@@ -83,11 +83,11 @@ import RSWeb
 		let conditionalGetInfo = try #require(HTTPConditionalGetInfo(lastModified: nil, etag: "\"abc\""))
 
 		let imageDatabase = ImageDatabase(databasePath: databasePath)
-		imageDatabase.saveDownloadedImage(DownloadedImageRecord(url: iconURL, byteCount: 100, pixelSize: (width: 48, height: 48), conditionalGetInfo: nil, nextCheck: nextCheck))
-		imageDatabase.saveDownloadedImage(DownloadedImageRecord(url: replacedIconURL, byteCount: 100, pixelSize: (width: 48, height: 48), conditionalGetInfo: nil, nextCheck: nextCheck))
-		imageDatabase.saveDownloadedImage(DownloadedImageRecord(url: replacedIconURL, byteCount: 200, pixelSize: (width: 512, height: 512), conditionalGetInfo: nil, nextCheck: nextCheck))
-		imageDatabase.saveDownloadedImage(DownloadedImageRecord(url: photoURL, byteCount: 300, pixelSize: (width: 800, height: 600), conditionalGetInfo: conditionalGetInfo, nextCheck: nextCheck))
-		imageDatabase.saveDownloadedImage(DownloadedImageRecord(url: unreadableImageURL, byteCount: 400, pixelSize: nil, conditionalGetInfo: nil, nextCheck: nextCheck))
+		imageDatabase.saveDownloadedImage(DownloadedImageRecord(url: iconURL, pixelSize: (width: 48, height: 48), conditionalGetInfo: nil, nextCheck: nextCheck))
+		imageDatabase.saveDownloadedImage(DownloadedImageRecord(url: replacedIconURL, pixelSize: (width: 48, height: 48), conditionalGetInfo: nil, nextCheck: nextCheck))
+		imageDatabase.saveDownloadedImage(DownloadedImageRecord(url: replacedIconURL, pixelSize: (width: 512, height: 512), conditionalGetInfo: nil, nextCheck: nextCheck))
+		imageDatabase.saveDownloadedImage(DownloadedImageRecord(url: photoURL, pixelSize: (width: 800, height: 600), conditionalGetInfo: conditionalGetInfo, nextCheck: nextCheck))
+		imageDatabase.saveDownloadedImage(DownloadedImageRecord(url: unreadableImageURL, pixelSize: nil, conditionalGetInfo: nil, nextCheck: nextCheck))
 
 		let validation = await imageDatabase.fetchDownloadedImageValidation(url: photoURL)
 		#expect(validation?.conditionalGetInfo == conditionalGetInfo)

@@ -17,18 +17,18 @@ import RSCore
 		let longAgo = now.addingTimeInterval(-TimeInterval(days: 10))
 		let urls = ["https://example.com/a.jpg", "https://example.com/b.jpg", "https://example.com/c.jpg", "https://example.com/just-saved.jpg"]
 		let records = [
-			DownloadedImageUsage(url: "https://example.com/no-file.jpg", byteCount: 50, lastAccessed: longAgo),
-			DownloadedImageUsage(url: urls[0], byteCount: 100, lastAccessed: longAgo),
-			DownloadedImageUsage(url: urls[1], byteCount: 100, lastAccessed: longAgo),
-			DownloadedImageUsage(url: urls[2], byteCount: 100, lastAccessed: longAgo),
-			DownloadedImageUsage(url: urls[3], byteCount: 100, lastAccessed: now)
+			DownloadedImageUsage(url: "https://example.com/no-file.jpg", lastAccessed: longAgo),
+			DownloadedImageUsage(url: urls[0], lastAccessed: longAgo),
+			DownloadedImageUsage(url: urls[1], lastAccessed: longAgo),
+			DownloadedImageUsage(url: urls[2], lastAccessed: longAgo),
+			DownloadedImageUsage(url: urls[3], lastAccessed: now)
 		]
 		let keys = urls.map { DownloadedImageCache.diskKey($0) }
-		var fileDates = Dictionary(uniqueKeysWithValues: keys.map { ($0, longAgo) })
-		fileDates["unrecorded"] = longAgo
-		fileDates["unrecordedJustSaved"] = now
+		var files = Dictionary(uniqueKeysWithValues: keys.map { ($0, storedFile(longAgo, byteCount: 100)) })
+		files["unrecorded"] = storedFile(longAgo, byteCount: 100)
+		files["unrecordedJustSaved"] = storedFile(now, byteCount: 100)
 
-		let removal = await DownloadedImageCache.imageRemoval(records: records, fileDates: fileDates, urlsInUse: [], now: now, maximumByteCount: 350)
+		let removal = await DownloadedImageCache.imageRemoval(records: records, files: files, urlsInUse: [], now: now, maximumByteCount: 350)
 
 		#expect(removal.urls == ["https://example.com/no-file.jpg", urls[0]])
 		#expect(removal.keys == ["unrecorded", keys[0]])
@@ -38,10 +38,10 @@ import RSCore
 	@Test func imagesInUseAreKept() async {
 		let now = Date()
 		let longAgo = now.addingTimeInterval(-TimeInterval(days: 10))
-		let records = (0..<3).map { DownloadedImageUsage(url: "https://example.com/\($0).jpg", byteCount: 100, lastAccessed: longAgo) }
-		let fileDates = Dictionary(uniqueKeysWithValues: records.map { (DownloadedImageCache.diskKey($0.url), longAgo) })
+		let records = (0..<3).map { DownloadedImageUsage(url: "https://example.com/\($0).jpg", lastAccessed: longAgo) }
+		let files = Dictionary(uniqueKeysWithValues: records.map { (DownloadedImageCache.diskKey($0.url), storedFile(longAgo, byteCount: 100)) })
 
-		let removal = await DownloadedImageCache.imageRemoval(records: records, fileDates: fileDates, urlsInUse: [records[0].url], now: now, maximumByteCount: 200)
+		let removal = await DownloadedImageCache.imageRemoval(records: records, files: files, urlsInUse: [records[0].url], now: now, maximumByteCount: 200)
 
 		#expect(removal.urls == [records[1].url])
 		#expect(removal.remainingByteCount == 200)
@@ -50,26 +50,40 @@ import RSCore
 	@Test func derivedCopiesAreKeptAndRemovedWithTheirImages() async {
 		let now = Date()
 		let longAgo = now.addingTimeInterval(-TimeInterval(days: 10))
-		let records = (0..<2).map { DownloadedImageUsage(url: "https://example.com/\($0).png", byteCount: 100, lastAccessed: longAgo.addingTimeInterval(TimeInterval($0))) }
+		let records = (0..<2).map { DownloadedImageUsage(url: "https://example.com/\($0).png", lastAccessed: longAgo.addingTimeInterval(TimeInterval($0))) }
 		let removedCopy = DownloadedImageCache.derivedDiskKey(records[0].url, suffix: "144")
 		let keptCopy = DownloadedImageCache.derivedDiskKey(records[1].url, suffix: "144")
 		let orphanedCopy = DownloadedImageCache.derivedDiskKey("https://example.com/gone.png", suffix: "144")
-		var fileDates = Dictionary(uniqueKeysWithValues: records.map { (DownloadedImageCache.diskKey($0.url), longAgo) })
+		var files = Dictionary(uniqueKeysWithValues: records.map { (DownloadedImageCache.diskKey($0.url), storedFile(longAgo, byteCount: 100)) })
 		for key in [removedCopy, keptCopy, orphanedCopy] {
-			fileDates[key] = longAgo
+			files[key] = storedFile(longAgo, byteCount: 10)
 		}
 
-		let removal = await DownloadedImageCache.imageRemoval(records: records, fileDates: fileDates, urlsInUse: [], now: now, maximumByteCount: 150)
+		let removal = await DownloadedImageCache.imageRemoval(records: records, files: files, urlsInUse: [], now: now, maximumByteCount: 150)
 
 		#expect(removal.urls == [records[0].url])
 		#expect(removal.keys == [DownloadedImageCache.diskKey(records[0].url), removedCopy, orphanedCopy])
 		#expect(removal.remainingByteCount == 100)
 	}
 
-	@Test func folderThatCantBeListedHasNoFileDates() async {
+	@Test func folderThatCantBeListedHasNoStoredFiles() async {
 		let missingFolder = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString).path
-		let fileDates = await DownloadedImageCache.fileModificationDates(BinaryDiskCache(folder: missingFolder))
-		#expect(fileDates == nil)
+		let files = await DownloadedImageCache.storedFiles(BinaryDiskCache(folder: missingFolder))
+		#expect(files == nil)
+	}
+
+	@Test func storedFilesHaveTheirSizesOnDisk() async throws {
+		let folder = FileManager.default.temporaryDirectory.appendingPathComponent("DownloadedImageCacheTests-\(UUID().uuidString)")
+		try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+		defer {
+			try? FileManager.default.removeItem(at: folder)
+		}
+		let diskCache = BinaryDiskCache(folder: folder.path)
+		let key = DownloadedImageCache.diskKey("https://example.com/photo.jpg")
+		try diskCache.setData(Data(count: 1234), forKey: key)
+
+		let files = await DownloadedImageCache.storedFiles(diskCache)
+		#expect(files?[key]?.byteCount == 1234)
 	}
 
 	@Test func shortMaxAgeIsRaisedToThreeDays() throws {
@@ -106,5 +120,12 @@ import RSCore
 
 		let retryDateAfterLaterFailure = DownloadedImageCache.retryDate(after: retryDateFromRetryAfter, retryAfter: nil, now: now.addingTimeInterval(1))
 		#expect(retryDateAfterLaterFailure == retryDateFromRetryAfter)
+	}
+}
+
+private extension DownloadedImageCacheTests {
+
+	func storedFile(_ modificationDate: Date, byteCount: Int) -> DownloadedImageCache.StoredFile {
+		DownloadedImageCache.StoredFile(modificationDate: modificationDate, byteCount: byteCount)
 	}
 }

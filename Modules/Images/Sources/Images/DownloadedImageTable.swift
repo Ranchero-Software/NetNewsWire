@@ -14,7 +14,6 @@ import RSDatabaseObjC
 /// A copy stored by `DownloadedImageCache`. `pixelSize` is nil when ImageIO can’t read the image.
 struct DownloadedImageRecord: Sendable {
 	let url: String
-	let byteCount: Int
 	let pixelSize: (width: Int, height: Int)?
 	let conditionalGetInfo: HTTPConditionalGetInfo?
 	let nextCheck: Date
@@ -29,7 +28,6 @@ struct DownloadedImageValidation: Sendable {
 /// What `DownloadedImageCache` needs to choose images to remove.
 struct DownloadedImageUsage: Sendable {
 	let url: String
-	let byteCount: Int
 	let lastAccessed: Date
 }
 
@@ -40,7 +38,6 @@ struct DownloadedImageTable {
 
 	private struct Column {
 		static let url = "url"
-		static let byteCount = "byteCount"
 		static let pixelWidth = "pixelWidth"
 		static let pixelHeight = "pixelHeight"
 		static let lastAccessed = "lastAccessed"
@@ -77,7 +74,7 @@ struct DownloadedImageTable {
 	/// Least recently accessed first. Nil when the query fails.
 	static func fetchUsageByLeastRecentAccess(database: FMDatabase) -> [DownloadedImageUsage]? {
 		var results = [DownloadedImageUsage]()
-		guard let resultSet = database.executeQuery("SELECT \(Column.url), \(Column.byteCount), \(Column.lastAccessed) FROM \(name) ORDER BY \(Column.lastAccessed);", withArgumentsIn: []) else {
+		guard let resultSet = database.executeQuery("SELECT \(Column.url), \(Column.lastAccessed) FROM \(name) ORDER BY \(Column.lastAccessed);", withArgumentsIn: []) else {
 			return nil
 		}
 		defer {
@@ -88,7 +85,7 @@ struct DownloadedImageTable {
 				continue
 			}
 			let lastAccessed = Date(timeIntervalSince1970: resultSet.double(forColumn: Column.lastAccessed))
-			results.append(DownloadedImageUsage(url: url, byteCount: resultSet.long(forColumn: Column.byteCount), lastAccessed: lastAccessed))
+			results.append(DownloadedImageUsage(url: url, lastAccessed: lastAccessed))
 		}
 		return results
 	}
@@ -125,7 +122,6 @@ struct DownloadedImageTable {
 	static func save(_ record: DownloadedImageRecord, database: FMDatabase) {
 		let dictionary: DatabaseDictionary = [
 			Column.url: record.url,
-			Column.byteCount: record.byteCount,
 			Column.pixelWidth: record.pixelSize?.width as Any,
 			Column.pixelHeight: record.pixelSize?.height as Any,
 			Column.lastAccessed: Date().timeIntervalSince1970,

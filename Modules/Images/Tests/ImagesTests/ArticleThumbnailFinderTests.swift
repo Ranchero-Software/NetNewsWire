@@ -55,7 +55,7 @@ private typealias ArticleAttachment = Articles.Attachment
 		let finder = ArticleThumbnailFinder(imageDatabase: imageDatabase)
 		let article = makeArticle(imageURL: "https://example.com/image.jpg", thumbnailURL: "https://example.com/logo.png")
 
-		imageDatabase.saveDownloadedImage(DownloadedImageRecord(url: "https://example.com/logo.png", byteCount: 1024, pixelSize: (width: 48, height: 48), conditionalGetInfo: nil, nextCheck: Date()))
+		imageDatabase.saveDownloadedImage(DownloadedImageRecord(url: "https://example.com/logo.png", pixelSize: (width: 48, height: 48), conditionalGetInfo: nil, nextCheck: Date()))
 
 		#expect(finder.thumbnailURL(for: article, mode: .small) == "https://example.com/image.jpg")
 		#expect(!imageDatabase.recentlyFailed(url: "https://example.com/logo.png"))

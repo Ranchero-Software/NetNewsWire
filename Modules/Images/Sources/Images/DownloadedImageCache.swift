@@ -344,7 +344,7 @@ private extension DownloadedImageCache {
 			conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
 		}
 		let nextCheck = Self.nextCheck(httpResponse, hasValidators: conditionalGetInfo != nil)
-		ImageDatabase.shared.saveDownloadedImage(DownloadedImageRecord(url: url, byteCount: data.count, pixelSize: pixelSize, conditionalGetInfo: conditionalGetInfo, nextCheck: nextCheck))
+		ImageDatabase.shared.saveDownloadedImage(DownloadedImageRecord(url: url, pixelSize: pixelSize, conditionalGetInfo: conditionalGetInfo, nextCheck: nextCheck))
 		return true
 	}
 
@@ -391,8 +391,8 @@ private extension DownloadedImageCache {
 
 	// MARK: - Removing Images
 
-	/// Removes the least recently used images until the total is `maximumStoredByteCount`.
-	/// Also removes files with no record and records with no file, so the total matches the disk.
+	/// Removes the least recently used images until their files total `maximumStoredByteCount`.
+	/// Also removes files with no record and records with no file.
 	func removeImagesOverSizeLimit() async {
 		let startDate = Date()
 
@@ -400,11 +400,11 @@ private extension DownloadedImageCache {
 			Self.logger.error("Skipped removing images: couldn’t read the image records.")
 			return
 		}
-		guard let fileDates = await Self.fileModificationDates(diskCache) else {
+		guard let files = await Self.storedFiles(diskCache) else {
 			Self.logger.error("Skipped removing images: couldn’t list the images folder.")
 			return
 		}
-		let removal = await Self.imageRemoval(records: records, fileDates: fileDates, urlsInUse: Set(tasks.keys), now: startDate, maximumByteCount: Self.maximumStoredByteCount)
+		let removal = await Self.imageRemoval(records: records, files: files, urlsInUse: Set(tasks.keys), now: startDate, maximumByteCount: Self.maximumStoredByteCount)
 
 		guard !removal.urls.isEmpty || !removal.keys.isEmpty else {
 			return
@@ -441,17 +441,24 @@ private extension DownloadedImageCache {
 
 extension DownloadedImageCache {
 
+	struct StoredFile: Equatable, Sendable {
+		let modificationDate: Date
+		let byteCount: Int
+	}
+
 	/// Keys are file names. Nil when the folder can’t be listed.
-	@concurrent static func fileModificationDates(_ diskCache: BinaryDiskCache) async -> [String: Date]? {
+	@concurrent static func storedFiles(_ diskCache: BinaryDiskCache) async -> [String: StoredFile]? {
 		let folderURL = URL(fileURLWithPath: diskCache.folder)
-		guard let fileURLs = try? FileManager.default.contentsOfDirectory(at: folderURL, includingPropertiesForKeys: [.contentModificationDateKey]) else {
+		let resourceKeys: Set<URLResourceKey> = [.contentModificationDateKey, .fileSizeKey]
+		guard let fileURLs = try? FileManager.default.contentsOfDirectory(at: folderURL, includingPropertiesForKeys: Array(resourceKeys)) else {
 			return nil
 		}
-		var fileDates = [String: Date]()
+		var files = [String: StoredFile]()
 		for fileURL in fileURLs {
-			fileDates[fileURL.lastPathComponent] = (try? fileURL.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate ?? .distantPast
+			let resourceValues = try? fileURL.resourceValues(forKeys: resourceKeys)
+			files[fileURL.lastPathComponent] = StoredFile(modificationDate: resourceValues?.contentModificationDate ?? .distantPast, byteCount: resourceValues?.fileSize ?? 0)
 		}
-		return fileDates
+		return files
 	}
 
 	nonisolated static func diskKey(_ url: String) -> String {
@@ -506,36 +513,36 @@ extension DownloadedImageCache {
 	/// the least recently accessed images are removed.
 	/// Nothing changed in the last minute is removed, since it may be in the middle of being saved.
 	/// Images in `urlsInUse` are being read or downloaded, so they’re kept too.
-	@concurrent static func imageRemoval(records: [DownloadedImageUsage], fileDates: [String: Date], urlsInUse: Set<String>, now: Date, maximumByteCount: Int) async -> ImageRemoval {
+	@concurrent static func imageRemoval(records: [DownloadedImageUsage], files: [String: StoredFile], urlsInUse: Set<String>, now: Date, maximumByteCount: Int) async -> ImageRemoval {
 		let recentChangeDate = now.addingTimeInterval(-recentChangeInterval)
 
-		var recordsToKeep = [(record: DownloadedImageUsage, key: String)]()
+		var recordsToKeep = [(record: DownloadedImageUsage, key: String, byteCount: Int)]()
 		var recordedKeys = Set<String>()
 		var urls = [String]()
 		for record in records {
 			let key = diskKey(record.url)
 			recordedKeys.insert(key)
-			if fileDates[key] == nil && record.lastAccessed < recentChangeDate {
+			if files[key] == nil && record.lastAccessed < recentChangeDate {
 				urls.append(record.url)
 			} else {
-				recordsToKeep.append((record: record, key: key))
+				recordsToKeep.append((record: record, key: key, byteCount: files[key]?.byteCount ?? 0))
 			}
 		}
-		var keys = Set(fileDates.filter { !recordedKeys.contains(baseDiskKey($0.key)) && $0.value < recentChangeDate }.keys)
-		var byteCount = recordsToKeep.reduce(0) { $0 + $1.record.byteCount }
+		var keys = Set(files.filter { !recordedKeys.contains(baseDiskKey($0.key)) && $0.value.modificationDate < recentChangeDate }.keys)
+		var byteCount = recordsToKeep.reduce(0) { $0 + $1.byteCount }
 
-		for (record, key) in recordsToKeep where !urlsInUse.contains(record.url) {
+		for (record, key, recordByteCount) in recordsToKeep where !urlsInUse.contains(record.url) {
 			if byteCount <= maximumByteCount || record.lastAccessed >= recentChangeDate {
 				break
 			}
 			urls.append(record.url)
 			keys.insert(key)
-			byteCount -= record.byteCount
+			byteCount -= recordByteCount
 		}
 
 		// Derived copies go with their images.
 		let removedKeys = keys.union(urls.map(diskKey))
-		keys.formUnion(fileDates.keys.filter { baseDiskKey($0) != $0 && removedKeys.contains(baseDiskKey($0)) })
+		keys.formUnion(files.keys.filter { baseDiskKey($0) != $0 && removedKeys.contains(baseDiskKey($0)) })
 
 		return ImageRemoval(urls: urls, keys: keys, remainingByteCount: byteCount)
 	}
