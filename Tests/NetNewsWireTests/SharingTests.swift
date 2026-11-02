@@ -52,9 +52,11 @@ import XCTest
 					   externalURL: nil,
 					   summary: nil,
 					   imageURL: nil,
+					   thumbnailURL: nil,
 					   datePublished: nil,
 					   dateModified: nil,
 					   authors: nil,
+					   attachments: nil,
 					   status: ArticleStatus(articleID: articleId, read: true, dateArrived: Date())
 		)
     }

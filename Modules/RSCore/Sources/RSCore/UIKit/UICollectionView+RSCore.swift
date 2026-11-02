@@ -22,7 +22,7 @@ extension UICollectionView {
 				return
 		}
 
-		selectItem(at: indexPath, animated: true, scrollPosition: [])
+		selectItem(at: indexPath, animated: animations.contains(.select), scrollPosition: [])
 
 		// indexPathsForVisibleItems includes cells hidden under the bars —
 		// check the unobscured region instead.
@@ -31,7 +31,7 @@ extension UICollectionView {
 		if let itemFrame = layoutAttributesForItem(at: indexPath)?.frame, unobscuredBounds.contains(itemFrame) {
 			return
 		}
-		scrollToItem(at: indexPath, at: .centeredVertically, animated: true)
+		scrollToItem(at: indexPath, at: .centeredVertically, animated: animations.contains(.scroll))
 	}
 
 	public func middleVisibleRow() -> IndexPath? {

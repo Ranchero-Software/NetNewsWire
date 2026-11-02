@@ -52,6 +52,10 @@ extension Article {
 		return URL.encodeSpacesIfNeeded(rawImageLink)
 	}
 
+	var thumbnailURL: URL? {
+		URL.encodeSpacesIfNeeded(rawThumbnailLink)
+	}
+
 	var link: String? {
 		// Prefer link from URL, if one can be created, as these are repaired if required.
 		// Provide the raw link if URL creation fails.
@@ -68,6 +72,10 @@ extension Article {
 		// Prefer link from imageURL, if one can be created, as these are repaired if required.
 		// Provide the raw link if URL creation fails.
 		return imageURL?.absoluteString ?? rawImageLink
+	}
+
+	var thumbnailLink: String? {
+		thumbnailURL?.absoluteString ?? rawThumbnailLink
 	}
 
 	var preferredLink: String? {

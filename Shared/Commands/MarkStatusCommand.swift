@@ -21,13 +21,15 @@ import Articles
 	let flag: Bool
 	let statusKey: ArticleStatus.Key
 	var completion: (() -> Void)?
+	// Called after every mark, with the flag that was applied, so undo and redo can update
+	// the UI in the right direction. Unlike completion, it’s not one-shot.
+	let didMark: ((Bool) -> Void)?
 
-	init?(initialArticles: [Article], statusKey: ArticleStatus.Key, flag: Bool, undoManager: UndoManager, completion: (() -> Void)? = nil) {
+	init?(initialArticles: [Article], statusKey: ArticleStatus.Key, flag: Bool, undoManager: UndoManager, completion: (() -> Void)? = nil, didMark: ((Bool) -> Void)? = nil) {
 
-        // Filter out articles that already have the desired status or can't be marked.
+        // Filter out articles that already have the desired status or can’t be marked.
 		let articlesToMark = MarkStatusCommand.filteredArticles(initialArticles, statusKey, flag)
 		if articlesToMark.isEmpty {
-			completion?()
 			return nil
 		}
 		self.articleIDsByAccountID = Dictionary(grouping: articlesToMark, by: { $0.accountID }).mapValues { Set($0.articleIDs()) }
@@ -36,6 +38,7 @@ import Articles
 		self.statusKey = statusKey
  		self.undoManager = undoManager
 		self.completion = completion
+		self.didMark = didMark
 
 		let actionName = MarkStatusCommand.actionName(statusKey, flag)
 		self.undoActionName = actionName
@@ -64,8 +67,14 @@ import Articles
 @MainActor private extension MarkStatusCommand {
 
 	func mark(_ statusKey: ArticleStatus.Key, _ flag: Bool) {
-		markArticleIDs(articleIDsByAccountID, statusKey: statusKey, flag: flag, completion: completion)
-		completion = nil
+		let completion = self.completion
+		let didMark = self.didMark
+		self.completion = nil
+
+		markArticleIDs(articleIDsByAccountID, statusKey: statusKey, flag: flag) {
+			completion?()
+			didMark?(flag)
+		}
     }
 
 	static private let markReadActionName = NSLocalizedString("Mark Read", comment: "command")

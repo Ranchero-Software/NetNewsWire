@@ -36,11 +36,14 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 	private var parsingArticle = false
 	private var parsingAuthor = false
 	private var parsingChannelImage = false
+	private var parsingTextInput = false
 	private var currentAttributes: [String: String] = [:]
 
 	// Keep track of depth to ignore unprefixed <title> (for instance)
 	// inside of namespaced section (<s:variant>, for instance).
 	private var namespaceElementDepth = 0
+
+	private var mediaElementTracker = MediaElementTracker()
 
 	init(urlString: String) {
 		self.feedURLString = urlString
@@ -87,6 +90,27 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 			namespaceElementDepth += 1
 			return
 		}
+		if parsingArticle && namespace.isMediaRSS {
+			if let currentItem, mediaElementTracker.start(localName: localName, attributes: attributes, item: currentItem, parser: parser, resolveURL: resolveURL) {
+				namespaceElementDepth = 1
+			}
+			return
+		}
+		if parsingArticle && namespace.isITunes && localName.equals("duration") {
+			parser.beginStoringCharacters()
+			return
+		}
+		if parsingArticle && namespace.isITunes && localName.equals("image") {
+			if let currentItem, currentItem.itunesImageURL == nil, let href = attributes.value(forNameCaseInsensitive: "href"), !href.isEmpty {
+				currentItem.itunesImageURL = resolveURL(href)
+			}
+			namespaceElementDepth = 1
+			return
+		}
+		if mediaElementTracker.containerDepth > 0 {
+			namespaceElementDepth = 1
+			return
+		}
 		if parsingArticle && namespace.prefix != nil
 			&& !namespace.isDublinCore && !namespace.isContent && !namespace.isSource {
 			// Skip this element (in an unexpected namespace) and its subtree, so a nested
@@ -107,6 +131,15 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 			return
 		}
 
+		// RSS 1.0 spells it textinput, RSS 2.0 spells it textInput.
+		if isUnprefixed && localName.equalsASCIICaseInsensitive(lowercaseLiteral: "textinput") {
+			parsingTextInput = true
+			return
+		}
+		if parsingTextInput {
+			return
+		}
+
 		// Grab attributes where we'll need them later.
 		if (isRDF && localName.equals("item"))
 			|| localName.equals("guid")
@@ -119,6 +152,7 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 		if isUnprefixed && localName.equals("item") {
 			items.append(RSSItem())
 			parsingArticle = true
+			mediaElementTracker.reset()
 
 			if isRDF, let about = currentAttributes["rdf:about"], !about.isEmpty {
 				currentItem?.guid = about
@@ -155,6 +189,13 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 			return
 		}
 
+		if parsingArticle && namespace.isMediaRSS {
+			if let currentItem {
+				mediaElementTracker.end(localName: localName, item: currentItem, parser: parser)
+			}
+			return
+		}
+
 		if isRDF && localName.equals("RDF") {
 			endRSSFound = true
 			return
@@ -162,6 +203,14 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 
 		if isUnprefixed && localName.equals("rss") {
 			endRSSFound = true
+			return
+		}
+
+		if isUnprefixed && localName.equalsASCIICaseInsensitive(lowercaseLiteral: "textinput") {
+			parsingTextInput = false
+			return
+		}
+		if parsingTextInput {
 			return
 		}
 
@@ -217,6 +266,10 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 				if let s, !s.isEmpty {
 					article.body = s
 				}
+				return
+			}
+			if namespace.isITunes && localName.equals("duration") {
+				article.itunesDurationInSeconds = ParsedAttachment.durationInSeconds(parser.currentStringWithTrimmedWhitespace)
 				return
 			}
 			// `source:markdown` — scripting.com's namespace, used by WordLand-generated feeds.
@@ -275,8 +328,8 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 		let length = Int(currentAttributes["length"] ?? "") ?? 0
 		let mimeType = currentAttributes["type"]
 		let sizeInBytes = length > 0 ? length : nil
-		if let attachment = ParsedAttachment(url: url, mimeType: mimeType, title: nil, sizeInBytes: sizeInBytes, durationInSeconds: nil) {
-			article.attachments.insert(attachment)
+		if let attachment = ParsedAttachment(url: url, mimeType: mimeType, title: nil, sizeInBytes: sizeInBytes, durationInSeconds: nil, width: nil, height: nil, medium: nil) {
+			article.attachments.append(attachment)
 		}
 	}
 

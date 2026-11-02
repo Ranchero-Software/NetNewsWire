@@ -662,20 +662,20 @@ private extension SidebarOutlineDataSource {
 
 	func indexWhereDraggedFeedWouldAppear(_ parentNode: Node, _ draggedFeed: PasteboardFeed) -> Int {
 		// The dragged feed’s unread count isn’t known here, so its sorted position can’t be predicted.
-		guard AppDefaults.shared.sidebarSortType != .byUnreadCount else {
+		guard AppDefaults.sidebarSortType != .byUnreadCount else {
 			return NSOutlineViewDropOnItemIndex
 		}
 		let draggedFeedWrapper = PasteboardFeedObjectWrapper(pasteboardFeed: draggedFeed)
 		let draggedSidebarItemNode = Node(representedObject: draggedFeedWrapper, parent: nil)
 		let nodes = parentNode.childNodes + [draggedSidebarItemNode]
 
-		let sortedNodes = nodes.sorted(by: AppDefaults.shared.sidebarSortType, ascending: AppDefaults.shared.sidebarSortAscending)
+		let sortedNodes = nodes.sorted(by: AppDefaults.sidebarSortType, ascending: AppDefaults.sidebarSortAscending)
 		let index = sortedNodes.firstIndex(of: draggedSidebarItemNode)!
 		return index
 	}
 
 	func indexWhereDraggedFolderWouldAppear(_ parentNode: Node, _ draggedFolder: PasteboardFolder) -> Int {
-		guard AppDefaults.shared.sidebarSortType != .byUnreadCount else {
+		guard AppDefaults.sidebarSortType != .byUnreadCount else {
 			return NSOutlineViewDropOnItemIndex
 		}
 		let draggedFolderWrapper = PasteboardFolderObjectWrapper(pasteboardFolder: draggedFolder)
@@ -683,7 +683,7 @@ private extension SidebarOutlineDataSource {
 		draggedFolderNode.canHaveChildNodes = true
 		let nodes = parentNode.childNodes + [draggedFolderNode]
 
-		let sortedNodes = nodes.sorted(by: AppDefaults.shared.sidebarSortType, ascending: AppDefaults.shared.sidebarSortAscending)
+		let sortedNodes = nodes.sorted(by: AppDefaults.sidebarSortType, ascending: AppDefaults.sidebarSortAscending)
 		let index = sortedNodes.firstIndex(of: draggedFolderNode)!
 		return index
 	}

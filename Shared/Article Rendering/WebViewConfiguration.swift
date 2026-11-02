@@ -51,7 +51,7 @@ import Articles
 	/// Whether the article view should run content JavaScript for this article.
 	/// Called from the navigation delegate on every navigation, so a change to the user setting takes effect on the next load.
 	static func allowsContentJavaScript(for article: Article?) -> Bool {
-		guard AppDefaults.shared.isArticleContentJavascriptEnabled else {
+		guard AppDefaults.isArticleContentJavascriptEnabled else {
 			return false
 		}
 		guard let article else {
@@ -127,7 +127,13 @@ private extension WebViewConfiguration {
 		let preferences = WKPreferences()
 		preferences.javaScriptCanOpenWindowsAutomatically = false
 		preferences.minimumFontSize = 12
+#if os(iOS)
+		// With element fullscreen enabled, YouTube embeds go fullscreen on iPad as a black screen with audio only.
+		// Without it, they use video fullscreen like on iPhone.
+		preferences.isElementFullscreenEnabled = UIDevice.current.userInterfaceIdiom != .pad
+#else
 		preferences.isElementFullscreenEnabled = true
+#endif
 
 		return preferences
 	}

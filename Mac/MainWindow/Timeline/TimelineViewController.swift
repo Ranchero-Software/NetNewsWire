@@ -209,7 +209,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	var standardColumn: NSTableColumn?
 	// Set while columns are added and autosaved state is restored, which fires sortDescriptorsDidChange.
 	var isConfiguringTableColumns = false
-	private var fontSize: FontSize = AppDefaults.shared.timelineFontSize {
+	private var fontSize: FontSize = AppDefaults.timelineFontSize {
 		didSet {
 			if fontSize != oldValue {
 				fontSizeDidChange()
@@ -279,10 +279,16 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		sharingServiceDelegate = SharingServiceDelegate(self.view.window)
 	}
 
+	override func viewDidLayout() {
+		super.viewDidLayout()
+		fitTableViewToVisibleWidthInStandardLayout()
+	}
+
 	// MARK: - API
 
 	func markAllAsRead(completion: (() -> Void)? = nil) {
 		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articles, markingRead: true, undoManager: undoManager, completion: completion) else {
+			completion?()
 			return
 		}
 		runCommand(markReadCommand)
@@ -458,13 +464,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 		tableView.selectRow(nextRowIndex)
 
-		let followingRowIndex = nextRowIndex - 1
-		if followingRowIndex < 0 {
+		if scrollToRowIfNotFullyVisible(nextRowIndex) {
 			return
 		}
 
-		tableView.scrollToRowIfNotVisible(followingRowIndex)
-
+		scrollToRowIfNotFullyVisible(nextRowIndex - 1)
 	}
 
 	@IBAction func selectNextDown(_ sender: Any?) {
@@ -480,13 +484,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 		tableView.selectRow(nextRowIndex)
 
-		let followingRowIndex = nextRowIndex + 1
-		if followingRowIndex > tableMaxIndex {
+		if scrollToRowIfNotFullyVisible(nextRowIndex) {
 			return
 		}
 
-		tableView.scrollToRowIfNotVisible(followingRowIndex)
-
+		scrollToRowIfNotFullyVisible(nextRowIndex + 1)
 	}
 
 	func toggleReadStatusForSelectedArticles() {
@@ -774,7 +776,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	@MainActor func userDefaultsDidChange() {
-		fontSize = AppDefaults.shared.timelineFontSize
+		fontSize = AppDefaults.timelineFontSize
 	}
 
 	/// The one place the row height is set — it depends on the layout and the font size.
@@ -836,7 +838,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		let longTitle = "But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?"
 		let prototypeID = "prototype"
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, dateArrived: Date())
-		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, feedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, markdown: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, datePublished: nil, dateModified: nil, authors: nil, status: status)
+		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, feedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, markdown: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, thumbnailURL: nil, datePublished: nil, dateModified: nil, authors: nil, attachments: nil, status: status)
 
 		let prototypeCellData = TimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false)
 		let height = TimelineCellLayout.height(for: 100, cellData: prototypeCellData, appearance: cellAppearance)
@@ -1077,6 +1079,31 @@ extension TimelineViewController: NSTableViewDelegate {
 // MARK: - Private
 
 private extension TimelineViewController {
+
+	/// The table doesn’t shrink by itself when the pane narrows after leaving column layout.
+	func fitTableViewToVisibleWidthInStandardLayout() {
+		guard layout == .standard, let scrollView = tableView.enclosingScrollView else {
+			return
+		}
+		let contentInsets = scrollView.contentInsets
+		let visibleWidth = scrollView.contentView.bounds.width - contentInsets.left - contentInsets.right
+		guard visibleWidth > 0, tableView.frame.width != visibleWidth else {
+			return
+		}
+		tableView.setFrameSize(NSSize(width: visibleWidth, height: tableView.frame.height))
+		tableView.sizeLastColumnToFit()
+	}
+
+	/// Returns true if it scrolled. Callers should skip further scrolling then,
+	/// since the animation hasn’t updated the visible rect yet.
+	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/5486>
+	@discardableResult func scrollToRowIfNotFullyVisible(_ row: Int) -> Bool {
+		guard (0..<tableView.numberOfRows).contains(row), !tableView.isRowFullyVisible(row) else {
+			return false
+		}
+		tableView.scrollRowFullyIntoView(row)
+		return true
+	}
 
 	func fetchAndReplacePreservingSelection() {
 		if let article = oneSelectedArticle, let account = article.account {

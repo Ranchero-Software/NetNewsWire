@@ -10,7 +10,7 @@ import AppKit
 
 final class DetailContainerView: NSView {
 
-	@IBOutlet var detailStatusBarView: DetailStatusBarView!
+	@IBOutlet var linkOverlayView: DetailLinkOverlayView!
 
 	var contentViewConstraints: [NSLayoutConstraint]?
 
@@ -28,7 +28,7 @@ final class DetailContainerView: NSView {
 
 			if let contentView = contentView {
 				contentView.translatesAutoresizingMaskIntoConstraints = false
-				addSubview(contentView, positioned: .below, relativeTo: detailStatusBarView)
+				addSubview(contentView, positioned: .below, relativeTo: linkOverlayView)
 				// Leading and trailing follow the safe area so the article view doesn’t extend under the sidebar
 				// in column layout on macOS 26. Top stays at the edge: the web view handles the toolbar itself.
 				let constraints = [

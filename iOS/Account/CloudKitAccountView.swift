@@ -19,43 +19,32 @@ struct CloudKitAccountView: View {
 	@State private var isShowingHelp = false
 
 	var body: some View {
-		NavigationStack {
-			Form {
-				Section {
-					Button(NSLocalizedString("Use iCloud", comment: "Use iCloud button")) {
-						addAccount()
-					}
-					.frame(maxWidth: .infinity)
-				} header: {
-					AccountIconHeader(accountType: .cloudKit)
-				} footer: {
-					AccountSheetFooter(text: NSLocalizedString("NetNewsWire will use your iCloud account to sync your subscriptions across your Mac and iOS devices.", comment: "iCloud"), linkTitle: CloudKitWebDocumentation.limitationsAndSolutionsText) {
-						isShowingHelp = true
-					}
+		AccountSetupSheet(accountType: .cloudKit) {
+			Section {
+				Button(NSLocalizedString("Use iCloud", comment: "Use iCloud button")) {
+					addAccount()
+				}
+				.frame(maxWidth: .infinity)
+			} header: {
+				AccountIconHeader(accountType: .cloudKit)
+			} footer: {
+				AccountSheetFooter(text: NSLocalizedString("NetNewsWire will use your iCloud account to sync your subscriptions across your Mac and iOS devices.", comment: "iCloud"), linkTitle: CloudKitWebDocumentation.limitationsAndSolutionsText) {
+					isShowingHelp = true
 				}
 			}
-			.navigationTitle(Text(verbatim: AccountType.cloudKit.displayName))
-			.navigationBarTitleDisplayMode(.inline)
-			.toolbar {
-				ToolbarItem(placement: .cancellationAction) {
-					Button(NSLocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {
-						dismiss()
-					}
-				}
+		}
+		.alert(isPresented: isShowingiCloudDriveError, error: iCloudDriveError) { _ in
+			Button(NSLocalizedString("Open Settings", comment: "Open Settings button")) {
+				AddCloudKitAccountUtilities.openiCloudSettings()
 			}
-			.alert(isPresented: isShowingiCloudDriveError, error: iCloudDriveError) { _ in
-				Button(NSLocalizedString("Open Settings", comment: "Open Settings button")) {
-					AddCloudKitAccountUtilities.openiCloudSettings()
-				}
-				Button(NSLocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {
-					iCloudDriveError = nil
-				}
-			} message: { error in
-				Text(verbatim: error.recoverySuggestion ?? "")
+			Button(NSLocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {
+				iCloudDriveError = nil
 			}
-			.sheet(isPresented: $isShowingHelp) {
-				SafariView(url: CloudKitWebDocumentation.limitationsAndSolutionsURL)
-			}
+		} message: { error in
+			Text(verbatim: error.recoverySuggestion ?? "")
+		}
+		.sheet(isPresented: $isShowingHelp) {
+			SafariView(url: CloudKitWebDocumentation.limitationsAndSolutionsURL)
 		}
 	}
 

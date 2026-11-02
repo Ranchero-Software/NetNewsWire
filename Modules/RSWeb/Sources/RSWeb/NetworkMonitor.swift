@@ -7,7 +7,7 @@
 
 import Foundation
 import Network
-import os
+import Synchronization
 
 nonisolated public final class NetworkMonitor: Sendable {
 	public static let shared = NetworkMonitor()
@@ -22,7 +22,7 @@ nonisolated public final class NetworkMonitor: Sendable {
 		var isConstrained = false
 	}
 
-	private let state = OSAllocatedUnfairLock<State>(initialState: State())
+	private let state = Mutex(State())
 
 	/// `true` until `NWPathMonitor` delivers its first path, so callers attempt
 	/// network work rather than skip it on an answer we don't have yet.

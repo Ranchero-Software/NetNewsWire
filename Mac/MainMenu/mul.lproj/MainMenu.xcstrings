@@ -1225,8 +1225,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Artículo más antiguo arriba"
+            "state" : "translated",
+            "value" : "Ascendente"
           }
         }
       }
@@ -1936,6 +1936,12 @@
             "state" : "new",
             "value" : "Date"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fecha"
+          }
         }
       }
     },
@@ -1947,6 +1953,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Feed"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fuente"
           }
         }
       }
@@ -1960,6 +1972,12 @@
             "state" : "new",
             "value" : "Starred"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Destacados"
+          }
         }
       }
     },
@@ -1972,6 +1990,12 @@
             "state" : "new",
             "value" : "Title"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Título"
+          }
         }
       }
     },
@@ -1983,6 +2007,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Unread"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No leídos"
           }
         }
       }
@@ -2001,6 +2031,30 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mostrar barra de herramientas"
+          }
+        }
+      }
+    },
+    "stB-ar-mI1.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Show Status Bar\"; ObjectID = \"stB-ar-mI1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show Status Bar"
+          }
+        }
+      }
+    },
+    "stT-hm-mI1.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Show Theme Menu in Status Bar\"; ObjectID = \"stT-hm-mI1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show Theme Menu in Status Bar"
           }
         }
       }
@@ -2035,8 +2089,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Artículo más reciente arriba"
+            "state" : "translated",
+            "value" : "Descendente"
           }
         }
       }

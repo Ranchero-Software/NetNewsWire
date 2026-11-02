@@ -27,71 +27,62 @@ struct CredentialsAccountView: View {
 	@State private var errorMessage: String?
 	@State private var isShowingSignUp = false
 
+	/// Account types that sign in with this sheet.
+	static let accountTypes: Set<AccountType> = [.feedbin, .newsBlur, .inoreader, .bazQux, .theOldReader, .freshRSS]
+
 	private static let passwordPlaceholder = NSLocalizedString("Password", comment: "Password field placeholder")
 
+	init(accountType: AccountType, account: Account?, didAddAccount: (() -> Void)?) {
+		self.accountType = accountType
+		self.account = account
+		self.didAddAccount = didAddAccount
+
+		if let account, let credentials = try? account.retrieveCredentials(type: accountType.credentialsType) {
+			self._username = State(initialValue: credentials.username)
+			self._password = State(initialValue: credentials.secret)
+		}
+		if accountType.needsAPIURL, let endpointURL = account?.endpointURL {
+			self._apiURLString = State(initialValue: endpointURL.absoluteString)
+		}
+	}
+
 	var body: some View {
-		NavigationStack {
-			Form {
-				Section {
-					TextField(accountType.usernamePlaceholder, text: $username)
-						.textContentType(.username)
-						.keyboardType(.emailAddress)
+		AccountSetupSheet(accountType: accountType, isWorking: isValidating) {
+			Section {
+				TextField(accountType.usernamePlaceholder, text: $username)
+					.textContentType(.username)
+					.keyboardType(.emailAddress)
+					.textInputAutocapitalization(.never)
+					.autocorrectionDisabled()
+				passwordRow
+				if accountType.needsAPIURL {
+					TextField(NSLocalizedString("API URL: https://fresh.rss.net/api/greader.php", comment: "FreshRSS API Helper"), text: $apiURLString)
+						.textContentType(.URL)
+						.keyboardType(.URL)
 						.textInputAutocapitalization(.never)
 						.autocorrectionDisabled()
-					passwordRow
-					if accountType.needsAPIURL {
-						TextField(NSLocalizedString("API URL: https://fresh.rss.net/api/greader.php", comment: "FreshRSS API Helper"), text: $apiURLString)
-							.textContentType(.URL)
-							.keyboardType(.URL)
-							.textInputAutocapitalization(.never)
-							.autocorrectionDisabled()
-					}
-				} header: {
-					AccountIconHeader(accountType: accountType)
 				}
-				Section {
-					Button(actionTitle) {
-						Task {
-							await submit()
-						}
+			} header: {
+				AccountIconHeader(accountType: accountType)
+			}
+			Section {
+				Button(actionTitle) {
+					Task {
+						await submit()
 					}
-					.frame(maxWidth: .infinity)
-					.disabled(!canSubmit || isValidating)
-				} footer: {
-					AccountSheetFooter(text: accountType.footerText, linkTitle: accountType.signUpTitle) {
-						isShowingSignUp = true
-					}
+				}
+				.frame(maxWidth: .infinity)
+				.disabled(!canSubmit || isValidating)
+			} footer: {
+				AccountSheetFooter(text: accountType.footerText, linkTitle: accountType.signUpTitle) {
+					isShowingSignUp = true
 				}
 			}
-			.navigationTitle(Text(verbatim: accountType.displayName))
-			.navigationBarTitleDisplayMode(.inline)
-			.toolbar {
-				ToolbarItem(placement: .cancellationAction) {
-					Button(NSLocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {
-						dismiss()
-					}
-					.disabled(isValidating)
-				}
-				ToolbarItem(placement: .topBarTrailing) {
-					if isValidating {
-						ProgressView()
-					}
-				}
-			}
-			.alert(NSLocalizedString("Error", comment: "Error"), isPresented: isShowingError) {
-				Button(NSLocalizedString("OK", comment: "OK button")) {
-					errorMessage = nil
-				}
-			} message: {
-				Text(verbatim: errorMessage ?? "")
-			}
-			.sheet(isPresented: $isShowingSignUp) {
-				if let signUpURL = accountType.signUpURL {
-					SafariView(url: signUpURL)
-				}
-			}
-			.onAppear {
-				loadExistingCredentials()
+		}
+		.errorAlert(message: $errorMessage)
+		.sheet(isPresented: $isShowingSignUp) {
+			if let signUpURL = accountType.signUpURL {
+				SafariView(url: signUpURL)
 			}
 		}
 	}
@@ -107,7 +98,7 @@ struct CredentialsAccountView: View {
 				SecureField(Self.passwordPlaceholder, text: $password)
 					.textContentType(.password)
 			}
-			Button(isPasswordVisible ? NSLocalizedString("Hide", comment: "Hide password button") : NSLocalizedString("Show", comment: "Show password button")) {
+			Button(isPasswordVisible ? NSLocalizedString("Hide", comment: "Hide") : NSLocalizedString("Show", comment: "Show")) {
 				isPasswordVisible.toggle()
 			}
 			.buttonStyle(.borderless)
@@ -135,25 +126,7 @@ struct CredentialsAccountView: View {
 		}
 	}
 
-	private var isShowingError: Binding<Bool> {
-		Binding {
-			errorMessage != nil
-		} set: { isShowing in
-			if !isShowing {
-				errorMessage = nil
-			}
-		}
-	}
-
-	private func loadExistingCredentials() {
-		guard let account, let credentials = try? account.retrieveCredentials(type: accountType.credentialsType) else {
-			return
-		}
-		username = credentials.username
-		password = credentials.secret
-	}
-
-	@MainActor private func submit() async {
+	private func submit() async {
 		let trimmedUsername = username.trimmingWhitespace
 
 		let endpoint: URL?
@@ -197,6 +170,9 @@ struct CredentialsAccountView: View {
 		do {
 			try store(basicCredentials: basicCredentials, validatedCredentials: validatedCredentials, in: account, endpoint: endpoint)
 		} catch {
+			if self.account == nil {
+				AccountManager.shared.deleteAccount(account)
+			}
 			errorMessage = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")
 			return
 		}
@@ -301,7 +277,7 @@ private extension AccountType {
 		case .theOldReader:
 			return NSLocalizedString("Sign in to your The Old Reader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a The Old Reader account?", comment: "TOR")
 		case .freshRSS:
-			return NSLocalizedString("Sign in to your FreshRSS instance and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an FreshRSS instance?", comment: "FreshRSS")
+			return NSLocalizedString("Sign in to your FreshRSS instance and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a FreshRSS instance?", comment: "FreshRSS")
 		default:
 			return ""
 		}

@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import os
+import Synchronization
 import RSCore
 
 /// Caches `Author` values by `authorID` so articles by the same author share
@@ -15,7 +15,7 @@ public final class AuthorCache: Sendable {
 
 	public static let shared = AuthorCache()
 
-	private let cache = OSAllocatedUnfairLock<[String: Author]>(initialState: [:])
+	private let cache = Mutex<[String: Author]>([:])
 
 	init() {
 		if !Platform.isRunningUnitTests {

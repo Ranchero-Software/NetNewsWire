@@ -21,7 +21,6 @@ final class BuiltinSmartFeedInspectorViewController: NSViewController, Inspector
 
 	// MARK: Inspector
 
-	let isFallbackInspector = false
 	var objects: [Any]? {
 		didSet {
 			updateSmartFeed()

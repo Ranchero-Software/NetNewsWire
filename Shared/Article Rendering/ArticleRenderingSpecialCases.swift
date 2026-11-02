@@ -19,16 +19,53 @@ struct ArticleRenderingSpecialCases {
 	/// True when any of the URL strings (article link, feed URL, feed home page URL)
 	/// is on a domain whose article content must render without JavaScript.
 	static func shouldDisableJavaScript(urlStrings: [String?]) -> Bool {
-		for urlString in urlStrings {
-			if let urlString, SpecialCase.urlStringMatchesDomain(urlString, domainsWithJavaScriptDisabled) {
-				return true
-			}
-		}
-		return false
+		anyURLStringMatchesAnyDomain(urlStrings, domainsWithJavaScriptDisabled)
 	}
 
 	@MainActor static func shouldDisableJavaScript(for article: Article) -> Bool {
 		shouldDisableJavaScript(urlStrings: [article.link, article.feed?.url, article.feed?.homePageURL])
+	}
+
+	private static let feedDomainsWithParagraphsSeparatedByReturns = ["slashdot.org"]
+	private static let consecutiveReturnsRegex = try? NSRegularExpression(pattern: "(?:\\r?\\n[ \\t]*){2,}")
+
+	/// Checks the home page too, which catches a feed subscribed through a proxy such as FeedBurner.
+	static func insertParagraphTagsIfNeeded(_ html: String, feedURL: String?, homePageURL: String?) -> String {
+		guard anyURLStringMatchesAnyDomain([feedURL, homePageURL], feedDomainsWithParagraphsSeparatedByReturns) else {
+			return html
+		}
+		guard html.utf8.contains(UInt8(ascii: "\n")), let consecutiveReturnsRegex else {
+			return html
+		}
+
+		let range = NSRange(html.startIndex..., in: html)
+		return consecutiveReturnsRegex.stringByReplacingMatches(in: html, range: range, withTemplate: "<p>")
+	}
+
+	private static let feedDomainsWithStrayLineBreaks = ["macrumors.com"]
+
+	// One or more <br>s right after a tag where a <br> can't appear — between list items,
+	// table rows, or table cells. Not after an opening <li>, <td>, or <th>: a <br> there is content.
+	private static let strayLineBreaksRegex = try? NSRegularExpression(
+		pattern: "(<(?:ul|ol|table|thead|tbody|tfoot|tr)\\b[^>]*>|</(?:li|tr|td|th|thead|tbody|tfoot)>)(?:\\s*<br\\s*/?>)+",
+		options: [.caseInsensitive]
+	)
+
+	/// MacRumors puts a <br/> after every line of its feed HTML, including inside lists and tables.
+	/// In lists each one renders as a blank line. In tables the HTML parser moves them all
+	/// to just before the table, leaving a huge gap above it. Remove them before parsing,
+	/// while they’re still recognizable.
+	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/5498>
+	static func removeStrayLineBreaksIfNeeded(_ html: String, feedURL: String?, homePageURL: String?) -> String {
+		guard anyURLStringMatchesAnyDomain([feedURL, homePageURL], feedDomainsWithStrayLineBreaks) else {
+			return html
+		}
+		guard html.range(of: "<br", options: .caseInsensitive) != nil, let strayLineBreaksRegex else {
+			return html
+		}
+
+		let range = NSRange(html.startIndex..., in: html)
+		return strayLineBreaksRegex.stringByReplacingMatches(in: html, range: range, withTemplate: "$1")
 	}
 
 	static func filterHTMLIfNeeded(baseURL: String, html: String) -> String {
@@ -82,6 +119,46 @@ struct ArticleRenderingSpecialCases {
 		}
 
 		return host.lowercased().contains("theverge.com")
+	}
+
+	// YouTube won’t play an embed whose host page is itself on youtube.com — the
+	// embed’s Referer has to identify a third-party client. Articles from YouTube
+	// channel feeds link to youtube.com/watch, so they render with NetNewsWire’s
+	// site as the base URL instead.
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/4860>
+	private static let baseURLForYouTubeArticles = URL(string: "https://netnewswire.com/")
+
+	static func baseURLForRendering(_ url: URL) -> URL {
+		if url.isYoutubeURL, let baseURLForYouTubeArticles {
+			return baseURLForYouTubeArticles
+		}
+		return url
+	}
+
+	private static let youTubeFlashPlayerPathPrefix = "/v/"
+	private static let youTubeEmbedURLPrefix = "https://www.youtube-nocookie.com/embed/"
+	private static let youTubeVideoIDCharacters = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_")
+
+	/// YouTube channel feeds list each video as a dead Flash player URL (youtube.com/v/ID).
+	/// Returns the privacy-enhanced embed player URL for the same video.
+	static func youTubeEmbedURL(forAttachmentURL urlString: String) -> String? {
+		guard let url = URL(string: urlString), url.isYoutubeURL, url.path.hasPrefix(youTubeFlashPlayerPathPrefix) else {
+			return nil
+		}
+		let videoID = url.path.dropFirst(youTubeFlashPlayerPathPrefix.count)
+		guard !videoID.isEmpty, videoID.unicodeScalars.allSatisfy({ youTubeVideoIDCharacters.contains($0) }) else {
+			return nil
+		}
+		return youTubeEmbedURLPrefix + videoID
+	}
+
+	private static func anyURLStringMatchesAnyDomain(_ urlStrings: [String?], _ domains: [String]) -> Bool {
+		for urlString in urlStrings {
+			if let urlString, SpecialCase.urlStringMatchesDomain(urlString, domains) {
+				return true
+			}
+		}
+		return false
 	}
 
 	// The content between a real <body …> tag and </body> (or the end of the string).
@@ -170,5 +247,20 @@ struct ArticleRenderingSpecialCases {
 		filteredHTML = filteredHTML.replacingOccurrences(of: "&amp;hellip;", with: "…")
 
 		return filteredHTML
+	}
+
+	/// De-sanitize some parts of the HTML that FreshRSS sanitized.
+	///
+	/// Doing this allows inline footnotes to work, without it they are broken, since they rely on matching `id` and `class` attributes.
+	static func desanitizeFreshRSSContent(_ content: String) -> String {
+		let classRegex = /(?'open'<[^>]*?)data-sanitized-class(?'close'[^<]*?>)/
+		let idRegex = /(?'open'<[^>]*?)data-sanitized-id(?'close'[^<]*?>)/
+		return content
+			.replacing(classRegex, with: { match in
+				match.output.open + "class" + match.output.close
+			})
+			.replacing(idRegex, with: { match in
+				match.output.open + "id" + match.output.close
+			})
 	}
 }

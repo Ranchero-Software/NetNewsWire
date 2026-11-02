@@ -25,7 +25,7 @@ struct AddAccountHelpView: View {
 				ForEach(accountTypes, id: \.self) { accountType in
 					if accountType == .cloudKit && hasiCloudAccount {
 						EmptyView()
-					} else if !(AppDefaults.shared.isDeveloperBuild && accountType.isDeveloperRestricted) {
+					} else if !(AppDefaults.isDeveloperBuild && accountType.isDeveloperRestricted) {
 						Button(action: {
 							delegate?.presentSheetForAccount(accountType)
 						}, label: {

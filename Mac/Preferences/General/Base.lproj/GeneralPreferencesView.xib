@@ -11,18 +11,62 @@
                 <outlet property="articleTextSizePopup" destination="Z6O-Zt-V1g" id="aTS-pU-7Vg"/>
                 <outlet property="articleThemePopup" destination="ISO-Wu-R60" id="oI3-6W-dPa"/>
                 <outlet property="defaultBrowserPopup" destination="Ci4-fW-KjU" id="7Nh-nU-Sbc"/>
+                <outlet property="hideUnreadCountsButton" destination="uC3-hD-nRb" id="uC3-oT-lTc"/>
+                <outlet property="showUnreadCountDotButton" destination="uC2-dS-hRb" id="uC2-oT-lTb"/>
+                <outlet property="showUnreadCountsButton" destination="uC1-sH-wRb" id="uC1-oT-lTa"/>
                 <outlet property="view" destination="WnV-px-wCT" id="gPv-Ow-1a1"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <view id="WnV-px-wCT">
-            <rect key="frame" x="0.0" y="0.0" width="509" height="460"/>
+            <rect key="frame" x="0.0" y="0.0" width="515" height="561"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <customView horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Ut3-yd-q6G">
-                    <rect key="frame" x="57" y="16" width="393" height="428"/>
+                    <rect key="frame" x="60" y="16" width="393" height="529"/>
                     <subviews>
+                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="f4H-6I-KoK">
+                            <rect key="frame" x="-2" y="509" width="106" height="16"/>
+                            <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="right" title="Unread Counts:" id="wAn-gW-UJc">
+                                <font key="font" metaFont="system"/>
+                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uC1-sH-wRb">
+                            <rect key="frame" x="110" y="509" width="283" height="16"/>
+                            <buttonCell key="cell" type="radio" title="Show" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="uC1-cL-sHw">
+                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="unreadCountDisplaySettingDidChange:" target="-2" id="uC1-aC-tNa"/>
+                            </connections>
+                        </button>
+                        <button tag="1" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uC2-dS-hRb">
+                            <rect key="frame" x="110" y="487" width="283" height="16"/>
+                            <buttonCell key="cell" type="radio" title="Show dot" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="uC2-cL-dSh">
+                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="unreadCountDisplaySettingDidChange:" target="-2" id="uC2-aC-tNb"/>
+                            </connections>
+                        </button>
+                        <button tag="2" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uC3-hD-nRb">
+                            <rect key="frame" x="110" y="465" width="283" height="16"/>
+                            <buttonCell key="cell" type="radio" title="Hide" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="uC3-cL-hDn">
+                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="unreadCountDisplaySettingDidChange:" target="-2" id="uC3-aC-tNc"/>
+                            </connections>
+                        </button>
+                        <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="uCs-sP-rTr">
+                            <rect key="frame" x="0.0" y="442" width="392" height="5"/>
+                        </box>
                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="pR2-Bf-7Fd">
                             <rect key="frame" x="-2" y="404" width="106" height="16"/>
                             <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Article Text Size:" id="xQu-QV-91i">
@@ -158,7 +202,7 @@
                                 <action selector="browserPopUpDidChangeValue:" target="-2" id="vSr-98-LQL"/>
                             </connections>
                         </popUpButton>
-                        <button horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Ubm-Pk-l7x">
+                        <button verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Ubm-Pk-l7x">
                             <rect key="frame" x="110" y="151" width="283" height="16"/>
                             <buttonCell key="cell" type="check" title="Open web pages in background in browser" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="t0a-LN-rCv">
                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -270,7 +314,6 @@
                         <constraint firstItem="S2Z-bG-jYk" firstAttribute="trailing" secondItem="pR2-Bf-7Fd" secondAttribute="trailing" id="4wu-2O-1fb"/>
                         <constraint firstItem="Tdg-6Y-gvW" firstAttribute="top" secondItem="0W5-tO-S63" secondAttribute="bottom" constant="20" id="5a3-LF-TvY"/>
                         <constraint firstItem="0W5-tO-S63" firstAttribute="top" secondItem="UI6-sq-M15" secondAttribute="bottom" constant="8" id="5mw-aE-uy4"/>
-                        <constraint firstItem="Z6O-Zt-V1g" firstAttribute="top" secondItem="Ut3-yd-q6G" secondAttribute="top" constant="4" id="6nC-a3-QOy"/>
                         <constraint firstItem="Z6O-Zt-V1g" firstAttribute="firstBaseline" secondItem="pR2-Bf-7Fd" secondAttribute="firstBaseline" id="72z-7d-9Qn"/>
                         <constraint firstItem="hQy-ng-ijd" firstAttribute="top" secondItem="Yrc-6Q-kx8" secondAttribute="bottom" constant="20" id="7iQ-QN-Ubh"/>
                         <constraint firstItem="Yrc-6Q-kx8" firstAttribute="leading" secondItem="Z6O-Zt-V1g" secondAttribute="leading" id="AQY-vT-qR7"/>
@@ -289,6 +332,7 @@
                         <constraint firstItem="Ubm-Pk-l7x" firstAttribute="leading" secondItem="Z6O-Zt-V1g" secondAttribute="leading" id="PXc-G4-8pH"/>
                         <constraint firstItem="S2Z-bG-jYk" firstAttribute="firstBaseline" secondItem="ISO-Wu-R60" secondAttribute="firstBaseline" id="QBC-MT-MY5"/>
                         <constraint firstAttribute="trailing" secondItem="Z6O-Zt-V1g" secondAttribute="trailing" constant="1" id="Qa5-bc-lvY"/>
+                        <constraint firstItem="pR2-Bf-7Fd" firstAttribute="trailing" secondItem="f4H-6I-KoK" secondAttribute="trailing" id="RBF-eU-g8N"/>
                         <constraint firstItem="SFF-mL-yc8" firstAttribute="top" secondItem="hQy-ng-ijd" secondAttribute="bottom" constant="20" id="S01-ZA-i2d"/>
                         <constraint firstAttribute="trailing" secondItem="Tdg-6Y-gvW" secondAttribute="trailing" constant="1" id="SOE-le-vT8"/>
                         <constraint firstItem="Z6O-Zt-V1g" firstAttribute="leading" secondItem="pR2-Bf-7Fd" secondAttribute="trailing" constant="8" symbolic="YES" id="TWU-6a-gBr"/>
@@ -307,7 +351,6 @@
                         <constraint firstItem="UI6-sq-M15" firstAttribute="leading" secondItem="Z6O-Zt-V1g" secondAttribute="leading" id="ffy-ld-r5Q"/>
                         <constraint firstAttribute="trailing" secondItem="Ci4-fW-KjU" secondAttribute="trailing" constant="1" id="h0b-Nh-tJJ"/>
                         <constraint firstAttribute="trailing" secondItem="SFF-mL-yc8" secondAttribute="trailing" constant="1" id="hYk-Ff-wTy"/>
-                        <constraint firstItem="SFF-mL-yc8" firstAttribute="leading" secondItem="hQy-ng-ijd" secondAttribute="trailing" constant="-282" id="hhb-8Q-KWc"/>
                         <constraint firstItem="0W5-tO-S63" firstAttribute="leading" secondItem="UI6-sq-M15" secondAttribute="leading" constant="22" id="jmc-lb-wp2"/>
                         <constraint firstAttribute="trailing" secondItem="Yrc-6Q-kx8" secondAttribute="trailing" id="o3L-x4-mEr"/>
                         <constraint firstItem="Wsb-Lr-8Q7" firstAttribute="trailing" secondItem="pR2-Bf-7Fd" secondAttribute="trailing" id="obL-84-81H"/>
@@ -319,6 +362,21 @@
                         <constraint firstAttribute="trailing" secondItem="UI6-sq-M15" secondAttribute="trailing" id="rxC-vu-aW1"/>
                         <constraint firstItem="yrg-M3-Dbz" firstAttribute="firstBaseline" secondItem="wtY-Zd-Ps9" secondAttribute="firstBaseline" id="sgV-rt-nFb"/>
                         <constraint firstItem="SFF-mL-yc8" firstAttribute="leading" secondItem="Z6O-Zt-V1g" secondAttribute="leading" id="shx-wm-ygD"/>
+                        <constraint firstItem="uC1-sH-wRb" firstAttribute="top" secondItem="Ut3-yd-q6G" secondAttribute="top" constant="4" id="uCa-tP-r01"/>
+                        <constraint firstItem="uC1-sH-wRb" firstAttribute="leading" secondItem="Z6O-Zt-V1g" secondAttribute="leading" id="uCb-lD-r01"/>
+                        <constraint firstAttribute="trailing" secondItem="uC1-sH-wRb" secondAttribute="trailing" id="uCc-tR-r01"/>
+                        <constraint firstItem="uC2-dS-hRb" firstAttribute="top" secondItem="uC1-sH-wRb" secondAttribute="bottom" constant="6" symbolic="YES" id="uCd-tP-r02"/>
+                        <constraint firstItem="uC2-dS-hRb" firstAttribute="leading" secondItem="Z6O-Zt-V1g" secondAttribute="leading" id="uCe-lD-r02"/>
+                        <constraint firstAttribute="trailing" secondItem="uC2-dS-hRb" secondAttribute="trailing" id="uCf-tR-r02"/>
+                        <constraint firstItem="uC3-hD-nRb" firstAttribute="top" secondItem="uC2-dS-hRb" secondAttribute="bottom" constant="6" symbolic="YES" id="uCg-tP-r03"/>
+                        <constraint firstItem="uC3-hD-nRb" firstAttribute="leading" secondItem="Z6O-Zt-V1g" secondAttribute="leading" id="uCh-lD-r03"/>
+                        <constraint firstAttribute="trailing" secondItem="uC3-hD-nRb" secondAttribute="trailing" id="uCi-tR-r03"/>
+                        <constraint firstItem="f4H-6I-KoK" firstAttribute="firstBaseline" secondItem="uC1-sH-wRb" secondAttribute="firstBaseline" id="uCj-bL-lbl"/>
+                        <constraint firstItem="f4H-6I-KoK" firstAttribute="leading" secondItem="Ut3-yd-q6G" secondAttribute="leading" id="uCk-lD-lbl"/>
+                        <constraint firstItem="uCs-sP-rTr" firstAttribute="top" secondItem="uC3-hD-nRb" secondAttribute="bottom" constant="20" id="uCl-tP-sep"/>
+                        <constraint firstItem="uCs-sP-rTr" firstAttribute="leading" secondItem="Ut3-yd-q6G" secondAttribute="leading" id="uCm-lD-sep"/>
+                        <constraint firstAttribute="trailing" secondItem="uCs-sP-rTr" secondAttribute="trailing" constant="1" id="uCn-tR-sep"/>
+                        <constraint firstItem="Z6O-Zt-V1g" firstAttribute="top" secondItem="uCs-sP-rTr" secondAttribute="bottom" constant="20" id="uCo-tP-z6o"/>
                         <constraint firstItem="wtY-Zd-Ps9" firstAttribute="leading" secondItem="Z6O-Zt-V1g" secondAttribute="leading" id="vaG-fM-WwJ"/>
                         <constraint firstItem="j0t-Wa-UTL" firstAttribute="leading" secondItem="Z6O-Zt-V1g" secondAttribute="leading" constant="22" id="xSA-4l-R2v"/>
                         <constraint firstAttribute="trailing" secondItem="ISO-Wu-R60" secondAttribute="trailing" constant="1" id="xaY-qS-LSN"/>
@@ -328,9 +386,12 @@
             </subviews>
             <constraints>
                 <constraint firstItem="Ut3-yd-q6G" firstAttribute="centerX" secondItem="WnV-px-wCT" secondAttribute="centerX" constant="-1" id="87C-ym-WzY"/>
+                <constraint firstItem="Ut3-yd-q6G" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="WnV-px-wCT" secondAttribute="leading" constant="20" id="gNl-lM-g01"/>
+                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Ut3-yd-q6G" secondAttribute="trailing" constant="20" id="gNl-tM-g02"/>
                 <constraint firstAttribute="bottom" secondItem="Ut3-yd-q6G" secondAttribute="bottom" constant="16" id="FVX-gg-o9H"/>
                 <constraint firstItem="Ut3-yd-q6G" firstAttribute="top" secondItem="WnV-px-wCT" secondAttribute="top" constant="16" id="jtz-mW-ptL"/>
             </constraints>
+            <point key="canvasLocation" x="141.5" y="193"/>
         </view>
         <userDefaultsController representsSharedInstance="YES" id="mAF-gO-1PI"/>
     </objects>

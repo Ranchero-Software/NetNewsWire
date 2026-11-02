@@ -23,7 +23,7 @@ import ActivityLog
 	func fireOldTimer() {
 		if let timer = internalTimer {
 			if timer.fireDate < Date() {
-				if AppDefaults.shared.refreshInterval != .manually {
+				if AppDefaults.refreshInterval != .manually {
 					timedRefresh(nil)
 				}
 			}
@@ -63,7 +63,7 @@ import ActivityLog
 			return
 		}
 
-		let refreshInterval = AppDefaults.shared.refreshInterval
+		let refreshInterval = AppDefaults.refreshInterval
 		if refreshInterval == .manually {
 			invalidate()
 			return

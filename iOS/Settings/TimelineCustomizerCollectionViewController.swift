@@ -32,14 +32,16 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 				externalURL: nil,
 				summary: nil,
 				imageURL: nil,
+				thumbnailURL: nil,
 				datePublished: date,
 				dateModified: nil,
 				authors: Set([Author(authorID: "_testAuthorID", name: "J. R. R. Tolkien", url: nil, avatarURL: nil, emailAddress: nil)!]),
+				attachments: nil,
 				status: ArticleStatus(articleID: "_testArticleID", read: false, starred: false, dateArrived: .now))
 	}
 
-	private var cachedTimelineLines: Int = AppDefaults.shared.timelineNumberOfLines
-	private var cachedIconSize: IconSize = AppDefaults.shared.timelineIconSize
+	private var cachedTimelineLines: Int = AppDefaults.timelineNumberOfLines
+	private var cachedIconSize: IconSize = AppDefaults.timelineIconSize
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,13 +51,13 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 			guard let self = self else { return }
 			Task { @MainActor in
 
-				if AppDefaults.shared.timelineNumberOfLines != self.cachedTimelineLines {
-					self.cachedTimelineLines = AppDefaults.shared.timelineNumberOfLines
+				if AppDefaults.timelineNumberOfLines != self.cachedTimelineLines {
+					self.cachedTimelineLines = AppDefaults.timelineNumberOfLines
 					self.userDefaultsDidChange()
 				}
 
-				if AppDefaults.shared.timelineIconSize != self.cachedIconSize {
-					self.cachedIconSize = AppDefaults.shared.timelineIconSize
+				if AppDefaults.timelineIconSize != self.cachedIconSize {
+					self.cachedIconSize = AppDefaults.timelineIconSize
 					self.userDefaultsDidChange()
 				}
 			}
@@ -115,8 +117,8 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 												 byline: "J. R. R. Tolkien",
 												 iconImage: IconImage(Assets.Images.nnwFeedIcon),
 												 showIcon: false,
-												 numberOfLines: AppDefaults.shared.timelineNumberOfLines,
-												 iconSize: AppDefaults.shared.timelineIconSize)
+												 numberOfLines: AppDefaults.timelineNumberOfLines,
+												 iconSize: AppDefaults.timelineIconSize)
 			cell.isPreview = true
 			return cell
 		}
@@ -129,8 +131,8 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 												 byline: "J. R. R. Tolkien",
 												 iconImage: IconImage(Assets.Images.nnwFeedIcon),
 												 showIcon: true,
-												 numberOfLines: AppDefaults.shared.timelineNumberOfLines,
-												 iconSize: AppDefaults.shared.timelineIconSize)
+												 numberOfLines: AppDefaults.timelineNumberOfLines,
+												 iconSize: AppDefaults.timelineIconSize)
 			cell.isPreview = true
 			return cell
 		}

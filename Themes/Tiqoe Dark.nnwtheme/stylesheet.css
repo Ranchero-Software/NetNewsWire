@@ -3,7 +3,7 @@
 body {
 	margin-left: auto;
 	margin-right: auto;
-	word-wrap: break-word;
+	overflow-wrap: break-word;
 	max-width: 44em;
 	background-color: #17120f;
 	color: #c5c2c1;
@@ -16,7 +16,14 @@ body {
 	text-underline-offset: 0.15em;
 }
 
-[href]:has(img):hover {
+a[href]:hover,
+.headerContainer a[href]:hover {
+	text-shadow: 0 1px rgba(0, 0, 0, 2);
+	opacity: 0.8;
+	color: color-mix(in hsl, var(--link-underline-color), firebrick 70%);
+}
+
+a[href]:has(img):hover {
 	opacity: 1;	
 }
 
@@ -180,11 +187,8 @@ pre {
 	margin: 0;
 	overflow: auto;
 	overflow-y: hidden;
-	word-wrap: normal;
+	overflow-wrap: normal;
 	word-break: normal;
-}
-
-pre {
 	line-height: 1.4286em;
 }
 
@@ -377,12 +381,20 @@ a.footnote:hover,
 		margin-bottom: 20px;
 		padding-left: 20px;
 		padding-right: 20px;
-
+		font-family: Charter, Georgia, sans-serif;
 		word-break: break-word;
 		-webkit-hyphens: auto;
 		-webkit-text-size-adjust: none;
-		font-family: Charter, Georgia, sans-serif;
 		font-size: calc([[font-size]]px + 2px);
+	}
+
+	figcaption {
+		font-size: calc([[font-size]]px + 0px);
+	}
+	
+	code,
+	pre {
+		font-size: calc([[font-size]]px - 2px);
 	}
 
 	.articleTitle h1 {
@@ -398,14 +410,6 @@ a.footnote:hover,
 		border: 1px solid var(--secondary-accent-color);
 	}
 
-	code,
-	pre {
-		font-size: calc([[font-size]]px - 2px);
-	}
-
-	figcaption {
-		font-size: calc([[font-size]]px + 0px);
-	}
 }
 
 /* macOS Specific */
@@ -420,67 +424,67 @@ a.footnote:hover,
 
 	.smallText {
 		font-size: 14px;
+		
+		figcaption {
+			font-size: 12px;
+		}
+		
+		code,
+		pre {
+			font-size: 10px;
+		}
 	}
-
-	.smallText code,
-	.smallText pre {
-		font-size: 10px;
-	}
-
-	.smallText figcaption {
-		font-size: 12px;
-	}
-
+	
 	.mediumText {
 		font-size: 16px;
+		
+		figcaption {
+			font-size: 14px;
+		}
+	
+		code,
+		pre {
+			font-size: 12px;
+		}
 	}
-
-	.mediumText code,
-	.mediumText pre {
-		font-size: 12px;
-	}
-
-	.mediumText figcaption {
-		font-size: 14px;
-	}
-
+	
 	.largeText {
 		font-size: 18px;
-	}
-
-	.largeText code,
-	.largeText pre {
-		font-size: 14px;
-	}
-
-	.largeText figcaption {
-		font-size: 16px;
+	
+	 	figcaption {
+			font-size: 16px;
+		}
+	
+		code,
+		pre {
+			font-size: 14px;
+		}
 	}
 
 	.xlargeText {
 		font-size: 20px;
-	}
-
-	.xlargeText code,
-	.xlargeText pre {
-		font-size: 16px;
-	}
-
-	.xlargeText figcaption {
-		font-size: 18px;
+	
+		figcaption {
+			font-size: 18px;
+		}
+			
+		code,
+		pre {
+			font-size: 16px;
+		}
 	}
 
 	.xxlargeText {
 		font-size: 22px;
-	}
-
-	.xxlargeText code,
-	.xxlargeText pre {
-		font-size: 18px;
-	}
-
-	.xxlargeText figcaption {
-		font-size: 20px;
+			
+		figcaption {
+			font-size: 20px;
+		}
+	
+		code,
+		pre {
+			font-size: 18px;
+		}
 	}
 
 	pre {
@@ -493,6 +497,7 @@ a.footnote:hover,
 	}
 }
 
+/* Substack */
 .image-link-expand .icon-container svg {
 	stroke: #aaa;
 }
@@ -503,9 +508,19 @@ a.footnote:hover,
 	stroke: color-mix(in hsl, var(--link-underline-color), firebrick 70%)
 }
 
-[href]:hover,
-.headerContainer a[href]:hover {
-	text-shadow: 0 1px rgba(0, 0, 0, 2);
-	opacity: 0.8;
-	color: color-mix(in hsl, var(--link-underline-color), firebrick 70%);
+/* WordPress */
+.wp-block-math:has(> math[display="block"]) {
+	overflow-x: auto;
+	border: 1px solid var(--secondary-accent-color);
+	padding: 10px;
+}
+
+/* SVG */
+:is(div, figure):has(> svg:only-child) {
+	overflow-x: auto;
+}
+
+/* PBS News Hour → Reader View */
+.inline-invite.inline-invite-type__funding.inline-invite-style__default:has(> .inline-invite-funding__box):has([href*="give.newshour.org"]) {
+	display: none;
 }

@@ -27,12 +27,12 @@ extension TimelineViewController {
 	}
 
 	var columnFont: NSFont {
-		NSFont.systemFont(ofSize: AppDefaults.shared.actualFontSize(for: AppDefaults.shared.timelineFontSize))
+		NSFont.systemFont(ofSize: AppDefaults.actualFontSize(for: AppDefaults.timelineFontSize))
 	}
 
 	// Unread rows are bold, like Mail.
 	var boldColumnFont: NSFont {
-		NSFont.boldSystemFont(ofSize: AppDefaults.shared.actualFontSize(for: AppDefaults.shared.timelineFontSize))
+		NSFont.boldSystemFont(ofSize: AppDefaults.actualFontSize(for: AppDefaults.timelineFontSize))
 	}
 
 	func columnRowHeight() -> CGFloat {
@@ -104,7 +104,7 @@ extension TimelineViewController {
 			return
 		}
 		let direction: ComparisonResult = descriptor.ascending ? .orderedAscending : .orderedDescending
-		let requestedParameters = sortParameters.withKey(key, direction: direction)
+		let requestedParameters = ArticleSortParameters(key: key, direction: direction)
 		if requestedParameters == sortParameters {
 			return
 		}

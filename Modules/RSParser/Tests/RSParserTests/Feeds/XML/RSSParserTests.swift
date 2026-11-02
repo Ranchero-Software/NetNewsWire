@@ -33,7 +33,86 @@ import RSParser
 				#expect(size >= 22275279)
 			}
 			#expect(attachment.mimeType == "audio/mpeg")
+			#expect(attachment.durationInSeconds != nil)
 		}
+	}
+
+	@Test func atpEnclosureAndMediaContentMerged() throws {
+		// Each atp.fm item has the same file as both <enclosure> and <media:content>.
+		let d = parserData("atp", "rss", "http://atp.fm/")
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		#expect(parsedFeed.items.count == 100)
+
+		for article in parsedFeed.items {
+			let attachments = try #require(article.attachments)
+			#expect(attachments.count == 1)
+			let attachment = try #require(attachments.first)
+			// Some items have no type attribute, only medium.
+			#expect(attachment.medium == .audio)
+			#expect(attachment.sizeInBytes != nil)
+		}
+
+		let article = try #require(parsedFeed.items.first { $0.title == "311: Mutually Assured Destruction" })
+		let attachment = try #require(article.attachments?.first)
+		#expect(attachment.url == "http://traffic.libsyn.com/atpfm/atp311.mp3")
+		#expect(attachment.mimeType == "audio/mpeg")
+		#expect(attachment.sizeInBytes == 54919661)
+		#expect(attachment.durationInSeconds == 6849) // itunes:duration 01:54:09
+		#expect(article.imageURL == "http://static1.squarespace.com/static/513abd71e4b0fe58c655c105/t/52c45a37e4b0a77a5034aa84/1388599866232/1500w/Artwork.jpg") // itunes:image
+	}
+
+	@Test func cloudBlogMediaContentImages() throws {
+		let d = parserData("cloudblog", "rss", "https://cloud.google.com/blog/")
+		let parsedFeed = try #require(try FeedParser.parse(d))
+
+		let articlesWithAttachments = parsedFeed.items.filter { $0.attachments != nil }
+		#expect(articlesWithAttachments.count == 18)
+		for article in articlesWithAttachments {
+			let attachments = try #require(article.attachments)
+			#expect(attachments.count == 1)
+			let attachment = try #require(attachments.first)
+			#expect(attachment.url.hasPrefix("https://storage.googleapis.com/"))
+			#expect(attachment.width != nil)
+			#expect(attachment.height != nil)
+		}
+	}
+
+	@Test func mediaGroupKeepsDefaultRendition() throws {
+		let d = parserData("media-group", "rss", "https://example.com/feed")
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		let item = try #require(parsedFeed.items.first)
+
+		#expect(item.title == "Real Article Title")
+		#expect(item.thumbnailURL == "https://example.com/videos/1.jpg")
+
+		let attachments = try #require(item.attachments)
+		#expect(attachments.count == 1)
+		let attachment = try #require(attachments.first)
+		#expect(attachment.url == "https://example.com/videos/1-high.mp4")
+		#expect(attachment.mimeType == "video/mp4")
+		#expect(attachment.medium == .video)
+		#expect(attachment.width == 1920)
+		#expect(attachment.height == 1080)
+		#expect(attachment.durationInSeconds == 125)
+	}
+
+	@Test func gravatarBecomesAuthorAvatar() throws {
+		// WordPress adds the author’s Gravatar as a media:content titled with the author’s name.
+		let d = parserData("postpunkmonk", "rss", "https://postpunkmonk.com/")
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		let item = try #require(parsedFeed.items.first { $0.title?.hasPrefix("Automatic Honor") == true })
+
+		let author = try #require(item.authors?.first)
+		#expect(author.name == "postpunkmonk")
+		#expect(author.avatarURL == "https://0.gravatar.com/avatar/fb95b7a51c1ce5897b406c1e656c6eb5f1ecfb4f537d200249ad0c3c53d6b7a1?s=96&d=&r=PG")
+
+		// In feed order.
+		let attachmentURLs = try #require(item.attachments).map { $0.url }
+		#expect(attachmentURLs == [
+			"https://postpunkmonk.com/wp-content/uploads/2026/10/automatic-shadowplay.jpg",
+			"https://postpunkmonk.com/wp-content/uploads/2026/10/automatic40eulogy9-26.jpg",
+			"https://postpunkmonk.com/wp-content/uploads/2022/10/8-ball-yes.jpg"
+		])
 	}
 
 	@Test func theOmniShowUniqueIDs() throws {
@@ -374,5 +453,31 @@ import RSParser
 		#expect(item.title == "Real Product Title")
 		#expect(item.contentHTML == "<p>Body HTML</p>")
 		#expect(item.authors?.first?.name == "Jane Maker")
+	}
+
+	@Test func slashdotTextInputDoesNotOverwriteFeedTitle() throws {
+		// slashdot.rss is RSS 1.0 and ends with a <textinput> element whose
+		// <title> is “Search Slashdot”.
+		let d = parserData("slashdot", "rss", "https://rss.slashdot.org/Slashdot/slashdotMain")
+		let parsedFeed = try #require(try FeedParser.parse(d))
+
+		#expect(parsedFeed.title == "Slashdot")
+		#expect(parsedFeed.homePageURL == "https://slashdot.org/")
+		#expect(parsedFeed.items.count == 15)
+	}
+
+	@Test func textInputInsideChannelIsIgnored() throws {
+		// RSS 2.0 <textInput> sits inside <channel>, after the channel’s <title>
+		// and before its <link>.
+		let d = parserData("textinput-rss2", "rss", "https://example.com/feed")
+		let parsedFeed = try #require(try FeedParser.parse(d))
+
+		#expect(parsedFeed.title == "Test Feed")
+		#expect(parsedFeed.homePageURL == "https://example.com")
+		#expect(parsedFeed.items.count == 1)
+
+		let item = try #require(parsedFeed.items.first)
+		#expect(item.title == "Real Article Title")
+		#expect(item.url == "https://example.com/articles/1")
 	}
 }

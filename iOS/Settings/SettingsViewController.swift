@@ -73,12 +73,16 @@ final class SettingsViewController: UITableViewController {
 	@IBOutlet var articleThemeDetailLabel: UILabel!
 	@IBOutlet var confirmMarkAllAsReadSwitch: UISwitch!
 	@IBOutlet var showFullscreenArticlesSwitch: UISwitch!
-	@IBOutlet var colorPaletteDetailLabel: UILabel!
+	@IBOutlet var colorPaletteCell: UITableViewCell?
+	@IBOutlet var unreadCountDisplayCell: UITableViewCell?
 	@IBOutlet var openLinksInNetNewsWire: UISwitch!
 	@IBOutlet var enableJavaScriptSwitch: UISwitch!
 
 	var scrollToArticlesSection = false
 	weak var presentingParentController: UIViewController?
+
+	private lazy var colorPalettePopUpButton = Self.makePopUpButton()
+	private lazy var unreadCountDisplayPopUpButton = Self.makePopUpButton()
 
 	override func viewDidLoad() {
 		// This hack mostly works around a bug in static tables with dynamic type.  See: https://spin.atomicobject.com/2018/10/15/dynamic-type-static-uitableview/
@@ -88,30 +92,37 @@ final class SettingsViewController: UITableViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidAddAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidDeleteAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleUserInterfaceColorPaletteDidUpdate(_:)), name: .userInterfaceColorPaletteDidUpdate, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
 
 		tableView.register(UINib(nibName: "SettingsComboTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsComboTableViewCell")
 		tableView.register(UINib(nibName: "SettingsTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsTableViewCell")
 
 		tableView.rowHeight = UITableView.automaticDimension
 		tableView.estimatedRowHeight = 44
+
+		addPopUpButton(colorPalettePopUpButton, to: colorPaletteCell, accessibilityLabel: NSLocalizedString("Color Palette", comment: "Color Palette"))
+		addPopUpButton(unreadCountDisplayPopUpButton, to: unreadCountDisplayCell, accessibilityLabel: NSLocalizedString("Unread Counts", comment: "Unread Counts"))
+		updateColorPalettePopUpButton()
+		updateUnreadCountDisplayPopUpButton()
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 
-		if AppDefaults.shared.timelineSortDirection == .orderedAscending {
+		if AppDefaults.timelineSortDirection == .orderedAscending {
 			timelineSortOrderSwitch.isOn = true
 		} else {
 			timelineSortOrderSwitch.isOn = false
 		}
 
-		if AppDefaults.shared.timelineGroupByFeed {
+		if AppDefaults.timelineGroupByFeed {
 			groupByFeedSwitch.isOn = true
 		} else {
 			groupByFeedSwitch.isOn = false
 		}
 
-		if AppDefaults.shared.refreshClearsReadArticles {
+		if AppDefaults.refreshClearsReadArticles {
 			refreshClearsReadArticlesSwitch.isOn = true
 		} else {
 			refreshClearsReadArticlesSwitch.isOn = false
@@ -119,37 +130,33 @@ final class SettingsViewController: UITableViewController {
 
 		articleThemeDetailLabel.text = ArticleThemesManager.shared.currentTheme.name
 
-		if AppDefaults.shared.confirmMarkAllAsRead {
+		if AppDefaults.confirmMarkAllAsRead {
 			confirmMarkAllAsReadSwitch.isOn = true
 		} else {
 			confirmMarkAllAsReadSwitch.isOn = false
 		}
 
-		if AppDefaults.shared.articleFullscreenAvailable {
+		if AppDefaults.articleFullscreenAvailable {
 			showFullscreenArticlesSwitch.isOn = true
 		} else {
 			showFullscreenArticlesSwitch.isOn = false
 		}
 
-		if AppDefaults.shared.isArticleContentJavascriptEnabled {
+		if AppDefaults.isArticleContentJavascriptEnabled {
 			enableJavaScriptSwitch.isOn = true
 		} else {
 			enableJavaScriptSwitch.isOn = false
 		}
 
-		colorPaletteDetailLabel.text = String(describing: AppDefaults.userInterfaceColorPalette)
+		openLinksInNetNewsWire.isOn = !AppDefaults.useSystemBrowser
 
-		openLinksInNetNewsWire.isOn = !AppDefaults.shared.useSystemBrowser
-
-		let buildLabel = NonIntrinsicLabel(frame: CGRect(x: 32.0, y: 0.0, width: 0.0, height: 0.0))
+		let buildLabel = CopyableLabel(frame: CGRect(x: 32.0, y: 0.0, width: 0.0, height: 0.0))
 		buildLabel.font = UIFont.systemFont(ofSize: 11.0)
 		buildLabel.textColor = UIColor.gray
-		buildLabel.text = "\(Bundle.main.appName) \(Bundle.main.versionNumber) (Build \(Bundle.main.buildNumber))"
+		buildLabel.text = "\(Bundle.main.appName) \(Bundle.main.versionNumber) (build \(Bundle.main.buildNumber))"
 		buildLabel.sizeToFit()
-		buildLabel.translatesAutoresizingMaskIntoConstraints = false
 
-		let wrapperView = UIView(frame: CGRect(x: 0, y: 0, width: buildLabel.frame.width, height: buildLabel.frame.height + 10.0))
-		wrapperView.translatesAutoresizingMaskIntoConstraints = false
+		let wrapperView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.bounds.width, height: buildLabel.frame.height + 10.0))
 		wrapperView.addSubview(buildLabel)
 		tableView.tableFooterView = wrapperView
 
@@ -273,9 +280,6 @@ final class SettingsViewController: UITableViewController {
 			default:
 				break
 			}
-		case .appearance:
-			let colorPalette = UIStoryboard.settings.instantiateController(ofType: ColorPaletteTableViewController.self)
-			self.navigationController?.pushViewController(colorPalette, animated: true)
 		case .troubleshooting:
 			let viewController: UIViewController? = {
 				switch TroubleshootingRow(rawValue: indexPath.row) {
@@ -358,54 +362,54 @@ final class SettingsViewController: UITableViewController {
 
 	@IBAction func switchTimelineOrder(_ sender: Any) {
 		if timelineSortOrderSwitch.isOn {
-			AppDefaults.shared.timelineSortDirection = .orderedAscending
+			AppDefaults.timelineSortDirection = .orderedAscending
 		} else {
-			AppDefaults.shared.timelineSortDirection = .orderedDescending
+			AppDefaults.timelineSortDirection = .orderedDescending
 		}
 	}
 
 	@IBAction func switchGroupByFeed(_ sender: Any) {
 		if groupByFeedSwitch.isOn {
-			AppDefaults.shared.timelineGroupByFeed = true
+			AppDefaults.timelineGroupByFeed = true
 		} else {
-			AppDefaults.shared.timelineGroupByFeed = false
+			AppDefaults.timelineGroupByFeed = false
 		}
 	}
 
 	@IBAction func switchClearsReadArticles(_ sender: Any) {
 		if refreshClearsReadArticlesSwitch.isOn {
-			AppDefaults.shared.refreshClearsReadArticles = true
+			AppDefaults.refreshClearsReadArticles = true
 		} else {
-			AppDefaults.shared.refreshClearsReadArticles = false
+			AppDefaults.refreshClearsReadArticles = false
 		}
 	}
 
 	@IBAction func switchConfirmMarkAllAsRead(_ sender: Any) {
 		if confirmMarkAllAsReadSwitch.isOn {
-			AppDefaults.shared.confirmMarkAllAsRead = true
+			AppDefaults.confirmMarkAllAsRead = true
 		} else {
-			AppDefaults.shared.confirmMarkAllAsRead = false
+			AppDefaults.confirmMarkAllAsRead = false
 		}
 	}
 
 	@IBAction func switchFullscreenArticles(_ sender: Any) {
 		if showFullscreenArticlesSwitch.isOn {
-			AppDefaults.shared.articleFullscreenAvailable = true
+			AppDefaults.articleFullscreenAvailable = true
 		} else {
-			AppDefaults.shared.articleFullscreenAvailable = false
+			AppDefaults.articleFullscreenAvailable = false
 		}
 	}
 
 	@IBAction func switchBrowserPreference(_ sender: Any) {
 		if openLinksInNetNewsWire.isOn {
-			AppDefaults.shared.useSystemBrowser = false
+			AppDefaults.useSystemBrowser = false
 		} else {
-			AppDefaults.shared.useSystemBrowser = true
+			AppDefaults.useSystemBrowser = true
 		}
 	}
 
 	@IBAction func switchJavaScriptPreference(_ sender: Any) {
-		AppDefaults.shared.isArticleContentJavascriptEnabled = enableJavaScriptSwitch.isOn
+		AppDefaults.isArticleContentJavascriptEnabled = enableJavaScriptSwitch.isOn
  	}
 
 	// MARK: - Notifications
@@ -424,6 +428,14 @@ final class SettingsViewController: UITableViewController {
 
 	@objc func browserPreferenceDidChange() {
 		tableView.reloadData()
+	}
+
+	@objc func handleUserInterfaceColorPaletteDidUpdate(_ notification: Notification) {
+		updateColorPalettePopUpButton()
+	}
+
+	@objc func handleUnreadCountDisplaySettingDidChange(_ notification: Notification) {
+		updateUnreadCountDisplayPopUpButton()
 	}
 
 }
@@ -453,13 +465,60 @@ extension SettingsViewController: UIDocumentPickerDelegate {
 
 private extension SettingsViewController {
 
+	static func makePopUpButton() -> UIButton {
+		var configuration = UIButton.Configuration.plain()
+		configuration.baseForegroundColor = .secondaryLabel
+		let button = UIButton(configuration: configuration)
+		button.showsMenuAsPrimaryAction = true
+		button.changesSelectionAsPrimaryAction = true
+		return button
+	}
+
+	/// Auto Layout lets the button resize itself when choosing an item changes its title.
+	/// The accessibility label names the setting, since the button’s title is only the current choice.
+	func addPopUpButton(_ button: UIButton, to cell: UITableViewCell?, accessibilityLabel: String) {
+		guard let cell else {
+			return
+		}
+		button.accessibilityLabel = accessibilityLabel
+		button.translatesAutoresizingMaskIntoConstraints = false
+		button.setContentCompressionResistancePriority(.required, for: .horizontal)
+		cell.contentView.addSubview(button)
+		NSLayoutConstraint.activate([
+			button.trailingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.trailingAnchor),
+			button.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor)
+		])
+	}
+
+	func updateColorPalettePopUpButton() {
+		let currentColorPalette = AppDefaults.userInterfaceColorPalette
+		let actions = UserInterfaceColorPalette.allCases.map { colorPalette in
+			UIAction(title: String(describing: colorPalette), state: colorPalette == currentColorPalette ? .on : .off) { _ in
+				AppDefaults.userInterfaceColorPalette = colorPalette
+			}
+		}
+		colorPalettePopUpButton.menu = UIMenu(children: actions)
+		colorPalettePopUpButton.accessibilityValue = String(describing: currentColorPalette)
+	}
+
+	func updateUnreadCountDisplayPopUpButton() {
+		let currentUnreadCountDisplay = AppDefaults.unreadCountDisplay
+		let actions = UnreadCountDisplay.allCases.map { unreadCountDisplay in
+			UIAction(title: String(describing: unreadCountDisplay), state: unreadCountDisplay == currentUnreadCountDisplay ? .on : .off) { _ in
+				AppDefaults.unreadCountDisplay = unreadCountDisplay
+			}
+		}
+		unreadCountDisplayPopUpButton.menu = UIMenu(children: actions)
+		unreadCountDisplayPopUpButton.accessibilityValue = String(describing: currentUnreadCountDisplay)
+	}
+
 	func addFeed() {
 		self.dismiss(animated: true)
 
 		let addFeedView = AddFeedView(initialFeed: AccountManager.netNewsWireNewsURL, initialFeedName: NSLocalizedString("NetNewsWire News", comment: "NetNewsWire News"))
 		let hostingController = UIHostingController(rootView: addFeedView)
 		hostingController.modalPresentationStyle = .formSheet
-		hostingController.preferredContentSize = AddFeedView.preferredContentSizeForFormSheetDisplay
+		hostingController.preferredContentSize = UIViewController.formSheetSize
 
 		presentingParentController?.present(hostingController, animated: true)
 	}

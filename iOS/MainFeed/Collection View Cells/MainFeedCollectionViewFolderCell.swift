@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RSCore
 import Images
 
 @MainActor protocol MainFeedCollectionViewFolderCellDelegate: AnyObject {
@@ -28,14 +29,18 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 		}
 		set {
 			_unreadCount = newValue
-			if newValue == 0 {
-				unreadCountLabel.isHidden = true
-			} else {
-				unreadCountLabel.isHidden = false
+			let unreadCountText = unreadCountText
+			unreadCountLabel.isHidden = unreadCountText == nil
+			if unreadCountText != nil {
 				updateUnreadCountVisibility()
 			}
-			unreadCountLabel.text = newValue.formatted()
+			unreadCountLabel.setUnreadCount(newValue)
+			setNeedsUpdateConfiguration()
 		}
+	}
+
+	private var unreadCountText: String? {
+		AppDefaults.unreadCountDisplay.text(for: unreadCount)
 	}
 
 	var iconImage: IconImage? {
@@ -75,7 +80,7 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 	}
 
 	func updateUnreadCountVisibility(animated: Bool = true) {
-		let alpha: CGFloat = (!disclosureExpanded && unreadCount > 0) ? 1 : 0
+		let alpha: CGFloat = (!disclosureExpanded && unreadCountText != nil) ? 1 : 0
 		if animated {
 			UIView.animate {
 				self.unreadCountLabel.alpha = alpha
@@ -100,12 +105,10 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 	override var accessibilityLabel: String? {
 		get {
 			let name = folderTitle.text ?? ""
-			if unreadCount > 0 {
-				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessibility")
-				return "\(name) \(unreadCount) \(unreadLabel) \(expandedStateMessage)"
-			} else {
+			guard let unreadText = AppDefaults.unreadCountDisplay.accessibilityText(for: unreadCount) else {
 				return "\(name) \(expandedStateMessage)"
 			}
+			return "\(name) \(unreadText) \(expandedStateMessage)"
 		}
 		set {}
 	}
@@ -135,28 +138,41 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 	}
 
 	override func updateConfiguration(using state: UICellConfigurationState) {
-		var backgroundConfig: UIBackgroundConfiguration
-		if #available(iOS 18, *) {
-			backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
-		} else if traitCollection.userInterfaceIdiom == .pad {
-			backgroundConfig = UIBackgroundConfiguration.listSidebarCell().updated(for: state)
-		} else {
-			backgroundConfig = UIBackgroundConfiguration.listGroupedCell().updated(for: state)
+		var backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
+
+		// Matches the timeline: accent background and white text when the feeds list is first responder,
+		// and no highlight while a row is pressed, so the row goes straight to the selected style.
+		let isExpanded = isInExpandedSplitView
+		let isActiveSelection = state.isSelected && isExpanded && enclosingViewController?.isFirstResponder == true
+		let isHighlighted = state.isHighlighted && !isExpanded
+		if state.isHighlighted && !state.isSelected && isExpanded {
+			backgroundConfig.backgroundColor = .clear
 		}
 
-		switch (state.isHighlighted || state.isSelected || state.isFocused, traitCollection.userInterfaceIdiom) {
+		switch (isHighlighted || state.isSelected || state.isFocused, traitCollection.userInterfaceIdiom) {
+		case _ where isActiveSelection:
+			backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
+			folderTitle.textColor = .white
+			folderTitle.font = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .semibold)
+			unreadCountLabel.textColor = .white
+			unreadCountLabel.font = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .semibold)
+			faviconView.tintColor = .white
+			disclosureButton.configuration?.baseForegroundColor = .white
 		case (true, .pad):
 			backgroundConfig.backgroundColor = .tertiarySystemFill
 			folderTitle.textColor = Assets.Colors.primaryAccent
 			folderTitle.font = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .semibold)
 			unreadCountLabel.textColor = Assets.Colors.primaryAccent
 			unreadCountLabel.font = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .semibold)
+			faviconView.tintColor = Assets.Colors.primaryAccent
+			disclosureButton.configuration?.baseForegroundColor = .label
 		default:
 			folderTitle.textColor = .label
 			faviconView.tintColor = Assets.Colors.primaryAccent
 			folderTitle.font = UIFont.preferredFont(forTextStyle: .body)
 			unreadCountLabel.textColor = .secondaryLabel
 			unreadCountLabel.font = UIFont.preferredFont(forTextStyle: .body)
+			disclosureButton.configuration?.baseForegroundColor = .label
 		}
 
 		if state.cellDropState == .targeted {

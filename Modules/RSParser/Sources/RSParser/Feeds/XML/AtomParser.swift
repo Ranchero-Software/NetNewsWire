@@ -46,6 +46,8 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 	// inside of namespaced section (<s:variant>, for instance).
 	private var namespaceElementDepth = 0
 
+	private var mediaElementTracker = MediaElementTracker()
+
 	// Attributes per open element.
 	private var attributesStack: [XMLAttributes] = []
 
@@ -121,6 +123,16 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 			namespaceElementDepth += 1
 			return
 		}
+		if parsingArticle && namespace.isMediaRSS {
+			if let currentArticle, mediaElementTracker.start(localName: localName, attributes: attributes, item: currentArticle, parser: parser, resolveURL: resolvedURLString) {
+				namespaceElementDepth = 1
+			}
+			return
+		}
+		if mediaElementTracker.containerDepth > 0 {
+			namespaceElementDepth = 1
+			return
+		}
 		if parsingArticle && namespace.prefix != nil {
 			// Skip this namespaced element and its entire subtree, so a nested
 			// unprefixed element (e.g. Shopify's <title>Default Title</title>) can't be
@@ -132,6 +144,7 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 		if localName.equals("entry") {
 			parsingArticle = true
 			items.append(RSSItem())
+			mediaElementTracker.reset()
 			return
 		}
 
@@ -228,6 +241,13 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 			return
 		}
 
+		if parsingArticle && namespace.isMediaRSS {
+			if let currentArticle {
+				mediaElementTracker.end(localName: localName, item: currentArticle, parser: parser)
+			}
+			return
+		}
+
 		if parsingAuthor {
 			handleAuthorElementEnd(parser: parser, localName: localName, namespace: namespace)
 			return
@@ -315,8 +335,8 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 		if rel == "enclosure" {
 			let length = Int(attributes["length"] ?? "") ?? 0
 			let sizeInBytes = length > 0 ? length : nil
-			if let attachment = ParsedAttachment(url: resolved, mimeType: attributes["type"], title: attributes["title"], sizeInBytes: sizeInBytes, durationInSeconds: nil) {
-				article.attachments.insert(attachment)
+			if let attachment = ParsedAttachment(url: resolved, mimeType: attributes["type"], title: attributes["title"], sizeInBytes: sizeInBytes, durationInSeconds: nil, width: nil, height: nil, medium: nil) {
+				article.attachments.append(attachment)
 			}
 			return
 		}

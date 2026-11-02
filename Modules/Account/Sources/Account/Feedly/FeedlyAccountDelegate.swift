@@ -34,7 +34,7 @@ import Secrets
 	// downloaded and are immediately cleaned up. Deliberately not markAsReadDaysLimit:
 	// that governs mark-as-read writes, and 31 days would shallow out first-sync history.
 	// <https://github.com/Ranchero-Software/NetNewsWire/issues/3949>
-	private static let streamIngestDaysLimit = 90
+	private static let streamFetchDaysLimit = 90
 
 	// Safety net so no continuation loop can run away.
 	private static let maxStreamPageCount = 40
@@ -186,7 +186,7 @@ import Secrets
 			Self.refreshAllMessage(summary: summary)
 		}
 
-		var ingestTruncated = false
+		var articleIDWalkTruncated = false
 
 		do {
 			try await account.logActivity(kind: .refreshAll, successMessage: successMessage) { () -> RefreshAllSummary in
@@ -205,15 +205,15 @@ import Secrets
 				refreshProgress.completeTask()
 				summary.feedListChanges = try await refreshFeedList(for: account)
 				refreshProgress.completeTask()
-				let (ingestedIDs, truncated) = try await ingestStreamArticleIDs(for: account, userID: credentials.username)
-				ingestTruncated = truncated
+				let (streamArticleIDs, truncated) = try await downloadStreamArticleIDs(for: account, userID: credentials.username)
+				articleIDWalkTruncated = truncated
 				refreshProgress.completeTask()
 				summary.statusRefreshCounts = try await refreshArticleStatusReturningCounts(for: account, includeStarred: true)
 				refreshProgress.completeTask()
-				// The ingest walk just fetched exactly the IDs changed since the last sync —
+				// The article ID walk just fetched exactly the IDs changed since the last sync —
 				// reuse them instead of walking global.all a second time with the same bounds.
 				// On a first sync there is no updated set: everything is new.
-					let updatedIDs = accountSettings?.lastArticleFetchStartTime == nil ? Set<String>() : ingestedIDs
+				let updatedIDs = accountSettings?.lastArticleFetchStartTime == nil ? Set<String>() : streamArticleIDs
 				let missingIDs = await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
 				refreshProgress.completeTask()
 				// Updated articles first — missing ones are recomputed every sync, so they
@@ -227,7 +227,7 @@ import Secrets
 			}
 			// Don’t advance the watermark when the ID walk stopped at the page cap —
 			// the unwalked window would fall outside every future fetch and be lost.
-			if !ingestTruncated {
+			if !articleIDWalkTruncated {
 				accountSettings?.lastArticleFetchStartTime = startDate.addingTimeInterval(-Self.articleFetchOverlapInterval)
 			}
 			accountSettings?.lastRefreshCompletedDate = Date()
@@ -462,7 +462,7 @@ import Secrets
 			var counts = StatusRefreshCounts()
 
 			do {
-				let unread = try await ingestUnreadArticleIDs(for: account, userID: credentials.username)
+				let unread = try await syncArticleReadState(for: account, userID: credentials.username)
 				counts.unreadAdded = unread.added
 				counts.unreadRemoved = unread.removed
 			} catch {
@@ -471,17 +471,17 @@ import Secrets
 					throw error
 				}
 				refreshError = error
-				Self.logger.error("Feedly: Ingesting unread article IDs failed: \(error.localizedDescription)")
+				Self.logger.error("Feedly: Syncing article read state failed: \(error.localizedDescription)")
 			}
 
 			if includeStarred {
 				do {
-					let starred = try await ingestStarredArticleIDs(for: account, userID: credentials.username)
+					let starred = try await syncArticleStarredState(for: account, userID: credentials.username)
 					counts.starredAdded = starred.added
 					counts.starredRemoved = starred.removed
 				} catch {
 					refreshError = error
-					Self.logger.error("Feedly: Ingesting starred article IDs failed: \(error.localizedDescription)")
+					Self.logger.error("Feedly: Syncing article starred state failed: \(error.localizedDescription)")
 				}
 			}
 
@@ -623,7 +623,7 @@ import Secrets
 
 				syncFeedsForCollectionFolders([(collectionFeeds, folder)], in: account)
 
-				try await ingestUnreadArticleIDs(for: account, userID: credentials.username)
+				try await syncArticleReadState(for: account, userID: credentials.username)
 				try await syncStreamContents(for: account, resource: feedResource, paginated: false, newerThan: nil)
 
 				guard let feed = folder.existingFeed(withFeedID: feedResource.id) else {
@@ -982,17 +982,15 @@ private extension FeedlyAccountDelegate {
 	}
 
 	/// Pages through global.all stream IDs, creating a status for each so that downstream
-	/// status sync has something to attach to.
-	/// Pages through global.all stream IDs, creating a status for each so that downstream
 	/// status sync has something to attach to. Returns the collected IDs so refreshAll can
 	/// reuse them as the updated-articles set instead of walking the same stream twice.
 	@discardableResult
-	func ingestStreamArticleIDs(for account: Account, userID: String) async throws -> (ids: Set<String>, truncated: Bool) {
+	func downloadStreamArticleIDs(for account: Account, userID: String) async throws -> (ids: Set<String>, truncated: Bool) {
 		let resource = FeedlyCategoryResourceID.Global.all(for: userID)
 
 		// Bounded — walking the entire global.all history every sync was a big part of
 		// the request volume that got users rate limited.
-		let newerThan = max(accountSettings?.lastArticleFetchStartTime ?? .distantPast, Date().bySubtracting(days: Self.streamIngestDaysLimit))
+		let newerThan = max(accountSettings?.lastArticleFetchStartTime ?? .distantPast, Date().bySubtracting(days: Self.streamFetchDaysLimit))
 
 		return try await account.logActivity(kind: .fetchArticleIDs, detail: "All articles", successMessage: { "\($0.ids.count) article IDs" }, { () -> (ids: Set<String>, truncated: Bool) in
 			var collected = Set<String>()
@@ -1018,12 +1016,12 @@ private extension FeedlyAccountDelegate {
 	/// Returns counts of articles whose unread status actually flipped:
 	/// `added` became unread, `removed` became read.
 	@discardableResult
-	func ingestUnreadArticleIDs(for account: Account, userID: String) async throws -> (added: Int, removed: Int) {
+	func syncArticleReadState(for account: Account, userID: String) async throws -> (added: Int, removed: Int) {
 		let resource = FeedlyCategoryResourceID.Global.all(for: userID)
 		// The floor is a safety net — Feedly auto-reads at about a month, so its unread
 		// stream can’t reach anywhere near the retention limit anyway. An article absent
 		// from the bounded fetch still gets marked read below, same as an unbounded one.
-		let newerThan = Date().bySubtracting(days: Self.streamIngestDaysLimit)
+		let newerThan = Date().bySubtracting(days: Self.streamFetchDaysLimit)
 		let (remoteUnreadIDs, truncated) = try await collectStreamIDs(for: account, resource: resource, kind: .refreshArticleStatuses, newerThan: newerThan, unreadOnly: true)
 
 		let localUnreadIDs = await account.fetchUnreadArticleIDsAsync()
@@ -1058,7 +1056,7 @@ private extension FeedlyAccountDelegate {
 	/// Returns counts of articles whose starred status actually flipped:
 	/// `added` became starred, `removed` became unstarred.
 	@discardableResult
-	func ingestStarredArticleIDs(for account: Account, userID: String) async throws -> (added: Int, removed: Int) {
+	func syncArticleStarredState(for account: Account, userID: String) async throws -> (added: Int, removed: Int) {
 		let resource = FeedlyTagResourceID.Global.saved(for: userID)
 		let (remoteStarredIDs, truncated) = try await collectStreamIDs(for: account, resource: resource, kind: .refreshArticleStatuses, unreadOnly: nil)
 
@@ -1111,7 +1109,7 @@ private extension FeedlyAccountDelegate {
 
 	/// Fetch full entries for `articleIDs` and update the account, in 1000-ID chunks,
 	/// in order — the front of the list survives the per-sync cap.
-	/// Returns the count of articles ingested.
+	/// Returns the count of new articles.
 	@discardableResult
 	func downloadEntries(for account: Account, articleIDs: [String]) async throws -> Int {
 		guard !articleIDs.isEmpty else {
@@ -1122,17 +1120,17 @@ private extension FeedlyAccountDelegate {
 
 		do {
 			return try await account.logActivity(kind: .refreshMissingArticles) { () -> Int in
-				var ingested = 0
+				var newArticleCount = 0
 				let chunks = articleIDs.chunked(into: Self.articleDownloadChunkSize)
 				if chunks.count > Self.maxArticleDownloadChunksPerSync {
 					Self.logger.info("Feedly: downloading \(Self.maxArticleDownloadChunksPerSync * Self.articleDownloadChunkSize) of \(articleIDs.count) articles this sync — the rest follow on later syncs")
 				}
 				for chunk in chunks.prefix(Self.maxArticleDownloadChunksPerSync) {
 					let entries = try await account.logRefreshPage(kind: .refreshMissingArticles, message: { "\($0.count) articles" }, { try await self.caller.getEntries(for: Set(chunk)) })
-					let pageResult = await self.ingest(entries: entries, into: account)
-					ingested += pageResult.newArticleCount
+					let pageResult = await self.saveEntries(entries, into: account)
+					newArticleCount += pageResult.newArticleCount
 				}
-				return ingested
+				return newArticleCount
 			}
 		} catch {
 			// A rate-limit error gets one Error Log entry from noteRateLimited, not one per operation.
@@ -1146,7 +1144,7 @@ private extension FeedlyAccountDelegate {
 	/// Directly refresh a few of the least-recently-checked feeds each sync, fetching each feed's own
 	/// Feedly stream. Backfills articles that the aggregate global.all stream doesn't return.
 	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/4635>
-	/// Returns the total number of new articles ingested across the refreshed feeds.
+	/// Returns the total number of new articles across the refreshed feeds.
 	func refreshIndividualFeeds(for account: Account) async -> Int {
 		let now = Date()
 		let due = account.flattenedFeeds()
@@ -1164,17 +1162,17 @@ private extension FeedlyAccountDelegate {
 			let lastCheckDate = feed.lastCheckDate
 			feed.lastCheckDate = now // mark the attempt; a failed feed retries next rotation, not immediately
 			do {
-				let successMessage: (IngestResult) -> String? = { "\($0.newArticleCount) new article\($0.newArticleCount == 1 ? "" : "s")" }
+				let successMessage: (SaveEntriesResult) -> String? = { "\($0.newArticleCount) new article\($0.newArticleCount == 1 ? "" : "s")" }
 				let result = try await account.logActivity(kind: .refreshFeedContent(feedURL: feed.url), detail: feed.nameForDisplay, successMessage: successMessage) {
 					let resource = FeedlyFeedResourceID(id: feed.feedID)
 					// Only what arrived since this feed's last check, in small pages. Paginated —
 					// an unpaginated fetch silently dropped everything past the first page while
 					// lastCheckDate advanced anyway, losing those articles for good.
-					let newerThan = lastCheckDate ?? now.bySubtracting(days: Self.streamIngestDaysLimit)
+					let newerThan = lastCheckDate ?? now.bySubtracting(days: Self.streamFetchDaysLimit)
 					return try await self.syncStreamContents(for: account, resource: resource, paginated: true, newerThan: newerThan, count: Self.individualFeedRefreshCount)
 				}
 				newArticleCount += result.newArticleCount
-				// ingest marks new articles read by default; restore the server's unread state for the ones that are unread.
+				// saveEntries marks new articles read by default; restore the server's unread state for the ones that are unread.
 				if !result.newUnreadArticleIDs.isEmpty {
 					await account.markAsUnreadAsync(articleIDs: result.newUnreadArticleIDs)
 				}
@@ -1191,15 +1189,15 @@ private extension FeedlyAccountDelegate {
 	}
 
 	/// Pull stream contents for `resource`, optionally paginated, and update the account.
-	/// Returns the aggregate ingest result across pages.
+	/// Returns the aggregate result across pages.
 	@discardableResult
-	func syncStreamContents(for account: Account, resource: FeedlyResourceID, paginated: Bool, newerThan: Date?, count: Int? = nil) async throws -> IngestResult {
-		var result = IngestResult()
+	func syncStreamContents(for account: Account, resource: FeedlyResourceID, paginated: Bool, newerThan: Date?, count: Int? = nil) async throws -> SaveEntriesResult {
+		var result = SaveEntriesResult()
 		var continuation: String?
 		var pageCount = 0
 		repeat {
 			let stream = try await account.logRefreshPage(kind: .refreshArticles, message: { "\($0.items.count) articles" }, { try await caller.getStreamContents(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: nil, count: count) })
-			let pageResult = await ingest(entries: stream.items, into: account)
+			let pageResult = await saveEntries(stream.items, into: account)
 			result.newArticleCount += pageResult.newArticleCount
 			result.newUnreadArticleIDs.formUnion(pageResult.newUnreadArticleIDs)
 			continuation = paginated ? stream.continuation : nil
@@ -1211,23 +1209,23 @@ private extension FeedlyAccountDelegate {
 		return result
 	}
 
-	/// The outcome of ingesting a batch of Feedly entries.
-	struct IngestResult {
+	/// The outcome of saving a batch of Feedly entries.
+	struct SaveEntriesResult {
 		var newArticleCount = 0
 		/// New (not previously in the database) article IDs that are unread on the server.
 		var newUnreadArticleIDs = Set<String>()
 	}
 
-	/// Ingest entries, reporting the new-article count and which of the new articles are unread on the server.
+	/// Save entries, reporting the new-article count and which of the new articles are unread on the server.
 	@discardableResult
-	func ingest(entries: [FeedlyEntry], into account: Account) async -> IngestResult {
+	func saveEntries(_ entries: [FeedlyEntry], into account: Account) async -> SaveEntriesResult {
 		let parsedItems = entries.compactMap { FeedlyEntryParser(entry: $0).parsedItemRepresentation }
 		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { $0.feedURL }).mapValues { Set($0) }
 		let changes = await account.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
 
 		let newArticleIDs = Set(changes.new?.map { $0.articleID } ?? [])
 		let unreadEntryIDs = Set(entries.lazy.filter { $0.unread }.map { $0.id })
-		return IngestResult(newArticleCount: newArticleIDs.count, newUnreadArticleIDs: newArticleIDs.intersection(unreadEntryIDs))
+		return SaveEntriesResult(newArticleCount: newArticleIDs.count, newUnreadArticleIDs: newArticleIDs.intersection(unreadEntryIDs))
 	}
 }
 

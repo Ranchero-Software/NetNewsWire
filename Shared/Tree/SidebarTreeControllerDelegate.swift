@@ -95,7 +95,7 @@ private extension SidebarTreeControllerDelegate {
 			}
 		}
 
-		return updatedChildNodes.sorted(by: AppDefaults.shared.sidebarSortType, ascending: AppDefaults.shared.sidebarSortAscending)
+		return updatedChildNodes.sorted(by: AppDefaults.sidebarSortType, ascending: AppDefaults.sidebarSortAscending)
 	}
 
 	func createNode(representedObject: Any, parent: Node) -> Node? {

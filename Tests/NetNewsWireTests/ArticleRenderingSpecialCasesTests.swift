@@ -70,4 +70,105 @@ import Testing
 	@Test func allNilURLsKeepJavaScript() {
 		#expect(!ArticleRenderingSpecialCases.shouldDisableJavaScript(urlStrings: [nil, nil, nil]))
 	}
+
+	// MARK: - Paragraphs separated by returns
+
+	// The first article in the Slashdot feed on 2026-10-02, with each paragraph cut to its first sentence.
+	@Test func slashdotArticleBodyGetsParagraphTags() {
+		let feedURLString = "https://rss.slashdot.org/Slashdot/slashdotMain"
+
+		let paragraph1 = "An anonymous reader quotes a report from Reuters: A growing number of people think social media manipulates and divides people and harms democracy, Pew Research Center said on Thursday, echoing rising concern and tighter scrutiny across the world."
+		let paragraph2 = "Australia has proposed rules to let users opt out of algorithmically recommended feeds, after becoming the first country to ban social media for children under 16."
+		let paragraph3 = "People in wealthier countries, including the US, Canada and UK, are more inclined to believe that social media is harming democracy, versus their counterparts in economies with lower gross domestic product per capita -- such as Ghana, Kenya and Nigeria."
+		let shareLinks = #"<p><div class="share_submission" style="position:relative;">"# + "\n"
+			+ #"<a class="slashpop" href="http://twitter.com/home?status=Social+Media+Harms+Democracy+By+Spreading+Rumors%2C+Survey+Shows%3A+https%3A%2F%2Ftech.slashdot.org%2Fstory%2F26%2F10%2F02%2F0632243%2F%3Futm_source%3Dtwitter%26utm_medium%3Dtwitter"><img src="https://a.fsdn.com/sd/twitter_icon_large.png"></a>"# + "\n"
+			+ #"<a class="slashpop" href="http://www.facebook.com/sharer.php?u=https%3A%2F%2Ftech.slashdot.org%2Fstory%2F26%2F10%2F02%2F0632243%2Fsocial-media-harms-democracy-by-spreading-rumors-survey-shows%3Futm_source%3Dslashdot%26utm_medium%3Dfacebook"><img src="https://a.fsdn.com/sd/facebook_icon_large.png"></a>"#
+		let readMore = #"</div></p><p><a href="https://tech.slashdot.org/story/26/10/02/0632243/social-media-harms-democracy-by-spreading-rumors-survey-shows?utm_source=rss1.0moreanon&amp;utm_medium=feed">Read more of this story</a> at Slashdot.</p><iframe src="https://slashdot.org/slashdot-it.pl?op=discuss&amp;id=24112882&amp;smallembed=1" style="height: 300px; width: 100%; border: none;"></iframe>"#
+
+		let html = paragraph1 + "\n \n" + paragraph2 + "\n \n" + paragraph3 + shareLinks + "\n\n\n\n" + readMore
+		let expected = paragraph1 + "<p>" + paragraph2 + "<p>" + paragraph3 + shareLinks + "<p>" + readMore
+
+		let result = ArticleRenderingSpecialCases.insertParagraphTagsIfNeeded(html, feedURL: feedURLString, homePageURL: nil)
+		#expect(result == expected)
+	}
+
+	@Test func slashdotHomePageURLGetsParagraphTagsForProxiedFeed() {
+		let html = "First paragraph.\n\nSecond paragraph."
+		let result = ArticleRenderingSpecialCases.insertParagraphTagsIfNeeded(html, feedURL: "https://feeds.feedburner.com/Slashdot/slashdot", homePageURL: "https://slashdot.org/")
+		#expect(result == "First paragraph.<p>Second paragraph.")
+	}
+
+	@Test func otherFeedsDontGetParagraphTags() {
+		let html = "First paragraph.\n\nSecond paragraph."
+		let result = ArticleRenderingSpecialCases.insertParagraphTagsIfNeeded(html, feedURL: "https://example.com/feed.xml", homePageURL: "https://example.com/")
+		#expect(result == html)
+	}
+
+	// MARK: - MacRumors stray line breaks
+
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/5498>
+
+	// From the MacRumors feed on 2026-10-19, cut to one list item.
+	@Test func macRumorsListLosesStrayLineBreaks() {
+		let html = "GM said the rollout will occur as follows.\n<br/>\n\n<br/>\n<p><h2>September–October 2026</h2></p>\n<br/>\n<ul>\n<br/>\n  <li>Cadillac Vistiq (2027)</li>\n<br/>\n</ul>GM said customers will see a notification."
+		let expected = "GM said the rollout will occur as follows.\n<br/>\n\n<br/>\n<p><h2>September–October 2026</h2></p>\n<br/>\n<ul>\n  <li>Cadillac Vistiq (2027)</li>\n</ul>GM said customers will see a notification."
+		let result = ArticleRenderingSpecialCases.removeStrayLineBreaksIfNeeded(html, feedURL: "https://feeds.macrumors.com/MacRumors-All", homePageURL: nil)
+		#expect(result == expected)
+	}
+
+	@Test func macRumorsTableLosesStrayLineBreaksButKeepsCellLineBreaks() {
+		let html = "<table class=\"specs\">\n<br/>\n<tr>\n<br/>\n<th>Height</th>\n<br/>\n<td>5.91 inches</td>\n<br/>\n<td>closed<br/>open</td>\n<br/>\n</tr>\n<br/>\n</table>\n<br/>\nAfter."
+		let expected = "<table class=\"specs\">\n<tr>\n<th>Height</th>\n<td>5.91 inches</td>\n<td>closed<br/>open</td>\n</tr>\n</table>\n<br/>\nAfter."
+		let result = ArticleRenderingSpecialCases.removeStrayLineBreaksIfNeeded(html, feedURL: nil, homePageURL: "https://www.macrumors.com/")
+		#expect(result == expected)
+	}
+
+	@Test func otherFeedsKeepLineBreaksInListsAndTables() {
+		let html = "<ul>\n<br/>\n<li>Item</li>\n<br/>\n</ul><table>\n<br/>\n<tr><td>Cell</td></tr></table>"
+		let result = ArticleRenderingSpecialCases.removeStrayLineBreaksIfNeeded(html, feedURL: "https://example.com/feed.xml", homePageURL: "https://example.com/")
+		#expect(result == html)
+	}
+
+	// MARK: - Base URL for YouTube articles
+
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/4860>
+	@Test func youtubeArticleGetsNetNewsWireBaseURL() throws {
+		let youtubeLink = try #require(URL(string: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"))
+		#expect(ArticleRenderingSpecialCases.baseURLForRendering(youtubeLink).absoluteString == "https://netnewswire.com/")
+
+		let hackadayLink = try #require(URL(string: "https://hackaday.com/2025/12/01/necroprinting-isnt-as-bad-as-it-sounds/"))
+		#expect(ArticleRenderingSpecialCases.baseURLForRendering(hackadayLink) == hackadayLink)
+	}
+
+	// MARK: De-sanizite FreshRSS content
+	@Test(
+		"The sanitization happening in FreshRSS breaks inline footnotes, so we de-sanitize id and class attributes",
+		.bug("https://github.com/Ranchero-Software/NetNewsWire/issues/5472")
+	)
+	func freshRSSContent_desanitizedIDAndClass() {
+		let sanitized = """
+<div data-sanitized-class="footnotes">
+	<li data-sanitized-id="footnote-1">
+		<p>
+			This is the footnote content, about `data-sanitized-class`.
+			<a href="#footnote-1-ref" data-sanitized-class="footnoteBackLink">Go back to content</a>
+		</p>
+	</li>
+	<li data-sanitized-id="footnote-2"><p>Another footnote, about `data-sanitized-id`.<a href="#footnote-2-ref" data-sanitized-class="footnoteBackLink">Go back to content</a></p></li>
+</div>
+"""
+		let expected = """
+<div class="footnotes">
+	<li id="footnote-1">
+		<p>
+			This is the footnote content, about `data-sanitized-class`.
+			<a href="#footnote-1-ref" class="footnoteBackLink">Go back to content</a>
+		</p>
+	</li>
+	<li id="footnote-2"><p>Another footnote, about `data-sanitized-id`.<a href="#footnote-2-ref" class="footnoteBackLink">Go back to content</a></p></li>
+</div>
+"""
+
+		#expect(ArticleRenderingSpecialCases.desanitizeFreshRSSContent(sanitized) == expected)
+	}
 }

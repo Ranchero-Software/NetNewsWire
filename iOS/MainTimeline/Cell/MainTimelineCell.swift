@@ -72,12 +72,7 @@ final class MainTimelineCell: UICollectionViewCell {
 	override func updateConfiguration(using state: UICellConfigurationState) {
 		super.updateConfiguration(using: state)
 
-		var backgroundConfig: UIBackgroundConfiguration
-		if #available(iOS 18, *) {
-			backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
-		} else {
-			backgroundConfig = UIBackgroundConfiguration.listGroupedCell().updated(for: state)
-		}
+		var backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
 		// The Settings timeline preview isn't in the split view hierarchy, so style it
 		// the way the timeline usually looks on the device.
 		let usesExpandedStyle = isPreview ? UIDevice.current.userInterfaceIdiom == .pad : isInExpandedSplitView
@@ -102,15 +97,14 @@ final class MainTimelineCell: UICollectionViewCell {
 			backgroundConfig.cornerRadius = 0
 		}
 
+		let showsAccentSelection = isActiveSelection(state)
+
 		if state.isSwiped {
 			backgroundConfig.backgroundColor = .secondarySystemFill
 		} else if state.isSelected {
-			// When the split view is expanded, force the accent color so the selection stays
-			// blue even when the timeline isn't first responder (updated(for: state) would
-			// otherwise dim it to gray). When collapsed, keep the standard system selection
-			// color from updated(for: state).
+			// When collapsed, keep the standard system selection color from updated(for: state).
 			if isInExpandedSplitView {
-				backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
+				backgroundConfig.backgroundColor = showsAccentSelection ? Assets.Colors.primaryAccent : .tertiarySystemFill
 			}
 		} else {
 			backgroundConfig.backgroundColor = .clear
@@ -125,12 +119,9 @@ final class MainTimelineCell: UICollectionViewCell {
 
 		topSeparator.alpha = (isActive || isPreview) ? 0.0 : 1.0
 
-		// Expanded split view: the selected cell has an accent-colored background, so its text
-		// goes white. Collapsed: the selection is a light system color, so labels keep their
-		// normal colors.
-		let active = state.isSelected && isInExpandedSplitView
-		updateColors(active: active)
-		updateIndicatorView(active: active)
+		// Text goes white only on the accent background. On gray, labels keep their normal colors.
+		updateColors(active: showsAccentSelection)
+		updateIndicatorView(active: showsAccentSelection)
 	}
 
 	func setIconImage(_ image: IconImage) {
@@ -141,20 +132,6 @@ final class MainTimelineCell: UICollectionViewCell {
 // MARK: - Private
 
 private extension MainTimelineCell {
-
-	// True when the timeline is showing beside the article view — on iPad,
-	// and on large iPhones in landscape. Found via the responder chain, so this
-	// is false for a cell that isn't in the view hierarchy yet.
-	var isInExpandedSplitView: Bool {
-		var responder: UIResponder? = self
-		while let currentResponder = responder {
-			if let viewController = currentResponder as? UIViewController {
-				return viewController.splitViewController?.isCollapsed == false
-			}
-			responder = currentResponder.next
-		}
-		return false
-	}
 
 	static func singleLineLabel() -> UILabel {
 		let label = NonIntrinsicLabel()
@@ -233,11 +210,16 @@ private extension MainTimelineCell {
 			iconView.isHidden = true
 		}
 
-		let active = configurationState.isSelected && isInExpandedSplitView
+		let active = isActiveSelection(configurationState)
 		updateColors(active: active)
 		updateIndicatorView(active: active)
 		updateAccessibilityLabel()
 		setNeedsLayout()
+	}
+
+	/// Matches the feeds list: accent background (and white text) when the timeline is first responder, gray otherwise.
+	func isActiveSelection(_ state: UICellConfigurationState) -> Bool {
+		state.isSelected && isInExpandedSplitView && enclosingViewController?.isFirstResponder == true
 	}
 
 	func updateColors(active: Bool) {

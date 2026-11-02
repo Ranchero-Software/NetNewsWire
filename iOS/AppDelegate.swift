@@ -55,18 +55,20 @@ import Images
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountRefreshDidFinish(_:)), name: .AccountRefreshDidFinish, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
 	}
 
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+		AppDefaults.registerDefaults()
+
 		FaviconGenerator.templateImage = Assets.Images.faviconTemplate
 
 		WebViewConfiguration.resolveBrowserUserAgent()
 		Task {
 			await WebViewConfiguration.compileContentBlockingRules()
 		}
-		AppDefaults.registerDefaults()
 
-		let isFirstRun = AppDefaults.shared.isFirstRun
+		let isFirstRun = AppDefaults.isFirstRun
 		if isFirstRun {
 			Self.logger.info("Is first run.")
 		}
@@ -134,7 +136,8 @@ import Images
 
 	private func updateBadge() {
 		assert(unreadCount == AccountManager.shared.unreadCount)
-		UNUserNotificationCenter.current().setBadgeCount(unreadCount)
+		let badgeCount = AppDefaults.unreadCountDisplay == .count ? unreadCount : 0
+		UNUserNotificationCenter.current().setBadgeCount(badgeCount)
 	}
 
 	// MARK: Notifications
@@ -146,7 +149,11 @@ import Images
 	}
 
 	@objc func accountRefreshDidFinish(_ note: Notification) {
-		AppDefaults.shared.lastRefresh = Date()
+		AppDefaults.lastRefresh = Date()
+	}
+
+	@objc func handleUnreadCountDisplaySettingDidChange(_ notification: Notification) {
+		updateBadge()
 	}
 
 	// MARK: - API
@@ -189,7 +196,7 @@ import Images
 #endif
 		ArticleStatusSyncTimer.shared.update()
 
-		if let lastRefresh = AppDefaults.shared.lastRefresh {
+		if let lastRefresh = AppDefaults.lastRefresh {
 			if Date() > lastRefresh.addingTimeInterval(15 * 60) {
 				AccountManager.shared.refreshAllWithoutWaiting(errorHandler: ErrorHandler.log)
 			} else {

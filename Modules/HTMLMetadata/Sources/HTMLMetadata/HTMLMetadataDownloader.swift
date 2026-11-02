@@ -11,6 +11,7 @@ import os
 import RSCore
 import RSParser
 import RSWeb
+import Synchronization
 import ActivityLog
 
 nonisolated public final class HTMLMetadataDownloader: Sendable {
@@ -21,10 +22,10 @@ nonisolated public final class HTMLMetadataDownloader: Sendable {
 
 	private static let hoursBetweenAttempts = 3
 
-	private let attemptDates = OSAllocatedUnfairLock(initialState: [String: Date]())
+	private let attemptDates = Mutex([String: Date]())
 
 	/// In-memory mirror so `cachedMetadata(for:)` can answer synchronously.
-	private let cache = OSAllocatedUnfairLock(initialState: [String: HTMLMetadataRecord]())
+	private let cache = Mutex([String: HTMLMetadataRecord]())
 
 	init() {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)

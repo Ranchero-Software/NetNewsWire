@@ -20,11 +20,11 @@ final class TimelineContainerViewController: NSViewController {
 
 	@IBOutlet var viewOptionsPopUpButton: NSPopUpButton!
 	@IBOutlet var readFilteredButton: NSButton!
-	@IBOutlet var headerSeparator: NSBox!
-	@IBOutlet var containerViewTopToHeaderConstraint: NSLayoutConstraint!
+	@IBOutlet var headerSeparator: NSBox?
+	@IBOutlet var containerViewTopToHeaderConstraint: NSLayoutConstraint?
 	@IBOutlet var containerView: TimelineContainerView!
 
-	private var layout = AppDefaults.shared.timelineLayout {
+	private var layout = AppDefaults.timelineLayout {
 		didSet {
 			if layout != oldValue {
 				layoutDidChange()
@@ -116,7 +116,7 @@ final class TimelineContainerViewController: NSViewController {
 	}
 
 	private func userDefaultsDidChange() {
-		layout = AppDefaults.shared.timelineLayout
+		layout = AppDefaults.timelineLayout
 	}
 
 	// MARK: - API
@@ -126,7 +126,7 @@ final class TimelineContainerViewController: NSViewController {
 		if key == sortParameters.key {
 			return
 		}
-		sortParameters = sortParameters.withKey(key, direction: key.firstDirection)
+		sortParameters = ArticleSortParameters(key: key, direction: key.firstDirection)
 	}
 
 	func setSortDirection(_ direction: ComparisonResult) {
@@ -254,10 +254,10 @@ private extension TimelineContainerViewController {
 
 	/// For a window with no saved sort. Group By Feed, from before sorting was per window, became sorting by feed.
 	static var seedSortParameters: ArticleSortParameters {
-		if AppDefaults.shared.timelineGroupByFeed {
+		if AppDefaults.timelineGroupByFeed {
 			return ArticleSortParameters(key: .feed, direction: .orderedAscending)
 		}
-		return ArticleSortParameters(key: .date, direction: AppDefaults.shared.timelineSortDirection)
+		return ArticleSortParameters(key: .date, direction: AppDefaults.timelineSortDirection)
 	}
 
 	func layoutDidChange() {
@@ -269,8 +269,8 @@ private extension TimelineContainerViewController {
 	func updateHeaderVisibility() {
 		let isHeaderHidden = layout == .column
 		viewOptionsPopUpButton.isHidden = isHeaderHidden
-		headerSeparator.isHidden = isHeaderHidden
-		containerViewTopToHeaderConstraint.isActive = !isHeaderHidden
+		headerSeparator?.isHidden = isHeaderHidden
+		containerViewTopToHeaderConstraint?.isActive = !isHeaderHidden
 		containerViewTopToViewConstraint.isActive = isHeaderHidden
 		updateReadFilterButton()
 	}

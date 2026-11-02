@@ -110,16 +110,28 @@ import Account
 		self.extractedArticle = extractedArticle
 		self.articleTheme = theme
 		self.title = ArticleStringFormatter.sanitizedTitle(article?.title, forHTML: true) ?? ""
-		// Some feeds embed a full HTML document as the article content —
-		// render just the body fragment.
-		// <https://github.com/Ranchero-Software/NetNewsWire/issues/3008>
+
+		var articleBody: String
+		var baseURL: String?
 		if let content = extractedArticle?.content {
-			self.body = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(content)
-			self.baseURL = extractedArticle?.url
+			articleBody = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(content)
+			baseURL = extractedArticle?.url
 		} else {
-			self.body = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(article?.body ?? "")
-			self.baseURL = article?.baseURL?.absoluteString
+			let feedURL = article?.feed?.url
+			let homePageURL = article?.feed?.homePageURL
+
+			articleBody = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(Self.bodyHTML(article))
+			articleBody = ArticleRenderingSpecialCases.insertParagraphTagsIfNeeded(articleBody, feedURL: feedURL, homePageURL: homePageURL)
+			articleBody = ArticleRenderingSpecialCases.removeStrayLineBreaksIfNeeded(articleBody, feedURL: feedURL, homePageURL: homePageURL)
+			if article?.account?.type == .freshRSS {
+				articleBody = ArticleRenderingSpecialCases.desanitizeFreshRSSContent(articleBody)
+			}
+
+			baseURL = article?.baseURL?.absoluteString
 		}
+
+		self.body = articleBody
+		self.baseURL = baseURL
 	}
 
 	// MARK: - API
@@ -148,11 +160,36 @@ import Account
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, theme: theme)
 		return (renderer.articleCSS, renderer.noContentHTML, renderer.title, renderer.baseURL ?? "")
 	}
+
+	/// Full page HTML for a rendering, ready to load into a web view.
+	static func pageHTML(_ rendering: Rendering, windowScrollY: Int) -> String {
+		let substitutions = [
+			"title": rendering.title,
+			"baseURL": rendering.baseURL,
+			"style": rendering.style,
+			"body": rendering.html,
+			"windowScrollY": String(windowScrollY)
+		]
+
+		let html = try! MacroProcessor.renderedText(withTemplate: page.html, substitutions: substitutions)
+		return ArticleRenderingSpecialCases.filterHTMLIfNeeded(baseURL: rendering.baseURL, html: html)
+	}
 }
 
 // MARK: - Private
 
 private extension ArticleRenderer {
+
+	/// The article’s body as HTML. Plain text (`contentText`, used when there’s no `contentHTML`) gets converted.
+	static func bodyHTML(_ article: Article?) -> String {
+		guard let article else {
+			return ""
+		}
+		if article.contentHTML == nil, let contentText = article.contentText {
+			return contentText.convertingPlainTextToHTML
+		}
+		return article.body ?? ""
+	}
 
 	private var articleHTML: String {
 		return try! MacroProcessor.renderedText(withTemplate: template(), substitutions: articleSubstitutions())
@@ -164,7 +201,7 @@ private extension ArticleRenderer {
 	}
 
 	private var loadingHTML: String {
-		let body = "<h3 class='systemMessage'>Loading...</h3>"
+		let body = "<h3 class='systemMessage'>Loading…</h3>"
 		return body
 	}
 
@@ -222,10 +259,21 @@ private extension ArticleRenderer {
 			d["external_link"] = ""
 		}
 
-		d["body"] = body
+		// Templates without [[enclosures]] get them at the end of the body.
+		let enclosures = Self.enclosuresHTML(attachments: article.attachments, body: body, imageURL: article.imageLink ?? article.thumbnailLink)
+		if template().contains("[[enclosures]]") {
+			d["body"] = body
+			d["enclosures"] = enclosures
+		} else if enclosures.isEmpty {
+			d["body"] = body
+		} else {
+			// The wrapper div closes anything the body leaves open, such as an unclosed
+			// <audio> (Micro.blog posts have them), so the enclosures can’t end up inside it.
+			d["body"] = "<div>" + body + "</div>" + enclosures
+		}
 
 		#if os(macOS)
-		d["text_size_class"] = AppDefaults.shared.articleTextSize.cssClass
+		d["text_size_class"] = AppDefaults.articleTextSize.cssClass
 		#endif
 
 		var components = URLComponents()
@@ -349,6 +397,6 @@ private extension ArticleRenderer {
 		guard let url = urlComponents!.url, url.scheme == "http" || url.scheme == "https" else {
 			return nil
 		}
-		return url
+		return ArticleRenderingSpecialCases.baseURLForRendering(url)
 	}
 }

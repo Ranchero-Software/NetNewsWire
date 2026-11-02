@@ -20,8 +20,8 @@ struct CacheCleaner {
 
 		purgeImageCachesForResizingIfNeeded()
 
-		guard let flushDate = AppDefaults.shared.lastImageCacheFlushDate else {
-			AppDefaults.shared.lastImageCacheFlushDate = Date()
+		guard let flushDate = AppDefaults.lastImageCacheFlushDate else {
+			AppDefaults.lastImageCacheFlushDate = Date()
 			return
 		}
 
@@ -43,7 +43,7 @@ struct CacheCleaner {
 				}
 			}
 
-			AppDefaults.shared.lastImageCacheFlushDate = Date()
+			AppDefaults.lastImageCacheFlushDate = Date()
 		}
 	}
 }

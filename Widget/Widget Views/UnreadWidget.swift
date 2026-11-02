@@ -33,8 +33,8 @@ struct UnreadWidgetView: View {
 						.layoutPriority(1)
 					Spacer()
 						.layoutPriority(0)
-					if entry.widgetData.totalUnreadCount - maxCount() > 0 {
-						Text(verbatim: entry.widgetData.totalUnreadCount.formatted())
+					if entry.widgetData.totalUnreadCount - maxCount() > 0, let unreadCountText = entry.widgetData.effectiveUnreadCountDisplay.text(for: entry.widgetData.totalUnreadCount) {
+						Text(verbatim: unreadCountText)
 							.font(.caption2)
 							.bold()
 							.foregroundColor(.secondary)

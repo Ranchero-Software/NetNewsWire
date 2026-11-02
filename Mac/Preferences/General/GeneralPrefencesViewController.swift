@@ -17,6 +17,9 @@ final class GeneralPreferencesViewController: NSViewController {
 	@IBOutlet var articleTextSizePopup: NSPopUpButton!
 	@IBOutlet var articleThemePopup: NSPopUpButton!
 	@IBOutlet var defaultBrowserPopup: NSPopUpButton!
+	@IBOutlet var showUnreadCountsButton: NSButton?
+	@IBOutlet var showUnreadCountDotButton: NSButton?
+	@IBOutlet var hideUnreadCountsButton: NSButton?
 
 	convenience init() {
 		self.init(nibName: "GeneralPreferencesView", bundle: nil)
@@ -32,9 +35,14 @@ final class GeneralPreferencesViewController: NSViewController {
 		commonInit()
 	}
 
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		fixArticleTextSizeBaselineIfNeeded()
+		view.sizeToFittingSize()
+	}
+
 	override func viewWillAppear() {
 		super.viewWillAppear()
-		fixArticleTextSizeBaselineIfNeeded()
 		updateUI()
 		updateNotificationSettings()
 	}
@@ -47,6 +55,10 @@ final class GeneralPreferencesViewController: NSViewController {
 
 	@objc func articleThemeNamesDidChangeNotification(_ note: Notification) {
 		updateArticleThemePopup()
+	}
+
+	@objc func handleUnreadCountDisplaySettingDidChange(_ notification: Notification) {
+		updateUnreadCountDisplayButtons()
 	}
 
 	// MARK: - Actions
@@ -64,13 +76,20 @@ final class GeneralPreferencesViewController: NSViewController {
 		updateArticleThemePopup()
 	}
 
+	@IBAction func unreadCountDisplaySettingDidChange(_ sender: NSButton) {
+		guard let unreadCountDisplay = UnreadCountDisplay(rawValue: sender.tag) else {
+			return
+		}
+		AppDefaults.unreadCountDisplay = unreadCountDisplay
+	}
+
 	@IBAction func browserPopUpDidChangeValue(_ sender: Any?) {
 		guard let menuItem = defaultBrowserPopup.selectedItem else {
 			return
 		}
 
 		let bundleID = menuItem.representedObject as? String
-		AppDefaults.shared.defaultBrowserID = bundleID
+		AppDefaults.defaultBrowserID = bundleID
 		updateBrowserPopup()
 	}
 
@@ -114,11 +133,20 @@ private extension GeneralPreferencesViewController {
 	func commonInit() {
 		NotificationCenter.default.addObserver(self, selector: #selector(applicationWillBecomeActive(_:)), name: NSApplication.willBecomeActiveNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(articleThemeNamesDidChangeNotification(_:)), name: .ArticleThemeNamesDidChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
 	}
 
 	func updateUI() {
 		updateArticleThemePopup()
 		updateBrowserPopup()
+		updateUnreadCountDisplayButtons()
+	}
+
+	func updateUnreadCountDisplayButtons() {
+		let selectedTag = AppDefaults.unreadCountDisplay.rawValue
+		for case let button? in [showUnreadCountsButton, showUnreadCountDotButton, hideUnreadCountsButton] {
+			button.state = button.tag == selectedTag ? .on : .off
+		}
 	}
 
 	func updateArticleThemePopup() {
@@ -193,7 +221,7 @@ private extension GeneralPreferencesViewController {
 			menu.addItem(item)
 		}
 
-		defaultBrowserPopup.selectItem(at: defaultBrowserPopup.indexOfItem(withRepresentedObject: AppDefaults.shared.defaultBrowserID))
+		defaultBrowserPopup.selectItem(at: defaultBrowserPopup.indexOfItem(withRepresentedObject: AppDefaults.defaultBrowserID))
 	}
 
 	func updateNotificationSettings() {
@@ -206,25 +234,12 @@ private extension GeneralPreferencesViewController {
 		}
 	}
 
-	func showNotificationsDeniedError() {
-		let updateAlert = NSAlert()
-		updateAlert.alertStyle = .informational
-		updateAlert.messageText = NSLocalizedString("Enable Notifications", comment: "Notifications")
-		updateAlert.informativeText = NSLocalizedString("To enable notifications, open Notifications in System Preferences, then find NetNewsWire in the list.", comment: "To enable notifications, open Notifications in System Preferences, then find NetNewsWire in the list.")
-		updateAlert.addButton(withTitle: NSLocalizedString("Open System Preferences", comment: "Open System Preferences"))
-		updateAlert.addButton(withTitle: NSLocalizedString("Close", comment: "Close"))
-		let modalResponse = updateAlert.runModal()
-		if modalResponse == .alertFirstButtonReturn {
-			NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.notifications")!)
-		}
-	}
-
 	@objc var openFeedsInDefaultNewsReader: Bool {
 		get {
-			return AppDefaults.shared.subscribeToFeedsInDefaultBrowser
+			return AppDefaults.subscribeToFeedsInDefaultBrowser
 		}
 		set {
-			AppDefaults.shared.subscribeToFeedsInDefaultBrowser = newValue
+			AppDefaults.subscribeToFeedsInDefaultBrowser = newValue
 		}
 	}
 }

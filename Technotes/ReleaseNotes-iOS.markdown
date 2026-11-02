@@ -1,5 +1,92 @@
 # iOS Release Notes
 
+### 7.3 build 7226 22 Oct 2026 - branch: main tag: iOS-7.3-7226
+
+Added an article preview to the timeline context menu — touch and hold an article to see it, and tap the preview to open the article
+Added version string to the About view
+Added a Copy command to the version string in Settings and in the About view — touch and hold to copy
+Fixed inline footnotes in FreshRSS articles
+Fixed extra vertical space in MacRumors articles
+Bumped minimum iOS version from 17 to 18
+
+### 7.2 build 7221 11 Oct 2026 - branch: main tag: iOS-7.2-7221
+
+Submitted to App Store 15 Oct. 2026. Originally a TestFlight release.
+
+Changes since 7.1.4:
+
+Added unread count display setting — show the count, show a dot, or hide it — which applies to the app icon badge, feeds list, and widgets
+Sped up Today and unread count queries
+Fixed bug where the timeline selection was cleared when using the left arrow or shift-tab to go back to the feeds list (when multiple columns are showing)
+Changed the selection color in the feeds list to blue when it has keyboard focus and multiple columns are showing
+Fixed timeline text sometimes showing white on the gray selection background
+Stopped the scroll animation when restoring the selection in the feeds list and timeline
+Changed sort-by-feed to sort feed names with numbers by value — “Episode 2” comes before “Episode 10”
+Fixed bug where YouTube embeds in articles showed an error instead of playing
+Fixed extra whitespace at the end of Slashdot articles and paragraphs running together
+Added support for the instapaper_ignore class — elements marked with it are now removed from articles
+Added support for Substack-style footnotes
+Improved CJK text rendering in the article view by adding text-autospace
+Changed tabs in pre and code elements in articles to display as four spaces
+Improved font sizing and fixed superscript orphans in table cells in the Tiqoe Dark theme
+Fixed horizontal overflow of WordPress Math blocks and SVGs in the Tiqoe Dark theme
+Fixed parsing of RSS feed titles when a feed contains a textinput section (Slashdot, for instance)
+Fixed Slashdot feed detection (for Slashdot special cases) when the feed comes through a proxy such as FeedBurner
+Improved finding feeds in a page by skipping links to PDFs, movies, and other files that can’t be feeds
+Improved finding feeds in a page by skipping links to X, Twitter, Facebook, and Instagram
+Changed finding a feed to use the redirected-to URL
+Fixed bug where some sites with “youtube” in their names were treated as YouTube
+Offered Update Credentials in the account error alert for all username and password accounts, not just Feedbin
+Filled in the API URL when editing a FreshRSS account’s credentials
+Removed a newly added account when its credentials can’t be saved to the keychain
+Stopped account sheets from being swiped away while they’re working
+Added up to 500 characters of the HTTP error response body to Error Log entries
+Trimmed spaces from folder names when adding a folder
+
+Changes since 7.2 (7220):
+
+Fixed bug on iPad where fullscreen YouTube videos were black with audio only
+Fixed bug where embedded videos with no set height — such as Inoreader’s YouTube player — collapsed to a short strip
+
+### 7.2 build 7220 10 Oct 2026 - branch: main tag: iOS-7.2-7220
+
+Fixed bug where Add Feed lost the typed URL and title after choosing a folder
+Offered Update Credentials in the account error alert for all username and password accounts, not just Feedbin
+Filled in the API URL when editing a FreshRSS account’s credentials
+Removed a newly added account when its credentials can’t be saved to the keychain
+Stopped account sheets from being swiped away while they’re working
+Showed unavailable rows in Add Account and the Add Feed folder picker as disabled
+Trimmed spaces from folder names when adding a folder
+Fixed timeline text sometimes showing white on the gray selection background
+Stopped the scroll animation when restoring the selection in the feeds list and timeline
+Changed sort-by-feed to sort feed names with numbers by value — “Episode 2” comes before “Episode 10”
+Improved finding feeds in a page by skipping links to X, Twitter, Facebook, and Instagram, and links to files with uppercase extensions or URL queries (such as .PDF or .jpg?w=600)
+Fixed bug where some sites with “youtube” in their names were treated as YouTube
+Fixed Slashdot feed detection (for Slashdot special cases) when the feed comes through a proxy such as FeedBurner
+Changed VoiceOver to say “unread” for unread counts shown as dots
+Added VoiceOver labels and values for the Settings pop-up buttons
+Told VoiceOver which folder is selected in the Add Feed folder picker
+
+### 7.2 build 7218 6 Oct 2026 - branch: main tag: iOS-7.2-7218
+
+Added unread count display setting — show the count, show a dot, or hide it — which applies to the app icon badge, feeds list, and widgets
+Fixed bug where the timeline selection was cleared when using the left arrow or shift-tab to go back to the feeds list (when multiple columns are showing)
+Changed the selection color in the feeds list to blue when it has keyboard focus and multiple columns are showing
+Fixed bug where YouTube embeds in articles showed an error instead of playing
+Fixed extra whitespace at the end of Slashdot articles and paragraphs running together
+Fixed parsing of RSS feed titles when a feed contains a textinput section (Slashdot, for instance)
+Added support for the instapaper_ignore class — elements marked with it are now removed from articles
+Added support for Substack-style footnotes
+Improved CJK text rendering in the article view by adding text-autospace
+Changed tabs in pre and code elements in articles to display as four spaces
+Improved finding feeds in a page by skipping links to PDFs, movies, and other files that can’t be feeds
+Changed finding a feed to use the redirected-to URL
+Improved font sizing and fixed superscript orphans in table cells in the Tiqoe Dark theme
+Fixed horizontal overflow of WordPress Math blocks and SVGs in the Tiqoe Dark theme
+Changed the Tiqoe Dark theme to hide the PBS NewsHour funding invite in Reader View
+Sped up Today and unread count queries
+Added up to 500 characters of the HTTP error response body to Error Log entries
+
 ### 7.1.4 build 7213 18 Sep 2026 - branch: main tag: iOS-7.1.4-7213
 
 This was originally a TestFlight release. It was submitted to the App Store as the 7.1.4 release version on 20 Sep 2026.
