@@ -94,12 +94,7 @@ extension Notification.Name {
 			}
 		}
 
-		// The stored icon URL remembers an icon discovered via the home page. A feed
-		// that declares its own icon supersedes it.
-		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5376>
-		let feedDeclaresIconURL = feed.iconURL != nil && !Self.shouldIgnoreFeedIconURL(feed)
-
-		if !feedDeclaresIconURL, let previouslyFoundIconURL = ImageDatabase.shared.iconURL(forFeedURL: feed.url) {
+		if let previouslyFoundIconURL = Self.savedHomePageIconURL(for: feed) {
 			icon(forURL: previouslyFoundIconURL, feed: feed) { iconImage, isDefinitive in
 				if let iconImage {
 					if self.cacheIcon(iconImage, for: feed, isFeedOwnIcon: false) {
@@ -110,6 +105,7 @@ extension Notification.Name {
 					checkHomePageURL()
 				}
 			}
+			checkForNewHomePageIconURL(feed, savedIconURL: previouslyFoundIconURL)
 
 			return nil
 		}
@@ -183,7 +179,12 @@ extension Notification.Name {
 		let feeds = feedsWaitingForHTMLMetadata.filter { $0.homePageURL == url }
 		feedsWaitingForHTMLMetadata.subtract(feeds)
 		for feed in feeds {
-			_ = icon(for: feed)
+			// A feed already showing its saved home page icon would return it without checking.
+			if cache[feed] != nil, let savedIconURL = Self.savedHomePageIconURL(for: feed) {
+				checkForNewHomePageIconURL(feed, savedIconURL: savedIconURL)
+			} else {
+				_ = icon(for: feed)
+			}
 		}
 	}
 }
@@ -212,6 +213,41 @@ private extension FeedIconDownloader {
 
 	static func shouldIgnoreFeedIconURL(_ feed: Feed) -> Bool {
 		SpecialCase.urlStringContainSpecialCase(feed.url, feedURLSubstringsToIgnoreFeedIconURL)
+	}
+
+	/// The stored icon URL remembers an icon discovered via the home page. A feed
+	/// that declares its own icon supersedes it.
+	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/5376>
+	static func savedHomePageIconURL(for feed: Feed) -> String? {
+		let feedDeclaresIconURL = feed.iconURL != nil && !shouldIgnoreFeedIconURL(feed)
+		if feedDeclaresIconURL {
+			return nil
+		}
+		return ImageDatabase.shared.iconURL(forFeedURL: feed.url)
+	}
+
+	/// The saved icon keeps working after a site adds a better icon or moves to a new one,
+	/// so the home page’s metadata is checked too. A different best icon replaces the saved one once it’s ready.
+	func checkForNewHomePageIconURL(_ feed: Feed, savedIconURL: String) {
+		guard let homePageURL = feed.homePageURL, !Self.shouldSkipDownloadingFeedIcon(homePageURL) else {
+			return
+		}
+		guard let metadata = HTMLMetadataDownloader.shared.cachedMetadata(for: homePageURL) else {
+			feedsWaitingForHTMLMetadata.insert(feed)
+			return
+		}
+		guard let iconURL = metadata.bestWebsiteIconURL(), iconURL != savedIconURL else {
+			return
+		}
+		icon(forURL: iconURL, feed: feed) { iconImage, _ in
+			guard let iconImage else {
+				return
+			}
+			// Replaces the saved home page icon, which `cacheIcon` wouldn’t.
+			self.cache[feed] = CachedIcon(iconImage: iconImage, isFeedOwnIcon: false)
+			self.cacheIconURLForFeedURL(iconURL: iconURL, feedURL: feed.url)
+			self.postFeedIconDidBecomeAvailableNotification(feed)
+		}
 	}
 
 	static func shouldSkipDownloadingFeedIcon(feed: Feed) -> Bool {
