@@ -83,6 +83,11 @@ nonisolated private extension HTMLMetadataDownloader {
 		}
 	}
 
+	/// Off the main thread, since a home page can be a few megabytes.
+	@concurrent static func parseRecord(url: String, parserData: ParserData) async -> HTMLMetadataRecord {
+		HTMLMetadataRecord(url: url, metadata: HTMLMetadataParser.htmlMetadata(with: parserData))
+	}
+
 	func cacheRecord(_ record: HTMLMetadataRecord) {
 		cache.withLock { $0[record.url] = record }
 	}
@@ -123,8 +128,7 @@ nonisolated private extension HTMLMetadataDownloader {
 				if let data = downloadResponse.data, !data.isEmpty, let response = downloadResponse.response, response.statusIsOK {
 					let urlToUse = response.url ?? actualURL
 					let parserData = ParserData(url: urlToUse.absoluteString, data: data)
-					let htmlMetadata = HTMLMetadataParser.htmlMetadata(with: parserData)
-					let record = HTMLMetadataRecord(url: url, metadata: htmlMetadata)
+					let record = await Self.parseRecord(url: url, parserData: parserData)
 
 					let statusCode = response.forcedStatusCode
 					await HTMLMetadataDatabase.shared.save(record, statusCode: statusCode)

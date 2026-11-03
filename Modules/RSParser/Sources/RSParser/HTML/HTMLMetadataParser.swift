@@ -32,7 +32,6 @@ public enum HTMLMetadataParser {
 private final class MetadataParserDelegate: HTMLScannerDelegate {
 
 	private let scanPastHead: Bool
-	private var finished = false
 	private(set) var tags: [HTMLTag] = []
 
 	init(scanPastHead: Bool) {
@@ -43,12 +42,9 @@ private final class MetadataParserDelegate: HTMLScannerDelegate {
 	                 didStartTag name: ArraySlice<UInt8>,
 	                 attributes: HTMLAttributes,
 	                 selfClosing: Bool) {
-		if finished {
-			return
-		}
-
+		// Nothing after <body> is needed, so the rest of a large page isn’t scanned.
 		if !scanPastHead && HTMLScanner.tagNameEqualsIgnoringCase(name, Self.bodyBytes[...]) {
-			finished = true
+			scanner.stopParsing()
 			return
 		}
 
