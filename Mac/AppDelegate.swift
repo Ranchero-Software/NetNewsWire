@@ -206,7 +206,6 @@ let appName = "NetNewsWire"
 			mainWindowController?.window?.center()
 		}
 
-		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .feedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { _ in
 			MainActor.assumeIsolated {
 				self.userDefaultsDidChange()
@@ -367,17 +366,6 @@ let appName = "NetNewsWire"
 
 	@objc func handleUnreadCountDisplaySettingDidChange(_ notification: Notification) {
 		updateDockBadge()
-	}
-
-	@objc func feedSettingDidChange(_ note: Notification) {
-		MainActor.assumeIsolated {
-			guard let feed = note.object as? Feed, let key = note.userInfo?[Feed.SettingUserInfoKey] as? Feed.SettingKey else {
-				return
-			}
-			if key == .homePageURL || key == .faviconURL {
-				_ = FaviconDownloader.shared.favicon(for: feed)
-			}
-		}
 	}
 
 	@objc func inspectableObjectsDidChange(_ note: Notification) {
