@@ -141,7 +141,8 @@ nonisolated private extension HTMLMetadataDownloader {
 				let downloadResponse = try await Downloader.shared.download(actualURL, userAgentStyle: .browser)
 
 				// A captive portal’s login page would give the home page the portal’s icons.
-				if let responseURL = downloadResponse.response?.url, Self.isRedirectToAnotherHost(from: actualURL, to: responseURL) {
+				// Only http is checked, since a portal can’t redirect https without a certificate error.
+				if actualURL.scheme?.lowercased() == "http", let responseURL = downloadResponse.response?.url, Self.isRedirectToAnotherHost(from: actualURL, to: responseURL) {
 					await returnStaleCacheIfAvailable(url)
 					let userInfo = [NSLocalizedDescriptionKey: "Redirected to \(responseURL.host() ?? responseURL.absoluteString)"]
 					activityLog.didFail(.htmlMetadataDownloader, kind: kind, error: NSError(domain: "NetNewsWire", code: -1, userInfo: userInfo))
