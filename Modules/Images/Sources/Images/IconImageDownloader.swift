@@ -145,7 +145,7 @@ private extension IconImageDownloader {
 
 			do throws(ImageDownloadError) {
 				let storedData = try await DownloadedImageCache.shared.imageData(for: url, usesDownloadQueue: false, checksForUpdates: true, activityOwner: request.activityOwner, activityKind: request.activityKind, activityDetail: request.activityDetail)
-				let scaledData = await Self.scaledImageData(storedData, maxPixelSize: RSImage.maxIconPixelSize)
+				let scaledData = await DownloadedImageCache.scaledIcon(from: storedData)
 				// DownloadedImageCache records download failures, but can’t know whether the data decodes as an icon.
 				guard let iconImage = await IconImage.decodedIconImage(scaledData) else {
 					ImageDatabase.shared.recordFailure(url: url)
@@ -154,7 +154,7 @@ private extension IconImageDownloader {
 				}
 				// An image that’s already small enough needs no second file.
 				if scaledData != storedData {
-					await DownloadedImageCache.shared.saveDerivedImageData(scaledData, for: url, suffix: DownloadedImageCache.scaledIconSuffix)
+					await DownloadedImageCache.shared.saveScaledIconData(scaledData, for: url)
 				}
 				cacheIconImage(iconImage, url: url)
 			} catch {
@@ -167,7 +167,7 @@ private extension IconImageDownloader {
 	}
 
 	func iconImageFromScaledCopy(_ url: String) async -> IconImage? {
-		guard let scaledData = await DownloadedImageCache.shared.derivedImageData(for: url, suffix: DownloadedImageCache.scaledIconSuffix), let iconImage = await IconImage.decodedIconImage(scaledData) else {
+		guard let scaledData = await DownloadedImageCache.shared.scaledIconData(for: url), let iconImage = await IconImage.decodedIconImage(scaledData) else {
 			return nil
 		}
 		DownloadedImageCache.shared.imageWasUsed(url, checksForUpdates: true)
@@ -181,9 +181,5 @@ private extension IconImageDownloader {
 
 	func postIconImageDownloadDidFail(_ url: String, error: ImageDownloadError) {
 		NotificationCenter.default.post(name: .iconImageDownloadDidFail, object: self, userInfo: [Self.urlKey: url, Self.errorKey: error])
-	}
-
-	@concurrent static func scaledImageData(_ data: Data, maxPixelSize: Int) async -> Data {
-		RSImage.scaledImageData(data, maxPixelSize: maxPixelSize) ?? data
 	}
 }

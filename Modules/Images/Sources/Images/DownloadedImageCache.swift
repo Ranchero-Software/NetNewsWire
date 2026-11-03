@@ -25,6 +25,7 @@ extension Notification.Name {
 ///
 /// A copy made from an image, such as a scaled icon, can be stored next to it with a suffix.
 /// It’s kept while the image is, and removed with it. It doesn’t count toward the limit.
+/// Once an icon’s scaled copy is saved, its original is deleted, since only the scaled copy is shown.
 ///
 /// At launch, the least recently used copies are deleted from disk until the rest total no more than
 /// `maximumStoredByteCount`. The total can go over that until the next launch.
@@ -44,7 +45,7 @@ extension Notification.Name {
 	static let shared = DownloadedImageCache()
 	static let urlKey = "url"
 	/// Scaled icons are saved next to their originals, so they aren’t rescaled after a memory cache is emptied.
-	static let scaledIconSuffix = String(RSImage.maxIconPixelSize)
+	private static let scaledIconSuffix = String(RSImage.maxIconPixelSize)
 
 	private static let folderName = "DownloadedImages"
 	private static let svgMIMEType = "image/svg+xml"
@@ -144,17 +145,20 @@ extension Notification.Name {
 		return false
 	}
 
-	/// A copy made from the image at `url`, such as a scaled icon. Nil when none has been saved.
-	func derivedImageData(for url: String, suffix: String) async -> Data? {
-		await Self.readFromDisk(diskCache, key: Self.derivedDiskKey(url, suffix: suffix))
+	/// Nil when none has been saved.
+	func scaledIconData(for url: String) async -> Data? {
+		await Self.readFromDisk(diskCache, key: Self.derivedDiskKey(url, suffix: Self.scaledIconSuffix))
 	}
 
-	func saveDerivedImageData(_ data: Data, for url: String, suffix: String) async {
+	/// Deletes the original, which an og:image, for instance, can make large. Kept if the scaled copy can’t be written.
+	func saveScaledIconData(_ data: Data, for url: String) async {
 		do {
-			try await Self.saveToDisk(diskCache, key: Self.derivedDiskKey(url, suffix: suffix), data: data)
+			try await Self.saveToDisk(diskCache, key: Self.derivedDiskKey(url, suffix: Self.scaledIconSuffix), data: data)
 		} catch {
-			Self.logger.error("Couldn’t write derived image for \(url): \(error.localizedDescription)")
+			Self.logger.error("Couldn’t write scaled icon for \(url): \(error.localizedDescription)")
+			return
 		}
+		await Self.deleteFromDisk(diskCache, keys: [Self.diskKey(url)])
 	}
 
 	/// At most once a day per image: saves the access date, which orders images for removal,
@@ -361,7 +365,9 @@ private extension DownloadedImageCache {
 			conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
 		}
 		let nextCheck = Self.nextCheck(httpResponse, hasValidators: conditionalGetInfo != nil)
-		ImageDatabase.shared.saveDownloadedImage(DownloadedImageRecord(url: url, pixelSize: pixelSize, conditionalGetInfo: conditionalGetInfo, nextCheck: nextCheck, isIcon: isIcon))
+		// An icon downloaded again as a thumbnail, since only its scaled copy was kept, stays an icon.
+		let isUsedAsIcon = isIcon || iconURLsNoted.contains(url)
+		ImageDatabase.shared.saveDownloadedImage(DownloadedImageRecord(url: url, pixelSize: pixelSize, conditionalGetInfo: conditionalGetInfo, nextCheck: nextCheck, isIcon: isUsedAsIcon))
 		return true
 	}
 
@@ -392,7 +398,7 @@ private extension DownloadedImageCache {
 		let httpResponse = downloadResponse.response as? HTTPURLResponse
 		if let data = downloadResponse.data, !data.isEmpty, let httpResponse, httpResponse.statusIsOK {
 			// A server without validators sends the whole image even when it hasn’t changed.
-			let isUnchanged = await Self.readFromDisk(diskCache, key: Self.diskKey(url)) == data
+			let isUnchanged = await isStoredImage(data, url: url)
 			if !isUnchanged, (try? await saveImage(data, url: url, httpResponse: httpResponse, isIcon: true)) == true {
 				Self.logger.info("Replaced changed image at \(url)")
 				await Self.deleteFromDisk(diskCache, keys: [Self.derivedDiskKey(url, suffix: Self.scaledIconSuffix)])
@@ -408,6 +414,17 @@ private extension DownloadedImageCache {
 
 		// 304 Not Modified, the same bytes, an error response, not an image, or a failed write: keep the copy and check again later.
 		ImageDatabase.shared.saveDownloadedImageNextCheck(url: url, nextCheck: Self.nextCheck(httpResponse, hasValidators: validation.conditionalGetInfo != nil))
+	}
+
+	/// Compares with the original, or, when only the scaled icon is kept, with that. Scaling the same bytes gives the same result.
+	func isStoredImage(_ data: Data, url: String) async -> Bool {
+		if let storedData = await Self.readFromDisk(diskCache, key: Self.diskKey(url)) {
+			return storedData == data
+		}
+		guard let scaledIconData = await scaledIconData(for: url) else {
+			return false
+		}
+		return await Self.scaledIcon(from: data) == scaledIconData
 	}
 
 	// MARK: - Removing Images
@@ -482,6 +499,11 @@ extension DownloadedImageCache {
 		return files
 	}
 
+	/// The original data when it’s already small enough, or can’t be scaled, such as SVG.
+	@concurrent static func scaledIcon(from data: Data) async -> Data {
+		RSImage.scaledImageData(data, maxPixelSize: RSImage.maxIconPixelSize) ?? data
+	}
+
 	nonisolated static func diskKey(_ url: String) -> String {
 		url.md5String
 	}
@@ -542,10 +564,12 @@ extension DownloadedImageCache {
 		var iconRecords = [(record: DownloadedImageUsage, key: String)]()
 		var recordedKeys = Set<String>()
 		var urls = [String]()
+		// An icon may have only its scaled copy.
+		let keysWithFiles = Set(files.keys.map(baseDiskKey))
 		for record in records {
 			let key = diskKey(record.url)
 			recordedKeys.insert(key)
-			if files[key] == nil && record.lastAccessed < recentChangeDate {
+			if !keysWithFiles.contains(key) && record.lastAccessed < recentChangeDate {
 				urls.append(record.url)
 			} else if record.isIcon {
 				iconRecords.append((record: record, key: key))

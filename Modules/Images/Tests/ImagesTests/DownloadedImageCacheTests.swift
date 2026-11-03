@@ -93,6 +93,18 @@ import RSCore
 		#expect(removal.keys == [DownloadedImageCache.diskKey(unusedIcon.url)])
 	}
 
+	@Test func iconWithOnlyItsScaledCopyIsKept() async {
+		let now = Date()
+		let longAgo = now.addingTimeInterval(-TimeInterval(days: 10))
+		let icon = DownloadedImageUsage(url: "https://example.com/og-image.jpg", lastAccessed: longAgo, isIcon: true)
+		let files = [DownloadedImageCache.derivedDiskKey(icon.url, suffix: "144"): storedFile(longAgo, byteCount: 10)]
+
+		let removal = await DownloadedImageCache.imageRemoval(records: [icon], files: files, urlsInUse: [], now: now, maximumByteCount: 1000)
+
+		#expect(removal.urls.isEmpty)
+		#expect(removal.keys.isEmpty)
+	}
+
 	@Test func folderThatCantBeListedHasNoStoredFiles() async {
 		let missingFolder = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString).path
 		let files = await DownloadedImageCache.storedFiles(BinaryDiskCache(folder: missingFolder))
