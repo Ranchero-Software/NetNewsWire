@@ -14,7 +14,7 @@
 //   - Tag names compared case-insensitively (but emitted as they appear).
 //   - Content of `<script>`, `<style>`, `<textarea>`, `<title>`, `<xmp>`, and
 //     `<noembed>` treated as opaque raw text: only the matching end tag ends
-//     the block. Entities in `<textarea>` and `<title>` aren't expanded.
+//     the block. Entities are expanded only in `<textarea>` and `<title>`, as in HTML.
 //   - Attributes may have no value (`<input disabled>`), single-quoted values,
 //     or unquoted values (`<a href=foo>`).
 //   - No void-element tracking. Consumers that care (none of ours do)
@@ -55,6 +55,7 @@ private extension HTMLScanner {
 	// Tag names that enter raw-text mode. Their content isn't parsed as markup;
 	// only the matching end tag ends the block.
 	static let rawTextTagNames: [[UInt8]] = ["script", "style", "textarea", "title", "xmp", "noembed"].map { Array($0.utf8) }
+	static let escapableRawTextTagNames: [[UInt8]] = ["textarea", "title"].map { Array($0.utf8) }
 
 	func drive() {
 		while pos < input.count && !stopped {
@@ -154,7 +155,7 @@ private extension HTMLScanner {
 		delegate?.htmlScanner(self, didStartTag: nameSlice, attributes: attributeView, selfClosing: selfClosing)
 
 		if !selfClosing, let rawTextTagName = Self.rawTextTagNames.first(where: { Self.tagNameEqualsIgnoringCase(nameSlice, $0[...]) }) {
-			consumeRawText(until: rawTextTagName[...])
+			consumeRawText(until: rawTextTagName[...], decodesEntities: Self.escapableRawTextTagNames.contains(rawTextTagName))
 		}
 	}
 
@@ -276,7 +277,7 @@ private extension HTMLScanner {
 	/// In raw-text mode after a start tag in `rawTextTagNames`, scan forward
 	/// until the matching end tag `</name>` (case-insensitive) and emit the
 	/// accumulated bytes as characters, followed by the end tag.
-	func consumeRawText(until tagName: ArraySlice<UInt8>) {
+	func consumeRawText(until tagName: ArraySlice<UInt8>, decodesEntities: Bool) {
 		let start = pos
 		while pos < input.count {
 			if input[pos] == .asciiLessThan && peek(1) == .asciiSlash {
@@ -289,7 +290,7 @@ private extension HTMLScanner {
 				let candidateName = input[closerStart..<nameEnd]
 				if Self.tagNameEqualsIgnoringCase(candidateName, tagName) {
 					if start < savedPos {
-						delegate?.htmlScanner(self, didFindCharacters: input[start..<savedPos])
+						emitRawText(start..<savedPos, decodesEntities: decodesEntities)
 					}
 					pos = nameEnd
 					while pos < input.count && input[pos] != .asciiGreaterThan {
@@ -306,8 +307,29 @@ private extension HTMLScanner {
 		}
 		// EOF without closer — flush what we have as characters.
 		if start < pos {
-			delegate?.htmlScanner(self, didFindCharacters: input[start..<pos])
+			emitRawText(start..<pos, decodesEntities: decodesEntities)
 		}
+	}
+
+	func emitRawText(_ range: Range<Int>, decodesEntities: Bool) {
+		guard decodesEntities, input[range].contains(.asciiAmpersand) else {
+			delegate?.htmlScanner(self, didFindCharacters: input[range])
+			return
+		}
+		var out = [UInt8]()
+		out.reserveCapacity(range.count)
+		var index = range.lowerBound
+		while index < range.upperBound {
+			if input[index] == .asciiAmpersand {
+				let result = XMLEntities.decode(bytes: input, at: index, mode: .html)
+				out.append(contentsOf: result.bytes)
+				index = max(result.nextIndex, index + 1)
+				continue
+			}
+			out.append(input[index])
+			index += 1
+		}
+		delegate?.htmlScanner(self, didFindCharacters: out[...])
 	}
 
 	// MARK: - Character data
