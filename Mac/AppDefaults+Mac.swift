@@ -51,7 +51,6 @@ extension AppDefaults.Key {
 	static let importOPMLAccountID = "importOPMLAccountID"
 	static let exportOPMLAccountID = "exportOPMLAccountID"
 	static let defaultBrowserID = "defaultBrowserID"
-	static let markAsReadOnOpenEnabled = "markAsReadOnOpenEnabled"
 
 	// Hidden prefs
 	static let showDebugMenu = "ShowDebugMenu"
@@ -169,15 +168,6 @@ extension AppDefaults {
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.defaultBrowserID)
-		}
-	}
-
-	static var isMarkAsReadOnOpenEnabled: Bool {
-		get {
-			UserDefaults.standard.bool(forKey: Key.markAsReadOnOpenEnabled)
-		}
-		set {
-			UserDefaults.standard.set(newValue, forKey: Key.markAsReadOnOpenEnabled)
 		}
 	}
 
@@ -334,7 +324,6 @@ extension AppDefaults {
 			Key.statusBarCountMode: StatusBarCountMode.lastRefresh.rawValue,
 			"NSScrollViewShouldScrollUnderTitlebar": false,
 			Key.refreshInterval: RefreshInterval.every2Hours.rawValue,
-			Key.markAsReadOnOpenEnabled: true,
 			Key.showDebugMenu: showDebugMenu
 		]
 

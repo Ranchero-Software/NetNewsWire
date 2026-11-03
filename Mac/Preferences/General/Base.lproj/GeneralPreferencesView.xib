@@ -155,7 +155,7 @@
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
                             <connections>
-                                <binding destination="mAF-gO-1PI" name="value" keyPath="values.markAsReadOnOpenEnabled" id="MarkAsRead-Binding">
+                                <binding destination="mAF-gO-1PI" name="value" keyPath="values.markAsReadOnOpen" id="MarkAsRead-Binding">
                                     <dictionary key="options">
                                         <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
                                         <bool key="NSConditionallySetsEnabled" value="NO"/>

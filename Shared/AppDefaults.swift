@@ -21,6 +21,7 @@ enum AppDefaults {
 		static let addFolderAccountID = "addFolderAccountID"
 		static let currentThemeName = "currentThemeName"
 		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
+		static let markAsReadOnOpen = "markAsReadOnOpen"
 		static let unreadCountDisplay = "unreadCountDisplay"
 		static let timelineThumbnailsDisplay = "timelineThumbnailsDisplay"
 		static let timelineFeedIconsDisplay = "timelineFeedIconsDisplay"
@@ -33,6 +34,7 @@ enum AppDefaults {
 			Key.timelineGroupByFeed: false,
 			Key.currentThemeName: defaultThemeName,
 			Key.articleContentJavascriptEnabled: true,
+			Key.markAsReadOnOpen: true
 			Key.timelineThumbnailsDisplay: TimelineThumbnailsDisplay.none.rawValue,
 			Key.timelineFeedIconsDisplay: TimelineFeedIconsDisplay.automatic.rawValue
 		]
@@ -95,6 +97,15 @@ enum AppDefaults {
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.articleContentJavascriptEnabled)
+		}
+	}
+
+	static var markAsReadOnOpen: Bool {
+		get {
+			UserDefaults.standard.bool(forKey: Key.markAsReadOnOpen)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.markAsReadOnOpen)
 		}
 	}
 

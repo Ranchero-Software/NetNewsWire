@@ -43,7 +43,6 @@ extension AppDefaults.Key {
 	static let timelineIconDimension = "timelineIconSize"
 	static let articleFullscreenAvailable = "articleFullscreenAvailable"
 	static let articleFullscreenEnabled = "articleFullscreenEnabled"
-	static let markAsReadOnOpen = "markAsReadOnOpen"
 	static let confirmMarkAllAsRead = "confirmMarkAllAsRead"
 	static let lastRefresh = "lastRefresh"
 	static let useSystemBrowser = "useSystemBrowser"
@@ -139,15 +138,6 @@ extension AppDefaults {
 
 	static var logicalArticleFullscreenEnabled: Bool {
 		articleFullscreenAvailable && articleFullscreenEnabled
-	}
-
-	static var markAsReadOnOpen: Bool {
-		get {
-			UserDefaults.standard.bool(forKey: Key.markAsReadOnOpen)
-		}
-		set {
-			UserDefaults.standard.set(newValue, forKey: Key.markAsReadOnOpen)
-		}
 	}
 
 	static var confirmMarkAllAsRead: Bool {
@@ -357,7 +347,6 @@ extension AppDefaults {
 			Key.timelineIconDimension: IconSize.medium.rawValue,
 			Key.articleFullscreenAvailable: false,
 			Key.articleFullscreenEnabled: false,
-			Key.markAsReadOnOpen: true,
 			Key.confirmMarkAllAsRead: true,
 			Key.splitViewPreferredDisplayMode: UISplitViewController.DisplayMode.oneBesideSecondary.rawValue
 		]
