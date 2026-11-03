@@ -29,7 +29,7 @@ extension Notification.Name {
 	private var singleFaviconDownloaderCache = [String: SingleFaviconDownloader]() // faviconURL: SingleFaviconDownloader
 	private var searches = [String: FaviconSearch]() // homePageURL: search through its favicon URLs
 
-	private var cache = [Feed: IconImage]() // faviconURL: RSImage
+	private var cache = [Feed: IconImage]()
 
 	public struct UserInfoKey {
 		public static let faviconURL = "faviconURL"
