@@ -22,7 +22,7 @@ extension Notification.Name {
 
 	private var avatarURLs = Set<String>() // Every avatar URL looked up, so a changed image is posted too
 
-	init() {
+	private init() {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleIconImageDidBecomeAvailable(_:)), name: .iconImageDidBecomeAvailable, object: IconImageDownloader.shared)
 	}
 

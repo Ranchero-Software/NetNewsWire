@@ -40,7 +40,7 @@ extension Notification.Name {
 	private var faviconURLs = Set<String>() // Every favicon URL looked up
 	private var faviconURLsThatAreNotImages = Set<String>()
 
-	init() {
+	private init() {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleIconImageDidBecomeAvailable(_:)), name: .iconImageDidBecomeAvailable, object: IconImageDownloader.shared)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleIconImageDownloadDidFail(_:)), name: .iconImageDownloadDidFail, object: IconImageDownloader.shared)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleHTMLMetadataAvailable(_:)), name: .htmlMetadataAvailable, object: nil)

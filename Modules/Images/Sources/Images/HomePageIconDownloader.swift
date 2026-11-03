@@ -33,7 +33,7 @@ extension Notification.Name {
 	private var newIconURLs = [String: String]() // home page URL: icon URL that replaces the saved one once its image loads
 	private var iconURLs = Set<String>() // Every icon URL looked up, so other kinds of icons are ignored when they arrive
 
-	init() {
+	private init() {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleIconImageDidBecomeAvailable(_:)), name: .iconImageDidBecomeAvailable, object: IconImageDownloader.shared)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleIconImageDownloadDidFail(_:)), name: .iconImageDownloadDidFail, object: IconImageDownloader.shared)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleHTMLMetadataAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
