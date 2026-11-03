@@ -222,10 +222,11 @@ public extension RSImage {
 		// Always use CreateThumbnailAtIndex rather than CreateImageAtIndex,
 		// because the latter mishandles indexed-color ICO files (produces
 		// grayscale with a nil color space instead of correct RGB).
+		// FromImageAlways, since a JPEG’s embedded EXIF thumbnail is small and low quality.
 		let thumbnailSize = needsResize ? maxPixelSize : largestMaxDimension
 		let options: [CFString: Any] = [
 			kCGImageSourceCreateThumbnailWithTransform: true,
-			kCGImageSourceCreateThumbnailFromImageIfAbsent: true,
+			kCGImageSourceCreateThumbnailFromImageAlways: true,
 			kCGImageSourceThumbnailMaxPixelSize: thumbnailSize
 		]
 		let cgImage = CGImageSourceCreateThumbnailAtIndex(imageSource, largestIndex, options as CFDictionary)
