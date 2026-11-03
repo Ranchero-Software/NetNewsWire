@@ -459,6 +459,10 @@ private extension AppDelegate {
 			if AccountManager.shared.isSuspended {
 				AccountManager.shared.resumeAll()
 			}
+			// After a launch in the background nothing has asked for icons yet, so widgets and
+			// new-article notifications would get generated placeholders. Their files load during the refresh.
+			let feeds = AccountManager.shared.activeAccounts.flatMap { $0.flattenedFeeds() }
+			IconImageCache.shared.prefetchImagesForFeeds(feeds)
 			let didRefresh = await AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
 			if !Task.isCancelled {
 				await WidgetDataEncoder.shared?.encodeAndWait()
