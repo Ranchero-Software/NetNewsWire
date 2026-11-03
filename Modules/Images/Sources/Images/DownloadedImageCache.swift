@@ -209,21 +209,21 @@ private extension DownloadedImageCache {
 		}
 
 		if isWaitingToRetry(url) {
-			return .failure(ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true))
+			return .failure(.notAttempted)
 		}
 		let host = Self.host(url)
 		if usesDownloadQueue {
 			guard Self.networkAllowsDownloads else {
-				return .failure(ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true))
+				return .failure(.notAttempted)
 			}
 			switch await downloadQueue.waitForTurn(key: url, group: host) {
 			case .dropped:
-				return .failure(ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true))
+				return .failure(.notAttempted)
 			case .start:
 				// The network or a retry wait may have changed while this was queued.
 				guard !isWaitingToRetry(url), Self.networkAllowsDownloads else {
 					downloadQueue.taskDidFinish(group: host)
-					return .failure(ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true))
+					return .failure(.notAttempted)
 				}
 			case .startNow:
 				break

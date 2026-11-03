@@ -15,6 +15,9 @@ public struct ImageDownloadError: Error {
 	public let retryAfter: TimeInterval? // From a Retry-After header in seconds
 	public let rejectedByteCount: Int? // Too large to save for the timeline
 
+	/// No request was made: waiting to retry, dropped from the download queue, or the network doesn’t allow the download.
+	static let notAttempted = ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true)
+
 	init(statusCode: Int?, decodingFailed: Bool, isTransient: Bool, rejectedPixelSize: (width: Int, height: Int)? = nil, retryAfter: TimeInterval? = nil, rejectedByteCount: Int? = nil) {
 		self.statusCode = statusCode
 		self.decodingFailed = decodingFailed
