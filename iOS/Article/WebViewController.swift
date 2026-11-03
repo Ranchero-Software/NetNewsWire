@@ -130,15 +130,15 @@ final class WebViewController: UIViewController {
 	}
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
-		reloadArticleImage()
+		reloadArticleImageIfNeeded(note)
 	}
 
 	@objc func avatarDidBecomeAvailable(_ note: Notification) {
-		reloadArticleImage()
+		reloadArticleImageIfNeeded(note)
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		reloadArticleImage()
+		reloadArticleImageIfNeeded(note)
 	}
 
 	@objc func currentArticleThemeDidChangeNotification(_ note: Notification) {
@@ -731,8 +731,11 @@ private extension WebViewController {
 		articleExtractorButtonState = .off
 	}
 
-	func reloadArticleImage() {
-		guard let article = article else { return }
+	/// Each reload draws and encodes the icon again, so icons for other feeds and authors are skipped.
+	func reloadArticleImageIfNeeded(_ notification: Notification) {
+		guard let article, article.mightShowIcon(in: notification) else {
+			return
+		}
 
 		var components = URLComponents()
 		components.scheme = ArticleRenderer.imageIconScheme
