@@ -64,7 +64,7 @@ extension Notification.Name {
 			return nil
 		}
 
-		if let faviconURL = feed.faviconURL {
+		if let faviconURL = usableDeclaredFaviconURL(for: feed) {
 			return favicon(with: faviconURL, homePageURL: feed.homePageURL)
 		}
 		if let homePageURL = faviconHomePageURL(for: feed) {
@@ -106,7 +106,7 @@ extension Notification.Name {
 	/// triggering any download. Both lookups are in-memory, so this is cheap to call per row.
 	/// The home page is the same one `favicon(for:)` saves under.
 	public func cachedFaviconURL(for feed: Feed) -> String? {
-		if let faviconURL = feed.faviconURL {
+		if let faviconURL = usableDeclaredFaviconURL(for: feed) {
 			return faviconURL
 		}
 		if let homePageURL = faviconHomePageURL(for: feed), let faviconURL = ImageDatabase.shared.faviconURL(forHomePageURL: homePageURL) {
@@ -224,6 +224,19 @@ private extension FaviconDownloader {
 
 	func shouldSkipDownloadingFavicon(feed: Feed) -> Bool {
 		SpecialCase.urlStringContainSpecialCase(feed.url, Self.specialCasesToSkip)
+	}
+
+	/// The favicon URL the feed declares, unless it recently failed or isn’t an image,
+	/// in which case the home page’s favicon is used instead.
+	/// Called per row, so it doesn’t log the way `canAttemptDownload` does.
+	func usableDeclaredFaviconURL(for feed: Feed) -> String? {
+		guard let faviconURL = feed.faviconURL, faviconURL.hasPrefix("http://") || faviconURL.hasPrefix("https://"), !ImageDatabase.shared.recentlyFailed(url: faviconURL) else {
+			return nil
+		}
+		if let downloader = singleFaviconDownloaderCache[faviconURL], downloader.lastFailureWasNotAnImage {
+			return nil
+		}
+		return faviconURL
 	}
 
 	/// The home page that favicons are saved under: the feed’s home page, or else the feed URL’s scheme and host.
