@@ -367,6 +367,8 @@ private extension DetailWebViewController {
 		let theme = ArticleThemesManager.shared.currentTheme
 		let rendering: ArticleRenderer.Rendering
 
+		// Column layout shows no thumbnails, so there’s no timeline copy to share.
+		let routesThumbnailImages = AppDefaults.timelineLayout == .standard
 		switch state {
 		case .noSelection:
 			rendering = ArticleRenderer.noSelectionHTML(theme: theme)
@@ -376,10 +378,10 @@ private extension DetailWebViewController {
 			rendering = ArticleRenderer.loadingHTML(theme: theme)
 		case .article(let article, _):
 			detailIconSchemeHandler.currentArticle = article
-			rendering = ArticleRenderer.articleHTML(article: article, theme: theme, routesThumbnailImages: true)
+			rendering = ArticleRenderer.articleHTML(article: article, theme: theme, routesThumbnailImages: routesThumbnailImages)
 		case .extracted(let article, let extractedArticle, _):
 			detailIconSchemeHandler.currentArticle = article
-			rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, theme: theme, routesThumbnailImages: true)
+			rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, theme: theme, routesThumbnailImages: routesThumbnailImages)
 		}
 
 		let substitutions = [
