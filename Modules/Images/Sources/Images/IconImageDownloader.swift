@@ -45,7 +45,7 @@ public enum IconLookup {
 
 	nonisolated static private let logger = Logger(subsystem: Logger.nnwSubsystem, category: "IconImageDownloader")
 
-	private let iconImageCache = NSCache<NSString, IconImage>() // url: icon image
+	private let iconImages = NSCache<NSString, IconImage>() // url: icon image
 	private var urlsInProgress = Set<String>()
 	private var requestsToRetry = [String: Request]() // url: request that failed transiently
 
@@ -64,7 +64,7 @@ public enum IconLookup {
 			Self.logger.debug("Skipping non-http(s) URL: \(url)")
 			return .unavailable
 		}
-		if let iconImage = iconImageCache.object(forKey: url as NSString) {
+		if let iconImage = iconImages.object(forKey: url as NSString) {
 			DownloadedImageCache.shared.imageWasUsed(url, checksForUpdates: true)
 			return .found(iconImage)
 		}
@@ -87,11 +87,11 @@ public enum IconLookup {
 	// MARK: - Notifications
 
 	@objc func handleAppDidGoToBackground(_ notification: Notification) {
-		iconImageCache.removeAllObjects()
+		iconImages.removeAllObjects()
 	}
 
 	@objc func handleLowMemory(_ notification: Notification) {
-		iconImageCache.removeAllObjects()
+		iconImages.removeAllObjects()
 	}
 
 	/// Made again even when not in memory, since icons made from the old copy may be cached elsewhere.
@@ -175,7 +175,7 @@ private extension IconImageDownloader {
 	}
 
 	func cacheIconImage(_ iconImage: IconImage, url: String) {
-		iconImageCache.setObject(iconImage, forKey: url as NSString)
+		iconImages.setObject(iconImage, forKey: url as NSString)
 		NotificationCenter.default.post(name: .iconImageDidBecomeAvailable, object: self, userInfo: [Self.urlKey: url])
 	}
 
