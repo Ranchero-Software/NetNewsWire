@@ -31,16 +31,17 @@ final class DetailIconSchemeHandler: NSObject, WKURLSchemeHandler {
 		}
 
 		let headerFields = ["Cache-Control": "no-cache"]
-		if let response = HTTPURLResponse(url: responseURL, statusCode: 200, httpVersion: nil, headerFields: headerFields) {
-			urlSchemeTask.didReceive(response)
-			urlSchemeTask.didReceive(data)
-			urlSchemeTask.didFinish()
+		guard let response = HTTPURLResponse(url: responseURL, statusCode: 200, httpVersion: nil, headerFields: headerFields) else {
+			urlSchemeTask.didFailWithError(URLError(.unknown))
+			return
 		}
-
+		urlSchemeTask.didReceive(response)
+		urlSchemeTask.didReceive(data)
+		urlSchemeTask.didFinish()
 	}
 
+	/// Every task finishes in `start`, and WebKit raises an exception for any call on a stopped task.
 	func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
-		urlSchemeTask.didFailWithError(URLError(.unknown))
 	}
 
 }
