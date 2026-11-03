@@ -398,6 +398,14 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 		updateQueue.add(self, #selector(reloadVisibleCells))
 	}
 
+	/// Icons arrive in bursts, so the reload is still coalesced.
+	private func queueReloadIfVisibleArticleMightShowIcon(in notification: Notification) {
+		guard isViewLoaded, showIcons, visibleArticles().contains(where: { $0.mightShowIcon(in: notification) }) else {
+			return
+		}
+		queueReloadAvailableCells()
+	}
+
 	@objc private func reloadVisibleCells() {
 		Self.logger.debug("MainTimelineViewController: reloadVisibleCells")
 		guard isViewLoaded, let collectionView, let dataSource else {
@@ -1133,20 +1141,12 @@ private extension MainTimelineViewController {
 
 	@objc func handleFeedIconImageDidChange(_ notification: Notification) {
 		Self.logger.debug("MainTimelineViewController: handleFeedIconImageDidChange")
-
-		guard isViewLoaded else {
-			return
-		}
-		queueReloadAvailableCells()
+		queueReloadIfVisibleArticleMightShowIcon(in: notification)
 	}
 
 	@objc func handleAuthorAvatarImageDidChange(_ notification: Notification) {
 		Self.logger.debug("MainTimelineViewController: handleAuthorAvatarImageDidChange")
-
-		guard isViewLoaded else {
-			return
-		}
-		queueReloadAvailableCells()
+		queueReloadIfVisibleArticleMightShowIcon(in: notification)
 	}
 
 	@objc func timelineIconSizeDidChange(_ note: Notification) {
