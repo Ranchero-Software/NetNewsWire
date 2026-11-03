@@ -235,18 +235,6 @@
         }
       }
     },
-    "mF5-NC-6s2.title" : {
-      "comment" : "Class = \"NSButtonCell\"; title = \"Mark as Read on Open\"; ObjectID = \"mF5-NC-6s2\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Mark as Read on Open"
-          }
-        }
-      }
-    },
     "MQe-Za-N8J.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Article Theme:\"; ObjectID = \"MQe-Za-N8J\";",
       "extractionState" : "extracted_with_value",
@@ -261,6 +249,42 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tema del artículo:"
+          }
+        }
+      }
+    },
+    "Mrk-Md-Cel.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Mark as Read:\"; ObjectID = \"Mrk-Md-Cel\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Mark as Read:"
+          }
+        }
+      }
+    },
+    "Mrk-Md-Ma.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Manually\"; ObjectID = \"Mrk-Md-Ma\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Manually"
+          }
+        }
+      }
+    },
+    "Mrk-Md-On.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"On Open\"; ObjectID = \"Mrk-Md-On\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "On Open"
           }
         }
       }

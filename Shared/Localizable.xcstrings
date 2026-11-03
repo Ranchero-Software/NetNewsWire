@@ -830,7 +830,7 @@
       "comment" : "Local"
     },
     "Manually" : {
-      "comment" : "Manually"
+      "comment" : "Manually\nMark as Read setting"
     },
     "Mark Above as Read" : {
       "comment" : "Command"
@@ -845,7 +845,7 @@
       "comment" : "Mark Article Unread"
     },
     "Mark as Read" : {
-      "comment" : "Command"
+      "comment" : "Command\nMark as Read"
     },
     "Mark As Read" : {
       "comment" : "Mark As Read"
