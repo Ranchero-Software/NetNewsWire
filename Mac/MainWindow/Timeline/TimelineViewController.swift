@@ -1136,10 +1136,6 @@ extension TimelineViewController: NSTableViewDelegate {
 		cell.cellData = TimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcons, thumbnail: thumbnail, showThumbnail: showThumbnail)
 	}
 
-	private func avatarForAuthor(_ author: Author) -> IconImage? {
-		return AuthorAvatarDownloader.shared.image(for: author)
-	}
-
 	private func makeTimelineCellEmpty(_ cell: TimelineTableCellView) {
 		cell.objectValue = nil
 		cell.cellData = TimelineCellData()

@@ -68,7 +68,7 @@ import Images
 				for author in authors {
 					if let avatarURL = author.avatarURL, !authorsSeen.contains(avatarURL) {
 						authorsSeen.insert(avatarURL)
-						_ = AuthorAvatarDownloader.shared.image(for: author)
+						_ = AuthorAvatarDownloader.shared.avatar(for: author)
 					}
 				}
 			}
@@ -175,7 +175,7 @@ private extension IconImageCache {
 	}
 
 	func imageForAuthor(_ author: Author) -> IconImage? {
-		if let iconImage = AuthorAvatarDownloader.shared.cachedImage(for: author) {
+		if let iconImage = AuthorAvatarDownloader.shared.avatar(for: author).iconImage {
 			authorIconImageCache[author] = iconImage
 			return iconImage
 		}

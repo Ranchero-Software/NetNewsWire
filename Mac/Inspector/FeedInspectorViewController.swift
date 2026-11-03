@@ -53,7 +53,7 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 
 	override func viewDidLoad() {
 		updateUI()
-		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .imageDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleIconImageDidBecomeAvailable(_:)), name: .iconImageDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(updateUI), name: .DidUpdateFeedPreferencesFromContextMenu, object: nil)
 	}
 
@@ -114,7 +114,7 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 
 	// MARK: Notifications
 
-	@objc func imageDidBecomeAvailable(_ note: Notification) {
+	@objc func handleIconImageDidBecomeAvailable(_ notification: Notification) {
 		updateImage()
 	}
 }

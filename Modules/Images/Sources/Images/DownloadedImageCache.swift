@@ -20,7 +20,7 @@ extension Notification.Name {
 /// Downloads each image URL once and keeps one copy on disk, shared by icons and thumbnails.
 ///
 /// The copy is the image as downloaded, since the article view shows it at full size.
-/// `ImageDownloader` and `ArticleThumbnailFinder` make their own sizes from it.
+/// `IconImageDownloader` and `ArticleThumbnailFinder` make their own sizes from it.
 /// Requests for a URL that’s already being read or downloaded share that work.
 ///
 /// A copy made from an image, such as a scaled icon, can be stored next to it with a suffix.

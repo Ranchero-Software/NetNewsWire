@@ -22,32 +22,27 @@ extension Notification.Name {
 
 	public static let shared = FeedIconDownloader()
 
-	private let imageDownloader = ImageDownloader.shared
 	private var homePagesWithNoIconURL = Set<String>()
 	private var cache = [Feed: CachedIcon]()
 	private var waitingForFeedURLs = [String: Set<Feed>]()
 	private var feedsWaitingForHTMLMetadata = Set<Feed>()
-	private var iconDecodeTasks = [String: Task<IconImage?, Never>]() // sanitized icon URL: its one decode
 
 	init() {
-		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .imageDidBecomeAvailable, object: imageDownloader)
-		NotificationCenter.default.addObserver(self, selector: #selector(handleImageDownloadDidFail(_:)), name: .imageDownloadDidFail, object: imageDownloader)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleIconImageDidBecomeAvailable(_:)), name: .iconImageDidBecomeAvailable, object: IconImageDownloader.shared)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleIconImageDownloadDidFail(_:)), name: .iconImageDownloadDidFail, object: IconImageDownloader.shared)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleDownloadedImageDidChange(_:)), name: .downloadedImageDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleFeedSettingDidChange(_:)), name: .feedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleHTMLMetadataAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(handleNetworkStatusDidChange(_:)), name: .networkStatusDidChange, object: nil)
 	}
 
 	@objc func handleLowMemory(_ notification: Notification) {
 		cache.removeAll()
-		iconDecodeTasks.removeAll()
 	}
 
 	@objc func handleAppDidGoToBackground(_ notification: Notification) {
 		cache.removeAll()
-		iconDecodeTasks.removeAll()
 	}
 
 	public func icon(for feed: Feed) -> IconImage? {
@@ -124,8 +119,8 @@ extension Notification.Name {
 		return nil
 	}
 
-	@objc func imageDidBecomeAvailable(_ note: Notification) {
-		guard let url = note.userInfo?["url"] as? String, let feeds = waitingForFeedURLs[url] else {
+	@objc func handleIconImageDidBecomeAvailable(_ notification: Notification) {
+		guard let url = notification.userInfo?[IconImageDownloader.urlKey] as? String, let feeds = waitingForFeedURLs[url] else {
 			return
 		}
 		// A single image URL may be shared by multiple feeds.
@@ -137,22 +132,9 @@ extension Notification.Name {
 		}
 	}
 
-	/// Waits for transient failures may have just ended, so waiting icons are requested again.
-	/// Runs after `DownloadedImageCache` ends those waits, which it does on this notification too.
-	@objc func handleNetworkStatusDidChange(_ notification: Notification) {
-		guard NetworkMonitor.shared.isConnected else {
-			return
-		}
-		Task { @MainActor in
-			for (url, feeds) in waitingForFeedURLs where !DownloadedImageCache.shared.isWaitingToRetry(url) {
-				_ = imageData(for: url, feed: feeds.first)
-			}
-		}
-	}
-
 	/// Feeds waiting on the failed URL look again, which falls back to the home page icon.
-	@objc func handleImageDownloadDidFail(_ notification: Notification) {
-		guard let url = notification.userInfo?["url"] as? String, let feeds = waitingForFeedURLs[url] else {
+	@objc func handleIconImageDownloadDidFail(_ notification: Notification) {
+		guard let url = notification.userInfo?[IconImageDownloader.urlKey] as? String, let feeds = waitingForFeedURLs[url] else {
 			return
 		}
 		waitingForFeedURLs[url] = nil
@@ -162,12 +144,11 @@ extension Notification.Name {
 		}
 	}
 
-	/// `ImageDownloader` makes the image again, and feeds using it get their icon again when it’s ready.
+	/// `IconImageDownloader` makes the icon again, and feeds using it get their icon again when it’s ready.
 	@objc func handleDownloadedImageDidChange(_ notification: Notification) {
 		guard let url = notification.userInfo?[DownloadedImageCache.urlKey] as? String else {
 			return
 		}
-		iconDecodeTasks[url] = nil
 		let feeds = cache.keys.filter { Self.iconURLs(for: $0).contains(url) }
 		for feed in feeds {
 			cache[feed] = nil
@@ -327,48 +308,29 @@ private extension FeedIconDownloader {
 		resultBlock(nil, nil)
 	}
 
-	/// `isDefinitive` is false when the image is still downloading — imageDidBecomeAvailable
+	/// `isDefinitive` is false when the icon is still loading — `handleIconImageDidBecomeAvailable`
 	/// re-runs icon(for:) when it arrives.
 	///
 	/// After a transient failure, `isDefinitive` is true, so the caller can fall back to the home page icon,
-	/// and the feed still waits for this image, which replaces the fallback when it arrives.
+	/// and the feed still waits for this icon, which replaces the fallback when it arrives.
 	func icon(forURL url: String, feed: Feed, _ imageResultBlock: @escaping @MainActor (IconImage?, _ isDefinitive: Bool) -> Void) {
-
 		let url = Self.sanitizedIconURL(url)
-
-		if let imageData = imageData(for: url, feed: feed) {
-			let decodeTask = iconDecodeTask(url: url, imageData: imageData)
-			Task { @MainActor in
-				imageResultBlock(await decodeTask.value, true)
+		switch iconImage(for: url, feed: feed) {
+		case .found(let iconImage):
+			imageResultBlock(iconImage, true)
+		case .loading:
+			waitingForFeedURLs[url, default: Set<Feed>()].insert(feed)
+			imageResultBlock(nil, false)
+		case .unavailable:
+			if DownloadedImageCache.shared.isWaitingToRetry(url) {
+				waitingForFeedURLs[url, default: Set<Feed>()].insert(feed)
 			}
-			return
-		}
-
-		let urlIsUnfetchable = !url.hasPrefix("http://") && !url.hasPrefix("https://")
-		if urlIsUnfetchable || ImageDatabase.shared.recentlyFailed(url: url) {
 			imageResultBlock(nil, true)
-			return
 		}
-
-		waitingForFeedURLs[url, default: Set<Feed>()].insert(feed)
-		imageResultBlock(nil, DownloadedImageCache.shared.isWaitingToRetry(url))
 	}
 
-	/// Feeds that share an icon URL share one decode and one bitmap.
-	func iconDecodeTask(url: String, imageData: Data) -> Task<IconImage?, Never> {
-		if let decodeTask = iconDecodeTasks[url] {
-			return decodeTask
-		}
-		let decodeTask = Task {
-			await IconImage.decodedIconImage(imageData)
-		}
-		iconDecodeTasks[url] = decodeTask
-		return decodeTask
-	}
-
-	/// Returns the data if in memory, else requests it. `imageDidBecomeAvailable` follows when it’s ready.
-	func imageData(for url: String, feed: Feed?) -> Data? {
-		imageDownloader.image(for: url, activityOwner: .feedImageDownloader, activityKind: .downloadFeedImage(feedURL: url), activityDetail: feed?.nameForDisplay)
+	func iconImage(for url: String, feed: Feed) -> IconLookup {
+		IconImageDownloader.shared.iconImage(for: url, activityOwner: .feedImageDownloader, activityKind: .downloadFeedImage(feedURL: url), activityDetail: feed.nameForDisplay)
 	}
 
 	/// A feed showing its home page icon while it waits for its own requests it again once the retry wait ends.
@@ -380,7 +342,7 @@ private extension FeedIconDownloader {
 		guard waitingForFeedURLs[url]?.contains(feed) == true, !DownloadedImageCache.shared.isWaitingToRetry(url) else {
 			return
 		}
-		_ = imageData(for: url, feed: feed)
+		_ = iconImage(for: url, feed: feed)
 	}
 
 	func postFeedIconDidBecomeAvailableNotification(_ feed: Feed) {

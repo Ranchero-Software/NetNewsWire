@@ -18,98 +18,33 @@ extension Notification.Name {
 @MainActor public final class AuthorAvatarDownloader {
 	public static let shared = AuthorAvatarDownloader()
 
-	private let imageDownloader = ImageDownloader.shared
-	private var cache = [String: IconImage]() // avatarURL: RSImage
-	private var waitingForAvatarURLs = Set<String>()
+	private var avatarURLs = Set<String>() // Every avatar URL looked up, so a changed image is posted too
 
 	init() {
-		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .imageDidBecomeAvailable, object: imageDownloader)
-		NotificationCenter.default.addObserver(self, selector: #selector(handleDownloadedImageDidChange(_:)), name: .downloadedImageDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleIconImageDidBecomeAvailable(_:)), name: .iconImageDidBecomeAvailable, object: IconImageDownloader.shared)
 	}
 
-	@objc func handleLowMemory(_ notification: Notification) {
-		cache.removeAll()
-	}
-
-	@objc func handleAppDidGoToBackground(_ notification: Notification) {
-		cache.removeAll()
-	}
-
-	public func image(for author: Author) -> IconImage? {
-
+	public func avatar(for author: Author) -> IconLookup {
 		guard let avatarURL = author.avatarURL else {
-			return nil
+			return .unavailable
 		}
-
-		if let cachedImage = cache[avatarURL] {
-			return cachedImage
-		}
-
-		let kind = ActivityKind.downloadAvatar(avatarURL: avatarURL)
-		if let imageData = imageDownloader.image(for: avatarURL, activityOwner: .avatarDownloader, activityKind: kind, activityDetail: author.name) {
-			scaleAndCacheImageData(imageData, avatarURL)
-		} else {
-			waitingForAvatarURLs.insert(avatarURL)
-		}
-
-		return nil
+		avatarURLs.insert(avatarURL)
+		return IconImageDownloader.shared.iconImage(for: avatarURL, activityOwner: .avatarDownloader, activityKind: .downloadAvatar(avatarURL: avatarURL), activityDetail: author.name)
 	}
 
-	public func cachedImage(for author: Author) -> IconImage? {
-		guard let avatarURL = author.avatarURL else {
-			return nil
-		}
-		return cache[avatarURL]
-	}
-
-	@objc func imageDidBecomeAvailable(_ note: Notification) {
-		guard let avatarURL = note.userInfo?["url"] as? String else {
+	@objc func handleIconImageDidBecomeAvailable(_ notification: Notification) {
+		guard let avatarURL = notification.userInfo?[IconImageDownloader.urlKey] as? String, avatarURLs.contains(avatarURL) else {
 			return
 		}
-		guard waitingForAvatarURLs.contains(avatarURL) else {
-			return
-		}
-		guard let imageData = imageDownloader.image(for: avatarURL) else {
-			return
-		}
-		scaleAndCacheImageData(imageData, avatarURL)
-	}
-
-	/// `ImageDownloader` makes the image again, and the avatar is replaced when it’s ready.
-	@objc func handleDownloadedImageDidChange(_ notification: Notification) {
-		guard let avatarURL = notification.userInfo?[DownloadedImageCache.urlKey] as? String, cache[avatarURL] != nil else {
-			return
-		}
-		cache[avatarURL] = nil
-		waitingForAvatarURLs.insert(avatarURL)
+		postAvatarDidBecomeAvailableNotification(avatarURL)
 	}
 }
 
 @MainActor private extension AuthorAvatarDownloader {
 
-	func scaleAndCacheImageData(_ imageData: Data, _ avatarURL: String) {
-		Task { @MainActor in
-			if let iconImage = await IconImage.decodedIconImage(imageData) {
-				handleImageDidBecomeAvailable(avatarURL, iconImage)
-			}
-		}
-	}
-
-	func handleImageDidBecomeAvailable(_ avatarURL: String, _ iconImage: IconImage) {
-		if cache[avatarURL] == nil {
-			cache[avatarURL] = iconImage
-		}
-		if waitingForAvatarURLs.contains(avatarURL) {
-			waitingForAvatarURLs.remove(avatarURL)
-			postAvatarDidBecomeAvailableNotification(avatarURL)
-		}
-	}
-
 	func postAvatarDidBecomeAvailableNotification(_ avatarURL: String) {
 		DispatchQueue.main.async {
- 			NotificationCenter.default.post(name: .AvatarDidBecomeAvailable, object: self, userInfo: ["url": avatarURL])
+			NotificationCenter.default.post(name: .AvatarDidBecomeAvailable, object: self, userInfo: ["url": avatarURL])
 		}
 	}
 }
