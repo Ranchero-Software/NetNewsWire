@@ -52,6 +52,8 @@ final class ArticleViewController: UIViewController {
 		return button
 	}()
 
+	private let fullScreenTapZone = UIView()
+
 	weak var coordinator: SceneCoordinator!
 
 	private let poppableDelegate = PoppableGestureRecognizerDelegate()
@@ -132,13 +134,19 @@ final class ArticleViewController: UIViewController {
 		navigationItem.scrollEdgeAppearance = appearance
 		navigationItem.compactAppearance = appearance
 
-		let fullScreenTapZone = UIView()
 		NSLayoutConstraint.activate([
 			fullScreenTapZone.widthAnchor.constraint(equalToConstant: 150),
 			fullScreenTapZone.heightAnchor.constraint(equalToConstant: 44)
 		])
 		fullScreenTapZone.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapNavigationBar)))
-		navigationItem.titleView = fullScreenTapZone
+		updateFullScreenTapZone()
+		#if compiler(>=6.4.2)
+		if #available(iOS 27.1, *) {
+			registerForTraitChanges(UITraitCollection.systemTraitsAffectingVerticalBarEdge) { (self: Self, _) in
+				self.updateFullScreenTapZone()
+			}
+		}
+		#endif
 
 		articleExtractorButton.addTarget(self, action: #selector(toggleArticleExtractor(_:)), for: .touchUpInside)
 		let articleExtractorBarButtonItem = UIBarButtonItem(customView: articleExtractorButton)
@@ -335,6 +343,19 @@ final class ArticleViewController: UIViewController {
 	}
 
 	// MARK: Actions
+
+	/// The tap zone lives in the navigation bar’s title view. When the system shows a vertical bar
+	/// (iPhone Duo), the bar buttons move into it and the tap zone would be the only thing keeping
+	/// an empty navigation bar across the top of the article, so it is left out.
+	private func updateFullScreenTapZone() {
+		#if compiler(>=6.4.2)
+		if #available(iOS 27.1, *), traitCollection.verticalBarEdge != .unspecified {
+			navigationItem.titleView = nil
+			return
+		}
+		#endif
+		navigationItem.titleView = fullScreenTapZone
+	}
 
 	@objc func didTapNavigationBar() {
 		currentWebViewController?.hideBars()
