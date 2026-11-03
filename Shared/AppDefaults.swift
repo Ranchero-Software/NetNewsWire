@@ -110,7 +110,7 @@ enum AppDefaults {
 
 	static var timelineThumbnailsDisplay: TimelineThumbnailsDisplay {
 		get {
-			TimelineThumbnailsDisplay(rawValue: UserDefaults.standard.integer(forKey: Key.timelineThumbnailsDisplay)) ?? .small
+			TimelineThumbnailsDisplay(rawValue: UserDefaults.standard.integer(forKey: Key.timelineThumbnailsDisplay)) ?? .none
 		}
 		set {
 			UserDefaults.standard.set(newValue.rawValue, forKey: Key.timelineThumbnailsDisplay)

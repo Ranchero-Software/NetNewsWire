@@ -14,9 +14,9 @@ extension Notification.Name {
 
 /// How article thumbnails are shown in the timeline.
 enum TimelineThumbnailsDisplay: Int, CaseIterable, CustomStringConvertible {
-	case small = 0 // To the right of the text
-	case large = 1 // Below the text, spanning the cell
-	case none = 2
+	case none = 0 // Also what integer(forKey:) returns for a missing value
+	case small = 1 // To the right of the text
+	case large = 2 // Below the text, spanning the cell
 
 	var description: String {
 		switch self {
