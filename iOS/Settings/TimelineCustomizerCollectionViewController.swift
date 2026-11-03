@@ -258,12 +258,15 @@ private extension TimelineCustomizerCollectionViewController {
 	}
 
 	private func previewCell(section: Section, indexPath: IndexPath) -> MainTimelineCell {
-		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainTimelineCell.reuseIdentifier, for: indexPath) as! MainTimelineCell
+		guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainTimelineCell.reuseIdentifier, for: indexPath) as? MainTimelineCell else {
+			assertionFailure("Expected MainTimelineCell")
+			return MainTimelineCell()
+		}
 		cell.cellData = MainTimelineCellData(article: previewArticle,
 											 showFeedName: .byline,
 											 feedName: "The Fellowship of the Ring",
 											 byline: "J. R. R. Tolkien",
-											 iconImage: IconImage(Assets.Images.nnwFeedIcon),
+											 iconImage: IconImage.nnwFeedIcon,
 											 showIcon: section.showsFeedIcon,
 											 numberOfLines: AppDefaults.timelineNumberOfLines,
 											 iconSize: AppDefaults.timelineIconSize,
