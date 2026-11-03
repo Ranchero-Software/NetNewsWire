@@ -85,6 +85,10 @@ private final class ImageParserDelegate: HTMLScannerDelegate {
 		// CSS overrides the attributes.
 		let width = pixelDimension(style["width"]) ?? pixelDimension(attributes["width"])
 		let height = pixelDimension(style["height"]) ?? pixelDimension(attributes["height"])
+		// Before resolving any URLs, since tracking pixels are common.
+		guard SignificantImageFilter.hasSignificantDimensions(width: width, height: height) else {
+			return
+		}
 		let htmlClass = attributes["class"]
 		for urlString in imageURLStrings(attributes) {
 			if SignificantImageFilter.isSignificant(urlString: urlString, width: width, height: height, htmlClass: htmlClass, enclosingLinkURLString: enclosingLinkURLString) {
@@ -108,7 +112,8 @@ private final class ImageParserDelegate: HTMLScannerDelegate {
 
 	// MARK: Helpers
 
-	private func imageURLStrings(_ attributes: HTMLAttributes) -> [String] {
+	/// Resolved as needed, since usually the first is used.
+	private func imageURLStrings(_ attributes: HTMLAttributes) -> some Sequence<String> {
 		var sources = Self.lazySrcsetAttributeNames.compactMap { attributes[$0] }.compactMap(preferredSrcsetCandidate)
 		sources += Self.lazySourceAttributeNames.compactMap { attributes[$0] }
 		if let srcset = attributes["srcset"], let candidate = preferredSrcsetCandidate(srcset) {
@@ -117,7 +122,7 @@ private final class ImageParserDelegate: HTMLScannerDelegate {
 		if let src = attributes["src"] {
 			sources.append(src)
 		}
-		return sources.compactMap(resolvedURLString)
+		return sources.lazy.compactMap { self.resolvedURLString($0) }
 	}
 
 	private func resolvedURLString(_ urlString: String?) -> String? {
