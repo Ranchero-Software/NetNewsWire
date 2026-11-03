@@ -27,12 +27,41 @@ import RSWeb
 		let imageDatabase = ImageDatabase(databasePath: databasePath, legacyDatabasePath: legacyDatabasePath)
 
 		#expect(imageDatabase.faviconURL(forHomePageURL: "https://example.com/") == "https://example.com/favicon.ico")
-		#expect(imageDatabase.iconURL(forFeedURL: "https://example.com/feed.xml") == "https://example.com/icon.png")
 		#expect(imageDatabase.recentlyFailed(url: "https://example.com/missing.png"))
 		#expect(!FileManager.default.fileExists(atPath: legacyDatabasePath))
 
 		// Waits for the cleanup init queues, which would otherwise run after the folder is deleted.
 		await imageDatabase.vacuum()
+	}
+
+	@Test func homePageIconsAreSavedAndReloaded() async throws {
+		let folder = FileManager.default.temporaryDirectory.appendingPathComponent("ImageDatabaseTests-\(UUID().uuidString)")
+		try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+		defer {
+			try? FileManager.default.removeItem(at: folder)
+		}
+		let databasePath = folder.appendingPathComponent("Images.db").path
+		let homePageURL = "https://daringfireball.net/"
+		let iconURL = "https://daringfireball.net/graphics/apple-touch-icon.png"
+		let homePageURLWithNoIcon = "https://inessential.com/"
+
+		let imageDatabase = ImageDatabase(databasePath: databasePath)
+		imageDatabase.saveHomePageIcon(homePageURL: homePageURL, iconURL: iconURL)
+		imageDatabase.saveHomePageIcon(homePageURL: homePageURLWithNoIcon, iconURL: nil)
+
+		// Waits for the saves, so the database opened below sees them.
+		await imageDatabase.vacuum()
+
+		let reopenedImageDatabase = ImageDatabase(databasePath: databasePath)
+		for database in [imageDatabase, reopenedImageDatabase] {
+			#expect(database.homePageIconURL(forHomePageURL: homePageURL) == iconURL)
+			#expect(!database.homePageHasNoIcon(homePageURL))
+			#expect(database.homePageIconURL(forHomePageURL: homePageURLWithNoIcon) == nil)
+			#expect(database.homePageHasNoIcon(homePageURLWithNoIcon))
+		}
+
+		// Waits for the cleanup init queues, which would otherwise run after the folder is deleted.
+		await reopenedImageDatabase.vacuum()
 	}
 
 	@Test func failedUsageQueryReturnsNil() {
@@ -92,11 +121,9 @@ private extension ImageDatabaseTests {
 		database.executeStatements("""
 		CREATE TABLE downloadFailure (url TEXT PRIMARY KEY NOT NULL, statusCode INTEGER, lastChecked REAL NOT NULL);
 		CREATE TABLE homePageFavicon (homePageURL TEXT PRIMARY KEY NOT NULL, faviconURL TEXT, lastChecked REAL NOT NULL);
-		CREATE TABLE feedIconURL (feedURL TEXT PRIMARY KEY NOT NULL, iconURL TEXT NOT NULL, lastChecked REAL NOT NULL);
 		""")
 		database.executeUpdate("INSERT INTO downloadFailure (url, statusCode, lastChecked) VALUES (?, ?, ?)", withArgumentsIn: ["https://example.com/missing.png", 404, lastChecked])
 		database.executeUpdate("INSERT INTO homePageFavicon (homePageURL, faviconURL, lastChecked) VALUES (?, ?, ?)", withArgumentsIn: ["https://example.com/", "https://example.com/favicon.ico", lastChecked])
-		database.executeUpdate("INSERT INTO feedIconURL (feedURL, iconURL, lastChecked) VALUES (?, ?, ?)", withArgumentsIn: ["https://example.com/feed.xml", "https://example.com/icon.png", lastChecked])
 		database.close()
 	}
 }

@@ -27,14 +27,15 @@ import RSParser
 
 	private var homePageToFaviconURL = [String: String]()
 	private var noFaviconDates = [String: Date]() // homePageURL: when no favicon was found
-	private var feedURLToIconURL = [String: String]()
+	private var homePageToIconURL = [String: String]()
+	private var noIconDates = [String: Date]() // homePageURL: when no icon was found
 	private var failureDates = [String: Date]()
 	private var urlsUnsuitableForThumbnails = Set<String>()
 
 	private static let tableCreationStatements = """
 	CREATE TABLE IF NOT EXISTS downloadFailure (url TEXT PRIMARY KEY NOT NULL, lastChecked REAL NOT NULL);
 	CREATE TABLE IF NOT EXISTS homePageFavicon (homePageURL TEXT PRIMARY KEY NOT NULL, faviconURL TEXT, lastChecked REAL NOT NULL);
-	CREATE TABLE IF NOT EXISTS feedIconURL (feedURL TEXT PRIMARY KEY NOT NULL, iconURL TEXT NOT NULL);
+	CREATE TABLE IF NOT EXISTS homePageIcon (homePageURL TEXT PRIMARY KEY NOT NULL, iconURL TEXT, lastChecked REAL NOT NULL);
 	CREATE TABLE IF NOT EXISTS downloadedImage (url TEXT PRIMARY KEY NOT NULL, pixelWidth INTEGER, pixelHeight INTEGER, lastAccessed REAL NOT NULL, etag TEXT, lastModified TEXT, nextCheck REAL NOT NULL, isIcon INTEGER NOT NULL DEFAULT 0);
 	"""
 
@@ -44,8 +45,7 @@ import RSParser
 	/// Tables and columns imported from ImageMetadata.db, which shipped before Images.db replaced it.
 	nonisolated private static let legacyTableColumns = [
 		(table: "downloadFailure", columns: "url, lastChecked"),
-		(table: "homePageFavicon", columns: "homePageURL, faviconURL, lastChecked"),
-		(table: "feedIconURL", columns: "feedURL, iconURL")
+		(table: "homePageFavicon", columns: "homePageURL, faviconURL, lastChecked")
 	]
 
 	private convenience init() {
@@ -70,6 +70,8 @@ import RSParser
 
 		let failureCutoff = Date().timeIntervalSince1970 - TimeInterval(days: Self.failureRetryDays)
 		queue.runInDatabase { database in
+			// Replaced by homePageIcon. Its home page icon URLs are found again from the home pages’ metadata.
+			database.executeStatements("DROP TABLE IF EXISTS feedIconURL;")
 			DownloadFailureTable.removeExpired(olderThan: failureCutoff, database: database)
 			database.checkpoint()
 		}
@@ -113,16 +115,30 @@ import RSParser
 		}
 	}
 
-	// MARK: - FeedIconURL
+	// MARK: - HomePageIcon
 
-	public func iconURL(forFeedURL feedURL: String) -> String? {
-		feedURLToIconURL[feedURL]
+	public func homePageIconURL(forHomePageURL homePageURL: String) -> String? {
+		homePageToIconURL[homePageURL]
 	}
 
-	public func saveFeedIconURL(feedURL: String, iconURL: String) {
-		feedURLToIconURL[feedURL] = iconURL
+	/// A no-icon verdict expires after `failureRetryDays`, so the home page gets checked again.
+	public func homePageHasNoIcon(_ homePageURL: String) -> Bool {
+		guard let noIconDate = noIconDates[homePageURL] else {
+			return false
+		}
+		return Date().timeIntervalSince(noIconDate) < TimeInterval(days: Self.failureRetryDays)
+	}
+
+	public func saveHomePageIcon(homePageURL: String, iconURL: String?) {
+		if let iconURL {
+			homePageToIconURL[homePageURL] = iconURL
+			noIconDates.removeValue(forKey: homePageURL)
+		} else {
+			noIconDates[homePageURL] = Date()
+			homePageToIconURL.removeValue(forKey: homePageURL)
+		}
 		queue.runInDatabase { database in
-			FeedIconURLTable.save(feedURL: feedURL, iconURL: iconURL, database: database)
+			HomePageIconTable.save(homePageURL: homePageURL, iconURL: iconURL, database: database)
 		}
 	}
 
@@ -255,11 +271,11 @@ private extension ImageDatabase {
 
 	func loadCachesFromDatabase() {
 		nonisolated(unsafe) var homePageRecords = [HomePageFaviconRecord]()
-		nonisolated(unsafe) var feedIcons = [String: String]()
+		nonisolated(unsafe) var homePageIconRecords = [HomePageIconRecord]()
 		nonisolated(unsafe) var failures = [String: Date]()
 		nonisolated(unsafe) var pixelSizes = [(url: String, pixelSize: (width: Int, height: Int)?)]()
 		nonisolated(unsafe) var homePageDuration: TimeInterval = 0
-		nonisolated(unsafe) var feedIconDuration: TimeInterval = 0
+		nonisolated(unsafe) var homePageIconDuration: TimeInterval = 0
 		nonisolated(unsafe) var failureDuration: TimeInterval = 0
 		nonisolated(unsafe) var pixelSizeDuration: TimeInterval = 0
 
@@ -270,8 +286,8 @@ private extension ImageDatabase {
 			homePageDuration = Date().timeIntervalSince(stepStart)
 
 			stepStart = Date()
-			feedIcons = FeedIconURLTable.fetchAll(database: database)
-			feedIconDuration = Date().timeIntervalSince(stepStart)
+			homePageIconRecords = HomePageIconTable.fetchAll(database: database)
+			homePageIconDuration = Date().timeIntervalSince(stepStart)
 
 			stepStart = Date()
 			failures = DownloadFailureTable.fetchAll(database: database)
@@ -290,10 +306,16 @@ private extension ImageDatabase {
 				noFaviconDates[record.homePageURL] = record.lastChecked
 			}
 		}
-		feedURLToIconURL = feedIcons
+		for record in homePageIconRecords {
+			if let iconURL = record.iconURL {
+				homePageToIconURL[record.homePageURL] = iconURL
+			} else {
+				noIconDates[record.homePageURL] = record.lastChecked
+			}
+		}
 		failureDates = failures
 		urlsUnsuitableForThumbnails = Set(pixelSizes.filter { !Self.isSuitableForThumbnail($0.pixelSize) }.map(\.url))
 
-		Self.logger.info("Initial fetches: homePageFavicon \(homePageRecords.count) rows in \(homePageDuration) seconds, feedIconURL \(feedIcons.count) rows in \(feedIconDuration) seconds, downloadFailure \(failures.count) rows in \(failureDuration) seconds, downloadedImage \(pixelSizes.count) rows in \(pixelSizeDuration) seconds, total \(totalDuration) seconds")
+		Self.logger.info("Initial fetches: homePageFavicon \(homePageRecords.count) rows in \(homePageDuration) seconds, homePageIcon \(homePageIconRecords.count) rows in \(homePageIconDuration) seconds, downloadFailure \(failures.count) rows in \(failureDuration) seconds, downloadedImage \(pixelSizes.count) rows in \(pixelSizeDuration) seconds, total \(totalDuration) seconds")
 	}
 }

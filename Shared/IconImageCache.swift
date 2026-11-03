@@ -12,6 +12,11 @@ import Articles
 import RSCore
 import Images
 
+extension Notification.Name {
+	/// Posted when a feed’s feed icon or home page icon loads, fails, or changes. userInfo key: `UserInfoKey.feed`.
+	static let feedIconDidBecomeAvailable = Notification.Name("FeedIconDidBecomeAvailable")
+}
+
 @MainActor final class IconImageCache {
 
 	static var shared = IconImageCache()
@@ -24,10 +29,28 @@ import Images
 
 	init() {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleFeedIconDidChange(_:)), name: .feedIconDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleHomePageIconDidChange(_:)), name: .homePageIconDidChange, object: nil)
 	}
 
 	@objc func handleLowMemory(_ notification: Notification) {
 		emptyCache()
+	}
+
+	@objc func handleFeedIconDidChange(_ notification: Notification) {
+		guard let feed = notification.userInfo?[FeedIconDownloader.feedKey] as? Feed else {
+			return
+		}
+		postFeedIconDidBecomeAvailable(feed)
+	}
+
+	@objc func handleHomePageIconDidChange(_ notification: Notification) {
+		guard let feeds = notification.userInfo?[HomePageIconDownloader.feedsKey] as? Set<Feed> else {
+			return
+		}
+		for feed in feeds {
+			postFeedIconDidBecomeAvailable(feed)
+		}
 	}
 
 	func imageFor(_ feedID: SidebarItemIdentifier) -> IconImage? {
@@ -75,7 +98,7 @@ import Images
 
 			if let feed = article.feed, let feedID = feed.sidebarItemID, !feedsSeen.contains(feedID) {
 				feedsSeen.insert(feedID)
-				_ = FeedIconDownloader.shared.icon(for: feed)
+				_ = feedOrHomePageIcon(feed)
 				_ = FaviconDownloader.shared.faviconAsIcon(for: feed)
 			}
 		}
@@ -83,7 +106,7 @@ import Images
 
 	func prefetchImagesForFeeds(_ feeds: [Feed]) {
 		for feed in feeds {
-			_ = FeedIconDownloader.shared.icon(for: feed)
+			_ = feedOrHomePageIcon(feed)
 			_ = FaviconDownloader.shared.faviconAsIcon(for: feed)
 		}
 	}
@@ -118,6 +141,20 @@ private extension IconImageCache {
 		return feed.url.hasPrefix("https://ranchero.com/downloads/netnewswire")
 	}
 
+	/// Precedence: feed icon, then home page icon.
+	/// A feed icon that’s loading keeps the home page icon from being looked up.
+	func feedOrHomePageIcon(_ feed: Feed) -> IconLookup {
+		let feedIcon = FeedIconDownloader.shared.feedIcon(for: feed)
+		guard case .unavailable = feedIcon else {
+			return feedIcon
+		}
+		return HomePageIconDownloader.shared.homePageIcon(for: feed)
+	}
+
+	func postFeedIconDidBecomeAvailable(_ feed: Feed) {
+		NotificationCenter.default.post(name: .feedIconDidBecomeAvailable, object: self, userInfo: [UserInfoKey.feed: feed])
+	}
+
 	func imageForSmartFeed(_ smartFeed: PseudoFeed, _ feedID: SidebarItemIdentifier) -> IconImage? {
 		if let iconImage = smartFeedIconImageCache[feedID] {
 			return iconImage
@@ -139,7 +176,7 @@ private extension IconImageCache {
 		// keep the last known icons across the downloaders’ low-memory and background flushes.
 		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5376>
 		// A miss requests the feed icon, so it comes back after a flush without waiting for a prefetch.
-		if let iconImage = FeedIconDownloader.shared.icon(for: feed) {
+		if let iconImage = feedOrHomePageIcon(feed).iconImage {
 			feedIconImageCache[feedID] = iconImage
 			return iconImage
 		}

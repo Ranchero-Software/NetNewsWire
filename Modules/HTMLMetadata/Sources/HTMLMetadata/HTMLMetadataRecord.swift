@@ -101,7 +101,7 @@ public extension HTMLMetadataRecord {
 
 public extension HTMLMetadataRecord {
 
-	func bestWebsiteIconURL() -> String? {
+	func bestHomePageIconURL() -> String? {
 		if let appleTouchIcon = largestAppleTouchIcon() {
 			return appleTouchIcon
 		}
