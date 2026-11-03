@@ -150,7 +150,11 @@ extension Notification.Name {
 	}
 
 	func saveDerivedImageData(_ data: Data, for url: String, suffix: String) async {
-		try? await Self.saveToDisk(diskCache, key: Self.derivedDiskKey(url, suffix: suffix), data: data)
+		do {
+			try await Self.saveToDisk(diskCache, key: Self.derivedDiskKey(url, suffix: suffix), data: data)
+		} catch {
+			Self.logger.error("Couldn’t write derived image for \(url): \(error.localizedDescription)")
+		}
 	}
 
 	/// At most once a day per image: saves the access date, which orders images for removal,
