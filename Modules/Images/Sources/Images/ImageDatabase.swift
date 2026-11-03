@@ -274,30 +274,13 @@ private extension ImageDatabase {
 		nonisolated(unsafe) var homePageIconRecords = [HomePageIconRecord]()
 		nonisolated(unsafe) var failures = [String: Date]()
 		nonisolated(unsafe) var pixelSizes = [(url: String, pixelSize: (width: Int, height: Int)?)]()
-		nonisolated(unsafe) var homePageDuration: TimeInterval = 0
-		nonisolated(unsafe) var homePageIconDuration: TimeInterval = 0
-		nonisolated(unsafe) var failureDuration: TimeInterval = 0
-		nonisolated(unsafe) var pixelSizeDuration: TimeInterval = 0
 
-		let totalStart = Date()
 		queue.runInDatabaseSync { database in
-			var stepStart = Date()
 			homePageRecords = HomePageFaviconTable.fetchAll(database: database)
-			homePageDuration = Date().timeIntervalSince(stepStart)
-
-			stepStart = Date()
 			homePageIconRecords = HomePageIconTable.fetchAll(database: database)
-			homePageIconDuration = Date().timeIntervalSince(stepStart)
-
-			stepStart = Date()
 			failures = DownloadFailureTable.fetchAll(database: database)
-			failureDuration = Date().timeIntervalSince(stepStart)
-
-			stepStart = Date()
 			pixelSizes = DownloadedImageTable.fetchPixelSizes(database: database)
-			pixelSizeDuration = Date().timeIntervalSince(stepStart)
 		}
-		let totalDuration = Date().timeIntervalSince(totalStart)
 
 		for record in homePageRecords {
 			if let faviconURL = record.faviconURL {
@@ -315,7 +298,5 @@ private extension ImageDatabase {
 		}
 		failureDates = failures
 		urlsUnsuitableForThumbnails = Set(pixelSizes.filter { !Self.isSuitableForThumbnail($0.pixelSize) }.map(\.url))
-
-		Self.logger.info("Initial fetches: homePageFavicon \(homePageRecords.count) rows in \(homePageDuration) seconds, homePageIcon \(homePageIconRecords.count) rows in \(homePageIconDuration) seconds, downloadFailure \(failures.count) rows in \(failureDuration) seconds, downloadedImage \(pixelSizes.count) rows in \(pixelSizeDuration) seconds, total \(totalDuration) seconds")
 	}
 }
