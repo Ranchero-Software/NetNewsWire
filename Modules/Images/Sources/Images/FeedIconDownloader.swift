@@ -27,6 +27,7 @@ extension Notification.Name {
 	private var cache = [Feed: CachedIcon]()
 	private var waitingForFeedURLs = [String: Set<Feed>]()
 	private var feedsWaitingForHTMLMetadata = Set<Feed>()
+	private var iconDecodeTasks = [String: Task<IconImage?, Never>]() // sanitized icon URL: its one decode
 
 	init() {
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .imageDidBecomeAvailable, object: imageDownloader)
@@ -41,10 +42,12 @@ extension Notification.Name {
 
 	@objc func handleLowMemory(_ notification: Notification) {
 		cache.removeAll()
+		iconDecodeTasks.removeAll()
 	}
 
 	@objc func handleAppDidGoToBackground(_ notification: Notification) {
 		cache.removeAll()
+		iconDecodeTasks.removeAll()
 	}
 
 	public func icon(for feed: Feed) -> IconImage? {
@@ -164,6 +167,7 @@ extension Notification.Name {
 		guard let url = notification.userInfo?[DownloadedImageCache.urlKey] as? String else {
 			return
 		}
+		iconDecodeTasks[url] = nil
 		let feeds = cache.keys.filter { Self.iconURLs(for: $0).contains(url) }
 		for feed in feeds {
 			cache[feed] = nil
@@ -333,8 +337,9 @@ private extension FeedIconDownloader {
 		let url = Self.sanitizedIconURL(url)
 
 		if let imageData = imageData(for: url, feed: feed) {
+			let decodeTask = iconDecodeTask(url: url, imageData: imageData)
 			Task { @MainActor in
-				imageResultBlock(await IconImage.decodedIconImage(imageData), true)
+				imageResultBlock(await decodeTask.value, true)
 			}
 			return
 		}
@@ -347,6 +352,18 @@ private extension FeedIconDownloader {
 
 		waitingForFeedURLs[url, default: Set<Feed>()].insert(feed)
 		imageResultBlock(nil, DownloadedImageCache.shared.isWaitingToRetry(url))
+	}
+
+	/// Feeds that share an icon URL share one decode and one bitmap.
+	func iconDecodeTask(url: String, imageData: Data) -> Task<IconImage?, Never> {
+		if let decodeTask = iconDecodeTasks[url] {
+			return decodeTask
+		}
+		let decodeTask = Task {
+			await IconImage.decodedIconImage(imageData)
+		}
+		iconDecodeTasks[url] = decodeTask
+		return decodeTask
 	}
 
 	/// Returns the data if in memory, else requests it. `imageDidBecomeAvailable` follows when it’s ready.
