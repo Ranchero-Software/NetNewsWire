@@ -176,6 +176,8 @@ extension Notification.Name {
 			return
 		}
 		if key == .iconURL || key == .homePageURL {
+			// `IconImageCache` keeps showing the old icon until the new one is ready.
+			cache[feed] = nil
 			_ = icon(for: feed)
 		}
 	}

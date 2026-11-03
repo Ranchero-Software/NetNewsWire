@@ -45,6 +45,7 @@ extension Notification.Name {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleDownloadedImageDidChange(_:)), name: .downloadedImageDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleNetworkStatusDidChange(_:)), name: .networkStatusDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleFeedSettingDidChange(_:)), name: .feedSettingDidChange, object: nil)
 	}
 
 	// MARK: - API
@@ -207,6 +208,20 @@ extension Notification.Name {
 			for homePageURL in homePageURLs {
 				searchForFavicon(homePageURL: homePageURL)
 			}
+		}
+	}
+
+	/// A favicon already in memory posts nothing when it loads, so it’s posted here.
+	@objc func handleFeedSettingDidChange(_ notification: Notification) {
+		guard let feed = notification.object as? Feed, let key = notification.userInfo?[Feed.SettingUserInfoKey] as? Feed.SettingKey else {
+			return
+		}
+		guard key == .faviconURL || key == .homePageURL else {
+			return
+		}
+		cache[feed] = nil
+		if faviconAsIcon(for: feed) != nil, let faviconURL = cachedFaviconURL(for: feed) {
+			postFaviconDidBecomeAvailableNotification(faviconURL)
 		}
 	}
 
