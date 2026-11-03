@@ -158,7 +158,9 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 			articleRowMap = [String: [Int]]()
 			tableView.reloadData()
-			IconImageCache.shared.prefetchImagesForArticles(articles)
+			if showIcons {
+				IconImageCache.shared.prefetchImagesForArticles(articles)
+			}
 		}
 	}
 
@@ -1110,7 +1112,7 @@ extension TimelineViewController: NSTableViewDelegate {
 
 	private func configureTimelineCell(_ cell: TimelineTableCellView, article: Article) {
 		cell.objectValue = article
-		let iconImage = article.iconImage()
+		let iconImage = showIcons ? article.iconImage() : nil
 		var thumbnail: NSImage?
 		var showThumbnail = false
 		if let thumbnailMode, let thumbnailURL = ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) {

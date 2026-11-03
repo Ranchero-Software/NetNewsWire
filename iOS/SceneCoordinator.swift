@@ -2478,7 +2478,9 @@ private extension SceneCoordinator {
 		}
 
 		updateShowNamesAndIcons()
-		IconImageCache.shared.prefetchImagesForArticles(articles)
+		if showIcons {
+			IconImageCache.shared.prefetchImagesForArticles(articles)
+		}
 		updateUnreadCount()
 		mainTimelineViewController?.reloadArticles(animated: animated)
 	}
