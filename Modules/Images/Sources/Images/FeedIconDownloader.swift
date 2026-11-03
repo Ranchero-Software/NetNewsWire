@@ -137,6 +137,9 @@ extension Notification.Name {
 	/// Waits for transient failures may have just ended, so waiting icons are requested again.
 	/// Runs after `DownloadedImageCache` ends those waits, which it does on this notification too.
 	@objc func handleNetworkStatusDidChange(_ notification: Notification) {
+		guard NetworkMonitor.shared.isConnected else {
+			return
+		}
 		Task { @MainActor in
 			for (url, feeds) in waitingForFeedURLs where !DownloadedImageCache.shared.isWaitingToRetry(url) {
 				_ = imageData(for: url, feed: feeds.first)

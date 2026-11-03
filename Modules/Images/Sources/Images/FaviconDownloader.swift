@@ -30,6 +30,7 @@ extension Notification.Name {
 	private var searches = [String: FaviconSearch]() // homePageURL: search through its favicon URLs
 	private var homePagesAwaitingMetadataForSearch = Set<String>()
 	private var homePagesCheckedForNewFavicon = Set<String>()
+	private var homePagesWithTransientSearchFailure = Set<String>()
 
 	private var cache = [Feed: IconImage]()
 
@@ -43,6 +44,7 @@ extension Notification.Name {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleDownloadedImageDidChange(_:)), name: .downloadedImageDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleNetworkStatusDidChange(_:)), name: .networkStatusDidChange, object: nil)
 	}
 
 	// MARK: - API
@@ -188,6 +190,24 @@ extension Notification.Name {
 			cache[feed] = nil
 		}
 		singleFaviconDownloaderCache[faviconURL] = SingleFaviconDownloader(faviconURL: faviconURL, homePageURL: downloader.homePageURL)
+	}
+
+	/// Waits for transient failures may have just ended, so those favicons and searches are tried again.
+	/// Runs after `DownloadedImageCache` ends those waits, which it does on this notification too.
+	@objc func handleNetworkStatusDidChange(_ notification: Notification) {
+		guard NetworkMonitor.shared.isConnected else {
+			return
+		}
+		Task { @MainActor in
+			for downloader in singleFaviconDownloaderCache.values where downloader.lastFailureWasTransient {
+				downloader.downloadFaviconIfNeeded()
+			}
+			let homePageURLs = homePagesWithTransientSearchFailure
+			homePagesWithTransientSearchFailure.removeAll()
+			for homePageURL in homePageURLs {
+				searchForFavicon(homePageURL: homePageURL)
+			}
+		}
 	}
 
 	@objc func htmlMetadataIsAvailable(_ note: Notification) {
@@ -348,7 +368,9 @@ private extension FaviconDownloader {
 		guard let search = searches.removeValue(forKey: homePageURL) else {
 			return
 		}
-		if !search.hadTransientFailure && !search.keepsSavedFavicon {
+		if search.hadTransientFailure {
+			homePagesWithTransientSearchFailure.insert(homePageURL)
+		} else if !search.keepsSavedFavicon {
 			ImageDatabase.shared.saveHomePageFavicon(homePageURL: homePageURL, faviconURL: nil)
 		}
 	}

@@ -27,29 +27,23 @@ extension Notification.Name {
 	/// True until `.DidLoadFavicon` is posted for the current attempt.
 	private(set) var isFinding = true
 
-	private static let retryInterval: TimeInterval = 30 * 60 // 30 minutes
-
-	private var lastDownloadAttemptDate: Date
-
 	public init(faviconURL: String, homePageURL: String?) {
 		self.faviconURL = faviconURL
 		self.homePageURL = homePageURL
-		self.lastDownloadAttemptDate = Date()
 
 		Task { @MainActor in
 			await findFavicon()
 		}
 	}
 
-	/// Tries again when there’s no image and the last attempt was a while ago.
+	/// Tries again when there’s no image, once `DownloadedImageCache`’s wait after a failure has ended.
 	public func downloadFaviconIfNeeded() {
 		guard iconImage == nil, !isFinding else {
 			return
 		}
-		if Date().timeIntervalSince(lastDownloadAttemptDate) < Self.retryInterval {
+		if DownloadedImageCache.shared.isWaitingToRetry(faviconURL) || ImageDatabase.shared.recentlyFailed(url: faviconURL) {
 			return
 		}
-		lastDownloadAttemptDate = Date()
 		isFinding = true
 
 		Task { @MainActor in
