@@ -83,6 +83,21 @@ nonisolated private extension HTMLMetadataDownloader {
 		}
 	}
 
+	/// A redirect between `example.com` and `www.example.com` stays on the same host.
+	static func isRedirectToAnotherHost(from url: URL, to responseURL: URL) -> Bool {
+		guard let host = hostIgnoringWWW(url), let responseHost = hostIgnoringWWW(responseURL) else {
+			return false
+		}
+		return host != responseHost
+	}
+
+	static func hostIgnoringWWW(_ url: URL) -> String? {
+		guard let host = url.host()?.lowercased() else {
+			return nil
+		}
+		return host.hasPrefix("www.") ? String(host.dropFirst(4)) : host
+	}
+
 	/// Off the main thread, since a home page can be a few megabytes.
 	@concurrent static func parseRecord(url: String, parserData: ParserData) async -> HTMLMetadataRecord {
 		HTMLMetadataRecord(url: url, metadata: HTMLMetadataParser.htmlMetadata(with: parserData))
@@ -124,6 +139,14 @@ nonisolated private extension HTMLMetadataDownloader {
 
 			do {
 				let downloadResponse = try await Downloader.shared.download(actualURL, userAgentStyle: .browser)
+
+				// A captive portal’s login page would give the home page the portal’s icons.
+				if let responseURL = downloadResponse.response?.url, Self.isRedirectToAnotherHost(from: actualURL, to: responseURL) {
+					await returnStaleCacheIfAvailable(url)
+					let userInfo = [NSLocalizedDescriptionKey: "Redirected to \(responseURL.host() ?? responseURL.absoluteString)"]
+					activityLog.didFail(.htmlMetadataDownloader, kind: kind, error: NSError(domain: "NetNewsWire", code: -1, userInfo: userInfo))
+					return
+				}
 
 				if let data = downloadResponse.data, !data.isEmpty, let response = downloadResponse.response, response.statusIsOK {
 					let urlToUse = response.url ?? actualURL
