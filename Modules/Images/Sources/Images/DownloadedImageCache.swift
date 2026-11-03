@@ -390,11 +390,15 @@ private extension DownloadedImageCache {
 		}
 
 		let httpResponse = downloadResponse.response as? HTTPURLResponse
-		if let data = downloadResponse.data, !data.isEmpty, let httpResponse, httpResponse.statusIsOK, (try? await saveImage(data, url: url, httpResponse: httpResponse, isIcon: true)) == true {
-			Self.logger.info("Replaced changed image at \(url)")
-			await Self.deleteFromDisk(diskCache, keys: [Self.derivedDiskKey(url, suffix: Self.scaledIconSuffix)])
-			NotificationCenter.default.post(name: .downloadedImageDidChange, object: self, userInfo: [Self.urlKey: url])
-			return
+		if let data = downloadResponse.data, !data.isEmpty, let httpResponse, httpResponse.statusIsOK {
+			// A server without validators sends the whole image even when it hasn’t changed.
+			let isUnchanged = await Self.readFromDisk(diskCache, key: Self.diskKey(url)) == data
+			if !isUnchanged, (try? await saveImage(data, url: url, httpResponse: httpResponse, isIcon: true)) == true {
+				Self.logger.info("Replaced changed image at \(url)")
+				await Self.deleteFromDisk(diskCache, keys: [Self.derivedDiskKey(url, suffix: Self.scaledIconSuffix)])
+				NotificationCenter.default.post(name: .downloadedImageDidChange, object: self, userInfo: [Self.urlKey: url])
+				return
+			}
 		}
 
 		if let httpResponse, Self.isTransient(statusCode: httpResponse.statusCode) {
@@ -402,7 +406,7 @@ private extension DownloadedImageCache {
 			noteDownloadResult(.failure(error), url: url)
 		}
 
-		// 304 Not Modified, an error response, not an image, or a failed write: keep the copy and check again later.
+		// 304 Not Modified, the same bytes, an error response, not an image, or a failed write: keep the copy and check again later.
 		ImageDatabase.shared.saveDownloadedImageNextCheck(url: url, nextCheck: Self.nextCheck(httpResponse, hasValidators: validation.conditionalGetInfo != nil))
 	}
 
