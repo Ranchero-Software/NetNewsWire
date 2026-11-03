@@ -108,20 +108,15 @@ extension Article {
 	}
 
 	/// True when an icon notification is about an icon this article might show:
-	/// its feed’s icon or favicon, or one of its authors’ avatars.
+	/// its feed’s icon, or one of its authors’ avatars.
 	func mightShowIcon(in notification: Notification) -> Bool {
 		switch notification.name {
-		case .feedIconDidBecomeAvailable:
+		case .feedIconImageDidChange:
 			guard let feed, let notificationFeed = notification.userInfo?[UserInfoKey.feed] as? Feed else {
 				return false
 			}
 			return notificationFeed == feed
-		case .faviconDidBecomeAvailable:
-			guard let feed, let faviconURL = notification.userInfo?[FaviconDownloader.faviconURLKey] as? String else {
-				return false
-			}
-			return FaviconDownloader.shared.cachedFaviconURL(for: feed) == faviconURL
-		case .AvatarDidBecomeAvailable:
+		case .authorAvatarImageDidChange:
 			guard let avatarURL = notification.userInfo?[UserInfoKey.url] as? String else {
 				return false
 			}

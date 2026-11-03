@@ -70,7 +70,7 @@ struct AccountNotificationInspectorView: View {
 						closeButton
 					}
 				}
-				.onReceive(NotificationCenter.default.publisher(for: Notification.Name.feedIconDidBecomeAvailable)) { _ in
+				.onReceive(NotificationCenter.default.publisher(for: Notification.Name.feedIconImageDidChange)) { _ in
 					uuid = UUID()
 				}
 			}

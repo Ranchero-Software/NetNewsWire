@@ -280,9 +280,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 		if !didRegisterForNotifications {
 			NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
-			NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
-			NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
-			NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .faviconDidBecomeAvailable, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(handleFeedIconImageDidChange(_:)), name: .feedIconImageDidChange, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(handleAuthorAvatarImageDidChange(_:)), name: .authorAvatarImageDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThumbnailDidBecomeAvailable(_:)), name: .articleThumbnailDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThumbnailDownloadDidFail(_:)), name: .articleThumbnailDownloadDidFail, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleNetworkStatusDidChange(_:)), name: .networkStatusDidChange, object: nil)
@@ -704,8 +703,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		updateUnreadCount()
 	}
 
-	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
-		guard showIcons, let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
+	@objc func handleFeedIconImageDidChange(_ notification: Notification) {
+		guard showIcons, let feed = notification.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
 		let indexesToReload = tableView.indexesOfAvailableRowsPassingTest { (row) -> Bool in
@@ -719,8 +718,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 	}
 
-	@objc func avatarDidBecomeAvailable(_ note: Notification) {
-		guard showIcons, let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
+	@objc func handleAuthorAvatarImageDidChange(_ notification: Notification) {
+		guard showIcons, let avatarURL = notification.userInfo?[UserInfoKey.url] as? String else {
 			return
 		}
 
@@ -734,21 +733,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				}
 			}
 			return false
-		}
-		if let indexesToReload = indexesToReload {
-			reloadCells(for: indexesToReload)
-		}
-	}
-
-	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		guard showIcons, let faviconURL = note.userInfo?[FaviconDownloader.faviconURLKey] as? String else {
-			return
-		}
-		let indexesToReload = tableView.indexesOfAvailableRowsPassingTest { (row) -> Bool in
-			guard let article = articles.articleAtRow(row), let feed = article.feed else {
-				return false
-			}
-			return FaviconDownloader.shared.cachedFaviconURL(for: feed) == faviconURL
 		}
 		if let indexesToReload = indexesToReload {
 			reloadCells(for: indexesToReload)

@@ -744,16 +744,8 @@ private extension MainTimelineViewController {
 	func addNotificationObservers() {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .faviconDidBecomeAvailable, object: nil)
-
-		// TODO: fix this temporary hack, which will probably require refactoring image handling.
-		// We want to know when to possibly reconfigure our cells with a new image, and we don’t
-		// always know when an image is available — but watching the .htmlMetadataAvailable Notification
-		// lets us know that it’s time to request an image.
-		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
-
+		NotificationCenter.default.addObserver(self, selector: #selector(handleFeedIconImageDidChange(_:)), name: .feedIconImageDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleAuthorAvatarImageDidChange(_:)), name: .authorAvatarImageDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(timelineIconSizeDidChange(_:)), name: .timelineIconSizeDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(timelineNumberOfLinesDidChange(_:)), name: .timelineNumberOfLinesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineThumbnailsDisplayDidChange(_:)), name: .timelineThumbnailsDisplayDidChange, object: nil)
@@ -1139,8 +1131,8 @@ private extension MainTimelineViewController {
 		reloadCells(visibleUpdatedArticles)
 	}
 
-	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
-		Self.logger.debug("MainTimelineViewController: feedIconDidBecomeAvailable")
+	@objc func handleFeedIconImageDidChange(_ notification: Notification) {
+		Self.logger.debug("MainTimelineViewController: handleFeedIconImageDidChange")
 
 		guard isViewLoaded else {
 			return
@@ -1148,17 +1140,8 @@ private extension MainTimelineViewController {
 		queueReloadAvailableCells()
 	}
 
-	@objc func avatarDidBecomeAvailable(_ note: Notification) {
-		Self.logger.debug("MainTimelineViewController: avatarDidBecomeAvailable")
-
-		guard isViewLoaded else {
-			return
-		}
-		queueReloadAvailableCells()
-	}
-
-	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		Self.logger.debug("MainTimelineViewController: faviconDidBecomeAvailable")
+	@objc func handleAuthorAvatarImageDidChange(_ notification: Notification) {
+		Self.logger.debug("MainTimelineViewController: handleAuthorAvatarImageDidChange")
 
 		guard isViewLoaded else {
 			return

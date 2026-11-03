@@ -13,10 +13,13 @@ import RSCore
 import Images
 
 extension Notification.Name {
-	/// Posted when a feed’s feed icon or home page icon loads, fails, or changes. userInfo key: `UserInfoKey.feed`.
-	static let feedIconDidBecomeAvailable = Notification.Name("FeedIconDidBecomeAvailable")
+	/// Posted when the icon `iconImage(for:)` returns for a feed may have changed. userInfo key: `UserInfoKey.feed`.
+	static let feedIconImageDidChange = Notification.Name("FeedIconImageDidChange")
+	/// Posted when an author’s avatar loads or changes. userInfo key: `UserInfoKey.url` (the avatar URL).
+	static let authorAvatarImageDidChange = Notification.Name("AuthorAvatarImageDidChange")
 }
 
+/// The icons the UI shows for feeds, articles, and sidebar items. The UI watches its two notifications, not the downloaders’.
 @MainActor final class IconImageCache {
 
 	static var shared = IconImageCache()
@@ -30,6 +33,8 @@ extension Notification.Name {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleFeedIconDidChange(_:)), name: .feedIconDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleHomePageIconDidChange(_:)), name: .homePageIconDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleFaviconDidChange(_:)), name: .faviconDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleAvatarDidChange(_:)), name: .avatarDidChange, object: nil)
 	}
 
 	@objc func handleLowMemory(_ notification: Notification) {
@@ -37,19 +42,22 @@ extension Notification.Name {
 	}
 
 	@objc func handleFeedIconDidChange(_ notification: Notification) {
-		guard let feed = notification.userInfo?[FeedIconDownloader.feedKey] as? Feed else {
-			return
-		}
-		postFeedIconDidBecomeAvailable(feed)
+		postFeedIconImageDidChange(notification.userInfo?[FeedIconDownloader.feedsKey] as? Set<Feed>)
 	}
 
 	@objc func handleHomePageIconDidChange(_ notification: Notification) {
-		guard let feeds = notification.userInfo?[HomePageIconDownloader.feedsKey] as? Set<Feed> else {
+		postFeedIconImageDidChange(notification.userInfo?[HomePageIconDownloader.feedsKey] as? Set<Feed>)
+	}
+
+	@objc func handleFaviconDidChange(_ notification: Notification) {
+		postFeedIconImageDidChange(notification.userInfo?[FaviconDownloader.feedsKey] as? Set<Feed>)
+	}
+
+	@objc func handleAvatarDidChange(_ notification: Notification) {
+		guard let avatarURL = notification.userInfo?[AuthorAvatarDownloader.avatarURLKey] as? String else {
 			return
 		}
-		for feed in feeds {
-			postFeedIconDidBecomeAvailable(feed)
-		}
+		NotificationCenter.default.post(name: .authorAvatarImageDidChange, object: self, userInfo: [UserInfoKey.url: avatarURL])
 	}
 
 	func imageFor(_ feedID: SidebarItemIdentifier) -> IconImage? {
@@ -173,8 +181,13 @@ private extension IconImageCache {
 		return FaviconDownloader.shared.favicon(for: feed)
 	}
 
-	func postFeedIconDidBecomeAvailable(_ feed: Feed) {
-		NotificationCenter.default.post(name: .feedIconDidBecomeAvailable, object: self, userInfo: [UserInfoKey.feed: feed])
+	func postFeedIconImageDidChange(_ feeds: Set<Feed>?) {
+		guard let feeds else {
+			return
+		}
+		for feed in feeds {
+			NotificationCenter.default.post(name: .feedIconImageDidChange, object: self, userInfo: [UserInfoKey.feed: feed])
+		}
 	}
 
 	func imageForSmartFeed(_ smartFeed: PseudoFeed, _ feedID: SidebarItemIdentifier) -> IconImage? {

@@ -14,7 +14,7 @@ import ActivityLog
 
 extension Notification.Name {
 	/// Posted when a feed’s icon loads or fails, or its icon URL changes.
-	/// userInfo key: `FeedIconDownloader.feedKey`.
+	/// userInfo key: `FeedIconDownloader.feedsKey` (`Set<Feed>`).
 	public static let feedIconDidChange = Notification.Name("FeedIconDidChange")
 }
 
@@ -22,7 +22,7 @@ extension Notification.Name {
 @MainActor public final class FeedIconDownloader {
 
 	public static let shared = FeedIconDownloader()
-	public static let feedKey = "feed"
+	public static let feedsKey = "feeds"
 
 	private var feedsByIconURL = [String: Set<Feed>]() // icon URL: feeds that looked it up
 
@@ -55,7 +55,7 @@ extension Notification.Name {
 		guard let feed = notification.object as? Feed, let key = notification.userInfo?[Feed.SettingUserInfoKey] as? Feed.SettingKey, key == .iconURL else {
 			return
 		}
-		postFeedIconDidChange(feed)
+		postFeedIconDidChange(Set([feed]))
 	}
 }
 
@@ -92,12 +92,10 @@ private extension FeedIconDownloader {
 		guard let iconURL, let feeds = feedsByIconURL[iconURL] else {
 			return
 		}
-		for feed in feeds {
-			postFeedIconDidChange(feed)
-		}
+		postFeedIconDidChange(feeds)
 	}
 
-	func postFeedIconDidChange(_ feed: Feed) {
-		NotificationCenter.default.post(name: .feedIconDidChange, object: self, userInfo: [Self.feedKey: feed])
+	func postFeedIconDidChange(_ feeds: Set<Feed>) {
+		NotificationCenter.default.post(name: .feedIconDidChange, object: self, userInfo: [Self.feedsKey: feeds])
 	}
 }

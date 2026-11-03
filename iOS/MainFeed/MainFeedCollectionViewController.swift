@@ -190,13 +190,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 	func registerForNotifications() {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .faviconDidBecomeAvailable, object: nil)
-		// TODO: fix this temporary hack, which will probably require refactoring image handling.
-		// We want to know when to possibly reconfigure our cells with a new image, and we don’t
-		// always know when an image is available — but watching the .htmlMetadataAvailable Notification
-		// lets us know that it’s time to request an image.
-		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleFeedIconImageDidChange(_:)), name: .feedIconImageDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .feedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
 
@@ -933,12 +927,8 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		}
 	}
 
-	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		applyToAvailableCells(configureIcon)
-	}
-
-	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
-		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
+	@objc func handleFeedIconImageDidChange(_ notification: Notification) {
+		guard let feed = notification.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
 		applyToCellsForRepresentedObject(feed, configureIcon(_:_:))

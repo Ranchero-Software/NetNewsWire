@@ -12,11 +12,13 @@ import RSCore
 import ActivityLog
 
 extension Notification.Name {
-	public static let AvatarDidBecomeAvailable = Notification.Name("AvatarDidBecomeAvailableNotification") // userInfo key: "url" (the avatarURL)
+	/// userInfo key: `AuthorAvatarDownloader.avatarURLKey`.
+	public static let avatarDidChange = Notification.Name("AvatarDidChange")
 }
 
 @MainActor public final class AuthorAvatarDownloader {
 	public static let shared = AuthorAvatarDownloader()
+	public static let avatarURLKey = "avatarURL"
 
 	private var avatarURLs = Set<String>() // Every avatar URL looked up, so a changed image is posted too
 
@@ -36,15 +38,6 @@ extension Notification.Name {
 		guard let avatarURL = notification.userInfo?[IconImageDownloader.urlKey] as? String, avatarURLs.contains(avatarURL) else {
 			return
 		}
-		postAvatarDidBecomeAvailableNotification(avatarURL)
-	}
-}
-
-@MainActor private extension AuthorAvatarDownloader {
-
-	func postAvatarDidBecomeAvailableNotification(_ avatarURL: String) {
-		DispatchQueue.main.async {
-			NotificationCenter.default.post(name: .AvatarDidBecomeAvailable, object: self, userInfo: ["url": avatarURL])
-		}
+		NotificationCenter.default.post(name: .avatarDidChange, object: self, userInfo: [Self.avatarURLKey: avatarURL])
 	}
 }

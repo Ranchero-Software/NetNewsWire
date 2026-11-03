@@ -89,9 +89,8 @@ final class WebViewController: UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
-		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .faviconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleFeedIconImageDidChange(_:)), name: .feedIconImageDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleAuthorAvatarImageDidChange(_:)), name: .authorAvatarImageDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(currentArticleThemeDidChangeNotification(_:)), name: .CurrentArticleThemeDidChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleSceneDidEnterBackground(_:)), name: UIScene.didEnterBackgroundNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUserDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
@@ -129,16 +128,12 @@ final class WebViewController: UIViewController {
 		}
 	}
 
-	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
-		reloadArticleImageIfNeeded(note)
+	@objc func handleFeedIconImageDidChange(_ notification: Notification) {
+		reloadArticleImageIfNeeded(notification)
 	}
 
-	@objc func avatarDidBecomeAvailable(_ note: Notification) {
-		reloadArticleImageIfNeeded(note)
-	}
-
-	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		reloadArticleImageIfNeeded(note)
+	@objc func handleAuthorAvatarImageDidChange(_ notification: Notification) {
+		reloadArticleImageIfNeeded(notification)
 	}
 
 	@objc func currentArticleThemeDidChangeNotification(_ note: Notification) {

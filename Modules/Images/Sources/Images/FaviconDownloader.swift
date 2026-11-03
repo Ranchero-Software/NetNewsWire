@@ -17,15 +17,15 @@ import ActivityLog
 import UniformTypeIdentifiers
 
 extension Notification.Name {
-	/// userInfo key: `FaviconDownloader.faviconURLKey`.
-	public static let faviconDidBecomeAvailable = Notification.Name("FaviconDidBecomeAvailable")
+	/// Posted when a favicon loads. userInfo key: `FaviconDownloader.feedsKey` (`Set<Feed>`, the feeds that looked it up and use it).
+	public static let faviconDidChange = Notification.Name("FaviconDidChange")
 }
 
 /// Gets a feed’s favicon: the one the feed specifies, or else the first that works of the favicons its home page’s metadata specifies, then `/favicon.ico`.
 @MainActor public final class FaviconDownloader {
 
 	public static let shared = FaviconDownloader()
-	public static let faviconURLKey = "faviconURL"
+	public static let feedsKey = "feeds"
 
 	nonisolated static private let logger = Logger(subsystem: Logger.nnwSubsystem, category: "FaviconDownloader")
 
@@ -34,7 +34,8 @@ extension Notification.Name {
 	private var homePagesAwaitingMetadataForSearch = Set<String>()
 	private var homePagesCheckedForNewFavicon = Set<String>()
 	private var homePagesWithTransientSearchFailure = Set<String>()
-	private var faviconURLs = Set<String>() // Every favicon URL looked up, so its arrival is posted
+	private var feeds = Set<Feed>() // Every feed that looked up its favicon, so its favicon’s arrival is posted
+	private var faviconURLs = Set<String>() // Every favicon URL looked up
 	private var faviconURLsThatAreNotImages = Set<String>()
 
 	init() {
@@ -52,6 +53,7 @@ extension Notification.Name {
 		if shouldSkipDownloadingFavicon(feed: feed) {
 			return .unavailable
 		}
+		feeds.insert(feed)
 		if let faviconURL = usableDeclaredFaviconURL(for: feed) {
 			return iconImage(for: faviconURL, homePageURL: feed.homePageURL)
 		}
@@ -59,19 +61,6 @@ extension Notification.Name {
 			return .unavailable
 		}
 		return favicon(forHomePageURL: homePageURL)
-	}
-
-	/// The known favicon URL for `feed` (from feed settings or the home-page→favicon map), without
-	/// triggering any download. Both lookups are in-memory, so this is cheap to call per row.
-	/// The home page is the same one `favicon(for:)` saves under.
-	public func cachedFaviconURL(for feed: Feed) -> String? {
-		if let faviconURL = usableDeclaredFaviconURL(for: feed) {
-			return faviconURL
-		}
-		if let homePageURL = faviconHomePageURL(for: feed), let faviconURL = ImageDatabase.shared.faviconURL(forHomePageURL: homePageURL) {
-			return faviconURL
-		}
-		return nil
 	}
 
 	// MARK: - Notifications
@@ -85,7 +74,7 @@ extension Notification.Name {
 		for homePageURL in homePageURLsSearching(with: faviconURL) {
 			saveFoundFavicon(faviconURL, homePageURL: homePageURL)
 		}
-		postFaviconDidBecomeAvailableNotification(faviconURL)
+		postFaviconDidChange(faviconURL)
 	}
 
 	/// Every home page searching with this favicon URL moves on to its next candidate.
@@ -134,13 +123,10 @@ extension Notification.Name {
 		guard let feed = notification.object as? Feed, let key = notification.userInfo?[Feed.SettingUserInfoKey] as? Feed.SettingKey else {
 			return
 		}
-		guard key == .faviconURL || key == .homePageURL else {
+		guard key == .faviconURL || key == .homePageURL, feeds.contains(feed) else {
 			return
 		}
-		guard let faviconURL = cachedFaviconURL(for: feed), faviconURLs.contains(faviconURL) else {
-			return
-		}
-		postFaviconDidBecomeAvailableNotification(faviconURL)
+		postFaviconDidChange(Set([feed]))
 	}
 
 	/// New metadata may name a different favicon.
@@ -310,7 +296,7 @@ private extension FaviconDownloader {
 			case .found:
 				// Already in memory, such as for another home page on the same site, so no `.iconImageDidBecomeAvailable` is coming.
 				saveFoundFavicon(faviconURL, homePageURL: homePageURL)
-				postFaviconDidBecomeAvailableNotification(faviconURL)
+				postFaviconDidChange(faviconURL)
 				return
 			case .loading:
 				searches[homePageURL]?.faviconURL = faviconURL
@@ -339,10 +325,31 @@ private extension FaviconDownloader {
 		ImageDatabase.shared.saveHomePageFavicon(homePageURL: homePageURL, faviconURL: faviconURL)
 	}
 
+	/// The known favicon URL for `feed` (from feed settings or the home-page→favicon map), without
+	/// triggering any download. Both lookups are in-memory, so this is cheap to call per feed.
+	/// The home page is the same one `favicon(for:)` saves under.
+	func cachedFaviconURL(for feed: Feed) -> String? {
+		if let faviconURL = usableDeclaredFaviconURL(for: feed) {
+			return faviconURL
+		}
+		if let homePageURL = faviconHomePageURL(for: feed), let faviconURL = ImageDatabase.shared.faviconURL(forHomePageURL: homePageURL) {
+			return faviconURL
+		}
+		return nil
+	}
+
+	func postFaviconDidChange(_ faviconURL: String) {
+		let feedsUsingFavicon = feeds.filter { cachedFaviconURL(for: $0) == faviconURL }
+		guard !feedsUsingFavicon.isEmpty else {
+			return
+		}
+		postFaviconDidChange(feedsUsingFavicon)
+	}
+
 	/// Posted later, since a lookup can find a favicon already in memory.
-	func postFaviconDidBecomeAvailableNotification(_ faviconURL: String) {
+	func postFaviconDidChange(_ feeds: Set<Feed>) {
 		DispatchQueue.main.async {
-			NotificationCenter.default.post(name: .faviconDidBecomeAvailable, object: self, userInfo: [Self.faviconURLKey: faviconURL])
+			NotificationCenter.default.post(name: .faviconDidChange, object: self, userInfo: [Self.feedsKey: feeds])
 		}
 	}
 }

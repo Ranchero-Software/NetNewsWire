@@ -116,9 +116,8 @@ final class DetailWebViewController: NSViewController {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(webInspectorEnabledDidChange(_:)), name: .WebInspectorEnabledDidChange, object: nil)
 
-		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .faviconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleFeedIconImageDidChange(_:)), name: .feedIconImageDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleAuthorAvatarImageDidChange(_:)), name: .authorAvatarImageDidChange, object: nil)
 		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
 			Task { @MainActor in
 				self?.userDefaultsDidChange()
@@ -131,16 +130,12 @@ final class DetailWebViewController: NSViewController {
 
 	// MARK: Notifications
 
-	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
-		reloadArticleImageIfNeeded(note)
+	@objc func handleFeedIconImageDidChange(_ notification: Notification) {
+		reloadArticleImageIfNeeded(notification)
 	}
 
-	@objc func avatarDidBecomeAvailable(_ note: Notification) {
-		reloadArticleImageIfNeeded(note)
-	}
-
-	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		reloadArticleImageIfNeeded(note)
+	@objc func handleAuthorAvatarImageDidChange(_ notification: Notification) {
+		reloadArticleImageIfNeeded(notification)
 	}
 
 	func userDefaultsDidChange() {
