@@ -27,17 +27,21 @@ nonisolated public final class HTMLMetadataDownloader: Sendable {
 	/// In-memory mirror so `cachedMetadata(for:)` can answer synchronously.
 	private let cache = Mutex([String: HTMLMetadataRecord]())
 
+	/// Icon lookups ask for metadata on every cell configure, so a URL isn’t looked up again
+	/// while its lookup runs, or after it found nothing, until `cache` is emptied.
+	private let urlsLookedUp = Mutex(Set<String>())
+
 	init() {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
 	}
 
 	@objc func handleAppDidGoToBackground(_ notification: Notification) {
-		cache.withLock { $0.removeAll() }
+		emptyCache()
 	}
 
 	@objc func handleLowMemory(_ notification: Notification) {
-		cache.withLock { $0.removeAll() }
+		emptyCache()
 	}
 
 	/// Returns cached metadata synchronously, or kicks off a fetch and returns nil.
@@ -67,7 +71,15 @@ nonisolated private extension HTMLMetadataDownloader {
 		SpecialCase.urlStringContainSpecialCase(urlString, specialCasesToSkip)
 	}
 
+	func emptyCache() {
+		cache.withLock { $0.removeAll() }
+		urlsLookedUp.withLock { $0.removeAll() }
+	}
+
 	func fetchAndDownloadIfNeeded(_ url: String) {
+		guard urlsLookedUp.withLock({ $0.insert(url).inserted }) else {
+			return
+		}
 		Task { @MainActor in
 			if let record = await HTMLMetadataDatabase.shared.cachedRecord(for: url) {
 				cacheRecord(record)
