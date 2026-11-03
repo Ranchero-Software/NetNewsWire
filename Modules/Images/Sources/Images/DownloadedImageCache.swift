@@ -327,7 +327,7 @@ private extension DownloadedImageCache {
 			return (data, downloadResponse)
 		}
 
-		// 2xx with empty / missing body — server said OK but gave us no image bytes.
+		// A 2xx response with no body.
 		if let response = downloadResponse.response, response.statusIsOK {
 			throw ImageDownloadError(statusCode: statusCode, decodingFailed: true, isTransient: false)
 		}
