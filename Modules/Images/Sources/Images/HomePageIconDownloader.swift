@@ -31,6 +31,7 @@ extension Notification.Name {
 	private var feedsByHomePageURL = [String: Set<Feed>]() // home page URL: feeds that looked it up
 	private var homePagesCheckedForNewIconURL = Set<String>()
 	private var newIconURLs = [String: String]() // home page URL: icon URL that replaces the saved one once its image loads
+	private var iconURLs = Set<String>() // Every icon URL looked up, so other kinds of icons are ignored when they arrive
 
 	init() {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleIconImageDidBecomeAvailable(_:)), name: .iconImageDidBecomeAvailable, object: IconImageDownloader.shared)
@@ -65,7 +66,7 @@ extension Notification.Name {
 	// MARK: - Notifications
 
 	@objc func handleIconImageDidBecomeAvailable(_ notification: Notification) {
-		guard let iconURL = notification.userInfo?[IconImageDownloader.urlKey] as? String else {
+		guard let iconURL = notification.userInfo?[IconImageDownloader.urlKey] as? String, iconURLs.contains(iconURL) else {
 			return
 		}
 		for (homePageURL, newIconURL) in newIconURLs where newIconURL == iconURL {
@@ -77,7 +78,7 @@ extension Notification.Name {
 
 	/// Feeds showing this icon look again, which falls back to the next source.
 	@objc func handleIconImageDownloadDidFail(_ notification: Notification) {
-		guard let iconURL = notification.userInfo?[IconImageDownloader.urlKey] as? String else {
+		guard let iconURL = notification.userInfo?[IconImageDownloader.urlKey] as? String, iconURLs.contains(iconURL) else {
 			return
 		}
 		newIconURLs = newIconURLs.filter { $0.value != iconURL }
@@ -148,7 +149,8 @@ private extension HomePageIconDownloader {
 	}
 
 	func iconImage(for iconURL: String, homePageURL: String) -> IconLookup {
-		IconImageDownloader.shared.iconImage(for: iconURL, activityOwner: .feedImageDownloader, activityKind: .downloadFeedImage(feedURL: iconURL), activityDetail: homePageURL)
+		iconURLs.insert(iconURL)
+		return IconImageDownloader.shared.iconImage(for: iconURL, activityOwner: .feedImageDownloader, activityKind: .downloadFeedImage(feedURL: iconURL), activityDetail: homePageURL)
 	}
 
 	func postHomePageIconDidChange(iconURL: String) {
