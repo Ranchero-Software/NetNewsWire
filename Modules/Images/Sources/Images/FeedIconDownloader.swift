@@ -73,6 +73,19 @@ extension Notification.Name {
 			}
 		}
 
+		@MainActor func checkSavedHomePageIconURL(_ savedIconURL: String) {
+			icon(forURL: savedIconURL, feed: feed) { iconImage, isDefinitive in
+				if let iconImage {
+					if self.cacheIcon(iconImage, for: feed, isFeedOwnIcon: false) {
+						self.postFeedIconDidBecomeAvailableNotification(feed)
+					}
+				} else if self.cache[feed] == nil, isDefinitive {
+					// The site may have moved its icon, so the home page is checked again.
+					checkHomePageURL()
+				}
+			}
+		}
+
 		@MainActor func checkFeedIconURL() {
 			if let iconURL = feed.iconURL, !Self.shouldIgnoreFeedIconURL(feed) {
 				icon(forURL: iconURL, feed: feed) { (iconImage, isDefinitive) in
@@ -85,7 +98,12 @@ extension Notification.Name {
 							// The declared icon failed or isn’t an image. A still-downloading
 							// icon is no reason to fall back to the home page’s icon.
 							// <https://github.com/Ranchero-Software/NetNewsWire/issues/5376>
-							checkHomePageURL()
+							// A home page icon found earlier works without the home page’s metadata.
+							if let savedIconURL = ImageDatabase.shared.iconURL(forFeedURL: feed.url) {
+								checkSavedHomePageIconURL(savedIconURL)
+							} else {
+								checkHomePageURL()
+							}
 						}
 					}
 				}
@@ -95,16 +113,7 @@ extension Notification.Name {
 		}
 
 		if let previouslyFoundIconURL = Self.savedHomePageIconURL(for: feed) {
-			icon(forURL: previouslyFoundIconURL, feed: feed) { iconImage, isDefinitive in
-				if let iconImage {
-					if self.cacheIcon(iconImage, for: feed, isFeedOwnIcon: false) {
-						self.postFeedIconDidBecomeAvailableNotification(feed)
-					}
-				} else if self.cache[feed] == nil, isDefinitive {
-					// The site may have moved its icon, so the home page is checked again.
-					checkHomePageURL()
-				}
-			}
+			checkSavedHomePageIconURL(previouslyFoundIconURL)
 			checkForNewHomePageIconURL(feed, savedIconURL: previouslyFoundIconURL)
 
 			return nil
