@@ -203,7 +203,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private static let prototypeRowWidth: CGFloat = 100.0
 
 	/// Nil when the timeline doesn’t show thumbnails. Column layout never shows them.
-	private var thumbnailMode: ArticleThumbnailFinder.Mode? {
+	private var thumbnailMode: ThumbnailMode? {
 		layout == .standard ? thumbnailsDisplay.thumbnailMode : nil
 	}
 
@@ -282,7 +282,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleFeedIconImageDidChange(_:)), name: .feedIconImageDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleAuthorAvatarImageDidChange(_:)), name: .authorAvatarImageDidChange, object: nil)
-			NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThumbnailDidBecomeAvailable(_:)), name: .articleThumbnailDidBecomeAvailable, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(handleThumbnailDidBecomeAvailable(_:)), name: .thumbnailDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThumbnailDownloadDidFail(_:)), name: .articleThumbnailDownloadDidFail, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleNetworkStatusDidChange(_:)), name: .networkStatusDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
@@ -739,13 +739,13 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 	}
 
-	@objc func handleArticleThumbnailDidBecomeAvailable(_ notification: Notification) {
-		guard let thumbnailMode, let url = notification.userInfo?[ArticleThumbnailFinder.urlKey] as? String else {
+	@objc func handleThumbnailDidBecomeAvailable(_ notification: Notification) {
+		guard let thumbnailMode, let url = notification.userInfo?[ThumbnailDownloader.urlKey] as? String else {
 			return
 		}
 		// The row already has room for the thumbnail, so only the image changes.
 		tableView.enumerateAvailableRowViews { rowView, row in
-			guard let article = articles.articleAtRow(row), ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) == url, let cell = cellForRowView(rowView) as? TimelineTableCellView, let thumbnail = ArticleThumbnailFinder.shared.thumbnail(url: url, mode: thumbnailMode, articleTitle: article.title) else {
+			guard let article = articles.articleAtRow(row), ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) == url, let cell = cellForRowView(rowView) as? TimelineTableCellView, let thumbnail = ThumbnailDownloader.shared.thumbnail(url: url, mode: thumbnailMode, articleTitle: article.title) else {
 				return
 			}
 			cell.thumbnail = thumbnail
@@ -761,7 +761,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	@objc func handleNetworkStatusDidChange(_ notification: Notification) {
-		guard thumbnailMode != nil, ArticleThumbnailFinder.shared.networkAllowsDownloads else {
+		guard thumbnailMode != nil, ThumbnailDownloader.shared.networkAllowsDownloads else {
 			return
 		}
 		// Thumbnails that couldn’t download while offline or in Low Data Mode try again.
@@ -1115,7 +1115,7 @@ extension TimelineViewController: NSTableViewDelegate {
 		var showThumbnail = false
 		if let thumbnailMode, let thumbnailURL = ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) {
 			showThumbnail = true
-			thumbnail = ArticleThumbnailFinder.shared.thumbnail(url: thumbnailURL, mode: thumbnailMode, articleTitle: article.title)
+			thumbnail = ThumbnailDownloader.shared.thumbnail(url: thumbnailURL, mode: thumbnailMode, articleTitle: article.title)
 		}
 		cell.cellData = TimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcons, thumbnail: thumbnail, showThumbnail: showThumbnail)
 	}

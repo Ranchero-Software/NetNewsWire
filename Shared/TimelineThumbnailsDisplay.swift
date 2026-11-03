@@ -30,7 +30,7 @@ enum TimelineThumbnailsDisplay: Int, CaseIterable, CustomStringConvertible {
 	}
 
 	/// Nil when the timeline doesn’t show thumbnails.
-	var thumbnailMode: ArticleThumbnailFinder.Mode? {
+	var thumbnailMode: ThumbnailMode? {
 		switch self {
 		case .small:
 			.small

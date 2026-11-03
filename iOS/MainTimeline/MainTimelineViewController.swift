@@ -43,7 +43,7 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 	}
 
 	/// Nil when the timeline doesn’t show thumbnails.
-	private var thumbnailMode: ArticleThumbnailFinder.Mode? {
+	private var thumbnailMode: ThumbnailMode? {
 		thumbnailsDisplay.thumbnailMode
 	}
 
@@ -576,7 +576,7 @@ extension MainTimelineViewController: UICollectionViewDelegate {
 			reloadCells([article])
 			return
 		}
-		guard let thumbnailURL, let thumbnail = ArticleThumbnailFinder.shared.thumbnail(url: thumbnailURL, mode: thumbnailMode, articleTitle: article.title), thumbnail !== cell.thumbnail else {
+		guard let thumbnailURL, let thumbnail = ThumbnailDownloader.shared.thumbnail(url: thumbnailURL, mode: thumbnailMode, articleTitle: article.title), thumbnail !== cell.thumbnail else {
 			return
 		}
 		cell.thumbnail = thumbnail
@@ -749,7 +749,7 @@ private extension MainTimelineViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(timelineIconSizeDidChange(_:)), name: .timelineIconSizeDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(timelineNumberOfLinesDidChange(_:)), name: .timelineNumberOfLinesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineThumbnailsDisplayDidChange(_:)), name: .timelineThumbnailsDisplayDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThumbnailDidBecomeAvailable(_:)), name: .articleThumbnailDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleThumbnailDidBecomeAvailable(_:)), name: .thumbnailDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThumbnailDownloadDidFail(_:)), name: .articleThumbnailDownloadDidFail, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleNetworkStatusDidChange(_:)), name: .networkStatusDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
@@ -973,7 +973,7 @@ private extension MainTimelineViewController {
 		var showThumbnail = false
 		if let thumbnailMode, let thumbnailURL = ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) {
 			showThumbnail = true
-			thumbnail = ArticleThumbnailFinder.shared.thumbnail(url: thumbnailURL, mode: thumbnailMode, articleTitle: article.title)
+			thumbnail = ThumbnailDownloader.shared.thumbnail(url: thumbnailURL, mode: thumbnailMode, articleTitle: article.title)
 		}
 		let cellData = MainTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, numberOfLines: numberOfTextLines, iconSize: iconSize, thumbnail: thumbnail, showThumbnail: showThumbnail, thumbnailsDisplay: thumbnailsDisplay)
 		return cellData
@@ -1176,13 +1176,13 @@ private extension MainTimelineViewController {
 		reloadAllCells()
 	}
 
-	@objc func handleArticleThumbnailDidBecomeAvailable(_ notification: Notification) {
-		guard let thumbnailMode, let collectionView, let dataSource, let url = notification.userInfo?[ArticleThumbnailFinder.urlKey] as? String else {
+	@objc func handleThumbnailDidBecomeAvailable(_ notification: Notification) {
+		guard let thumbnailMode, let collectionView, let dataSource, let url = notification.userInfo?[ThumbnailDownloader.urlKey] as? String else {
 			return
 		}
 		// The row’s height already allows for the thumbnail, so only the cell’s contents change.
 		for indexPath in collectionView.indexPathsForVisibleItems {
-			guard let article = dataSource.itemIdentifier(for: indexPath), ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) == url, let cell = collectionView.cellForItem(at: indexPath) as? MainTimelineCell, let thumbnail = ArticleThumbnailFinder.shared.thumbnail(url: url, mode: thumbnailMode, articleTitle: article.title) else {
+			guard let article = dataSource.itemIdentifier(for: indexPath), ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) == url, let cell = collectionView.cellForItem(at: indexPath) as? MainTimelineCell, let thumbnail = ThumbnailDownloader.shared.thumbnail(url: url, mode: thumbnailMode, articleTitle: article.title) else {
 				continue
 			}
 			cell.thumbnail = thumbnail
@@ -1198,7 +1198,7 @@ private extension MainTimelineViewController {
 	}
 
 	@objc func handleNetworkStatusDidChange(_ notification: Notification) {
-		guard thumbnailMode != nil, ArticleThumbnailFinder.shared.networkAllowsDownloads else {
+		guard thumbnailMode != nil, ThumbnailDownloader.shared.networkAllowsDownloads else {
 			return
 		}
 		// Thumbnails that couldn’t download while offline or in Low Data Mode try again.

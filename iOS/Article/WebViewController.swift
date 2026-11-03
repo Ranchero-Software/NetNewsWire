@@ -756,7 +756,7 @@ private extension WebViewController {
 			var data: Data?
 			// Only a correctly signed routed URL uses the timeline’s copy, so page content can’t claim one.
 			if imageURL.scheme?.caseInsensitiveCompare(ArticleRenderer.articleImageScheme) == .orderedSame, let timelineImageURL = ArticleImageSchemeHandler.imageURL(imageURL) {
-				data = try? await ArticleThumbnailFinder.shared.fullSizeImageData(url: timelineImageURL, articleTitle: nil)
+				data = try? await ThumbnailDownloader.shared.fullSizeImageData(url: timelineImageURL, articleTitle: nil)
 			} else {
 				data = try? await Downloader.shared.download(imageURL, userAgentStyle: .browser).data
 			}

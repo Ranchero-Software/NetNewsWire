@@ -43,7 +43,7 @@ import Images
 			var imageData: Data?
 			var downloadError: Error?
 			do {
-				imageData = try await ArticleThumbnailFinder.shared.fullSizeImageData(url: imageURL, articleTitle: nil)
+				imageData = try await ThumbnailDownloader.shared.fullSizeImageData(url: imageURL, articleTitle: nil)
 			} catch {
 				downloadError = error
 			}
