@@ -99,7 +99,7 @@ extension Notification.Name {
 			if let feed = article.feed, let feedID = feed.sidebarItemID, !feedsSeen.contains(feedID) {
 				feedsSeen.insert(feedID)
 				_ = feedOrHomePageIcon(feed)
-				_ = FaviconDownloader.shared.faviconAsIcon(for: feed)
+				_ = FaviconDownloader.shared.favicon(for: feed)
 			}
 		}
 	}
@@ -107,7 +107,7 @@ extension Notification.Name {
 	func prefetchImagesForFeeds(_ feeds: [Feed]) {
 		for feed in feeds {
 			_ = feedOrHomePageIcon(feed)
-			_ = FaviconDownloader.shared.faviconAsIcon(for: feed)
+			_ = FaviconDownloader.shared.favicon(for: feed)
 		}
 	}
 
@@ -183,7 +183,7 @@ private extension IconImageCache {
 		if let iconImage = feedIconImageCache[feedID] {
 			return iconImage
 		}
-		if let faviconImage = FaviconDownloader.shared.cachedFaviconAsIcon(for: feed) {
+		if let faviconImage = FaviconDownloader.shared.favicon(for: feed).iconImage {
 			faviconImageCache[feedID] = faviconImage
 			return faviconImage
 		}

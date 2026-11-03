@@ -63,7 +63,7 @@ final class DinosaursWindowController: NSWindowController {
 
 		updateActionBarEnabledState()
 
-		NotificationCenter.default.addObserver(self, selector: #selector(handleFaviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleFaviconDidBecomeAvailable(_:)), name: .faviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleFeedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 	}

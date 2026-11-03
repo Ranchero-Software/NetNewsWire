@@ -190,7 +190,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 	func registerForNotifications() {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .faviconDidBecomeAvailable, object: nil)
 		// TODO: fix this temporary hack, which will probably require refactoring image handling.
 		// We want to know when to possibly reconfigure our cells with a new image, and we don’t
 		// always know when an image is available — but watching the .htmlMetadataAvailable Notification

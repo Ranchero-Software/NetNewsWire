@@ -116,8 +116,8 @@ extension Article {
 				return false
 			}
 			return notificationFeed == feed
-		case .FaviconDidBecomeAvailable:
-			guard let feed, let faviconURL = notification.userInfo?[FaviconDownloader.UserInfoKey.faviconURL] as? String else {
+		case .faviconDidBecomeAvailable:
+			guard let feed, let faviconURL = notification.userInfo?[FaviconDownloader.faviconURLKey] as? String else {
 				return false
 			}
 			return FaviconDownloader.shared.cachedFaviconURL(for: feed) == faviconURL

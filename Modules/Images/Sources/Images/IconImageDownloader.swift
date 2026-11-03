@@ -15,7 +15,7 @@ import ActivityLog
 extension Notification.Name {
 	/// userInfo key: `IconImageDownloader.urlKey`.
 	public static let iconImageDidBecomeAvailable = Notification.Name("IconImageDidBecomeAvailable")
-	/// userInfo key: `IconImageDownloader.urlKey`. Not posted when the URL was already waiting to retry.
+	/// userInfo keys: `IconImageDownloader.urlKey` and `IconImageDownloader.errorKey` (`ImageDownloadError`).
 	public static let iconImageDownloadDidFail = Notification.Name("IconImageDownloadDidFail")
 }
 
@@ -41,6 +41,7 @@ public enum IconLookup {
 
 	public static let shared = IconImageDownloader()
 	public static let urlKey = "url"
+	public static let errorKey = "error"
 
 	nonisolated static private let logger = Logger(subsystem: Logger.nnwSubsystem, category: "IconImageDownloader")
 
@@ -142,15 +143,13 @@ private extension IconImageDownloader {
 				return
 			}
 
-			// A URL already waiting to retry fails without a request, so that failure isn’t news.
-			let wasWaitingToRetry = DownloadedImageCache.shared.isWaitingToRetry(url)
 			do throws(ImageDownloadError) {
 				let storedData = try await DownloadedImageCache.shared.imageData(for: url, usesDownloadQueue: false, checksForUpdates: true, activityOwner: request.activityOwner, activityKind: request.activityKind, activityDetail: request.activityDetail)
 				let scaledData = await Self.scaledImageData(storedData, maxPixelSize: RSImage.maxIconPixelSize)
 				// DownloadedImageCache records download failures, but can’t know whether the data decodes as an icon.
 				guard let iconImage = await IconImage.decodedIconImage(scaledData) else {
 					ImageDatabase.shared.recordFailure(url: url)
-					postIconImageDownloadDidFail(url)
+					postIconImageDownloadDidFail(url, error: ImageDownloadError(statusCode: nil, decodingFailed: true, isTransient: false))
 					return
 				}
 				// An image that’s already small enough needs no second file.
@@ -162,9 +161,7 @@ private extension IconImageDownloader {
 				if error.isTransient {
 					requestsToRetry[url] = request
 				}
-				if !wasWaitingToRetry {
-					postIconImageDownloadDidFail(url)
-				}
+				postIconImageDownloadDidFail(url, error: error)
 			}
 		}
 	}
@@ -182,8 +179,8 @@ private extension IconImageDownloader {
 		NotificationCenter.default.post(name: .iconImageDidBecomeAvailable, object: self, userInfo: [Self.urlKey: url])
 	}
 
-	func postIconImageDownloadDidFail(_ url: String) {
-		NotificationCenter.default.post(name: .iconImageDownloadDidFail, object: self, userInfo: [Self.urlKey: url])
+	func postIconImageDownloadDidFail(_ url: String, error: ImageDownloadError) {
+		NotificationCenter.default.post(name: .iconImageDownloadDidFail, object: self, userInfo: [Self.urlKey: url, Self.errorKey: error])
 	}
 
 	@concurrent static func scaledImageData(_ data: Data, maxPixelSize: Int) async -> Data {
