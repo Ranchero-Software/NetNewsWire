@@ -28,7 +28,8 @@ extension Notification.Name {
 ///
 /// The first three sources are property reads. The HTML is parsed off the main thread by
 /// `findThumbnailURLs(for:)` at fetch time, or by `thumbnailURL(for:mode:)` on a cache miss.
-/// The results are cached in memory until the app goes to the background or memory is low.
+/// The results are cached in memory until memory is low, or, on iOS, until the app goes to the background.
+/// The Mac keeps them on switching apps, since large-mode row heights ask for every row.
 /// Parsing 1,000 articles takes about 0.036 seconds on an M1 Max in a release build, measured
 /// on 8,660 real articles: median 0.000018 seconds and 2,463 bytes of HTML per article.
 ///
@@ -56,7 +57,9 @@ extension Notification.Name {
 		self.imageDatabase = imageDatabase
 
 		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
+		#if os(iOS)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)
+		#endif
 		NotificationCenter.default.addObserver(self, selector: #selector(handleNetworkStatusDidChange(_:)), name: .networkStatusDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleThumbnailDownloadDidFail(_:)), name: .thumbnailDownloadDidFail, object: nil)
 	}
@@ -129,9 +132,11 @@ extension Notification.Name {
 		emptyHTMLThumbnailCache()
 	}
 
+	#if os(iOS)
 	@objc func handleAppDidGoToBackground(_ notification: Notification) {
 		emptyHTMLThumbnailCache()
 	}
+	#endif
 
 	/// What failed to decode may have been a captive portal’s login page, not the image.
 	@objc func handleNetworkStatusDidChange(_ notification: Notification) {

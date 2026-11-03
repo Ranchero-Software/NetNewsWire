@@ -96,7 +96,7 @@ private typealias ArticleAttachment = Articles.Attachment
 		let article = makeArticle(contentHTML: #"<p><img src="/uploads/photo.jpg" width="640" height="480"></p>"#)
 		#expect(finder.thumbnailURL(for: article, mode: .small) == "https://example.com/uploads/photo.jpg")
 
-		finder.handleAppDidGoToBackground(Notification(name: .appDidGoToBackground))
+		finder.handleLowMemory(Notification(name: .lowMemory))
 		#expect(finder.thumbnailURL(for: article, mode: .small) == "https://example.com/uploads/photo.jpg")
 	}
 

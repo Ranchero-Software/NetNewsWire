@@ -1363,9 +1363,6 @@ private extension TimelineViewController {
 	}
 
 	func thumbnailsDisplayDidChange() {
-		if thumbnailsDisplay.thumbnailMode == nil {
-			ArticleThumbnailFinder.shared.emptyHTMLThumbnailCache()
-		}
 		updateCellAppearances()
 		updateLargeThumbnailRowHeight()
 		guard layout == .standard else {
