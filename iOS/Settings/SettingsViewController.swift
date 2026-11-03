@@ -52,7 +52,7 @@ final class SettingsViewController: UITableViewController {
 
 	private enum ArticlesRow: Int, CaseIterable {
 		case theme = 0
-		case markAsReadOnOpen = 1
+		case markAsReadMode = 1
 		case openLinksInNetNewsWire = 2
 		case enableJavaScript = 3
 		case enableFullScreenArticles = 4
@@ -72,7 +72,7 @@ final class SettingsViewController: UITableViewController {
 	@IBOutlet var groupByFeedSwitch: UISwitch!
 	@IBOutlet var refreshClearsReadArticlesSwitch: UISwitch!
 	@IBOutlet var articleThemeDetailLabel: UILabel!
-	@IBOutlet var markAsReadOnOpenSwitch: UISwitch!
+	@IBOutlet var markAsReadCell: UITableViewCell?
 	@IBOutlet var confirmMarkAllAsReadSwitch: UISwitch!
 	@IBOutlet var showFullscreenArticlesSwitch: UISwitch!
 	@IBOutlet var colorPaletteCell: UITableViewCell?
@@ -84,6 +84,7 @@ final class SettingsViewController: UITableViewController {
 	weak var presentingParentController: UIViewController?
 
 	private lazy var colorPalettePopUpButton = Self.makePopUpButton()
+	private lazy var markAsReadPopUpButton = Self.makePopUpButton()
 	private lazy var unreadCountDisplayPopUpButton = Self.makePopUpButton()
 
 	override func viewDidLoad() {
@@ -104,8 +105,10 @@ final class SettingsViewController: UITableViewController {
 		tableView.estimatedRowHeight = 44
 
 		addPopUpButton(colorPalettePopUpButton, to: colorPaletteCell, accessibilityLabel: NSLocalizedString("Color Palette", comment: "Color Palette"))
+		addPopUpButton(markAsReadPopUpButton, to: markAsReadCell, accessibilityLabel: NSLocalizedString("Mark as Read", comment: "Mark as Read"))
 		addPopUpButton(unreadCountDisplayPopUpButton, to: unreadCountDisplayCell, accessibilityLabel: NSLocalizedString("Unread Counts", comment: "Unread Counts"))
 		updateColorPalettePopUpButton()
+		updateMarkAsReadPopUpButton()
 		updateUnreadCountDisplayPopUpButton()
 	}
 
@@ -131,12 +134,6 @@ final class SettingsViewController: UITableViewController {
 		}
 
 		articleThemeDetailLabel.text = ArticleThemesManager.shared.currentTheme.name
-
-		if AppDefaults.markAsReadOnOpen {
-			markAsReadOnOpenSwitch.isOn = true
-		} else {
-			markAsReadOnOpenSwitch.isOn = false
-		}
 
 		if AppDefaults.confirmMarkAllAsRead {
 			confirmMarkAllAsReadSwitch.isOn = true
@@ -392,14 +389,6 @@ final class SettingsViewController: UITableViewController {
 		}
 	}
 
-	@IBAction func switchMarkAsReadOnOpen(_ sender: Any) {
-		if markAsReadOnOpenSwitch.isOn {
-			AppDefaults.markAsReadOnOpen = true
-		} else {
-			AppDefaults.markAsReadOnOpen = false
-		}
-	}
-
 	@IBAction func switchConfirmMarkAllAsRead(_ sender: Any) {
 		if confirmMarkAllAsReadSwitch.isOn {
 			AppDefaults.confirmMarkAllAsRead = true
@@ -515,6 +504,18 @@ private extension SettingsViewController {
 		}
 		colorPalettePopUpButton.menu = UIMenu(children: actions)
 		colorPalettePopUpButton.accessibilityValue = String(describing: currentColorPalette)
+	}
+
+	func updateMarkAsReadPopUpButton() {
+		let currentMode = AppDefaults.markAsReadMode
+		let actions = MarkAsReadMode.allCases.map { mode in
+			UIAction(title: String(describing: mode), state: mode == currentMode ? .on : .off) { [weak self] _ in
+				AppDefaults.markAsReadMode = mode
+				self?.updateMarkAsReadPopUpButton()
+			}
+		}
+		markAsReadPopUpButton.menu = UIMenu(children: actions)
+		markAsReadPopUpButton.accessibilityValue = String(describing: currentMode)
 	}
 
 	func updateUnreadCountDisplayPopUpButton() {

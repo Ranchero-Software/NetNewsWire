@@ -1019,6 +1019,9 @@
         }
       }
     },
+    "On Open" : {
+      "comment" : "Mark as Read setting"
+    },
     "Open" : {
       "comment" : "Open"
     },
