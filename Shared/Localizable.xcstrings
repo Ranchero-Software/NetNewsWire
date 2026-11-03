@@ -830,7 +830,7 @@
       "comment" : "Local"
     },
     "Manually" : {
-      "comment" : "Manually\nMark as Read setting"
+      "comment" : "Manually\nMark article as read setting"
     },
     "Mark Above as Read" : {
       "comment" : "Command"
@@ -841,11 +841,14 @@
     "Mark All as Read in “%@”" : {
       "comment" : "Command"
     },
+    "Mark article as read" : {
+      "comment" : "Mark article as read"
+    },
     "Mark Article Unread" : {
       "comment" : "Mark Article Unread"
     },
     "Mark as Read" : {
-      "comment" : "Command\nMark as Read"
+      "comment" : "Command"
     },
     "Mark As Read" : {
       "comment" : "Mark As Read"
@@ -1019,8 +1022,8 @@
         }
       }
     },
-    "On Open" : {
-      "comment" : "Mark as Read setting"
+    "On open" : {
+      "comment" : "Mark article as read setting"
     },
     "Open" : {
       "comment" : "Open"

@@ -150,7 +150,7 @@
                         </textField>
                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Mrk-Md-Lbl">
                             <rect key="frame" x="-2" y="328" width="106" height="16"/>
-                            <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Mark as Read:" id="Mrk-Md-Cel">
+                            <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Mark article as read:" id="Mrk-Md-Cel">
                                 <font key="font" usesAppearanceFont="YES"/>
                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -158,17 +158,17 @@
                         </textField>
                         <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Mrk-Md-Pop">
                             <rect key="frame" x="110" y="324" width="282" height="24"/>
-                            <popUpButtonCell key="cell" type="push" title="On Open" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Mrk-Md-On" id="Mrk-Md-Pc">
+                            <popUpButtonCell key="cell" type="push" title="On open" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Mrk-Md-On" id="Mrk-Md-Pc">
                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="message"/>
                                 <menu key="menu" id="Mrk-Md-Mnu">
                                     <items>
-                                        <menuItem title="On Open" state="on" tag="1" id="Mrk-Md-On"/>
+                                        <menuItem title="On open" state="on" tag="1" id="Mrk-Md-On"/>
                                         <menuItem title="Manually" tag="0" id="Mrk-Md-Ma"/>
                                     </items>
                                 </menu>
                                 <connections>
-                                    <binding destination="mAF-gO-1PI" name="selectedTag" keyPath="values.markAsReadOnOpen" id="Mrk-Md-Bnd">
+                                    <binding destination="mAF-gO-1PI" name="selectedTag" keyPath="values.markArticleAsReadMode" id="Mrk-Md-Bnd">
                                         <dictionary key="options">
                                             <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
                                             <bool key="NSConditionallySetsEnabled" value="NO"/>

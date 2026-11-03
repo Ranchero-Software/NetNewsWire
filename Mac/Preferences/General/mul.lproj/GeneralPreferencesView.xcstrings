@@ -254,13 +254,13 @@
       }
     },
     "Mrk-Md-Cel.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Mark as Read:\"; ObjectID = \"Mrk-Md-Cel\";",
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Mark article as read:\"; ObjectID = \"Mrk-Md-Cel\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Mark as Read:"
+            "value" : "Mark article as read:"
           }
         }
       }
@@ -278,13 +278,13 @@
       }
     },
     "Mrk-Md-On.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"On Open\"; ObjectID = \"Mrk-Md-On\";",
+      "comment" : "Class = \"NSMenuItem\"; title = \"On open\"; ObjectID = \"Mrk-Md-On\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "On Open"
+            "value" : "On open"
           }
         }
       }

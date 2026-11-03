@@ -21,8 +21,7 @@ enum AppDefaults {
 		static let addFolderAccountID = "addFolderAccountID"
 		static let currentThemeName = "currentThemeName"
 		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
-		// Keeps the key from the original Boolean setting so existing choices carry over.
-		static let markAsReadMode = "markAsReadOnOpen"
+		static let markArticleAsReadMode = "markArticleAsReadMode"
 		static let unreadCountDisplay = "unreadCountDisplay"
 		static let timelineThumbnailsDisplay = "timelineThumbnailsDisplay"
 		static let timelineFeedIconsDisplay = "timelineFeedIconsDisplay"
@@ -35,7 +34,7 @@ enum AppDefaults {
 			Key.timelineGroupByFeed: false,
 			Key.currentThemeName: defaultThemeName,
 			Key.articleContentJavascriptEnabled: true,
-			Key.markAsReadMode: MarkAsReadMode.onOpen.rawValue
+			Key.markArticleAsReadMode: MarkArticleAsReadMode.onOpen.rawValue
 			Key.timelineThumbnailsDisplay: TimelineThumbnailsDisplay.none.rawValue,
 			Key.timelineFeedIconsDisplay: TimelineFeedIconsDisplay.automatic.rawValue
 		]
@@ -101,12 +100,12 @@ enum AppDefaults {
 		}
 	}
 
-	static var markAsReadMode: MarkAsReadMode {
+	static var markArticleAsReadMode: MarkArticleAsReadMode {
 		get {
-			MarkAsReadMode(rawValue: UserDefaults.standard.integer(forKey: Key.markAsReadMode)) ?? .onOpen
+			MarkArticleAsReadMode(rawValue: UserDefaults.standard.integer(forKey: Key.markArticleAsReadMode)) ?? .onOpen
 		}
 		set {
-			UserDefaults.standard.set(newValue.rawValue, forKey: Key.markAsReadMode)
+			UserDefaults.standard.set(newValue.rawValue, forKey: Key.markArticleAsReadMode)
 		}
 	}
 
