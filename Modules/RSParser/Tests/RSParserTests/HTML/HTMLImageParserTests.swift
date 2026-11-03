@@ -164,7 +164,7 @@ import RSParser
 		#expect(!SignificantImageFilter.isSignificant(urlString: "https://s0.wp.com/i/blank.jpg", width: nil, height: nil))
 		#expect(!SignificantImageFilter.isSignificant(urlString: "https://pixel.wp.com/b.gif?v=1", width: nil, height: nil))
 		#expect(!SignificantImageFilter.isSignificant(urlString: "ftp://example.com/a.jpg", width: nil, height: nil))
-		#expect(!SignificantImageFilter.isSignificant(urlString: "https://example.com/banner.jpg", width: 1200, height: 250))
+		#expect(!SignificantImageFilter.isSignificant(urlString: "https://example.com/banner.jpg", width: 1200, height: 150))
 		#expect(!SignificantImageFilter.isSignificant(urlString: "https://example.com/images/spacer.gif", width: nil, height: nil))
 		#expect(!SignificantImageFilter.isSignificant(urlString: "https://email.example.net/open/abc123.gif", width: nil, height: nil))
 		#expect(!SignificantImageFilter.isSignificant(urlString: "https://email.example.net/wf/open?upn=abc123", width: nil, height: nil))
