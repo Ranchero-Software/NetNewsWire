@@ -193,6 +193,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private var showIcons = false
 	private var currentRowHeight: CGFloat = 0.0
 	private var largeThumbnailRowHeight: CGFloat = 0.0
+	private var articleIDsWithLargeThumbnailHeight = Set<String>() // Articles heightOfRow last gave largeThumbnailRowHeight
 	private var thumbnailsDisplay = AppDefaults.timelineThumbnailsDisplay {
 		didSet {
 			if thumbnailsDisplay != oldValue {
@@ -763,11 +764,19 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	@objc func handleNetworkStatusDidChange(_ notification: Notification) {
-		guard thumbnailMode != nil, ThumbnailDownloader.shared.networkAllowsDownloads else {
+		guard thumbnailMode != nil else {
 			return
 		}
-		// Thumbnails that couldn’t download while offline or in Low Data Mode try again.
-		reloadVisibleCells()
+		// After ArticleThumbnailFinder forgets its choices, which it does on this notification too.
+		Task { @MainActor in
+			if thumbnailMode == .large {
+				noteHeightOfRowsThatGainedOrLostLargeThumbnail()
+			}
+			// Thumbnails that couldn’t download while offline or in Low Data Mode try again.
+			if ThumbnailDownloader.shared.networkAllowsDownloads {
+				reloadVisibleCells()
+			}
+		}
 	}
 
 	@objc nonisolated func handleUserDefaultsDidChange(_ notification: Notification) {
@@ -922,6 +931,23 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		return rows
 	}
 
+	/// For thumbnail choices that change with no failure notification, such as after a network change.
+	private func noteHeightOfRowsThatGainedOrLostLargeThumbnail() {
+		guard largeThumbnailRowHeight > 0.0 else {
+			return
+		}
+		var rows = IndexSet()
+		for (row, article) in articles.enumerated() {
+			let hasThumbnail = ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: .large) != nil
+			if hasThumbnail != articleIDsWithLargeThumbnailHeight.contains(article.articleID) {
+				rows.insert(row)
+			}
+		}
+		if !rows.isEmpty {
+			noteHeightOfRowsKeepingScrollPosition(rows)
+		}
+	}
+
 	/// Keeps the top visible row in place when rows above it change height.
 	private func noteHeightOfRowsKeepingScrollPosition(_ rowIndexes: IndexSet) {
 		guard let scrollView = tableView.enclosingScrollView else {
@@ -1027,8 +1053,12 @@ extension TimelineViewController: NSTableViewDataSource {
 	}
 
 	func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
-		if thumbnailMode == .large, largeThumbnailRowHeight > 0.0, let article = articles.articleAtRow(row), ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: .large) != nil {
-			return largeThumbnailRowHeight
+		if let article = articles.articleAtRow(row) {
+			if thumbnailMode == .large, largeThumbnailRowHeight > 0.0, ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: .large) != nil {
+				articleIDsWithLargeThumbnailHeight.insert(article.articleID)
+				return largeThumbnailRowHeight
+			}
+			articleIDsWithLargeThumbnailHeight.remove(article.articleID)
 		}
 		// Keeping -[NSTableViewDelegate tableView:heightOfRow:] implemented fixes
 		// an issue that the bottom inset of NSTableView disappears on macOS Monterey.
