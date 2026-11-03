@@ -70,7 +70,10 @@ struct AccountNotificationInspectorView: View {
 						closeButton
 					}
 				}
-				.onReceive(NotificationCenter.default.publisher(for: Notification.Name.feedIconImageDidChange)) { _ in
+				.onReceive(NotificationCenter.default.publisher(for: Notification.Name.feedIconImageDidChange)) { notification in
+					guard let feed = notification.userInfo?[UserInfoKey.feed] as? Feed, feed.account === account else {
+						return
+					}
 					uuid = UUID()
 				}
 			}
