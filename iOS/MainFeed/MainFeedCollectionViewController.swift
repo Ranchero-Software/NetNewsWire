@@ -885,7 +885,6 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	// MARK: - Notifications
 
 	@objc func preferredContentSizeCategoryDidChange() {
-		IconImageCache.shared.emptyCache()
 		reloadAllVisibleCells()
 	}
 

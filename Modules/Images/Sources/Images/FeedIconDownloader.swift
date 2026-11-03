@@ -186,11 +186,6 @@ extension Notification.Name {
 			_ = icon(for: feed)
 		}
 	}
-
-	/// Returns the in-memory icon for `feed` without triggering a download.
-	public func cachedIcon(for feed: Feed) -> IconImage? {
-		cache[feed]?.iconImage
-	}
 }
 
 private extension FeedIconDownloader {

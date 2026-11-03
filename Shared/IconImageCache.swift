@@ -138,7 +138,8 @@ private extension IconImageCache {
 		// dictionaries so a newly arrived icon replaces a stale one. The dictionaries
 		// keep the last known icons across the downloaders’ low-memory and background flushes.
 		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5376>
-		if let iconImage = FeedIconDownloader.shared.cachedIcon(for: feed) {
+		// A miss requests the feed icon, so it comes back after a flush without waiting for a prefetch.
+		if let iconImage = FeedIconDownloader.shared.icon(for: feed) {
 			feedIconImageCache[feedID] = iconImage
 			return iconImage
 		}
