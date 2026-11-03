@@ -62,9 +62,6 @@ extension Notification.Name {
 			guard let homePageURL = feed.homePageURL else {
 				return
 			}
-			if homePagesWithNoIconURL.contains(homePageURL) {
-				return
-			}
 			icon(forHomePageURL: homePageURL, feed: feed) { iconImage, iconURL in
 				if let iconImage, let iconURL, self.cacheIcon(iconImage, for: feed, isFeedOwnIcon: false) {
 					self.cacheIconURLForFeedURL(iconURL: iconURL, feedURL: feed.url)
@@ -184,6 +181,7 @@ extension Notification.Name {
 		guard let url = note.userInfo?[HTMLMetadataUserInfoKey.url] as? String else {
 			return
 		}
+		homePagesWithNoIconURL.remove(url)
 		// A homepage URL may be shared by multiple feeds.
 		let feeds = feedsWaitingForHTMLMetadata.filter { $0.homePageURL == url }
 		feedsWaitingForHTMLMetadata.subtract(feeds)
@@ -293,6 +291,7 @@ private extension FeedIconDownloader {
 		}
 
 		if homePagesWithNoIconURL.contains(homePageURL) {
+			feedsWaitingForHTMLMetadata.insert(feed)
 			resultBlock(nil, nil)
 			return
 		}
@@ -313,7 +312,9 @@ private extension FeedIconDownloader {
 			return
 		}
 
+		// The feed is checked again when the home page’s metadata refreshes.
 		homePagesWithNoIconURL.insert(homePageURL)
+		feedsWaitingForHTMLMetadata.insert(feed)
 		resultBlock(nil, nil)
 	}
 

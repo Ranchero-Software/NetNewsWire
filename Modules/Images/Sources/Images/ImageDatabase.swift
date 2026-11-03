@@ -26,7 +26,7 @@ import RSParser
 	private let queue: DatabaseQueue
 
 	private var homePageToFaviconURL = [String: String]()
-	private var homePagesWithNoFavicon = Set<String>()
+	private var noFaviconDates = [String: Date]() // homePageURL: when no favicon was found
 	private var feedURLToIconURL = [String: String]()
 	private var failureDates = [String: Date]()
 	private var urlsUnsuitableForThumbnails = Set<String>()
@@ -92,16 +92,20 @@ import RSParser
 		homePageToFaviconURL.filter { $0.value == faviconURL }.map { $0.key }
 	}
 
+	/// A no-favicon verdict expires after `failureRetryDays`, so the home page gets checked again.
 	public func homePageHasNoFavicon(_ homePageURL: String) -> Bool {
-		homePagesWithNoFavicon.contains(homePageURL)
+		guard let noFaviconDate = noFaviconDates[homePageURL] else {
+			return false
+		}
+		return Date().timeIntervalSince(noFaviconDate) < TimeInterval(days: Self.failureRetryDays)
 	}
 
 	public func saveHomePageFavicon(homePageURL: String, faviconURL: String?) {
 		if let faviconURL {
 			homePageToFaviconURL[homePageURL] = faviconURL
-			homePagesWithNoFavicon.remove(homePageURL)
+			noFaviconDates.removeValue(forKey: homePageURL)
 		} else {
-			homePagesWithNoFavicon.insert(homePageURL)
+			noFaviconDates[homePageURL] = Date()
 			homePageToFaviconURL.removeValue(forKey: homePageURL)
 		}
 		queue.runInDatabase { database in
@@ -282,9 +286,8 @@ private extension ImageDatabase {
 		for record in homePageRecords {
 			if let faviconURL = record.faviconURL {
 				homePageToFaviconURL[record.homePageURL] = faviconURL
-			} else if Date().timeIntervalSince(record.lastChecked) < TimeInterval(days: Self.failureRetryDays) {
-				// A no-favicon verdict expires after failureRetryDays, so the homepage gets rechecked.
-				homePagesWithNoFavicon.insert(record.homePageURL)
+			} else {
+				noFaviconDates[record.homePageURL] = record.lastChecked
 			}
 		}
 		feedURLToIconURL = feedIcons
