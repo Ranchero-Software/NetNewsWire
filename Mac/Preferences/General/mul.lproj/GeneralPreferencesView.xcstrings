@@ -235,6 +235,18 @@
         }
       }
     },
+    "mF5-NC-6s2.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Mark as Read on Open\"; ObjectID = \"mF5-NC-6s2\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Mark as Read on Open"
+          }
+        }
+      }
+    },
     "MQe-Za-N8J.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Article Theme:\"; ObjectID = \"MQe-Za-N8J\";",
       "extractionState" : "extracted_with_value",
