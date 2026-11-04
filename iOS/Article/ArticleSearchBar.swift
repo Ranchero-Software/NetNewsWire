@@ -23,6 +23,14 @@ import UIKit
 
 	weak private var resultsLabel: UILabel!
 
+	private static let margins = UIEdgeInsets(top: 6, left: 8, bottom: 6, right: 8)
+	private static let controlHeight: CGFloat = 44
+	private static let controlSpacing: CGFloat = 8
+	private static let minimumHeight = controlHeight + margins.top + margins.bottom
+	private static let capsuleCornerRadius = controlHeight / 2
+	private static let searchFieldInset: CGFloat = 8
+	private static let previousNextWidth: CGFloat = 96
+
 	var resultsCount: UInt = 0 {
 		didSet {
 			updateUI()
@@ -42,7 +50,7 @@ import UIKit
 
 	override var intrinsicContentSize: CGSize {
 		let contentSize = super.intrinsicContentSize
-		return CGSize(width: contentSize.width, height: max(56, contentSize.height))
+		return CGSize(width: contentSize.width, height: max(Self.minimumHeight, contentSize.height))
 	}
 
 	override init(frame: CGRect) {
@@ -99,7 +107,7 @@ import UIKit
 private extension ArticleSearchBar {
 	func updateMarginsForReservedRegions() {
 		// The fold is a physical feature, so these are left and right, not leading and trailing.
-		var margins = UIEdgeInsets(top: 6, left: 8, bottom: 6, right: 8)
+		var margins = Self.margins
 
 		#if compiler(>=6.4)
 		// This stops Xcode 26 having a hissy.
@@ -110,9 +118,9 @@ private extension ArticleSearchBar {
 			let leftWidth = division.frame.minX - bounds.minX
 			let rightWidth = bounds.maxX - division.frame.maxX
 			if leftWidth >= rightWidth {
-				margins.right = bounds.maxX - division.frame.minX + 8
+				margins.right = bounds.maxX - division.frame.minX + Self.controlSpacing
 			} else {
-				margins.left = division.frame.maxX - bounds.minX + 8
+				margins.left = division.frame.maxX - bounds.minX + Self.controlSpacing
 			}
 		}
 		#endif
@@ -125,8 +133,8 @@ private extension ArticleSearchBar {
 	func commonInit() {
 		isLayoutMarginsRelativeArrangement = true
 		alignment = .center
-		spacing = 8
-		directionalLayoutMargins = NSDirectionalEdgeInsets(top: 6, leading: 8, bottom: 6, trailing: 8)
+		spacing = Self.controlSpacing
+		layoutMargins = Self.margins
 
 		var doneConfiguration: UIButton.Configuration
 		#if compiler(>=6.4)
@@ -146,7 +154,7 @@ private extension ArticleSearchBar {
 		doneButton.isAccessibilityElement = true
 		doneButton.addTarget(self, action: #selector(donePressed), for: .touchUpInside)
 		doneButton.isEnabled = true
-		doneButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
+		doneButton.heightAnchor.constraint(equalToConstant: Self.controlHeight).isActive = true
 		doneButton.widthAnchor.constraint(equalTo: doneButton.heightAnchor).isActive = true
 		addArrangedSubview(doneButton)
 
@@ -169,20 +177,7 @@ private extension ArticleSearchBar {
 		searchField.rightViewMode = .always
 
 		self.resultsLabel = resultsLabel
-		let searchBackground = UIVisualEffectView(effect: searchBarVisualEffect())
-		searchBackground.clipsToBounds = true
-		searchBackground.layer.cornerCurve = .continuous
-		searchBackground.layer.cornerRadius = 22
-		searchField.translatesAutoresizingMaskIntoConstraints = false
-		searchBackground.contentView.addSubview(searchField)
-		addArrangedSubview(searchBackground)
-		NSLayoutConstraint.activate([
-			searchBackground.heightAnchor.constraint(equalToConstant: 44),
-			searchField.leadingAnchor.constraint(equalTo: searchBackground.contentView.leadingAnchor, constant: 8),
-			searchField.trailingAnchor.constraint(equalTo: searchBackground.contentView.trailingAnchor, constant: -8),
-			searchField.topAnchor.constraint(equalTo: searchBackground.contentView.topAnchor),
-			searchField.bottomAnchor.constraint(equalTo: searchBackground.contentView.bottomAnchor)
-		])
+		addCapsule(containing: searchField, horizontalInset: Self.searchFieldInset)
 
 		var previousConfiguration = UIButton.Configuration.plain()
 		previousConfiguration.image = UIImage(systemName: "chevron.up")
@@ -203,25 +198,27 @@ private extension ArticleSearchBar {
 		let navigationStack = UIStackView(arrangedSubviews: [prevButton, nextButton])
 		navigationStack.axis = .horizontal
 		navigationStack.distribution = .fillEqually
-		let navigationBackground = UIVisualEffectView(effect: searchBarVisualEffect())
-		navigationBackground.clipsToBounds = true
-		navigationBackground.layer.cornerCurve = .continuous
-		navigationBackground.layer.cornerRadius = 22
-		navigationStack.translatesAutoresizingMaskIntoConstraints = false
-		navigationBackground.contentView.addSubview(navigationStack)
-		addArrangedSubview(navigationBackground)
-		NSLayoutConstraint.activate([
-			navigationStack.leadingAnchor.constraint(equalTo: navigationBackground.contentView.leadingAnchor),
-			navigationStack.trailingAnchor.constraint(equalTo: navigationBackground.contentView.trailingAnchor),
-			navigationStack.topAnchor.constraint(equalTo: navigationBackground.contentView.topAnchor),
-			navigationStack.bottomAnchor.constraint(equalTo: navigationBackground.contentView.bottomAnchor),
-			navigationBackground.heightAnchor.constraint(equalToConstant: 44),
-			navigationBackground.widthAnchor.constraint(equalToConstant: 96)
-		])
+		let navigationCapsule = addCapsule(containing: navigationStack, horizontalInset: 0)
+		navigationCapsule.widthAnchor.constraint(equalToConstant: Self.previousNextWidth).isActive = true
 	}
 
-	func searchBarVisualEffect() -> UIVisualEffect {
-		return UIBlurEffect(style: .systemChromeMaterial)
+	/// Adds a blurred, capsule-shaped background holding `content` as an arranged subview.
+	@discardableResult func addCapsule(containing content: UIView, horizontalInset: CGFloat) -> UIVisualEffectView {
+		let capsule = UIVisualEffectView(effect: UIBlurEffect(style: .systemChromeMaterial))
+		capsule.clipsToBounds = true
+		capsule.layer.cornerCurve = .continuous
+		capsule.layer.cornerRadius = Self.capsuleCornerRadius
+		content.translatesAutoresizingMaskIntoConstraints = false
+		capsule.contentView.addSubview(content)
+		addArrangedSubview(capsule)
+		NSLayoutConstraint.activate([
+			capsule.heightAnchor.constraint(equalToConstant: Self.controlHeight),
+			content.leadingAnchor.constraint(equalTo: capsule.contentView.leadingAnchor, constant: horizontalInset),
+			content.trailingAnchor.constraint(equalTo: capsule.contentView.trailingAnchor, constant: -horizontalInset),
+			content.topAnchor.constraint(equalTo: capsule.contentView.topAnchor),
+			content.bottomAnchor.constraint(equalTo: capsule.contentView.bottomAnchor)
+		])
+		return capsule
 	}
 }
 
