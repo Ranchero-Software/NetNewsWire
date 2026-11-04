@@ -180,22 +180,65 @@ function stopMediaPlayback() {
 	});
 }
 
-// The element at the top of the viewport and its offset. A scroll offset alone
-// means nothing once the article reflows at a different width.
+// The element at the top of the viewport, how far through it the viewport top is,
+// and any remaining distance. A scroll offset alone means nothing once the article
+// reflows at a different width.
 let scrollAnchorElement = null;
-let scrollAnchorTop = 0;
+let scrollAnchorFraction = 0;
+let scrollAnchorOffset = 0;
 
-function recordScrollAnchor() {
-	scrollAnchorElement = document.elementFromPoint(window.innerWidth / 2, 1);
-	scrollAnchorTop = scrollAnchorElement ? scrollAnchorElement.getBoundingClientRect().top : 0;
+const scrollAnchorSampleSpacing = 16;
+
+// False for a container hit in the gap between blocks: it has element children
+// and only whitespace text of its own.
+function isScrollAnchorCandidate(element) {
+	if (element.children.length === 0) {
+		return true;
+	}
+	for (const node of element.childNodes) {
+		if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== "") {
+			return true;
+		}
+	}
+	return false;
 }
 
-// Scrolls back to the recorded element after a reflow.
+function findScrollAnchorElement() {
+	const x = window.innerWidth / 2;
+	const maximumSampleDepth = window.innerHeight / 4;
+	let firstHit = null;
+	for (let y = 1; y <= maximumSampleDepth; y += scrollAnchorSampleSpacing) {
+		const element = document.elementFromPoint(x, y);
+		if (!element) {
+			continue;
+		}
+		if (isScrollAnchorCandidate(element)) {
+			return element;
+		}
+		if (!firstHit) {
+			firstHit = element;
+		}
+	}
+	return firstHit;
+}
+
+function recordScrollAnchor() {
+	scrollAnchorElement = findScrollAnchorElement();
+	if (!scrollAnchorElement) {
+		return;
+	}
+	const rect = scrollAnchorElement.getBoundingClientRect();
+	scrollAnchorFraction = rect.height > 0 ? Math.min(Math.max(-rect.top / rect.height, 0), 1) : 0;
+	scrollAnchorOffset = -(rect.top + scrollAnchorFraction * rect.height);
+}
+
+// Scrolls back to the same place in the recorded element after a reflow.
 function restoreScrollAnchor() {
 	if (!scrollAnchorElement || !scrollAnchorElement.isConnected) {
 		return;
 	}
-	window.scrollTo(0, window.scrollY + scrollAnchorElement.getBoundingClientRect().top - scrollAnchorTop);
+	const rect = scrollAnchorElement.getBoundingClientRect();
+	window.scrollTo(0, window.scrollY + rect.top + scrollAnchorFraction * rect.height + scrollAnchorOffset);
 }
 
 function error() {
