@@ -34,6 +34,14 @@ final class ImageTransition: NSObject, UIViewControllerAnimatedTransitioning {
 	}
 
 	private func animateTransitionPresenting(using transitionContext: UIViewControllerContextTransitioning) {
+		guard let toViewController = transitionContext.viewController(forKey: .to),
+			  let toView = transitionContext.view(forKey: .to) else {
+			transitionContext.completeTransition(false)
+			return
+		}
+
+		toView.frame = transitionContext.finalFrame(for: toViewController)
+		toView.layoutIfNeeded()
 
 		let imageView = UIImageView(image: originImage)
 		imageView.frame = originFrame
@@ -56,9 +64,7 @@ final class ImageTransition: NSObject, UIViewControllerAnimatedTransitioning {
 				}
 			}, completion: { _ in
 				imageView.removeFromSuperview()
-				if let toView = transitionContext.view(forKey: .to) {
-					transitionContext.containerView.addSubview(toView)
-				}
+				transitionContext.containerView.addSubview(toView)
 				transitionContext.completeTransition(true)
 		})
 	}

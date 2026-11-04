@@ -16,6 +16,8 @@ final class ImageViewController: UIViewController {
 	@IBOutlet var titleTrailing: NSLayoutConstraint!
 
 	private var shareButtonItem: UIBarButtonItem?
+	private var initialTitleConstraintConstants: (leading: CGFloat, trailing: CGFloat)?
+	private var lastImageScrollViewSize = CGSize.zero
 
 	var image: UIImage!
 	var imageTitle: String?
@@ -59,7 +61,7 @@ final class ImageViewController: UIViewController {
 		imageScrollView.display(image: image)
 
 		titleLabel.text = imageTitle ?? ""
-		layoutTitleLabel()
+		initialTitleConstraintConstants = (titleLeading.constant, titleTrailing.constant)
 
 		guard imageTitle != "" else {
 			titleBackground.removeFromSuperview()
@@ -68,11 +70,15 @@ final class ImageViewController: UIViewController {
 		titleBackground.layer.cornerRadius = 6
     }
 
-	override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-		super.viewWillTransition(to: size, with: coordinator)
-		coordinator.animate(alongsideTransition: { [weak self] _ in
-			self?.imageScrollView.resize()
-		})
+	override func viewDidLayoutSubviews() {
+		super.viewDidLayoutSubviews()
+		layoutTitleLabel()
+
+		let imageScrollViewSize = imageScrollView.bounds.size
+		if imageScrollViewSize != lastImageScrollViewSize {
+			lastImageScrollViewSize = imageScrollViewSize
+			imageScrollView.resize()
+		}
 	}
 
 	@IBAction func share(_ sender: Any) {
@@ -89,11 +95,11 @@ final class ImageViewController: UIViewController {
 	}
 
 	private func layoutTitleLabel() {
-		let width = view.frame.width
-		let multiplier = traitCollection.userInterfaceIdiom == .pad ? CGFloat(0.1) : CGFloat(0.04)
-		titleLeading.constant += width * multiplier
-		titleTrailing.constant -= width * multiplier
-		titleLabel.layoutIfNeeded()
+		guard let initialTitleConstraintConstants else { return }
+		let width = view.bounds.width
+		let multiplier = traitCollection.horizontalSizeClass == .regular ? CGFloat(0.1) : CGFloat(0.04)
+		titleLeading.constant = initialTitleConstraintConstants.leading + width * multiplier
+		titleTrailing.constant = initialTitleConstraintConstants.trailing - width * multiplier
 	}
 }
 

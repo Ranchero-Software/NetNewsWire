@@ -1651,7 +1651,7 @@ struct SidebarItemNode: Hashable, Sendable {
 		imageVC.imageTitle = imageTitle
 		imageVC.transition = transition
 		let navController = UINavigationController(rootViewController: imageVC)
-		navController.modalPresentationStyle = .currentContext
+		navController.modalPresentationStyle = .fullScreen
 		navController.transitioningDelegate = transition
 		rootSplitViewController.present(navController, animated: true)
 	}
