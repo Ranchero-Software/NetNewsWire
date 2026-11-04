@@ -16,8 +16,11 @@ final class ImageViewController: UIViewController {
 	@IBOutlet var titleTrailing: NSLayoutConstraint!
 
 	private var shareButtonItem: UIBarButtonItem?
-	private var initialTitleConstraintConstants: (leading: CGFloat, trailing: CGFloat)?
 	private var lastImageScrollViewSize = CGSize.zero
+
+	// Title margins as a fraction of the view width.
+	private static let regularWidthTitleMarginMultiplier: CGFloat = 0.1
+	private static let compactWidthTitleMarginMultiplier: CGFloat = 0.04
 
 	var image: UIImage!
 	var imageTitle: String?
@@ -61,7 +64,6 @@ final class ImageViewController: UIViewController {
 		imageScrollView.display(image: image)
 
 		titleLabel.text = imageTitle ?? ""
-		initialTitleConstraintConstants = (titleLeading.constant, titleTrailing.constant)
 
 		guard imageTitle != "" else {
 			titleBackground.removeFromSuperview()
@@ -95,11 +97,10 @@ final class ImageViewController: UIViewController {
 	}
 
 	private func layoutTitleLabel() {
-		guard let initialTitleConstraintConstants else { return }
 		let width = view.bounds.width
-		let multiplier = traitCollection.horizontalSizeClass == .regular ? CGFloat(0.1) : CGFloat(0.04)
-		titleLeading.constant = initialTitleConstraintConstants.leading + width * multiplier
-		titleTrailing.constant = initialTitleConstraintConstants.trailing - width * multiplier
+		let multiplier = traitCollection.horizontalSizeClass == .regular ? Self.regularWidthTitleMarginMultiplier : Self.compactWidthTitleMarginMultiplier
+		titleLeading.constant = width * multiplier
+		titleTrailing.constant = -width * multiplier
 	}
 }
 
