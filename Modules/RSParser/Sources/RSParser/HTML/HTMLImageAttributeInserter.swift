@@ -17,9 +17,9 @@ import Foundation
 public enum HTMLImageAttributeInserter {
 
 	/// `attributes` is inserted as is, so it must be escaped HTML, starting with a space.
-	public static func insertingAttributes(_ attributes: String, intoImagesWithSource urlString: String, html: String, baseURL: String?) -> String {
+	public static func insertingAttributes(_ attributes: String, intoImagesWithSource urlString: String, html: String, baseURL: URL?) -> String {
 		let bytes = Array(html.utf8)
-		let delegate = InserterDelegate(urlString: urlString, baseURL: URL(string: baseURL ?? ""))
+		let delegate = InserterDelegate(urlString: urlString, baseURL: baseURL)
 		let scanner = HTMLScanner(delegate: delegate)
 		scanner.parse(bytes)
 		guard !delegate.insertionOffsets.isEmpty else {

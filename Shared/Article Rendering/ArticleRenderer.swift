@@ -44,7 +44,7 @@ import Images
 	private let articleTheme: ArticleTheme
 	private let title: String
 	private let body: String
-	private let baseURL: String?
+	private let baseURL: URL?
 	private let routesThumbnailImages: Bool
 
 	private static let longDateTimeFormatter: DateFormatter = {
@@ -118,10 +118,12 @@ import Images
 		self.title = ArticleStringFormatter.sanitizedTitle(article?.title, forHTML: true) ?? ""
 
 		var articleBody: String
-		var baseURL: String?
+		var baseURL: URL?
 		if let content = extractedArticle?.content {
 			articleBody = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(content)
-			baseURL = extractedArticle?.url
+			if let extractedArticleURL = extractedArticle?.url {
+				baseURL = URL(string: extractedArticleURL)
+			}
 		} else {
 			let feedURL = article?.feed?.url
 			let homePageURL = article?.feed?.homePageURL
@@ -134,7 +136,7 @@ import Images
 			}
 
 			if let articleBaseURL = article?.baseURL {
-				baseURL = ArticleRenderingSpecialCases.baseURLForRendering(articleBaseURL).absoluteString
+				baseURL = ArticleRenderingSpecialCases.baseURLForRendering(articleBaseURL)
 			}
 		}
 
@@ -147,27 +149,27 @@ import Images
 	/// `routesThumbnailImages` points the thumbnail’s `<img>`s at `articleImageScheme`, which only a web view with `ArticleImageSchemeHandler` can load.
 	static func articleHTML(article: Article, extractedArticle: ExtractedArticle? = nil, theme: ArticleTheme, routesThumbnailImages: Bool = false) -> Rendering {
 		let renderer = ArticleRenderer(article: article, extractedArticle: extractedArticle, theme: theme, routesThumbnailImages: routesThumbnailImages)
-		return (renderer.articleCSS, renderer.articleHTML, renderer.title, renderer.baseURL ?? "")
+		return (renderer.articleCSS, renderer.articleHTML, renderer.title, renderer.baseURL?.absoluteString ?? "")
 	}
 
 	static func multipleSelectionHTML(theme: ArticleTheme) -> Rendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, theme: theme)
-		return (renderer.articleCSS, renderer.multipleSelectionHTML, renderer.title, renderer.baseURL ?? "")
+		return (renderer.articleCSS, renderer.multipleSelectionHTML, renderer.title, renderer.baseURL?.absoluteString ?? "")
 	}
 
 	static func loadingHTML(theme: ArticleTheme) -> Rendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, theme: theme)
-		return (renderer.articleCSS, renderer.loadingHTML, renderer.title, renderer.baseURL ?? "")
+		return (renderer.articleCSS, renderer.loadingHTML, renderer.title, renderer.baseURL?.absoluteString ?? "")
 	}
 
 	static func noSelectionHTML(theme: ArticleTheme) -> Rendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, theme: theme)
-		return (renderer.articleCSS, renderer.noSelectionHTML, renderer.title, renderer.baseURL ?? "")
+		return (renderer.articleCSS, renderer.noSelectionHTML, renderer.title, renderer.baseURL?.absoluteString ?? "")
 	}
 
 	static func noContentHTML(theme: ArticleTheme) -> Rendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, theme: theme)
-		return (renderer.articleCSS, renderer.noContentHTML, renderer.title, renderer.baseURL ?? "")
+		return (renderer.articleCSS, renderer.noContentHTML, renderer.title, renderer.baseURL?.absoluteString ?? "")
 	}
 
 	/// Full page HTML for a rendering, ready to load into a web view.
@@ -327,7 +329,7 @@ private extension ArticleRenderer {
 	/// Points the `<img>`s that show the article’s timeline thumbnail at `articleImageScheme`,
 	/// so the article view uses the timeline’s copy instead of downloading the image again.
 	/// `data-nnw-src` keeps the original URL, which main.js falls back to when the copy can’t be loaded.
-	static func routingThumbnailImages(_ html: String, thumbnailURL: String, baseURL: String?) -> String {
+	static func routingThumbnailImages(_ html: String, thumbnailURL: String, baseURL: URL?) -> String {
 		guard let routedURLString = ArticleImageSchemeHandler.routedURLString(thumbnailURL) else {
 			return html
 		}
