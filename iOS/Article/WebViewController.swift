@@ -121,8 +121,9 @@ final class WebViewController: UIViewController {
 			guard let self else {
 				return
 			}
-			self.restoreScrollAnchor()
-			self.isChangingSize = false
+			restoreScrollAnchor()
+			scrollPositionDidChange()
+			isChangingSize = false
 		}
 	}
 
