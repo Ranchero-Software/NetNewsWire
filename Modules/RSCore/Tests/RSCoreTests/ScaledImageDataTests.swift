@@ -32,9 +32,28 @@ import UniformTypeIdentifiers
 		#expect(RSImage.largestFramePixelSize(scaledData)?.width == 288)
 		#expect(RSImage.largestFramePixelSize(scaledData)?.height == 216)
 	}
+
+#if os(macOS)
+	@Test func svgIsRasterizedToPNG() throws {
+		let scaledData = try #require(RSImage.scaledImageData(svgData, maxPixelSize: 64))
+
+		#expect(imageType(scaledData) == UTType.png.identifier)
+		#expect(RSImage.largestFramePixelSize(scaledData)?.width == 64)
+		#expect(RSImage.largestFramePixelSize(scaledData)?.height == 32)
+	}
+
+	@Test func svgRasterizingIsDeterministic() throws {
+		let scaledData = try #require(RSImage.scaledImageData(svgData, maxPixelSize: 64))
+		let scaledAgainData = try #require(RSImage.scaledImageData(svgData, maxPixelSize: 64))
+
+		#expect(scaledData == scaledAgainData)
+	}
+#endif
 }
 
 // MARK: - Helpers
+
+private let svgData = Data(##"<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100" viewBox="0 0 200 100"><rect width="200" height="100" fill="#336699"/><circle cx="100" cy="50" r="40" fill="#ffcc00"/></svg>"##.utf8)
 
 private func pngData(width: Int, height: Int) -> Data? {
 	imageData(width: width, height: height, type: UTType.png, embedsThumbnail: false)

@@ -510,7 +510,7 @@ extension DownloadedImageCache {
 		return files
 	}
 
-	/// The original data when it’s already small enough, or can’t be scaled, such as SVG.
+	/// The original data when it’s already small enough or can’t be read.
 	@concurrent static func scaledIcon(from data: Data) async -> Data {
 		RSImage.scaledImageData(data, maxPixelSize: RSImage.maxIconPixelSize) ?? data
 	}
