@@ -99,7 +99,8 @@ import UIKit
 
 private extension ArticleSearchBar {
 	func updateMarginsForReservedRegions() {
-		var margins = NSDirectionalEdgeInsets(top: 6, leading: 8, bottom: 6, trailing: 8)
+		// The fold is a physical feature, so these are left and right, not leading and trailing.
+		var margins = UIEdgeInsets(top: 6, left: 8, bottom: 6, right: 8)
 
 		#if compiler(>=6.4)
 		// This stops Xcode 26 having a hissy.
@@ -107,18 +108,18 @@ private extension ArticleSearchBar {
 		   let division = reservedRegions(kind: .division).first(where: { region in
 			   region.frame.intersects(bounds) && region.frame.height > region.frame.width
 		   }) {
-			let leadingWidth = division.frame.minX - bounds.minX
-			let trailingWidth = bounds.maxX - division.frame.maxX
-			if leadingWidth >= trailingWidth {
-				margins.trailing = bounds.maxX - division.frame.minX + 8
+			let leftWidth = division.frame.minX - bounds.minX
+			let rightWidth = bounds.maxX - division.frame.maxX
+			if leftWidth >= rightWidth {
+				margins.right = bounds.maxX - division.frame.minX + 8
 			} else {
-				margins.leading = division.frame.maxX - bounds.minX + 8
+				margins.left = division.frame.maxX - bounds.minX + 8
 			}
 		}
 		#endif
 
-		if directionalLayoutMargins != margins {
-			directionalLayoutMargins = margins
+		if layoutMargins != margins {
+			layoutMargins = margins
 		}
 	}
 
