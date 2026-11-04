@@ -291,7 +291,10 @@ private extension DownloadedImageCache {
 				}
 				activityLog.didFail(activityOwner, kind: activityKind, error: error)
 			}
-			if !error.isTransient {
+			if error.rejectedByteCount != nil {
+				// Too large only for the timeline, so icons and the article view can still use it.
+				ImageDatabase.shared.saveUnsuitableForThumbnail(url: url)
+			} else if !error.isTransient {
 				ImageDatabase.shared.recordFailure(url: url)
 			}
 			return .failure(error)
@@ -396,9 +399,10 @@ private extension DownloadedImageCache {
 		}
 
 		let httpResponse = downloadResponse.response as? HTTPURLResponse
+		var isUnchanged = httpResponse?.statusCode == HTTPResponseCode.notModified
 		if let data = downloadResponse.data, !data.isEmpty, let httpResponse, httpResponse.statusIsOK {
 			// A server without validators sends the whole image even when it hasn’t changed.
-			let isUnchanged = await isStoredImage(data, url: url)
+			isUnchanged = await isStoredImage(data, url: url)
 			if !isUnchanged, (try? await saveImage(data, url: url, httpResponse: httpResponse, isIcon: true)) == true {
 				Self.logger.info("Replaced changed image at \(url)")
 				await Self.deleteFromDisk(diskCache, keys: [Self.derivedDiskKey(url, suffix: Self.scaledIconSuffix)])
@@ -412,8 +416,15 @@ private extension DownloadedImageCache {
 			noteDownloadResult(.failure(error), url: url)
 		}
 
+		// The server may send a new ETag or Last-Modified with an unchanged image, so later checks can get a 304.
+		var newConditionalGetInfo: HTTPConditionalGetInfo?
+		if isUnchanged, let httpResponse {
+			newConditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
+		}
+
 		// 304 Not Modified, the same bytes, an error response, not an image, or a failed write: keep the copy and check again later.
-		ImageDatabase.shared.saveDownloadedImageNextCheck(url: url, nextCheck: Self.nextCheck(httpResponse, hasValidators: validation.conditionalGetInfo != nil))
+		let nextCheck = Self.nextCheck(httpResponse, hasValidators: newConditionalGetInfo != nil || validation.conditionalGetInfo != nil)
+		ImageDatabase.shared.saveDownloadedImageNextCheck(url: url, nextCheck: nextCheck, conditionalGetInfo: newConditionalGetInfo)
 	}
 
 	/// Compares with the original, or, when only the scaled icon is kept, with that. Scaling the same bytes gives the same result.

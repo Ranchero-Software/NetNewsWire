@@ -11,6 +11,7 @@ import RSCore
 import RSDatabase
 import RSDatabaseObjC
 import RSParser
+import RSWeb
 
 /// Per-URL image metadata: discovered URLs, failure tracking, and the copies `DownloadedImageCache` stores.
 @MainActor public final class ImageDatabase {
@@ -169,10 +170,15 @@ import RSParser
 
 	// MARK: - DownloadedImage
 
-	/// True when the stored copy is too small, too narrow, or unreadable by ImageIO.
+	/// True when the image is too large to download for the timeline, or the stored copy is too small, too narrow, or unreadable by ImageIO.
 	/// It may still be a fine feed icon.
 	public func isUnsuitableForThumbnail(url: String) -> Bool {
 		urlsUnsuitableForThumbnails.contains(url)
+	}
+
+	/// For this session.
+	func saveUnsuitableForThumbnail(url: String) {
+		urlsUnsuitableForThumbnails.insert(url)
 	}
 
 	func saveDownloadedImage(_ record: DownloadedImageRecord) {
@@ -206,9 +212,10 @@ import RSParser
 		}
 	}
 
-	func saveDownloadedImageNextCheck(url: String, nextCheck: Date) {
+	/// Saves `conditionalGetInfo` too when it’s not nil. Otherwise the saved validators are kept.
+	func saveDownloadedImageNextCheck(url: String, nextCheck: Date, conditionalGetInfo: HTTPConditionalGetInfo?) {
 		queue.runInDatabase { database in
-			DownloadedImageTable.saveNextCheck(url: url, nextCheck: nextCheck, database: database)
+			DownloadedImageTable.saveNextCheck(url: url, nextCheck: nextCheck, conditionalGetInfo: conditionalGetInfo, database: database)
 		}
 	}
 

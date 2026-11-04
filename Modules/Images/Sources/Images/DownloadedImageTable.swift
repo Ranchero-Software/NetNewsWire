@@ -109,8 +109,17 @@ struct DownloadedImageTable {
 		return DownloadedImageValidation(nextCheck: nextCheck, conditionalGetInfo: conditionalGetInfo)
 	}
 
-	static func saveNextCheck(url: String, nextCheck: Date, database: FMDatabase) {
-		database.updateRowsWithValue(nextCheck.timeIntervalSince1970, valueKey: Column.nextCheck, whereKey: Column.url, equals: url, tableName: name)
+	static func saveNextCheck(url: String, nextCheck: Date, conditionalGetInfo: HTTPConditionalGetInfo?, database: FMDatabase) {
+		guard let conditionalGetInfo else {
+			database.updateRowsWithValue(nextCheck.timeIntervalSince1970, valueKey: Column.nextCheck, whereKey: Column.url, equals: url, tableName: name)
+			return
+		}
+		let dictionary: DatabaseDictionary = [
+			Column.nextCheck: nextCheck.timeIntervalSince1970,
+			Column.etag: conditionalGetInfo.etag as Any,
+			Column.lastModified: conditionalGetInfo.lastModified as Any
+		]
+		database.updateRowsWithDictionary(dictionary, whereKey: Column.url, equals: url, tableName: name)
 	}
 
 	static func saveAccessDate(url: String, database: FMDatabase) {

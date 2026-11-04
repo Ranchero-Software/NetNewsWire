@@ -111,6 +111,31 @@ import RSWeb
 		// Waits for the cleanup init queues, which would otherwise run after the folder is deleted.
 		await reopenedImageDatabase.vacuum()
 	}
+
+	@Test func newValidatorsAreSavedWithNextCheck() async throws {
+		let folder = FileManager.default.temporaryDirectory.appendingPathComponent("ImageDatabaseTests-\(UUID().uuidString)")
+		try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+		defer {
+			try? FileManager.default.removeItem(at: folder)
+		}
+		let databasePath = folder.appendingPathComponent("Images.db").path
+		let iconURL = "https://example.com/apple-touch-icon.png"
+		let oldConditionalGetInfo = try #require(HTTPConditionalGetInfo(lastModified: nil, etag: "\"old\""))
+		let newConditionalGetInfo = try #require(HTTPConditionalGetInfo(lastModified: "Tue, 03 Nov 2026 12:00:00 GMT", etag: "\"new\""))
+		let nextCheck = Date(timeIntervalSince1970: 2_000_000_000)
+		let laterNextCheck = Date(timeIntervalSince1970: 2_100_000_000)
+
+		let imageDatabase = ImageDatabase(databasePath: databasePath)
+		imageDatabase.saveDownloadedImage(DownloadedImageRecord(url: iconURL, pixelSize: (width: 180, height: 180), conditionalGetInfo: oldConditionalGetInfo, nextCheck: nextCheck, isIcon: true))
+		imageDatabase.saveDownloadedImageNextCheck(url: iconURL, nextCheck: laterNextCheck, conditionalGetInfo: newConditionalGetInfo)
+
+		let validation = await imageDatabase.fetchDownloadedImageValidation(url: iconURL)
+		#expect(validation?.conditionalGetInfo == newConditionalGetInfo)
+		#expect(validation?.nextCheck == laterNextCheck)
+
+		// Waits for the cleanup init queues, which would otherwise run after the folder is deleted.
+		await imageDatabase.vacuum()
+	}
 }
 
 private extension ImageDatabaseTests {
