@@ -19,7 +19,6 @@ import UIKit
 	var searchField: UISearchTextField!
 	var nextButton: UIButton!
 	var prevButton: UIButton!
-	var background: UIView!
 	var shouldBeginEditing: Bool = true
 
 	weak private var resultsLabel: UILabel!
@@ -128,12 +127,6 @@ private extension ArticleSearchBar {
 		alignment = .center
 		spacing = 8
 		directionalLayoutMargins = NSDirectionalEdgeInsets(top: 6, leading: 8, bottom: 6, trailing: 8)
-
-		let background = UIView(frame: bounds)
-		background.backgroundColor = .clear
-		background.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-		self.background = background
-		addSubview(background)
 
 		var doneConfiguration: UIButton.Configuration
 		#if compiler(>=6.4)
