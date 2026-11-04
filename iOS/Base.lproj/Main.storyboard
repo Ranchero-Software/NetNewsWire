@@ -436,7 +436,6 @@
                         <color key="backgroundColor" name="fullScreenBackgroundColor"/>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="msG-pz-EKk" secondAttribute="bottom" id="AtA-bA-jDr"/>
-                            <constraint firstItem="eMj-1g-3xm" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="mbY-02-GFL" secondAttribute="trailing" id="E7e-Lv-6ZA"/>
                             <constraint firstItem="eMj-1g-3xm" firstAttribute="centerX" secondItem="w6Q-vH-063" secondAttribute="centerX" id="H2b-IA-6hz"/>
                             <constraint firstItem="bHh-pW-oTS" firstAttribute="bottom" secondItem="eMj-1g-3xm" secondAttribute="bottom" constant="4" id="P3m-i2-3pJ"/>
                             <constraint firstAttribute="trailing" secondItem="msG-pz-EKk" secondAttribute="trailing" id="R49-qV-8nm"/>
@@ -454,7 +453,6 @@
                         <outlet property="titleBackground" destination="bHh-pW-oTS" id="o2K-cY-90c"/>
                         <outlet property="titleLabel" destination="eMj-1g-3xm" id="6wF-IZ-fNw"/>
                         <outlet property="titleLeading" destination="Xni-Dn-I3Z" id="8Ik-la-Qkw"/>
-                        <outlet property="titleTrailing" destination="E7e-Lv-6ZA" id="lGu-iv-C9W"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ZPN-tH-JAG" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

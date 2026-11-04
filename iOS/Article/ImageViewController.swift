@@ -13,7 +13,6 @@ final class ImageViewController: UIViewController {
 	@IBOutlet var titleLabel: UILabel!
 	@IBOutlet var titleBackground: UIVisualEffectView!
 	@IBOutlet var titleLeading: NSLayoutConstraint!
-	@IBOutlet var titleTrailing: NSLayoutConstraint!
 
 	private var shareButtonItem: UIBarButtonItem?
 	private var lastImageScrollViewSize = CGSize.zero
@@ -101,10 +100,8 @@ final class ImageViewController: UIViewController {
 	}
 
 	private func layoutTitleLabel() {
-		let width = view.bounds.width
 		let multiplier = traitCollection.horizontalSizeClass == .regular ? Self.regularWidthTitleMarginMultiplier : Self.compactWidthTitleMarginMultiplier
-		titleLeading.constant = width * multiplier
-		titleTrailing.constant = -width * multiplier
+		titleLeading.constant = view.bounds.width * multiplier
 	}
 }
 
