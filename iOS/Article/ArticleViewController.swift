@@ -59,6 +59,7 @@ final class ArticleViewController: UIViewController {
 	private let poppableDelegate = PoppableGestureRecognizerDelegate()
 	private weak var originalPopGestureRecognizerDelegate: UIGestureRecognizerDelegate?
 	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "ArticleViewController")
+	private static let searchBarSpacing: CGFloat = 8
 
 	var article: Article? {
 		didSet {
@@ -490,9 +491,8 @@ extension ArticleViewController {
 
 	@objc func beginFind(_ _: Any? = nil) {
 		searchBar.isHidden = false
-		searchBarBottomConstraint.constant = 8
 		navigationController?.setToolbarHidden(true, animated: true)
-		currentWebViewController?.additionalSafeAreaInsets.bottom = searchBar.frame.height + 8
+		updateSearchBarPosition(keyboardHeight: 0)
 		searchBar.becomeFirstResponder()
 	}
 
@@ -516,12 +516,19 @@ extension ArticleViewController {
 			let keyboardFrame = view.convert(frame, from: window.screen.coordinateSpace)
 			let coversBottomEdge = keyboardFrame.maxY >= view.bounds.maxY
 			let newHeight = coversBottomEdge ? max(0, view.safeAreaLayoutGuide.layoutFrame.maxY - keyboardFrame.minY) : 0
-			currentWebViewController?.additionalSafeAreaInsets.bottom = newHeight + searchBar.frame.height + 18
-			self.searchBarBottomConstraint.constant = newHeight + 8
+			updateSearchBarPosition(keyboardHeight: newHeight)
 			UIView.animate(withDuration: duration, delay: 0, options: curve, animations: {
 				self.view.layoutIfNeeded()
 			})
 		}
+	}
+
+	/// Puts the search bar above the keyboard and insets the web view to the search bar’s top.
+	private func updateSearchBarPosition(keyboardHeight: CGFloat) {
+		let searchBarBottom = keyboardHeight + Self.searchBarSpacing
+		searchBarBottomConstraint.constant = searchBarBottom
+		// The intrinsic height is correct before layout, unlike the frame right after un-hiding.
+		currentWebViewController?.additionalSafeAreaInsets.bottom = searchBarBottom + searchBar.intrinsicContentSize.height
 	}
 
 }
