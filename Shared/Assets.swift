@@ -80,7 +80,7 @@ struct Assets {
 #else // iOS
 		static var accountLocalPadImage: RSImage { RSImage(named: "accountLocalPad")! }
 		static var accountLocalPhoneImage: RSImage { RSImage(named: "accountLocalPhone")! }
-		static var nnwAppIcon: RSImage { RSImage(named: "nnwAppIcon")! }
+		static var timelinePreviewThumbnail: RSImage { RSImage(named: "timelinePreviewThumbnail")! }
 
 		static let circleClosed = RSImage(symbol: "largecircle.fill.circle")!
 		static let markBelowAsRead = RSImage(symbol: "arrowtriangle.down.circle")!

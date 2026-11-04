@@ -270,7 +270,7 @@ private extension TimelineCustomizerCollectionViewController {
 											 showIcon: section.showsFeedIcon,
 											 numberOfLines: AppDefaults.timelineNumberOfLines,
 											 iconSize: AppDefaults.timelineIconSize,
-											 thumbnail: Assets.Images.nnwAppIcon,
+											 thumbnail: Assets.Images.timelinePreviewThumbnail,
 											 showThumbnail: section.showsThumbnail,
 											 thumbnailsDisplay: AppDefaults.timelineThumbnailsDisplay)
 		cell.isPreview = true
