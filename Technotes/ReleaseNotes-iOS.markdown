@@ -1,5 +1,15 @@
 # iOS Release Notes
 
+### 7.3 build 7227 3 Nov 2026 - branch: main tag: iOS-7.3-7227
+
+Added support for enclosures and Media RSS
+Added enclosures to the article view (at the bottom) — you can see images from Mastodon feeds, play an MP3, etc.
+Made YouTube enclosures play in the privacy-enhanced YouTube player (youtube-nocookie.com)
+Made the article view show plain text or media:description when an article has no HTML content
+Made image downloading kinder to servers — honors Retry-After, waits after errors, and limits downloads to two at a time per host
+Added article thumbnails to the timeline — choose Settings > Timeline Layout > Thumbnail Size to pick large or small. Default is none
+Added a Feed Icons setting to Settings > Timeline Layout — Automatic (folders, smart feeds, and authors with avatars), Always, or Never
+
 ### 7.3 build 7226 22 Oct 2026 - branch: main tag: iOS-7.3-7226
 
 Added an article preview to the timeline context menu — touch and hold an article to see it, and tap the preview to open the article

@@ -1,5 +1,15 @@
 # Mac Release Notes
 
+### 7.3b3 7227 3 Nov 2026 - branch: main tag: mac-7.3b3
+
+Added support for enclosures and Media RSS
+Added enclosures to the article view (at the bottom) — you can see images from Mastodon feeds, play an MP3, etc.
+Made YouTube enclosures play in the privacy-enhanced YouTube player (youtube-nocookie.com)
+Made the article view show plain text or media:description when an article has no HTML content
+Made image downloading kinder to servers — honors Retry-After, waits after errors, and limits downloads to two at a time per host
+Reorganized the View menu into sections — sidebar, timeline, status bar, and toolbar
+Added article thumbnails to the timeline — choose View > Thumbnails to pick large or small. Default is none. (Works in standard layout but not column layout)
+
 ### 7.3b2 7226 22 Oct 2026 - branch: main tag: mac-7.3b2
 
 Fixed a crash at midnight when the status bar is showing
