@@ -7,6 +7,24 @@
     <language>en</language>
 
 <item>
+	<title>NetNewsWire 7.3b3</title>
+	<description><![CDATA[
+<ul>
+<li>Added support for enclosures and Media RSS
+<li>Added enclosures to the article view (at the bottom) — you can see images from Mastodon feeds, play an MP3, etc.
+<li>Made YouTube enclosures play in the privacy-enhanced YouTube player (youtube-nocookie.com)
+<li>Made the article view show plain text or media:description when an article has no HTML content
+<li>Made image downloading kinder to servers — honors Retry-After, waits after errors, and limits downloads to two at a time per host
+<li>Reorganized the View menu into sections — sidebar, timeline, status bar, and toolbar
+<li>Added article thumbnails to the timeline — choose View > Thumbnails to pick large or small. Default is none. (Works in standard layout but not column layout)
+</ul>
+	]]></description>
+	<pubDate>Tue, 03 Nov 2026 17:00:00 -0800</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.3b3/NetNewsWire7.3b3.zip" sparkle:version="7227" sparkle:shortVersionString="7.3b3" length="10342300" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
 	<title>NetNewsWire 7.3b2</title>
 	<description><![CDATA[
 <ul>
