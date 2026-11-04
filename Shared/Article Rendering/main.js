@@ -180,6 +180,24 @@ function stopMediaPlayback() {
 	});
 }
 
+// The element at the top of the viewport and its offset. A scroll offset alone
+// means nothing once the article reflows at a different width.
+let scrollAnchorElement = null;
+let scrollAnchorTop = 0;
+
+function recordScrollAnchor() {
+	scrollAnchorElement = document.elementFromPoint(window.innerWidth / 2, 1);
+	scrollAnchorTop = scrollAnchorElement ? scrollAnchorElement.getBoundingClientRect().top : 0;
+}
+
+// Scrolls back to the recorded element after a reflow.
+function restoreScrollAnchor() {
+	if (!scrollAnchorElement || !scrollAnchorElement.isConnected) {
+		return;
+	}
+	window.scrollTo(0, window.scrollY + scrollAnchorElement.getBoundingClientRect().top - scrollAnchorTop);
+}
+
 function error() {
 	document.body.innerHTML = "error";
 }

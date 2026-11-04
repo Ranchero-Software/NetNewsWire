@@ -585,17 +585,7 @@ extension WebViewController: UIScrollViewDelegate {
 
 	@objc func scrollPositionDidChange() {
 		let articleIDWhenAsked = article?.articleID
-		// Note the element at the top of the viewport along with the offset. The offset alone
-		// means nothing once the article reflows at a different width.
-		let javascript = """
-			(function() {
-				const element = document.elementFromPoint(window.innerWidth / 2, 1);
-				window.nnwScrollAnchor = element;
-				window.nnwScrollAnchorTop = element ? element.getBoundingClientRect().top : 0;
-				return window.scrollY;
-			})();
-			"""
-		webView?.evaluateJavaScript(javascript) { (scrollY, error) in
+		webView?.evaluateJavaScript("recordScrollAnchor(); window.scrollY") { (scrollY, error) in
 			guard error == nil else { return }
 			// A late callback must not record the previous article’s offset.
 			// <https://github.com/Ranchero-Software/NetNewsWire/issues/5243>
@@ -733,16 +723,7 @@ private extension WebViewController {
 	/// Scrolls back to the element that was at the top of the viewport before the article
 	/// reflowed, so rotating doesn't lose the reader's place.
 	func restoreScrollAnchor() {
-		let javascript = """
-			(function() {
-				const element = window.nnwScrollAnchor;
-				if (!element || !element.isConnected) {
-					return;
-				}
-				window.scrollTo(0, window.scrollY + element.getBoundingClientRect().top - window.nnwScrollAnchorTop);
-			})();
-			"""
-		webView?.evaluateJavaScript(javascript, completionHandler: nil)
+		webView?.evaluateJavaScript("restoreScrollAnchor();")
 	}
 
 	func finalScrollPosition(scrollingUp: Bool) -> CGFloat {
