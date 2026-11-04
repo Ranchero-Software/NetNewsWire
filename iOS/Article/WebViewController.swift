@@ -113,9 +113,7 @@ final class WebViewController: UIViewController {
 	override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
 		super.viewWillTransition(to: size, with: coordinator)
 
-		// Reflowing at a new width moves whatever the reader was looking at, and the offsets
-		// the web view reports mid-transition aren't where they were. Stop recording until
-		// it settles, then scroll back to the last place we knew about.
+		// Ignore mid-transition offsets, then scroll back to the reader’s place.
 		isChangingSize = true
 		coordinator.animate(alongsideTransition: nil) { [weak self] _ in
 			guard let self else {
@@ -587,7 +585,9 @@ extension WebViewController: UIScrollViewDelegate {
 	@objc func scrollPositionDidChange() {
 		let articleIDWhenAsked = article?.articleID
 		webView?.evaluateJavaScript("recordScrollAnchor(); window.scrollY") { (scrollY, error) in
-			guard error == nil else { return }
+			guard error == nil else {
+				return
+			}
 			// A late callback must not record the previous article’s offset.
 			// <https://github.com/Ranchero-Software/NetNewsWire/issues/5243>
 			guard articleIDWhenAsked == self.article?.articleID else {
@@ -595,7 +595,9 @@ extension WebViewController: UIScrollViewDelegate {
 			}
 			let javascriptScrollY = scrollY as? Int ?? 0
 			// I don't know why this value gets returned sometimes, but it is in error
-			guard javascriptScrollY != 33554432 else { return }
+			guard javascriptScrollY != 33554432 else {
+				return
+			}
 			self.windowScrollY = javascriptScrollY
 		}
 	}
