@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="24765" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="25098" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24765"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="25098"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -16,10 +16,10 @@
             <connections>
                 <outlet property="checkForUpdatesMenuItem" destination="1nF-7O-aKU" id="JmT-jc-DJ8"/>
                 <outlet property="debugMenuItem" destination="UqE-mp-gtV" id="OnR-lr-Zlt"/>
-                <outlet property="useColumnLayoutMenuItem" destination="ucL-ay-0ut" id="ucL-ou-tl1"/>
-                <outlet property="thumbnailsMenu" destination="tHm-nu-mN1" id="tHm-nu-oU1"/>
                 <outlet property="showStatusBarMenuItem" destination="stB-ar-mI1" id="stB-ar-oU1"/>
                 <outlet property="showStatusBarThemeMenuMenuItem" destination="stT-hm-mI1" id="stT-hm-oU1"/>
+                <outlet property="thumbnailsMenu" destination="tHm-nu-mN1" id="tHm-nu-oU1"/>
+                <outlet property="useColumnLayoutMenuItem" destination="ucL-ay-0ut" id="ucL-ou-tl1"/>
             </connections>
         </customObject>
         <menu title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
@@ -362,6 +362,18 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="View" id="HyV-fh-RgO">
                         <items>
+                            <menuItem title="Show Sidebar" keyEquivalent="s" id="kIP-vf-haE">
+                                <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
+                                <connections>
+                                    <action selector="toggleSidebar:" target="-1" id="CZ1-aO-CkF"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Hide Read Feeds" keyEquivalent="F" id="E9K-zV-nLv">
+                                <connections>
+                                    <action selector="toggleReadFeedsFilter:" target="-1" id="5pI-YT-xai"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="dZt-2W-gxf"/>
                             <menuItem title="Sort Articles By" id="nLP-fa-KUi">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Sort Articles By" id="OlJ-93-6OP">
@@ -412,7 +424,6 @@
                                     </items>
                                 </menu>
                             </menuItem>
-                            <menuItem isSeparatorItem="YES" id="dZt-2W-gxf"/>
                             <menuItem title="Clean Up Articles" keyEquivalent="'" id="J5h-uQ-57w">
                                 <connections>
                                     <action selector="cleanUp:" target="-1" id="eNB-UA-e3a"/>
@@ -421,18 +432,6 @@
                             <menuItem title="Hide Read Articles" keyEquivalent="H" id="b10-sA-Yzi">
                                 <connections>
                                     <action selector="toggleReadArticlesFilter:" target="-1" id="YhV-0F-jrM"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Hide Read Feeds" keyEquivalent="F" id="E9K-zV-nLv">
-                                <connections>
-                                    <action selector="toggleReadFeedsFilter:" target="-1" id="5pI-YT-xai"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem isSeparatorItem="YES" id="Ocl-6H-m3k"/>
-                            <menuItem title="Show Sidebar" keyEquivalent="s" id="kIP-vf-haE">
-                                <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
-                                <connections>
-                                    <action selector="toggleSidebar:" target="-1" id="CZ1-aO-CkF"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Use Column Layout" id="ucL-ay-0ut">
@@ -445,6 +444,7 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Thumbnails" id="tHm-nu-mN1"/>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="3ut-x3-H83"/>
                             <menuItem title="Show Status Bar" id="stB-ar-mI1">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
