@@ -110,7 +110,7 @@ private extension ArticleSearchBar {
 		var margins = Self.margins
 
 		#if compiler(>=6.4)
-		// This stops Xcode 26 having a hissy.
+		// reservedRegions is new in iOS 27.1.
 		if #available(iOS 27.1, *),
 		   let division = reservedRegions(kind: .division).first(where: { region in
 			   region.frame.intersects(bounds) && region.frame.height > region.frame.width

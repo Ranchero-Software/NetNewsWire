@@ -155,7 +155,7 @@ final class ArticleViewController: UIViewController {
 
 		if #available(iOS 26, *) {
 			#if compiler(>=6.4)
-			// This stops Xcode 26 having a hissy.
+			// visibilityPriority is new in iOS 27.
 			if #available(iOS 27, *) {
 				readBarButtonItem.visibilityPriority = .standard
 				starBarButtonItem.visibilityPriority = .standard
