@@ -72,9 +72,13 @@ final class ImageViewController: UIViewController {
 		titleBackground.layer.cornerRadius = 6
     }
 
+	override func viewWillLayoutSubviews() {
+		super.viewWillLayoutSubviews()
+		layoutTitleLabel()
+	}
+
 	override func viewDidLayoutSubviews() {
 		super.viewDidLayoutSubviews()
-		layoutTitleLabel()
 
 		let imageScrollViewSize = imageScrollView.bounds.size
 		if imageScrollViewSize != lastImageScrollViewSize {
