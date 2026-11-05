@@ -1,14 +1,20 @@
 # iOS Release Notes
 
-### 7.3 build 7227 3 Nov 2026 - branch: main tag: iOS-7.3-7227
+### 7.3 build 7228 5 Nov 2026 - branch: main tag: iOS-7.3-7228
 
 Added support for enclosures and Media RSS
 Added enclosures to the article view (at the bottom) — you can see images from Mastodon feeds, play an MP3, etc.
 Made YouTube enclosures play in the privacy-enhanced YouTube player (youtube-nocookie.com)
 Made the article view show plain text or media:description when an article has no HTML content
 Made image downloading kinder to servers — honors Retry-After, waits after errors, and limits downloads to two at a time per host
-Added article thumbnails to the timeline — choose Settings > Timeline Layout > Thumbnail Size to pick large or small. Default is none
 Added a Feed Icons setting to Settings > Timeline Layout — Automatic (folders, smart feeds, and authors with avatars), Always, or Never
+Added article thumbnails to the timeline — choose Settings > Timeline Layout > Thumbnail Size to pick large or small. Default is none
+Refreshed the Find in Article controls — translucent, with spacing that adjusts for the keyboard
+Kept the reader’s place better in an article across a rotation
+Made a left-edge swipe over an article reveal the timeline
+Fixed the layout and resizing of the full-screen image viewer on Duo
+Fixed bug with footnote popover positioning on Duo
+Removed the empty navigation bar over articles when the bar buttons move to the side on iPhone Duo
 
 ### 7.3 build 7226 22 Oct 2026 - branch: main tag: iOS-7.3-7226
 
