@@ -152,16 +152,11 @@ img[src*="/img/social/"] {
 	position: absolute;
 	display: block;
 	padding: 0em 1em;
-	margin: 1em auto;
+	margin: 1em 0;
 	top: 0.75em;
 	max-width: 44em;
 	border-radius: 0.3em;
 	box-sizing: border-box;
-}
-
-.newsfoot-footnote-popover {
-	left: calc(-1 * (50vw - 1em));
-	right: calc(-1 * (50vw - 1em));
 }
 
 .newsfoot-footnote-popover-arrow {
@@ -170,7 +165,6 @@ img[src*="/img/social/"] {
 	width: 1em;
 	position: absolute;
 	top: -0.5em;
-	left: calc(50% - 0.5em);
 	height: 1em !important;
 	transform: rotate(45deg);
 	z-index:0;
