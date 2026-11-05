@@ -15,17 +15,6 @@
 		return el;
 	}
 
-	/** @type {<T extends any[]>(fn: (...args: T) => void, t: number) => ((...args: T) => void)} */
-	function debounce(f, ms) {
-		let t = Date.now();
-		return (...args) => {
-			const now = Date.now();
-			if (now - t < ms) return;
-			t = now;
-			f(...args);
-		};
-	}
-
 	const clsPrefix = "newsfoot-footnote-";
 	const CONTAINER_CLS = `${clsPrefix}container`;
 	const POPOVER_CLS = `${clsPrefix}popover`;
@@ -76,7 +65,7 @@
 			}
 			document.addEventListener("click", this.clickoutHandler, {capture: true});
   
-			this.resizeHandler = debounce(() => this.reposition(), 20);
+			this.resizeHandler = () => this.reposition();
 			window.addEventListener("resize", this.resizeHandler);
 		}
   
