@@ -356,19 +356,6 @@ final class ArticleViewController: UIViewController {
 
 	// MARK: Actions
 
-	/// The tap zone lives in the navigation bar’s title view. When the system shows a vertical bar
-	/// (iPhone Duo), the bar buttons move into it and the tap zone would be the only thing keeping
-	/// an empty navigation bar across the top of the article, so it is left out.
-	private func updateFullScreenTapZone() {
-		#if compiler(>=6.4.2)
-		if #available(iOS 27.1, *), traitCollection.verticalBarEdge != .unspecified {
-			navigationItem.titleView = nil
-			return
-		}
-		#endif
-		navigationItem.titleView = fullScreenTapZone
-	}
-
 	@objc func didTapNavigationBar() {
 		currentWebViewController?.hideBars()
 	}
@@ -641,6 +628,17 @@ private extension ArticleViewController {
 		controller.delegate = self
 		controller.setArticle(article, updateView: updateView)
 		return controller
+	}
+
+	/// No tap zone with a vertical bar (Duo) — it would be the only thing in the top bar.
+	func updateFullScreenTapZone() {
+		#if compiler(>=6.4.2)
+		if #available(iOS 27.1, *), traitCollection.verticalBarEdge != .unspecified {
+			navigationItem.titleView = nil
+			return
+		}
+		#endif
+		navigationItem.titleView = fullScreenTapZone
 	}
 
 	func syncArticleExtractorButtonState() {
