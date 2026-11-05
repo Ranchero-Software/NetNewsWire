@@ -15,7 +15,6 @@ final class ImageViewController: UIViewController {
 	@IBOutlet var titleLeading: NSLayoutConstraint!
 
 	private var shareButtonItem: UIBarButtonItem?
-	private var lastImageScrollViewSize = CGSize.zero
 
 	// Title margins as a fraction of the view width.
 	private static let regularWidthTitleMarginMultiplier: CGFloat = 0.1
@@ -74,16 +73,6 @@ final class ImageViewController: UIViewController {
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		layoutTitleLabel()
-	}
-
-	override func viewDidLayoutSubviews() {
-		super.viewDidLayoutSubviews()
-
-		let imageScrollViewSize = imageScrollView.bounds.size
-		if imageScrollViewSize != lastImageScrollViewSize {
-			lastImageScrollViewSize = imageScrollViewSize
-			imageScrollView.resize()
-		}
 	}
 
 	@IBAction func share(_ sender: Any) {
