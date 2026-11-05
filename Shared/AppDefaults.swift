@@ -34,7 +34,7 @@ enum AppDefaults {
 			Key.timelineGroupByFeed: false,
 			Key.currentThemeName: defaultThemeName,
 			Key.articleContentJavascriptEnabled: true,
-			Key.markArticleAsReadMode: MarkArticleAsReadMode.onOpen.rawValue
+			Key.markArticleAsReadMode: MarkArticleAsReadMode.onOpen.rawValue,
 			Key.timelineThumbnailsDisplay: TimelineThumbnailsDisplay.none.rawValue,
 			Key.timelineFeedIconsDisplay: TimelineFeedIconsDisplay.automatic.rawValue
 		]
