@@ -11,7 +11,7 @@ import Images
 
 ///  Manual-layout timeline cell modeled on the Mac timeline
 ///  and the pre-7.0 iOS table view cell.
-final class MainTimelineCell: UICollectionViewCell {
+final class MainTimelineCell: UICollectionViewListCell {
 
 	static let reuseIdentifier = "MainTimelineCell"
 
@@ -24,7 +24,8 @@ final class MainTimelineCell: UICollectionViewCell {
 	private lazy var iconView = IconView()
 	private lazy var indicatorView = IconView()
 	private let thumbnailView = UIImageView()
-	private let topSeparator = UIView()
+	/// Lines up the system separator with the text.
+	private lazy var separatorLeadingConstraint = separatorLayoutGuide.leadingAnchor.constraint(equalTo: contentView.leadingAnchor)
 
 	var cellData: MainTimelineCellData! {
 		didSet {
@@ -80,7 +81,9 @@ final class MainTimelineCell: UICollectionViewCell {
 		// Sized to the image, so the corner radius rounds the image itself. All of the rect until the image arrives.
 		thumbnailView.setFrameIfNotEqual(layout.thumbnailRect.aspectFitRect(for: thumbnailView.image?.size ?? .zero))
 		indicatorView.setFrameIfNotEqual(cellData.starred ? layout.starRect : layout.unreadIndicatorRect)
-		topSeparator.frame = CGRect(x: layout.separatorRect.minX, y: 0, width: layout.separatorRect.width, height: 1.0 / traitCollection.displayScale)
+		if separatorLeadingConstraint.constant != layout.separatorRect.minX {
+			separatorLeadingConstraint.constant = layout.separatorRect.minX
+		}
 	}
 
 	override func updateConfiguration(using state: UICellConfigurationState) {
@@ -124,14 +127,10 @@ final class MainTimelineCell: UICollectionViewCell {
 			backgroundConfig.backgroundColor = .clear
 		}
 
-		let isActive = state.isSwiped || state.isSelected
-
 		if isPreview {
 			backgroundConfig.backgroundColor = traitCollection.userInterfaceStyle == .dark ? .secondarySystemBackground : .white
 		}
 		backgroundConfiguration = backgroundConfig
-
-		topSeparator.alpha = (isActive || isPreview) ? 0.0 : 1.0
 
 		// Text goes white only on the accent background. On gray, labels keep their normal colors.
 		updateColors(active: showsAccentSelection)
@@ -162,12 +161,12 @@ private extension MainTimelineCell {
 
 	func commonInit() {
 		isAccessibilityElement = true
-		topSeparator.backgroundColor = .separator
+		separatorLeadingConstraint.isActive = true
 		thumbnailView.contentMode = .scaleAspectFit
 		thumbnailView.clipsToBounds = true
 		thumbnailView.layer.cornerRadius = MainTimelineDefaultCellLayout.thumbnailCornerRadius
 		thumbnailView.backgroundColor = Assets.Colors.thumbnailPlaceholder
-		for view in [titleView, summaryView, dateView, feedNameView, iconView, indicatorView, thumbnailView, topSeparator] {
+		for view in [titleView, summaryView, dateView, feedNameView, iconView, indicatorView, thumbnailView] {
 			contentView.addSubview(view)
 			view.isAccessibilityElement = false
 		}

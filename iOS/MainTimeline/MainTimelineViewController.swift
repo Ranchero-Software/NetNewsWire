@@ -793,8 +793,16 @@ private extension MainTimelineViewController {
 
 	private func configureCollectionView(_ dataSource: UICollectionViewDiffableDataSource<Int, Article>) {
 		var config = UICollectionLayoutListConfiguration(appearance: .plain)
-		config.showsSeparators = false
 		config.headerMode = .none
+		// System separators between rows, none above the first row or below the last. Each cell lines its separator up with its text.
+		config.itemSeparatorHandler = { [weak self] indexPath, sectionSeparatorConfiguration in
+			var separatorConfiguration = sectionSeparatorConfiguration
+			separatorConfiguration.topSeparatorVisibility = .hidden
+			if let collectionView = self?.collectionView, indexPath.item == collectionView.numberOfItems(inSection: indexPath.section) - 1 {
+				separatorConfiguration.bottomSeparatorVisibility = .hidden
+			}
+			return separatorConfiguration
+		}
 		config.trailingSwipeActionsConfigurationProvider = { [weak self] indexPath in
 			guard let self else {
 				return nil
