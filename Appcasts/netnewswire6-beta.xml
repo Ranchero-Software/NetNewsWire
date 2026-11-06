@@ -7,6 +7,22 @@
     <language>en</language>
 
 <item>
+	<title>NetNewsWire 7.3b4</title>
+	<description><![CDATA[
+<ul>
+<li>Made small thumbnails fill the space (aspect fill) — images are cropped from the sides and bottom, never the top, so faces and other important parts are more likely to stay in view
+<li>Gave large thumbnails rounded corners, to match small thumbnails and feed icons
+<li>Removed the background color behind thumbnails, and added a faint placeholder color that shows until a thumbnail loads
+<li>Fixed footnote popover positioning near the edge of the article view and after resizing the window on Duo
+<li>Fixed bug where the last article in the timeline had a separator below it (when separators are turned on via the hidden preference)
+</ul>
+	]]></description>
+	<pubDate>Fri, 06 Nov 2026 08:40:00 -0800</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.3b4/NetNewsWire7.3b4.zip" sparkle:version="7229" sparkle:shortVersionString="7.3b4" length="10350632" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
 	<title>NetNewsWire 7.3b3</title>
 	<description><![CDATA[
 <ul>
