@@ -1,5 +1,13 @@
 # iOS Release Notes
 
+### 7.3 build 7229 6 Nov 2026 - branch: main tag: iOS-7.3-7229
+
+Made small thumbnails fill the space (aspect fill) — images are cropped from the sides and bottom, never the top, so faces and other important parts are more likely to stay in view
+Gave large thumbnails rounded corners, to match small thumbnails and feed icons
+Removed the background color behind thumbnails, and added a faint placeholder color that shows until a thumbnail loads
+Changed the background behind feed icons to the system fill color
+Made the timeline separators more visible — they now use the standard iOS separator color
+
 ### 7.3 build 7228 5 Nov 2026 - branch: main tag: iOS-7.3-7228
 
 Added support for enclosures and Media RSS
