@@ -20,14 +20,6 @@ final class ThumbnailView: NSView {
 		}
 	}
 
-	var fillColor = NSColor.systemFill {
-		didSet {
-			if fillColor != oldValue {
-				needsDisplay = true
-			}
-		}
-	}
-
 	var cornerRadius: CGFloat = 0 {
 		didSet {
 			layer?.cornerRadius = cornerRadius
@@ -57,12 +49,7 @@ final class ThumbnailView: NSView {
 	}
 
 	override func updateLayer() {
-		guard let layer else {
-			return
-		}
-		layer.contents = image?.cgImage(forProposedRect: nil, context: nil, hints: nil)
-		// Resolved here so the fill follows light and dark mode.
-		layer.backgroundColor = fillColor.cgColor
+		layer?.contents = image?.cgImage(forProposedRect: nil, context: nil, hints: nil)
 	}
 }
 

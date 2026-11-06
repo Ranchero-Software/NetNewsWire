@@ -33,7 +33,6 @@ final class TimelineTableCellView: NSTableCellView {
 				updateTextFieldFonts()
 				iconView.layer?.cornerRadius = cellAppearance.iconCornerRadius
 				thumbnailView.cornerRadius = cellAppearance.thumbnailCornerRadius
-				thumbnailView.fillColor = cellAppearance.showsLargeThumbnails ? .tertiarySystemFill : .systemFill
 				needsLayout = true
 			}
 		}
