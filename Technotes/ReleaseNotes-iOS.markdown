@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 7.3 build 7231 6 Nov 2026 - branch: main tag: iOS-7.3-7231
+
+Work around Apple crashing bug in iOS 27.2 beta. (Stop using <= and >= with Dates.)
+
 ### 7.3 build 7230 6 Nov 2026 - branch: main tag: iOS-7.3-7230
 
 Made separators more visible in the timeline, for real this time
