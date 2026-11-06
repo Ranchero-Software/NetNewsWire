@@ -52,8 +52,8 @@ public enum ThumbnailMode: String, Sendable, CaseIterable {
 	#else
 	private static let imageCacheByteLimit = 64 * 1024 * 1024
 	#endif
-	/// The small thumbnail is aspect-fit into a box of at most 76pt, which is 228 pixels at 3x.
-	private static let smallThumbnailMaxPixelSize = 256
+	/// The small thumbnail is a square of at most 76pt, which is 228 pixels at 3x.
+	private static let smallThumbnailPixelSize = 256
 	/// The longest side of a wide image, which fills the timeline’s width before it reaches the height limit.
 	private static let largeThumbnailMaxPixelSize = 1200
 	/// The large thumbnail is aspect-fit into a box 180pt tall.
@@ -62,6 +62,7 @@ public enum ThumbnailMode: String, Sendable, CaseIterable {
 	#else
 	private static let largeThumbnailMaxPixelHeight = 540
 	#endif
+	nonisolated private static let squareBitsPerComponent = 8
 	private static let maximumConcurrentDecodes = 4
 	/// A few screens of thumbnails.
 	private static let maximumWaitingDecodes = 60
@@ -111,21 +112,12 @@ private extension ThumbnailDownloader {
 		"\(mode.rawValue) \(url)" as NSString
 	}
 
-	static func maxPixelSize(_ mode: ThumbnailMode) -> Int {
+	@concurrent static func decodedImage(_ data: Data, mode: ThumbnailMode) async throws(ImageDownloadError) -> (image: RSImage, byteCount: Int) {
 		switch mode {
 		case .small:
-			smallThumbnailMaxPixelSize
+			try await decodedSquareImage(data, pixelSize: smallThumbnailPixelSize)
 		case .large:
-			largeThumbnailMaxPixelSize
-		}
-	}
-
-	static func maxPixelHeight(_ mode: ThumbnailMode) -> Int? {
-		switch mode {
-		case .small:
-			nil
-		case .large:
-			largeThumbnailMaxPixelHeight
+			try await decodedImage(data, maxPixelSize: largeThumbnailMaxPixelSize, maxPixelHeight: largeThumbnailMaxPixelHeight)
 		}
 	}
 
@@ -151,7 +143,7 @@ private extension ThumbnailDownloader {
 				defer {
 					decodeQueue.taskDidFinish()
 				}
-				let decodedImage = try await Self.decodedImage(data, maxPixelSize: Self.maxPixelSize(mode), maxPixelHeight: Self.maxPixelHeight(mode))
+				let decodedImage = try await Self.decodedImage(data, mode: mode)
 				imageCache.setObject(decodedImage.image, forKey: cacheKey, cost: decodedImage.byteCount)
 				NotificationCenter.default.post(name: .thumbnailDidBecomeAvailable, object: self, userInfo: [Self.urlKey: url])
 			} catch {
@@ -170,12 +162,7 @@ extension ThumbnailDownloader {
 	/// For a multi-image file such as ICO, the largest frame is the one checked and decoded.
 	/// With a `maxPixelHeight`, the image is also no taller than that as displayed.
 	@concurrent static func decodedImage(_ data: Data, maxPixelSize: Int, maxPixelHeight: Int?) async throws(ImageDownloadError) -> (image: RSImage, byteCount: Int) {
-		guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil), let largestFrame = RSImage.largestFrame(in: imageSource) else {
-			throw ImageDownloadError(statusCode: nil, decodingFailed: true, isTransient: false)
-		}
-		guard SignificantImageFilter.hasSignificantDimensions(width: largestFrame.width, height: largestFrame.height) else {
-			throw ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: false, rejectedPixelSize: (width: largestFrame.width, height: largestFrame.height))
-		}
+		let (imageSource, largestFrame) = try significantLargestFrame(data)
 
 		var longestSide = maxPixelSize
 		if let maxPixelHeight {
@@ -185,16 +172,72 @@ extension ThumbnailDownloader {
 			longestSide = min(maxPixelSize, longestSideAtHeight(maxPixelHeight, width: displayedWidth, height: displayedHeight))
 		}
 
+		return try decodedResult(thumbnail(imageSource, frameIndex: largestFrame.index, maxPixelSize: longestSide))
+	}
+
+	/// Like `decodedImage(_:maxPixelSize:maxPixelHeight:)`, but decoded so the shorter side is `pixelSize`,
+	/// then cropped to a square from the bottom, left, and right, never the top, so faces are less likely to be cropped.
+	/// An image with a shorter side under `pixelSize` is cropped at its own size.
+	@concurrent static func decodedSquareImage(_ data: Data, pixelSize: Int) async throws(ImageDownloadError) -> (image: RSImage, byteCount: Int) {
+		let (imageSource, largestFrame) = try significantLargestFrame(data)
+
+		// The ratio of longer to shorter side is the same rotated or not.
+		let shorterSide = min(largestFrame.width, largestFrame.height)
+		let longerSide = max(largestFrame.width, largestFrame.height)
+		let longestSide = Int((Double(pixelSize) * Double(longerSide) / Double(shorterSide)).rounded(.up))
+
+		let cgImage = try thumbnail(imageSource, frameIndex: largestFrame.index, maxPixelSize: longestSide)
+		guard let squareImage = croppedToSquareFromTop(cgImage) else {
+			throw ImageDownloadError(statusCode: nil, decodingFailed: true, isTransient: false)
+		}
+		return decodedResult(squareImage)
+	}
+}
+
+private extension ThumbnailDownloader {
+
+	nonisolated static func significantLargestFrame(_ data: Data) throws(ImageDownloadError) -> (imageSource: CGImageSource, largestFrame: (index: Int, width: Int, height: Int)) {
+		guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil), let largestFrame = RSImage.largestFrame(in: imageSource) else {
+			throw ImageDownloadError(statusCode: nil, decodingFailed: true, isTransient: false)
+		}
+		guard SignificantImageFilter.hasSignificantDimensions(width: largestFrame.width, height: largestFrame.height) else {
+			throw ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: false, rejectedPixelSize: (width: largestFrame.width, height: largestFrame.height))
+		}
+		return (imageSource: imageSource, largestFrame: largestFrame)
+	}
+
+	/// In EXIF orientation, with its longest side no more than `maxPixelSize`.
+	nonisolated static func thumbnail(_ imageSource: CGImageSource, frameIndex: Int, maxPixelSize: Int) throws(ImageDownloadError) -> CGImage {
 		let options: [CFString: Any] = [
 			kCGImageSourceCreateThumbnailWithTransform: true,
 			kCGImageSourceCreateThumbnailFromImageAlways: true,
-			kCGImageSourceThumbnailMaxPixelSize: longestSide,
+			kCGImageSourceThumbnailMaxPixelSize: maxPixelSize,
 			kCGImageSourceShouldCacheImmediately: true
 		]
-		guard let cgImage = CGImageSourceCreateThumbnailAtIndex(imageSource, largestFrame.index, options as CFDictionary) else {
+		guard let cgImage = CGImageSourceCreateThumbnailAtIndex(imageSource, frameIndex, options as CFDictionary) else {
 			throw ImageDownloadError(statusCode: nil, decodingFailed: true, isTransient: false)
 		}
+		return cgImage
+	}
 
+	/// Drawn into its own bitmap, since `CGImage.cropping(to:)` would keep the whole uncropped bitmap in memory.
+	/// Wider images lose equal amounts from the left and right. Taller images lose only from the bottom.
+	nonisolated static func croppedToSquareFromTop(_ cgImage: CGImage) -> CGImage? {
+		guard cgImage.width != cgImage.height else {
+			return cgImage
+		}
+		let side = min(cgImage.width, cgImage.height)
+		let bitmapInfo = CGImageAlphaInfo.premultipliedFirst.rawValue | CGBitmapInfo.byteOrder32Little.rawValue
+		guard let colorSpace = CGColorSpace(name: CGColorSpace.sRGB), let context = CGContext(data: nil, width: side, height: side, bitsPerComponent: squareBitsPerComponent, bytesPerRow: 0, space: colorSpace, bitmapInfo: bitmapInfo) else {
+			return nil
+		}
+		// The context’s origin is at the bottom left, so the image’s top edge goes at y == side.
+		let drawRect = CGRect(x: -((cgImage.width - side) / 2), y: side - cgImage.height, width: cgImage.width, height: cgImage.height)
+		context.draw(cgImage, in: drawRect)
+		return context.makeImage()
+	}
+
+	nonisolated static func decodedResult(_ cgImage: CGImage) -> (image: RSImage, byteCount: Int) {
 		let byteCount = cgImage.bytesPerRow * cgImage.height
 		#if os(macOS)
 		return (image: NSImage(cgImage: cgImage, size: .zero), byteCount: byteCount)
