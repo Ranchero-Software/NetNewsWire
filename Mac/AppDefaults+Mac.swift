@@ -325,7 +325,7 @@ extension AppDefaults {
 			"NSScrollViewShouldScrollUnderTitlebar": false,
 			Key.refreshInterval: RefreshInterval.every2Hours.rawValue,
 			Key.showDebugMenu: showDebugMenu,
-			Key.timelineShowsSeparators: true
+			Key.timelineShowsSeparators: false
 		]
 
 		let defaults = commonRegisteredDefaults.merging(platformDefaults) { _, platformValue in platformValue }
