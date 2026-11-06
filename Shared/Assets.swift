@@ -148,7 +148,6 @@ struct Assets {
 	@MainActor struct Colors {
 #if os(macOS)
 		static let primaryAccent = RSColor(named: "AccentColor")!
-		static let timelineSeparator = NSColor(named: "timelineSeparatorColor")!
 		/// Behind icons that wouldn’t otherwise stand out from the background.
 		static let iconBackground = NSColor.tertiarySystemFill
 		static let star = RSColor(named: "StarColor")!

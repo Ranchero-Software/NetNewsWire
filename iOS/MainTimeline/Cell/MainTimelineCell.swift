@@ -162,7 +162,7 @@ private extension MainTimelineCell {
 
 	func commonInit() {
 		isAccessibilityElement = true
-		topSeparator.backgroundColor = .separator.withAlphaComponent(0.1)
+		topSeparator.backgroundColor = .separator
 		thumbnailView.contentMode = .scaleAspectFit
 		thumbnailView.clipsToBounds = true
 		thumbnailView.layer.cornerRadius = MainTimelineDefaultCellLayout.thumbnailCornerRadius

@@ -275,9 +275,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		tableView.setDraggingSourceOperationMask(.copy, forLocal: false)
 		tableView.keyboardDelegate = keyboardDelegate
 		tableView.style = .inset
+		tableView.gridColor = .separatorColor
 
 		standardColumn = tableView.tableColumns.first
 		configureTableView(for: layout)
+		updateGridStyle()
 		updateShowIcons()
 
 		if !didRegisterForNotifications {
@@ -835,6 +837,16 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	private func userDefaultsDidChange() {
 		fontSize = AppDefaults.timelineFontSize
+		updateGridStyle()
+	}
+
+	/// Separators between rows, never in column layout. `TimelineTableRowView` draws them.
+	private func updateGridStyle() {
+		let showsSeparators = layout == .standard && AppDefaults.timelineShowsSeparators
+		let gridStyleMask: NSTableView.GridLineStyle = showsSeparators ? .solidHorizontalGridLineMask : []
+		if tableView.gridStyleMask != gridStyleMask {
+			tableView.gridStyleMask = gridStyleMask
+		}
 	}
 
 	/// The one place the row height is set — it depends on the layout and the font size.
@@ -1082,17 +1094,9 @@ extension TimelineViewController: NSTableViewDelegate {
 			rowView = TimelineTableRowView()
 			rowView.identifier = TimelineViewController.rowViewIdentifier
 		}
-		rowView.showsSeparator = rowShowsSeparator(row)
+		// Rows change only by reloading, which asks for every row view again, so a former last row doesn’t keep this.
+		rowView.isLastRow = row == tableView.numberOfRows - 1
 		return rowView
-	}
-
-	/// Always with large thumbnails. Never below the last row.
-	/// Rows change only by reloading, which asks for every row view again, so a former last row doesn’t keep its setting.
-	private func rowShowsSeparator(_ row: Int) -> Bool {
-		guard row < tableView.numberOfRows - 1 else {
-			return false
-		}
-		return AppDefaults.timelineShowsSeparators
 	}
 
 	private static let timelineCellIdentifier = NSUserInterfaceItemIdentifier(rawValue: "timelineCell")
@@ -1278,6 +1282,7 @@ private extension TimelineViewController {
 	func layoutDidChange() {
 		performBlockAndRestoreSelection {
 			configureTableView(for: layout)
+			updateGridStyle()
 			updateShowIcons()
 			tableView.reloadData()
 		}

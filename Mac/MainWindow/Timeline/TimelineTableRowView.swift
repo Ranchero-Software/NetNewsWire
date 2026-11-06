@@ -10,15 +10,18 @@ import AppKit
 
 final class TimelineTableRowView: NSTableRowView {
 
-	private var separator: NSView?
-
-	var showsSeparator = false {
+	/// The last row has no separator below it.
+	var isLastRow = false {
 		didSet {
-			if showsSeparator != oldValue {
-				updateSeparator()
+			if isLastRow != oldValue {
+				needsDisplay = true
 			}
 		}
 	}
+
+	private static let separatorInsetLeft: CGFloat = 20.0
+	private static let separatorInsetRight: CGFloat = 4.0
+	private static let separatorHeight: CGFloat = 1.0
 
 	override var isOpaque: Bool {
 		return true
@@ -33,7 +36,6 @@ final class TimelineTableRowView: NSTableRowView {
 	override var isSelected: Bool {
 		didSet {
 			cellView?.isSelected = isSelected
-			updateSeparator()
 		}
 	}
 
@@ -54,31 +56,14 @@ final class TimelineTableRowView: NSTableRowView {
 		return nil
 	}
 
-	override func viewDidMoveToSuperview() {
-		updateSeparator()
-	}
-
-	/// The separator is added once the cell view is, since it’s aligned with the cell view.
-	private func updateSeparator() {
-		if showsSeparator {
-			addSeparatorView()
+	/// Called only when the table’s `gridStyleMask` includes horizontal lines. Inset to line up with the cell’s content.
+	override func drawSeparator(in dirtyRect: NSRect) {
+		guard !isLastRow, !isSelected, let cellView else {
+			return
 		}
-		separator?.isHidden = !showsSeparator || isSelected
+		let separatorRect = NSRect(x: cellView.frame.minX + Self.separatorInsetLeft, y: bounds.maxY - Self.separatorHeight, width: cellView.frame.width - Self.separatorInsetLeft - Self.separatorInsetRight, height: Self.separatorHeight)
+		let gridColor = (superview as? NSTableView)?.gridColor ?? .gridColor
+		gridColor.setFill()
+		separatorRect.fill(using: .sourceOver)
 	}
-
-	private func addSeparatorView() {
-		guard let cellView = cellView, separator == nil else { return }
-		separator = NSView()
-		separator!.translatesAutoresizingMaskIntoConstraints = false
-		separator!.wantsLayer = true
-		separator!.layer?.backgroundColor = Assets.Colors.timelineSeparator.cgColor
-		addSubview(separator!)
-		NSLayoutConstraint.activate([
-			separator!.leadingAnchor.constraint(equalTo: cellView.leadingAnchor, constant: 20),
-			separator!.trailingAnchor.constraint(equalTo: cellView.trailingAnchor, constant: -4),
-			separator!.heightAnchor.constraint(equalToConstant: 1),
-			separator!.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 0)
-		])
-	}
-
 }
