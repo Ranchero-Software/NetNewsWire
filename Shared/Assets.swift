@@ -149,20 +149,25 @@ struct Assets {
 #if os(macOS)
 		static let primaryAccent = RSColor(named: "AccentColor")!
 		static let timelineSeparator = NSColor(named: "timelineSeparatorColor")!
-		static let iconLightBackground = NSColor(named: "iconLightBackgroundColor")!
-		static let iconDarkBackground = NSColor(named: "iconDarkBackgroundColor")!
+		/// Behind icons that wouldn’t otherwise stand out from the background.
+		static let iconBackground = NSColor.tertiarySystemFill
 		static let star = RSColor(named: "StarColor")!
 		static let sidebarUnreadCountBackground = RSColor(named: "SidebarUnreadCountBackground")!
 		static let sidebarUnreadCountText = RSColor(named: "SidebarUnreadCountText")!
+		/// A faint gray, shown until a timeline thumbnail arrives.
+		static let thumbnailPlaceholder = NSColor.tertiarySystemFill
 #else // iOS
 		static let primaryAccent = RSColor(named: "primaryAccentColor")!
 		static let secondaryAccent = RSColor(named: "secondaryAccentColor")!
 		static let star = RSColor(named: "starColor")!
 		static let vibrantText = RSColor(named: "vibrantTextColor")!
 		static let controlBackground = RSColor(named: "controlBackgroundColor")!
-		static let iconBackground = RSColor(named: "iconBackgroundColor")!
+		/// Behind icons that wouldn’t otherwise stand out from the background.
+		static let iconBackground = UIColor.quaternarySystemFill
 		static let fullScreenBackground = RSColor(named: "fullScreenBackgroundColor")!
 		static let sectionHeader = RSColor(named: "sectionHeaderColor")!
+		/// A faint gray, shown until a timeline thumbnail arrives.
+		static let thumbnailPlaceholder = UIColor.quaternarySystemFill
 #endif
 	}
 }
