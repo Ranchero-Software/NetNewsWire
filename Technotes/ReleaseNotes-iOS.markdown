@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 7.3 build 7230 6 Nov 2026 - branch: main tag: iOS-7.3-7230
+
+Made separators more visible in the timeline, for real this time
+
 ### 7.3 build 7229 6 Nov 2026 - branch: main tag: iOS-7.3-7229
 
 Made small thumbnails fill the space (aspect fill) — images are cropped from the sides and bottom, never the top, so faces and other important parts are more likely to stay in view
