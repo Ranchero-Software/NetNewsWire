@@ -12,6 +12,14 @@ final class TimelineTableRowView: NSTableRowView {
 
 	private var separator: NSView?
 
+	var showsSeparator = false {
+		didSet {
+			if showsSeparator != oldValue {
+				updateSeparator()
+			}
+		}
+	}
+
 	override var isOpaque: Bool {
 		return true
 	}
@@ -25,7 +33,7 @@ final class TimelineTableRowView: NSTableRowView {
 	override var isSelected: Bool {
 		didSet {
 			cellView?.isSelected = isSelected
-			separator?.isHidden = isSelected
+			updateSeparator()
 		}
 	}
 
@@ -47,9 +55,15 @@ final class TimelineTableRowView: NSTableRowView {
 	}
 
 	override func viewDidMoveToSuperview() {
-		if AppDefaults.timelineShowsSeparators {
+		updateSeparator()
+	}
+
+	/// The separator is added once the cell view is, since it’s aligned with the cell view.
+	private func updateSeparator() {
+		if showsSeparator {
 			addSeparatorView()
 		}
+		separator?.isHidden = !showsSeparator || isSelected
 	}
 
 	private func addSeparatorView() {

@@ -1076,12 +1076,24 @@ extension TimelineViewController: NSTableViewDelegate {
 			// The standard row view suits column layout. TimelineTableRowView only knows the standard cell.
 			return nil
 		}
-		if let rowView: TimelineTableRowView = tableView.makeView(withIdentifier: TimelineViewController.rowViewIdentifier, owner: nil) as? TimelineTableRowView {
-			return rowView
+		let rowView: TimelineTableRowView
+		if let reusedRowView = tableView.makeView(withIdentifier: TimelineViewController.rowViewIdentifier, owner: nil) as? TimelineTableRowView {
+			rowView = reusedRowView
+		} else {
+			rowView = TimelineTableRowView()
+			rowView.identifier = TimelineViewController.rowViewIdentifier
 		}
-		let rowView = TimelineTableRowView()
-		rowView.identifier = TimelineViewController.rowViewIdentifier
+		rowView.showsSeparator = rowShowsSeparator(row)
 		return rowView
+	}
+
+	/// Always with large thumbnails. Never below the last row.
+	/// Rows change only by reloading, which asks for every row view again, so a former last row doesn’t keep its setting.
+	private func rowShowsSeparator(_ row: Int) -> Bool {
+		guard row < tableView.numberOfRows - 1 else {
+			return false
+		}
+		return AppDefaults.timelineShowsSeparators
 	}
 
 	private static let timelineCellIdentifier = NSUserInterfaceItemIdentifier(rawValue: "timelineCell")
