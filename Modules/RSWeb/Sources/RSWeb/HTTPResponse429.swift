@@ -20,7 +20,8 @@ struct HTTPResponse429 {
 		dateCreated + TimeInterval(retryAfter)
 	}
 	var canResume: Bool {
-		Date() >= resumeDate
+		// Not >=, which is back-deployed and crashes on iOS 27.2 betas.
+		Date() > resumeDate
 	}
 
 	init?(url: URL, retryAfter: TimeInterval) {

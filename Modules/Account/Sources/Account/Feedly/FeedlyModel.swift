@@ -250,7 +250,8 @@ struct FeedlyEntryParser {
 		// archive “now.” Publisher dates aren’t always reliable (per Feedly), so a
 		// future-dated article falls back to crawled rather than pinning itself to
 		// the top of a date-sorted timeline.
-		if let published = entry.published, published <= entry.crawled {
+		// Not <=, which is back-deployed and crashes on iOS 27.2 betas.
+		if let published = entry.published, published < entry.crawled {
 			return published
 		}
 		return entry.crawled

@@ -382,7 +382,8 @@ private extension DownloadedImageCache {
 		guard Self.networkAllowsDownloads, !isWaitingToRetry(url) else {
 			return
 		}
-		guard let validation = await ImageDatabase.shared.fetchDownloadedImageValidation(url: url), validation.nextCheck <= Date() else {
+		// Not <=, which is back-deployed and crashes on iOS 27.2 betas.
+		guard let validation = await ImageDatabase.shared.fetchDownloadedImageValidation(url: url), validation.nextCheck < Date() else {
 			return
 		}
 		guard let imageURL = URL(string: url) else {
@@ -592,7 +593,8 @@ extension DownloadedImageCache {
 		var byteCount = recordsCountedTowardLimit.reduce(0) { $0 + $1.byteCount }
 
 		for (record, key, recordByteCount) in recordsCountedTowardLimit where !urlsInUse.contains(record.url) {
-			if byteCount <= maximumByteCount || record.lastAccessed >= recentChangeDate {
+			// Not >=, which is back-deployed and crashes on iOS 27.2 betas.
+			if byteCount <= maximumByteCount || record.lastAccessed > recentChangeDate {
 				break
 			}
 			urls.append(record.url)

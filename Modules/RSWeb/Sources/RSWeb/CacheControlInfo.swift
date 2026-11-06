@@ -19,7 +19,8 @@ public struct CacheControlInfo: Codable, Equatable, Sendable {
 		dateCreated + maxAge
 	}
 	public var canResume: Bool {
-		Date() >= resumeDate
+		// Not >=, which is back-deployed and crashes on iOS 27.2 betas.
+		Date() > resumeDate
 	}
 
 	/// canResume with a maximum maxAge. We do this because
@@ -28,7 +29,8 @@ public struct CacheControlInfo: Codable, Equatable, Sendable {
 	/// clearly not intentional.
 	public func canResume(maxMaxAge: TimeInterval) -> Bool {
 		let maxAgeToUse = min(maxMaxAge, maxAge)
-		return Date() >= dateCreated + maxAgeToUse
+		// Not >=, which is back-deployed and crashes on iOS 27.2 betas.
+		return Date() > dateCreated + maxAgeToUse
 	}
 
 	public init(dateCreated: Date, maxAge: TimeInterval) {
