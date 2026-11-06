@@ -1,5 +1,13 @@
 # Mac Release Notes
 
+### 7.3b4 7229 6 Nov 2026 - branch: main tag: mac-7.3b4
+
+Made small thumbnails fill the space (aspect fill) — images are cropped from the sides and bottom, never the top, so faces and other important parts are more likely to stay in view
+Gave large thumbnails rounded corners, to match small thumbnails and feed icons
+Removed the background color behind thumbnails, and added a faint placeholder color that shows until a thumbnail loads
+Fixed footnote popover positioning near the edge of the article view and after resizing the window on Duo
+Fixed bug where the last article in the timeline had a separator below it (when separators are turned on via the hidden preference)
+
 ### 7.3b3 7227 3 Nov 2026 - branch: main tag: mac-7.3b3
 
 Added support for enclosures and Media RSS
