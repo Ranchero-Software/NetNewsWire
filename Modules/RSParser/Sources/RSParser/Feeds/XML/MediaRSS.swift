@@ -13,13 +13,13 @@ enum MediaRSS {
 	/// Attachment from a `media:content` element’s attributes. `url` is the resolved `url` attribute.
 	static func attachment(url: String, attributes: XMLAttributes) -> ParsedAttachment? {
 
-		let mimeType = attributes.value(forNameCaseInsensitive: "type")
+		let mimeType = attributes.value(forCaseInsensitiveName: "type")
 		// The spec says fileSize. Some feeds (atp.fm) use length, as in RSS enclosures.
-		let sizeInBytes = positiveInt(attributes.value(forNameCaseInsensitive: "fileSize") ?? attributes.value(forNameCaseInsensitive: "length"))
-		let durationInSeconds = ParsedAttachment.durationInSeconds(attributes.value(forNameCaseInsensitive: "duration"))
-		let width = positiveInt(attributes.value(forNameCaseInsensitive: "width"))
-		let height = positiveInt(attributes.value(forNameCaseInsensitive: "height"))
-		let mediumValue = attributes.value(forNameCaseInsensitive: "medium")
+		let sizeInBytes = positiveInt(attributes.value(forCaseInsensitiveName: "fileSize") ?? attributes.value(forCaseInsensitiveName: "length"))
+		let durationInSeconds = ParsedAttachment.durationInSeconds(attributes.value(forCaseInsensitiveName: "duration"))
+		let width = positiveInt(attributes.value(forCaseInsensitiveName: "width"))
+		let height = positiveInt(attributes.value(forCaseInsensitiveName: "height"))
+		let mediumValue = attributes.value(forCaseInsensitiveName: "medium")
 		let medium = ParsedAttachment.Medium(mediaRSSValue: mediumValue)
 
 		return ParsedAttachment(url: url, mimeType: mimeType, title: nil, sizeInBytes: sizeInBytes, durationInSeconds: durationInSeconds, width: width, height: height, medium: medium)
@@ -38,7 +38,7 @@ enum MediaRSS {
 	}
 
 	static func isDefault(_ attributes: XMLAttributes) -> Bool {
-		attributes.value(forNameCaseInsensitive: "isDefault")?.lowercased() == "true"
+		attributes.value(forCaseInsensitiveName: "isDefault")?.lowercased() == "true"
 	}
 
 	private static func positiveInt(_ s: String?) -> Int? {
@@ -78,7 +78,7 @@ struct MediaElementTracker {
 		}
 
 		if localName.equals("content") {
-			if let urlString = attributes.value(forNameCaseInsensitive: "url"), let url = resolveURL(urlString), let attachment = MediaRSS.attachment(url: url, attributes: attributes) {
+			if let urlString = attributes.value(forCaseInsensitiveName: "url"), let url = resolveURL(urlString), let attachment = MediaRSS.attachment(url: url, attributes: attributes) {
 				if group != nil {
 					group?.add(attachment, isDefault: MediaRSS.isDefault(attributes))
 				} else {
@@ -100,14 +100,14 @@ struct MediaElementTracker {
 
 		if localName.equals("description") {
 			if item.mediaDescription == nil {
-				item.mediaDescriptionIsHTML = attributes.value(forNameCaseInsensitive: "type")?.lowercased() == "html"
+				item.mediaDescriptionIsHTML = attributes.value(forCaseInsensitiveName: "type")?.lowercased() == "html"
 				parser.beginStoringCharacters()
 			}
 			containerDepth += 1
 			return false
 		}
 
-		if localName.equals("thumbnail"), item.thumbnailURL == nil, let urlString = attributes.value(forNameCaseInsensitive: "url"), !urlString.isEmpty {
+		if localName.equals("thumbnail"), item.thumbnailURL == nil, let urlString = attributes.value(forCaseInsensitiveName: "url"), !urlString.isEmpty {
 			item.thumbnailURL = resolveURL(urlString)
 		}
 		return true

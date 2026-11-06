@@ -61,7 +61,7 @@ public struct XMLAttributes: Sendable {
 	}
 
 	/// For feeds with messed up casing (`isPermaLink` vs `ispermalink`).
-	public func value(forNameCaseInsensitive name: String) -> String? {
+	public func value(forCaseInsensitiveName name: String) -> String? {
 		value(forName: name, caseInsensitive: true)
 	}
 

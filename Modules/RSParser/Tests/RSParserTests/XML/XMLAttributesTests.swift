@@ -116,22 +116,22 @@ import Testing
 	@Test func caseInsensitiveMatchesMixedCaseLocalName() {
 		// RSS's `isPermaLink` vs authors typing `ispermalink`.
 		let a = make(makeAttribute(localName: "isPermaLink", value: "false"))
-		#expect(a.value(forNameCaseInsensitive: "ispermalink") == "false")
-		#expect(a.value(forNameCaseInsensitive: "ISPERMALINK") == "false")
-		#expect(a.value(forNameCaseInsensitive: "IsPermaLink") == "false")
+		#expect(a.value(forCaseInsensitiveName: "ispermalink") == "false")
+		#expect(a.value(forCaseInsensitiveName: "ISPERMALINK") == "false")
+		#expect(a.value(forCaseInsensitiveName: "IsPermaLink") == "false")
 	}
 
 	@Test func caseInsensitiveMatchesPrefixAndLocal() {
 		let a = make(makeAttribute(prefix: "XML", localName: "Lang", value: "en",
 		                           uri: "http://www.w3.org/XML/1998/namespace"))
-		#expect(a.value(forNameCaseInsensitive: "xml:lang") == "en")
+		#expect(a.value(forCaseInsensitiveName: "xml:lang") == "en")
 	}
 
 	@Test func caseInsensitiveDoesNotAffectNonLetters() {
 		// Hyphens/digits/punctuation compare byte-for-byte even under case-insensitive.
 		let a = make(makeAttribute(localName: "data-id", value: "42"))
-		#expect(a.value(forNameCaseInsensitive: "data-id") == "42")
-		#expect(a.value(forNameCaseInsensitive: "data_id") == nil)
+		#expect(a.value(forCaseInsensitiveName: "data-id") == "42")
+		#expect(a.value(forCaseInsensitiveName: "data_id") == nil)
 	}
 
 	// MARK: - dictionary()
