@@ -1132,7 +1132,7 @@ extension TimelineViewController: NSTableViewDelegate {
 			return
 		}
 
-		if selectedArticles.count == 1 {
+		if selectedArticles.count == 1 && AppDefaults.markArticleAsReadMode == .onOpen {
 			let article = selectedArticles.first!
 			if !article.status.read {
 				markArticles(Set([article]), statusKey: .read, flag: true)

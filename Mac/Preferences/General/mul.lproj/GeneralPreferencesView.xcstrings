@@ -253,6 +253,42 @@
         }
       }
     },
+    "Mrk-Md-Cel.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Mark article as read:\"; ObjectID = \"Mrk-Md-Cel\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Mark article as read:"
+          }
+        }
+      }
+    },
+    "Mrk-Md-Ma.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Manually\"; ObjectID = \"Mrk-Md-Ma\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Manually"
+          }
+        }
+      }
+    },
+    "Mrk-Md-On.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"On open\"; ObjectID = \"Mrk-Md-On\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "On open"
+          }
+        }
+      }
+    },
     "o1h-xo-elW.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Every 2 hours\"; ObjectID = \"o1h-xo-elW\";",
       "extractionState" : "extracted_with_value",

@@ -148,6 +148,40 @@
                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                             </textFieldCell>
                         </textField>
+                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Mrk-Md-Lbl">
+                            <rect key="frame" x="-2" y="328" width="106" height="16"/>
+                            <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Mark article as read:" id="Mrk-Md-Cel">
+                                <font key="font" usesAppearanceFont="YES"/>
+                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                        <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Mrk-Md-Pop">
+                            <rect key="frame" x="110" y="324" width="282" height="24"/>
+                            <popUpButtonCell key="cell" type="push" title="On open" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Mrk-Md-On" id="Mrk-Md-Pc">
+                                <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="message"/>
+                                <menu key="menu" id="Mrk-Md-Mnu">
+                                    <items>
+                                        <menuItem title="On open" state="on" tag="1" id="Mrk-Md-On"/>
+                                        <menuItem title="Manually" tag="0" id="Mrk-Md-Ma"/>
+                                    </items>
+                                </menu>
+                                <connections>
+                                    <binding destination="mAF-gO-1PI" name="selectedTag" keyPath="values.markArticleAsReadMode" id="Mrk-Md-Bnd">
+                                        <dictionary key="options">
+                                            <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
+                                            <bool key="NSConditionallySetsEnabled" value="NO"/>
+                                            <integer key="NSMultipleValuesPlaceholder" value="1"/>
+                                            <integer key="NSNoSelectionPlaceholder" value="1"/>
+                                            <integer key="NSNotApplicablePlaceholder" value="1"/>
+                                            <integer key="NSNullPlaceholder" value="1"/>
+                                            <bool key="NSRaisesForNotApplicableKeys" value="NO"/>
+                                        </dictionary>
+                                    </binding>
+                                </connections>
+                            </popUpButtonCell>
+                        </popUpButton>
                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UI6-sq-M15">
                             <rect key="frame" x="110" y="300" width="283" height="16"/>
                             <buttonCell key="cell" type="check" title="Enable JavaScript" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="GUo-0M-xMc">
@@ -310,6 +344,9 @@
                     </subviews>
                     <constraints>
                         <constraint firstItem="Ci4-fW-KjU" firstAttribute="leading" secondItem="Z6O-Zt-V1g" secondAttribute="leading" id="0Do-jh-Hqq"/>
+                        <constraint firstItem="Mrk-Md-Lbl" firstAttribute="leading" secondItem="Ut3-yd-q6G" secondAttribute="leading" id="Mrk-Md-Ld1"/>
+                        <constraint firstItem="Mrk-Md-Lbl" firstAttribute="trailing" secondItem="92N-8I-bOs" secondAttribute="trailing" id="Mrk-Md-Tr1"/>
+                        <constraint firstItem="Mrk-Md-Pop" firstAttribute="leading" secondItem="Z6O-Zt-V1g" secondAttribute="leading" id="43S-zb-paT"/>
                         <constraint firstItem="92N-8I-bOs" firstAttribute="trailing" secondItem="S2Z-bG-jYk" secondAttribute="trailing" id="2ZD-KR-H5A"/>
                         <constraint firstItem="S2Z-bG-jYk" firstAttribute="trailing" secondItem="pR2-Bf-7Fd" secondAttribute="trailing" id="4wu-2O-1fb"/>
                         <constraint firstItem="Tdg-6Y-gvW" firstAttribute="top" secondItem="0W5-tO-S63" secondAttribute="bottom" constant="20" id="5a3-LF-TvY"/>
@@ -318,7 +355,9 @@
                         <constraint firstItem="hQy-ng-ijd" firstAttribute="top" secondItem="Yrc-6Q-kx8" secondAttribute="bottom" constant="20" id="7iQ-QN-Ubh"/>
                         <constraint firstItem="Yrc-6Q-kx8" firstAttribute="leading" secondItem="Z6O-Zt-V1g" secondAttribute="leading" id="AQY-vT-qR7"/>
                         <constraint firstItem="yrg-M3-Dbz" firstAttribute="leading" secondItem="Ut3-yd-q6G" secondAttribute="leading" id="Bmt-Mn-CCl"/>
-                        <constraint firstItem="UI6-sq-M15" firstAttribute="top" secondItem="1w0-nA-DEO" secondAttribute="bottom" constant="12" id="DMk-OP-dpa"/>
+                        <constraint firstItem="Mrk-Md-Pop" firstAttribute="top" secondItem="1w0-nA-DEO" secondAttribute="bottom" constant="12" id="DMk-OP-dpa"/>
+                        <constraint firstItem="Mrk-Md-Lbl" firstAttribute="firstBaseline" secondItem="Mrk-Md-Pop" secondAttribute="firstBaseline" id="Mrk-Md-Bas"/>
+                        <constraint firstItem="UI6-sq-M15" firstAttribute="top" secondItem="Mrk-Md-Pop" secondAttribute="bottom" constant="12" id="a9E-Wa-PdK"/>
                         <constraint firstItem="Ubm-Pk-l7x" firstAttribute="top" secondItem="Ci4-fW-KjU" secondAttribute="bottom" constant="12" id="E3r-xf-7aZ"/>
                         <constraint firstAttribute="bottom" secondItem="SFF-mL-yc8" secondAttribute="bottom" constant="4" id="FAd-wh-IFu"/>
                         <constraint firstItem="pR2-Bf-7Fd" firstAttribute="leading" secondItem="Ut3-yd-q6G" secondAttribute="leading" id="G0C-1M-LW1"/>
@@ -360,6 +399,7 @@
                         <constraint firstAttribute="trailing" secondItem="j0t-Wa-UTL" secondAttribute="trailing" id="qc4-hF-DW3"/>
                         <constraint firstItem="j0t-Wa-UTL" firstAttribute="top" secondItem="Ubm-Pk-l7x" secondAttribute="bottom" constant="8" id="qeX-7L-XAA"/>
                         <constraint firstAttribute="trailing" secondItem="UI6-sq-M15" secondAttribute="trailing" id="rxC-vu-aW1"/>
+                        <constraint firstItem="Mrk-Md-Pop" firstAttribute="trailing" secondItem="Z6O-Zt-V1g" secondAttribute="trailing" id="kAo-hE-vfB"/>
                         <constraint firstItem="yrg-M3-Dbz" firstAttribute="firstBaseline" secondItem="wtY-Zd-Ps9" secondAttribute="firstBaseline" id="sgV-rt-nFb"/>
                         <constraint firstItem="SFF-mL-yc8" firstAttribute="leading" secondItem="Z6O-Zt-V1g" secondAttribute="leading" id="shx-wm-ygD"/>
                         <constraint firstItem="uC1-sH-wRb" firstAttribute="top" secondItem="Ut3-yd-q6G" secondAttribute="top" constant="4" id="uCa-tP-r01"/>
