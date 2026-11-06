@@ -50,7 +50,7 @@ final class TimelineTableCellView: NSTableCellView {
 			thumbnailView.image
 		}
 		set {
-			thumbnailView.image = newValue
+			setThumbnailImage(newValue)
 		}
 	}
 
@@ -118,7 +118,8 @@ final class TimelineTableCellView: NSTableCellView {
 		unreadIndicatorView.setFrameIfNotEqual(layoutRects.unreadIndicatorRect)
 		feedNameView.setFrameIfNotEqual(layoutRects.feedNameRect)
 		iconView.setFrameIfNotEqual(layoutRects.iconImageRect)
-		thumbnailView.setFrameIfNotEqual(layoutRects.thumbnailRect)
+		// Sized to the image, so the corner radius rounds the image itself. All of the rect until the image arrives.
+		thumbnailView.setFrameIfNotEqual(layoutRects.thumbnailRect.aspectFitRect(for: thumbnailView.image?.size ?? .zero))
 		starView.setFrameIfNotEqual(layoutRects.starRect)
 	}
 }
@@ -306,7 +307,7 @@ private extension TimelineTableCellView {
 			showView(thumbnailView)
 			needsLayout = true
 		}
-		thumbnailView.image = cellData.thumbnail
+		setThumbnailImage(cellData.thumbnail)
 	}
 
 	func makeThumbnailEmpty() {
@@ -314,7 +315,15 @@ private extension TimelineTableCellView {
 			hideView(thumbnailView)
 			needsLayout = true
 		}
-		thumbnailView.image = nil
+		setThumbnailImage(nil)
+	}
+
+	/// Lays out again, since the thumbnail view is sized to the image.
+	func setThumbnailImage(_ image: NSImage?) {
+		if thumbnailView.image !== image {
+			thumbnailView.image = image
+			needsLayout = true
+		}
 	}
 
 	func hideView(_ view: NSView) {
