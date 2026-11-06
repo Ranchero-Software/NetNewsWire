@@ -324,7 +324,8 @@ extension AppDefaults {
 			Key.statusBarCountMode: StatusBarCountMode.lastRefresh.rawValue,
 			"NSScrollViewShouldScrollUnderTitlebar": false,
 			Key.refreshInterval: RefreshInterval.every2Hours.rawValue,
-			Key.showDebugMenu: showDebugMenu
+			Key.showDebugMenu: showDebugMenu,
+			Key.timelineShowsSeparators: true
 		]
 
 		let defaults = commonRegisteredDefaults.merging(platformDefaults) { _, platformValue in platformValue }
