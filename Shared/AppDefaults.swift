@@ -32,6 +32,7 @@ enum AppDefaults {
 		static let showUnreadFeed = "showUnreadFeed"
 		static let showStarredFeed = "showStarredFeed"
 		static let timelineIconDimension = "timelineIconSize"
+		static let timelineTextSize = "timelineTextSize"
 	}
 
 	/// Registered by both platforms. Each platform’s registerDefaults adds its own.
@@ -48,7 +49,8 @@ enum AppDefaults {
 			Key.sidebarTextSize: SidebarTextSize.system.rawValue,
 			Key.showTodayFeed: true,
 			Key.showUnreadFeed: true,
-			Key.showStarredFeed: true
+			Key.showStarredFeed: true,
+			Key.timelineTextSize: TimelineTextSize.medium.rawValue
 		]
 	}
 
@@ -210,6 +212,16 @@ enum AppDefaults {
 		set {
 			UserDefaults.standard.set(newValue.rawValue, forKey: Key.timelineIconDimension)
 			NotificationCenter.default.post(name: .timelineIconSizeDidChange, object: nil)
+		}
+	}
+
+	static var timelineTextSize: TimelineTextSize {
+		get {
+			TimelineTextSize(rawValue: UserDefaults.standard.integer(forKey: Key.timelineTextSize)) ?? .medium
+		}
+		set {
+			UserDefaults.standard.set(newValue.rawValue, forKey: Key.timelineTextSize)
+			NotificationCenter.default.post(name: .timelineTextSizeDidChange, object: nil)
 		}
 	}
 }

@@ -236,10 +236,10 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	var standardColumn: NSTableColumn?
 	// Set while columns are added and autosaved state is restored, which fires sortDescriptorsDidChange.
 	var isConfiguringTableColumns = false
-	private var fontSize: FontSize = AppDefaults.timelineFontSize {
+	private var textSize = AppDefaults.timelineTextSize {
 		didSet {
-			if fontSize != oldValue {
-				fontSizeDidChange()
+			if textSize != oldValue {
+				textSizeDidChange()
 			}
 		}
 	}
@@ -300,6 +300,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineThumbnailsDisplayDidChange(_:)), name: .timelineThumbnailsDisplayDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFeedIconsDisplayDidChange(_:)), name: .timelineFeedIconsDisplayDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineIconSizeDidChange(_:)), name: .timelineIconSizeDidChange, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineTextSizeDidChange(_:)), name: .timelineTextSizeDidChange, object: nil)
 			didRegisterForNotifications = true
 		}
 
@@ -803,6 +804,10 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 	}
 
+	@objc func handleTimelineTextSizeDidChange(_ notification: Notification) {
+		textSize = AppDefaults.timelineTextSize
+	}
+
 	@objc func handleTimelineIconSizeDidChange(_ notification: Notification) {
 		updateCellAppearances()
 		performBlockAndRestoreSelection {
@@ -856,7 +861,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	private func userDefaultsDidChange() {
-		fontSize = AppDefaults.timelineFontSize
 		updateGridStyle()
 	}
 
@@ -1459,11 +1463,11 @@ private extension TimelineViewController {
 
 	private func updateCellAppearances() {
 		let iconSize = AppDefaults.timelineIconSize
-		cellAppearance = TimelineCellAppearance(showIcon: false, fontSize: fontSize, iconSize: iconSize, showsLargeThumbnails: thumbnailsDisplay == .large)
-		cellAppearanceWithIcon = TimelineCellAppearance(showIcon: true, fontSize: fontSize, iconSize: iconSize, showsLargeThumbnails: thumbnailsDisplay == .large)
+		cellAppearance = TimelineCellAppearance(showIcon: false, textSize: textSize, iconSize: iconSize, showsLargeThumbnails: thumbnailsDisplay == .large)
+		cellAppearanceWithIcon = TimelineCellAppearance(showIcon: true, textSize: textSize, iconSize: iconSize, showsLargeThumbnails: thumbnailsDisplay == .large)
 	}
 
-	private func fontSizeDidChange() {
+	private func textSizeDidChange() {
 		updateCellAppearances()
 		updateRowHeights()
 		performBlockAndRestoreSelection {

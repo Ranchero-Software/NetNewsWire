@@ -50,11 +50,10 @@ struct TimelineCellAppearance: Equatable {
 
 	let boxLeftMargin: CGFloat
 
-	init(showIcon: Bool, fontSize: FontSize, iconSize: IconSize, showsLargeThumbnails: Bool) {
+	init(showIcon: Bool, textSize: TimelineTextSize, iconSize: IconSize, showsLargeThumbnails: Bool) {
 
-		let actualFontSize = AppDefaults.actualFontSize(for: fontSize)
-		let smallItemFontSize = floor(actualFontSize * 0.90)
-		let largeItemFontSize = actualFontSize
+		let largeItemFontSize = textSize.pointSize
+		let smallItemFontSize = floor(largeItemFontSize * 0.90)
 
 		self.feedNameFont = NSFont.systemFont(ofSize: smallItemFontSize, weight: NSFont.Weight.bold)
 		self.dateFont = NSFont.systemFont(ofSize: smallItemFontSize, weight: NSFont.Weight.bold)
@@ -70,6 +69,30 @@ struct TimelineCellAppearance: Equatable {
 
 		let margin = self.cellPadding.left + self.unreadCircleDimension + self.unreadCircleMarginRight
 		self.boxLeftMargin = margin
+	}
+}
+
+extension TimelineTextSize {
+
+	private static let smallPointSize: CGFloat = 12
+	private static let mediumPointSize: CGFloat = 14
+	private static let largePointSize: CGFloat = 16
+	private static let extraLargePointSize: CGFloat = 19
+	private static let extraExtraLargePointSize: CGFloat = 22
+
+	var pointSize: CGFloat {
+		switch self {
+		case .small:
+			Self.smallPointSize
+		case .medium:
+			Self.mediumPointSize
+		case .large:
+			Self.largePointSize
+		case .extraLarge:
+			Self.extraLargePointSize
+		case .extraExtraLarge:
+			Self.extraExtraLargePointSize
+		}
 	}
 }
 

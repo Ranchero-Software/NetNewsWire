@@ -9,13 +9,6 @@
 import AppKit
 import Images
 
-enum FontSize: Int {
-	case small = 0
-	case medium = 1
-	case large = 2
-	case veryLarge = 3
-}
-
 /// What the status bar’s count text shows. Clicking the text cycles through them.
 enum StatusBarCountMode: Int {
 	case unreadCount = 0
@@ -38,13 +31,10 @@ enum StatusBarCountMode: Int {
 extension AppDefaults.Key {
 	static let legacyWindowState = "windowState"
 	static let secureWindowState = "secureWindowState"
-	static let sidebarFontSize = "sidebarFontSize"
-	static let timelineFontSize = "timelineFontSize"
 	static let useColumnLayout = "useColumnLayout"
 	static let showStatusBar = "showStatusBar"
 	static let showStatusBarThemeMenu = "showStatusBarThemeMenu"
 	static let statusBarCountMode = "statusBarCountMode"
-	static let detailFontSize = "detailFontSize"
 	static let openInBrowserInBackground = "openInBrowserInBackground"
 	static let subscribeToFeedsInDefaultBrowser = "subscribeToFeedsInDefaultBrowser"
 	static let articleTextSize = "articleTextSize"
@@ -64,9 +54,6 @@ extension AppDefaults.Key {
 }
 
 extension AppDefaults {
-
-	private static let smallestFontSizeRawValue = FontSize.small.rawValue
-	private static let largestFontSizeRawValue = FontSize.veryLarge.rawValue
 
 	/// Stores window state prior to switching to secure state restoration.
 	///
@@ -115,33 +102,6 @@ extension AppDefaults {
 		}
 		set {
 			subscribeToFeedDefaults.set(newValue, forKey: Key.subscribeToFeedsInDefaultBrowser)
-		}
-	}
-
-	static var sidebarFontSize: FontSize {
-		get {
-			fontSize(for: Key.sidebarFontSize)
-		}
-		set {
-			AppDefaults.setFontSize(for: Key.sidebarFontSize, newValue)
-		}
-	}
-
-	static var timelineFontSize: FontSize {
-		get {
-			fontSize(for: Key.timelineFontSize)
-		}
-		set {
-			AppDefaults.setFontSize(for: Key.timelineFontSize, newValue)
-		}
-	}
-
-	static var detailFontSize: FontSize {
-		get {
-			fontSize(for: Key.detailFontSize)
-		}
-		set {
-			AppDefaults.setFontSize(for: Key.detailFontSize, newValue)
 		}
 	}
 
@@ -316,9 +276,6 @@ extension AppDefaults {
  		#endif
 
 		let platformDefaults: [String: Any] = [
-			Key.sidebarFontSize: FontSize.medium.rawValue,
-			Key.timelineFontSize: FontSize.medium.rawValue,
-			Key.detailFontSize: FontSize.medium.rawValue,
 			Key.useColumnLayout: false,
 			Key.showStatusBar: Self.showStatusBarDefault,
 			Key.showStatusBarThemeMenu: true,
@@ -332,39 +289,5 @@ extension AppDefaults {
 
 		let defaults = commonRegisteredDefaults.merging(platformDefaults) { _, platformValue in platformValue }
 		UserDefaults.standard.register(defaults: defaults)
-	}
-
-	static func actualFontSize(for fontSize: FontSize) -> CGFloat {
-		switch fontSize {
-		case .small:
-			NSFont.systemFontSize
-		case .medium:
-			actualFontSize(for: .small) + 1.0
-		case .large:
-			actualFontSize(for: .medium) + 4.0
-		case .veryLarge:
-			actualFontSize(for: .large) + 8.0
-		}
-	}
-}
-
-private extension AppDefaults {
-
-	static func fontSize(for key: String) -> FontSize {
-		// Punted till after 1.0.
-		.medium
-
-//		var rawFontSize = UserDefaults.standard.integer(forKey: key)
-//		if rawFontSize < smallestFontSizeRawValue {
-//			rawFontSize = smallestFontSizeRawValue
-//		}
-//		if rawFontSize > largestFontSizeRawValue {
-//			rawFontSize = largestFontSizeRawValue
-//		}
-//		return FontSize(rawValue: rawFontSize)!
-	}
-
-	static func setFontSize(for key: String, _ fontSize: FontSize) {
-		UserDefaults.standard.set(fontSize.rawValue, forKey: key)
 	}
 }

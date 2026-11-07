@@ -27,12 +27,12 @@ extension TimelineViewController {
 	}
 
 	var columnFont: NSFont {
-		NSFont.systemFont(ofSize: AppDefaults.actualFontSize(for: AppDefaults.timelineFontSize))
+		NSFont.systemFont(ofSize: AppDefaults.timelineTextSize.pointSize)
 	}
 
 	// Unread rows are bold, like Mail.
 	var boldColumnFont: NSFont {
-		NSFont.boldSystemFont(ofSize: AppDefaults.actualFontSize(for: AppDefaults.timelineFontSize))
+		NSFont.boldSystemFont(ofSize: AppDefaults.timelineTextSize.pointSize)
 	}
 
 	func columnRowHeight() -> CGFloat {

@@ -59,6 +59,7 @@ final class AppearancePreferencesViewController: NSViewController {
 		updateTimelineFeedIconsPopup()
 		updateTimelineIconSizePopup()
 		updateTimelineThumbnailsPopup()
+		updateTimelineTextSizePopup()
 		updateArticleThemePopup()
 	}
 
@@ -98,6 +99,10 @@ final class AppearancePreferencesViewController: NSViewController {
 
 	@objc func handleTimelineThumbnailsDisplayDidChange(_ notification: Notification) {
 		updateTimelineThumbnailsPopup()
+	}
+
+	@objc func handleTimelineTextSizeDidChange(_ notification: Notification) {
+		updateTimelineTextSizePopup()
 	}
 
 	// MARK: - Actions
@@ -153,6 +158,13 @@ final class AppearancePreferencesViewController: NSViewController {
 		AppDefaults.timelineThumbnailsDisplay = thumbnailsDisplay
 	}
 
+	@IBAction func timelineTextSizePopUpDidChange(_ sender: Any) {
+		guard let tag = timelineTextSizePopup?.selectedTag(), let textSize = TimelineTextSize(rawValue: tag) else {
+			return
+		}
+		AppDefaults.timelineTextSize = textSize
+	}
+
 	@IBAction func showThemesFolder(_ sender: Any) {
 		let url = URL(fileURLWithPath: ArticleThemesManager.shared.folderPath)
 		NSWorkspace.shared.open(url)
@@ -181,6 +193,7 @@ private extension AppearancePreferencesViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFeedIconsDisplayDidChange(_:)), name: .timelineFeedIconsDisplayDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineIconSizeDidChange(_:)), name: .timelineIconSizeDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineThumbnailsDisplayDidChange(_:)), name: .timelineThumbnailsDisplayDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineTextSizeDidChange(_:)), name: .timelineTextSizeDidChange, object: nil)
 	}
 
 	/// On macOS 15 the "Article Text Size:" label is vertically misaligned
@@ -242,6 +255,10 @@ private extension AppearancePreferencesViewController {
 
 	func updateTimelineThumbnailsPopup() {
 		timelineThumbnailsPopup?.selectItem(withTag: AppDefaults.timelineThumbnailsDisplay.rawValue)
+	}
+
+	func updateTimelineTextSizePopup() {
+		timelineTextSizePopup?.selectItem(withTag: AppDefaults.timelineTextSize.rawValue)
 	}
 
 	func updateArticleThemePopup() {
