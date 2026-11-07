@@ -193,6 +193,9 @@
     "API URL: https://fresh.rss.net/api/greader.php" : {
       "comment" : "FreshRSS API Helper"
     },
+    "Appearance" : {
+      "comment" : "Preferences"
+    },
     "Are you sure you want to delete %d feeds?" : {
       "comment" : "Delete feeds alert message"
     },

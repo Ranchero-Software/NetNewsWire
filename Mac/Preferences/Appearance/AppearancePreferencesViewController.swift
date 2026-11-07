@@ -1,0 +1,140 @@
+//
+//  AppearancePreferencesViewController.swift
+//  NetNewsWire
+//
+//  Created by Brent Simmons on 11/6/26.
+//
+
+import AppKit
+import RSCore
+
+final class AppearancePreferencesViewController: NSViewController {
+	@IBOutlet var appearancePopup: NSPopUpButton?
+
+	@IBOutlet var sidebarShowFeedIconsButton: NSButton?
+	@IBOutlet var sidebarTextSizePopup: NSPopUpButton?
+	@IBOutlet var sidebarShowTodayButton: NSButton?
+	@IBOutlet var sidebarShowAllUnreadButton: NSButton?
+	@IBOutlet var sidebarShowStarredButton: NSButton?
+
+	@IBOutlet var timelineIconsPopup: NSPopUpButton?
+	@IBOutlet var timelineIconSizePopup: NSPopUpButton?
+	@IBOutlet var timelineNumberOfLinesPopup: NSPopUpButton?
+	@IBOutlet var timelineThumbnailsPopup: NSPopUpButton?
+	@IBOutlet var timelineTextSizePopup: NSPopUpButton?
+	@IBOutlet var timelineShowSeparatorsButton: NSButton?
+
+	@IBOutlet var articleTextSizeLabel: NSTextField?
+	@IBOutlet var articleTextSizePopup: NSPopUpButton?
+	@IBOutlet var articleThemePopup: NSPopUpButton?
+
+	convenience init() {
+		self.init(nibName: "AppearancePreferencesView", bundle: nil)
+	}
+
+	override init(nibName nibNameOrNil: NSNib.Name?, bundle nibBundleOrNil: Bundle?) {
+		super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+		commonInit()
+	}
+
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		commonInit()
+	}
+
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		fixArticleTextSizeBaselineIfNeeded()
+		view.sizeToFittingSize()
+	}
+
+	override func viewWillAppear() {
+		super.viewWillAppear()
+		updateArticleThemePopup()
+	}
+
+	// MARK: - Notifications
+
+	@objc func handleApplicationWillBecomeActive(_ notification: Notification) {
+		updateArticleThemePopup()
+	}
+
+	@objc func handleArticleThemeNamesDidChange(_ notification: Notification) {
+		updateArticleThemePopup()
+	}
+
+	// MARK: - Actions
+
+	@IBAction func showThemesFolder(_ sender: Any) {
+		let url = URL(fileURLWithPath: ArticleThemesManager.shared.folderPath)
+		NSWorkspace.shared.open(url)
+	}
+
+	@IBAction func articleThemePopUpDidChange(_ sender: Any) {
+		guard let menuItem = articleThemePopup?.selectedItem else {
+			return
+		}
+		ArticleThemesManager.shared.currentThemeName = menuItem.title
+		updateArticleThemePopup()
+	}
+}
+
+// MARK: - Private
+
+private extension AppearancePreferencesViewController {
+
+	func commonInit() {
+		NotificationCenter.default.addObserver(self, selector: #selector(handleApplicationWillBecomeActive(_:)), name: NSApplication.willBecomeActiveNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThemeNamesDidChange(_:)), name: .ArticleThemeNamesDidChangeNotification, object: nil)
+	}
+
+	/// On macOS 15 the "Article Text Size:" label is vertically misaligned
+	/// with its popup. Replace the firstBaseline constraint with a
+	/// centerY constraint, which works.
+	func fixArticleTextSizeBaselineIfNeeded() {
+		if #available(macOS 26, *) {
+			return
+		}
+
+		guard let articleTextSizeLabel, let articleTextSizePopup, let superview = articleTextSizeLabel.superview else {
+			return
+		}
+
+		for constraint in superview.constraints {
+			let matchesBaseline =
+				constraint.firstAttribute == .firstBaseline &&
+				constraint.secondAttribute == .firstBaseline
+			let involvesPopup =
+				constraint.firstItem === articleTextSizePopup ||
+				constraint.secondItem === articleTextSizePopup
+			let involvesLabel =
+				constraint.firstItem === articleTextSizeLabel ||
+				constraint.secondItem === articleTextSizeLabel
+
+			if matchesBaseline && involvesPopup && involvesLabel {
+				superview.removeConstraint(constraint)
+				articleTextSizeLabel.centerYAnchor.constraint(equalTo: articleTextSizePopup.centerYAnchor).isActive = true
+				break
+			}
+		}
+	}
+
+	func updateArticleThemePopup() {
+		guard let articleThemePopup, let menu = articleThemePopup.menu else {
+			return
+		}
+		menu.removeAllItems()
+
+		menu.addItem(NSMenuItem(title: ArticleTheme.defaultTheme.name, action: nil, keyEquivalent: ""))
+		menu.addItem(NSMenuItem.separator())
+
+		for themeName in ArticleThemesManager.shared.themeNames {
+			menu.addItem(NSMenuItem(title: themeName, action: nil, keyEquivalent: ""))
+		}
+
+		articleThemePopup.selectItem(withTitle: ArticleThemesManager.shared.currentThemeName)
+		if articleThemePopup.indexOfSelectedItem == -1 {
+			articleThemePopup.selectItem(withTitle: ArticleTheme.defaultTheme.name)
+		}
+	}
+}

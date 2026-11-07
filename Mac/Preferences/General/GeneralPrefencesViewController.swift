@@ -13,9 +13,6 @@ import UserNotifications
 import UniformTypeIdentifiers
 
 final class GeneralPreferencesViewController: NSViewController {
-	@IBOutlet var articleTextSizeLabel: NSTextField!
-	@IBOutlet var articleTextSizePopup: NSPopUpButton!
-	@IBOutlet var articleThemePopup: NSPopUpButton!
 	@IBOutlet var defaultBrowserPopup: NSPopUpButton!
 	@IBOutlet var showUnreadCountsButton: NSButton?
 	@IBOutlet var showUnreadCountDotButton: NSButton?
@@ -37,7 +34,6 @@ final class GeneralPreferencesViewController: NSViewController {
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		fixArticleTextSizeBaselineIfNeeded()
 		view.sizeToFittingSize()
 	}
 
@@ -53,28 +49,11 @@ final class GeneralPreferencesViewController: NSViewController {
 		updateUI()
 	}
 
-	@objc func articleThemeNamesDidChangeNotification(_ note: Notification) {
-		updateArticleThemePopup()
-	}
-
 	@objc func handleUnreadCountDisplaySettingDidChange(_ notification: Notification) {
 		updateUnreadCountDisplayButtons()
 	}
 
 	// MARK: - Actions
-
-	@IBAction func showThemesFolder(_ sender: Any) {
-		let url = URL(fileURLWithPath: ArticleThemesManager.shared.folderPath)
-		NSWorkspace.shared.open(url)
-	}
-
-	@IBAction func articleThemePopUpDidChange(_ sender: Any) {
-		guard let menuItem = articleThemePopup.selectedItem else {
-			return
-		}
-		ArticleThemesManager.shared.currentThemeName = menuItem.title
-		updateArticleThemePopup()
-	}
 
 	@IBAction func unreadCountDisplaySettingDidChange(_ sender: NSButton) {
 		guard let unreadCountDisplay = UnreadCountDisplay(rawValue: sender.tag) else {
@@ -99,45 +78,12 @@ final class GeneralPreferencesViewController: NSViewController {
 
 private extension GeneralPreferencesViewController {
 
-	/// On macOS 15 the "Article Text Size:" label is vertically misaligned
-	/// with its popup. Replace the firstBaseline constraint with a
-	/// centerY constraint, which works.
-	func fixArticleTextSizeBaselineIfNeeded() {
-		if #available(macOS 26, *) {
-			return
-		}
-
-		guard let superview = articleTextSizeLabel.superview else {
-			return
-		}
-
-		for constraint in superview.constraints {
-			let matchesBaseline =
-				constraint.firstAttribute == .firstBaseline &&
-				constraint.secondAttribute == .firstBaseline
-			let involvesPopup =
-				constraint.firstItem === articleTextSizePopup ||
-				constraint.secondItem === articleTextSizePopup
-			let involvesLabel =
-				constraint.firstItem === articleTextSizeLabel ||
-				constraint.secondItem === articleTextSizeLabel
-
-			if matchesBaseline && involvesPopup && involvesLabel {
-				superview.removeConstraint(constraint)
-				articleTextSizeLabel.centerYAnchor.constraint(equalTo: articleTextSizePopup.centerYAnchor).isActive = true
-				break
-			}
-		}
-	}
-
 	func commonInit() {
 		NotificationCenter.default.addObserver(self, selector: #selector(applicationWillBecomeActive(_:)), name: NSApplication.willBecomeActiveNotification, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(articleThemeNamesDidChangeNotification(_:)), name: .ArticleThemeNamesDidChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
 	}
 
 	func updateUI() {
-		updateArticleThemePopup()
 		updateBrowserPopup()
 		updateUnreadCountDisplayButtons()
 	}
@@ -146,23 +92,6 @@ private extension GeneralPreferencesViewController {
 		let selectedTag = AppDefaults.unreadCountDisplay.rawValue
 		for case let button? in [showUnreadCountsButton, showUnreadCountDotButton, hideUnreadCountsButton] {
 			button.state = button.tag == selectedTag ? .on : .off
-		}
-	}
-
-	func updateArticleThemePopup() {
-		let menu = articleThemePopup.menu!
-		menu.removeAllItems()
-
-		menu.addItem(NSMenuItem(title: ArticleTheme.defaultTheme.name, action: nil, keyEquivalent: ""))
-		menu.addItem(NSMenuItem.separator())
-
-		for themeName in ArticleThemesManager.shared.themeNames {
-			menu.addItem(NSMenuItem(title: themeName, action: nil, keyEquivalent: ""))
-		}
-
-		articleThemePopup.selectItem(withTitle: ArticleThemesManager.shared.currentThemeName)
-		if articleThemePopup.indexOfSelectedItem == -1 {
-			articleThemePopup.selectItem(withTitle: ArticleTheme.defaultTheme.name)
 		}
 	}
 

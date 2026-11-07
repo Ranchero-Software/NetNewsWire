@@ -53,7 +53,6 @@ let appName = "NetNewsWire"
 
 	@IBOutlet var debugMenuItem: NSMenuItem!
 	@IBOutlet var useColumnLayoutMenuItem: NSMenuItem?
-	@IBOutlet var thumbnailsMenu: NSMenu?
 	@IBOutlet var showStatusBarMenuItem: NSMenuItem?
 	@IBOutlet var showStatusBarThemeMenuMenuItem: NSMenuItem?
 	@IBOutlet var checkForUpdatesMenuItem: NSMenuItem!
@@ -194,7 +193,6 @@ let appName = "NetNewsWire"
 		}
 
 		updateColumnLayoutMenuItem()
-		buildThumbnailsMenu()
 		updateStatusBarMenuItems()
 
 		if mainWindowController == nil {
@@ -379,7 +377,6 @@ let appName = "NetNewsWire"
 
 	func userDefaultsDidChange() {
 		updateColumnLayoutMenuItem()
-		updateThumbnailsMenu()
 		updateStatusBarMenuItems()
 
 		if lastRefreshInterval != AppDefaults.refreshInterval {
@@ -485,10 +482,6 @@ let appName = "NetNewsWire"
 
 		if item.action == #selector(toggleStatusBarThemeMenu(_:)) {
 			return AppDefaults.showStatusBar
-		}
-
-		if item.action == #selector(setTimelineThumbnailsDisplay(_:)) {
-			return !AppDefaults.useColumnLayout
 		}
 
 		if item.action == #selector(toggleWebInspectorEnabled(_:)) {
@@ -755,13 +748,6 @@ let appName = "NetNewsWire"
 		AppDefaults.useColumnLayout.toggle()
 	}
 
-	@IBAction func setTimelineThumbnailsDisplay(_ sender: Any?) {
-		guard let rawValue = (sender as? NSMenuItem)?.representedObject as? Int, let thumbnailsDisplay = TimelineThumbnailsDisplay(rawValue: rawValue) else {
-			return
-		}
-		AppDefaults.timelineThumbnailsDisplay = thumbnailsDisplay
-	}
-
 	@IBAction func toggleStatusBar(_ sender: Any?) {
 		AppDefaults.showStatusBar.toggle()
 	}
@@ -887,29 +873,6 @@ extension AppDelegate {
 
 	@MainActor func updateColumnLayoutMenuItem() {
 		useColumnLayoutMenuItem?.state = AppDefaults.useColumnLayout ? .on : .off
-	}
-
-	/// One item per TimelineThumbnailsDisplay case. The item’s representedObject is the raw value.
-	@MainActor func buildThumbnailsMenu() {
-		guard let thumbnailsMenu else {
-			return
-		}
-		thumbnailsMenu.removeAllItems()
-		for thumbnailsDisplay in TimelineThumbnailsDisplay.allCases {
-			let menuItem = NSMenuItem(title: thumbnailsDisplay.description, action: #selector(setTimelineThumbnailsDisplay(_:)), keyEquivalent: "")
-			menuItem.target = self
-			menuItem.representedObject = thumbnailsDisplay.rawValue
-			thumbnailsMenu.addItem(menuItem)
-		}
-		updateThumbnailsMenu()
-	}
-
-	@MainActor func updateThumbnailsMenu() {
-		let currentThumbnailsDisplay = AppDefaults.timelineThumbnailsDisplay
-		for menuItem in thumbnailsMenu?.items ?? [] {
-			let isCurrent = menuItem.representedObject as? Int == currentThumbnailsDisplay.rawValue
-			menuItem.state = isCurrent ? .on : .off
-		}
 	}
 
 	@MainActor func updateStatusBarMenuItems() {
