@@ -61,6 +61,7 @@ final class AppearancePreferencesViewController: NSViewController {
 		updateTimelineThumbnailsPopup()
 		updateTimelineTextSizePopup()
 		updateTimelineNumberOfLinesPopup()
+		updateTimelineShowSeparatorsButton()
 		updateArticleThemePopup()
 	}
 
@@ -108,6 +109,10 @@ final class AppearancePreferencesViewController: NSViewController {
 
 	@objc func handleTimelineNumberOfLinesDidChange(_ notification: Notification) {
 		updateTimelineNumberOfLinesPopup()
+	}
+
+	@objc func handleTimelineShowSeparatorsDidChange(_ notification: Notification) {
+		updateTimelineShowSeparatorsButton()
 	}
 
 	// MARK: - Actions
@@ -177,6 +182,10 @@ final class AppearancePreferencesViewController: NSViewController {
 		AppDefaults.timelineNumberOfLines = numberOfLines
 	}
 
+	@IBAction func timelineShowSeparatorsDidChange(_ sender: NSButton) {
+		AppDefaults.timelineShowSeparators = sender.state == .on
+	}
+
 	@IBAction func showThemesFolder(_ sender: Any) {
 		let url = URL(fileURLWithPath: ArticleThemesManager.shared.folderPath)
 		NSWorkspace.shared.open(url)
@@ -207,6 +216,7 @@ private extension AppearancePreferencesViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineThumbnailsDisplayDidChange(_:)), name: .timelineThumbnailsDisplayDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineTextSizeDidChange(_:)), name: .timelineTextSizeDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineNumberOfLinesDidChange(_:)), name: .timelineNumberOfLinesDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineShowSeparatorsDidChange(_:)), name: .timelineShowSeparatorsDidChange, object: nil)
 	}
 
 	/// On macOS 15 the "Article Text Size:" label is vertically misaligned
@@ -276,6 +286,10 @@ private extension AppearancePreferencesViewController {
 
 	func updateTimelineNumberOfLinesPopup() {
 		timelineNumberOfLinesPopup?.selectItem(withTag: AppDefaults.timelineNumberOfLines)
+	}
+
+	func updateTimelineShowSeparatorsButton() {
+		timelineShowSeparatorsButton?.state = AppDefaults.timelineShowSeparators ? .on : .off
 	}
 
 	func updateArticleThemePopup() {

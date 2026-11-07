@@ -305,6 +305,9 @@
                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
+                            <connections>
+                                <action selector="timelineShowSeparatorsDidChange:" target="-2" id="tlA-sP-0a1"/>
+                            </connections>
                         </button>
                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="tlN-cL-0l1">
                             <rect key="frame" x="153" y="137" width="255" height="48"/>

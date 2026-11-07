@@ -273,7 +273,9 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	override func viewDidLoad() {
 		// The search timeline can be created long before its view loads, and defaults are observed only from here on.
-		userDefaultsDidChange()
+		textSize = AppDefaults.timelineTextSize
+		numberOfLines = AppDefaults.timelineNumberOfLines
+		updateGridStyle()
 		thumbnailsDisplay = AppDefaults.timelineThumbnailsDisplay
 		updateCellAppearances()
 
@@ -303,7 +305,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			NotificationCenter.default.addObserver(self, selector: #selector(userDidDeleteAccount(_:)), name: .UserDidDeleteAccount, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarDidAcceptDrop(_:)), name: .SidebarDidAcceptDrop, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
-			NotificationCenter.default.addObserver(self, selector: #selector(handleUserDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineShowSeparatorsDidChange(_:)), name: .timelineShowSeparatorsDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineThumbnailsDisplayDidChange(_:)), name: .timelineThumbnailsDisplayDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFeedIconsDisplayDidChange(_:)), name: .timelineFeedIconsDisplayDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineIconSizeDidChange(_:)), name: .timelineIconSizeDidChange, object: nil)
@@ -792,10 +794,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 	}
 
-	@objc nonisolated func handleUserDefaultsDidChange(_ notification: Notification) {
-		Task { @MainActor in
-			self.userDefaultsDidChange()
-		}
+	@objc func handleTimelineShowSeparatorsDidChange(_ notification: Notification) {
+		updateGridStyle()
 	}
 
 	@objc func handleTimelineThumbnailsDisplayDidChange(_ notification: Notification) {
@@ -872,13 +872,9 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 	}
 
-	private func userDefaultsDidChange() {
-		updateGridStyle()
-	}
-
 	/// Separators between rows, never in column layout. `TimelineTableRowView` draws them.
 	private func updateGridStyle() {
-		let showsSeparators = layout == .standard && AppDefaults.timelineShowsSeparators
+		let showsSeparators = layout == .standard && AppDefaults.timelineShowSeparators
 		let gridStyleMask: NSTableView.GridLineStyle = showsSeparators ? .solidHorizontalGridLineMask : []
 		if tableView.gridStyleMask != gridStyleMask {
 			tableView.gridStyleMask = gridStyleMask

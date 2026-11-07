@@ -9,6 +9,10 @@
 import AppKit
 import Images
 
+extension Notification.Name {
+	static let timelineShowSeparatorsDidChange = Notification.Name("TimelineShowSeparatorsDidChangeNotification")
+}
+
 /// What the status bar’s count text shows. Clicking the text cycles through them.
 enum StatusBarCountMode: Int {
 	case unreadCount = 0
@@ -32,6 +36,8 @@ extension AppDefaults.Key {
 	static let legacyWindowState = "windowState"
 	static let secureWindowState = "secureWindowState"
 	static let useColumnLayout = "useColumnLayout"
+	static let timelineShowSeparators = "timelineShowSeparators"
+	static let legacyTimelineShowSeparators = "CorreiaSeparators" // Formerly a hidden pref
 	static let showStatusBar = "showStatusBar"
 	static let showStatusBarThemeMenu = "showStatusBarThemeMenu"
 	static let statusBarCountMode = "statusBarCountMode"
@@ -45,7 +51,6 @@ extension AppDefaults.Key {
 
 	// Hidden prefs
 	static let showDebugMenu = "ShowDebugMenu"
-	static let timelineShowsSeparators = "CorreiaSeparators"
 	static let showTitleOnMainWindow = "KafasisTitleMode"
 	static let feedDoubleClickMarkAsRead = "GruberFeedDoubleClickMarkAsRead"
 	static let suppressSyncOnLaunch = "DevroeSuppressSyncOnLaunch"
@@ -235,8 +240,14 @@ extension AppDefaults {
 		}
 	}
 
-	static var timelineShowsSeparators: Bool {
-		UserDefaults.standard.bool(forKey: Key.timelineShowsSeparators)
+	static var timelineShowSeparators: Bool {
+		get {
+			UserDefaults.standard.bool(forKey: Key.timelineShowSeparators)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.timelineShowSeparators)
+			NotificationCenter.default.post(name: .timelineShowSeparatorsDidChange, object: nil)
+		}
 	}
 
 	static var articleTextSize: ArticleTextSize {
@@ -269,6 +280,8 @@ extension AppDefaults {
 			UserDefaults.standard.set(RefreshInterval.every30Minutes.rawValue, forKey: Key.refreshInterval)
 		}
 
+		migrateLegacyTimelineShowSeparators()
+
 		#if DEBUG
  		let showDebugMenu = true
  		#else
@@ -283,12 +296,20 @@ extension AppDefaults {
 			"NSScrollViewShouldScrollUnderTitlebar": false,
 			Key.refreshInterval: RefreshInterval.every2Hours.rawValue,
 			Key.showDebugMenu: showDebugMenu,
-			Key.timelineShowsSeparators: false,
+			Key.timelineShowSeparators: false,
 			Key.timelineIconDimension: IconSize.large.rawValue,
 			Key.timelineNumberOfLines: 3
 		]
 
 		let defaults = commonRegisteredDefaults.merging(platformDefaults) { _, platformValue in platformValue }
 		UserDefaults.standard.register(defaults: defaults)
+	}
+
+	/// Carries a true value over from the old hidden-pref key, then removes the old key.
+	private static func migrateLegacyTimelineShowSeparators() {
+		if UserDefaults.standard.bool(forKey: Key.legacyTimelineShowSeparators) {
+			UserDefaults.standard.set(true, forKey: Key.timelineShowSeparators)
+		}
+		UserDefaults.standard.removeObject(forKey: Key.legacyTimelineShowSeparators)
 	}
 }
