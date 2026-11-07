@@ -34,6 +34,7 @@ enum AppDefaults {
 		static let timelineIconDimension = "timelineIconSize"
 		static let timelineTextSize = "timelineTextSize"
 		static let timelineNumberOfLines = "timelineNumberOfLines"
+		static let timelineShowFullTitles = "timelineShowFullTitles"
 	}
 
 	/// Registered by both platforms. Each platform’s registerDefaults adds its own.
@@ -51,7 +52,8 @@ enum AppDefaults {
 			Key.showTodayFeed: true,
 			Key.showUnreadFeed: true,
 			Key.showStarredFeed: true,
-			Key.timelineTextSize: TimelineTextSize.medium.rawValue
+			Key.timelineTextSize: TimelineTextSize.medium.rawValue,
+			Key.timelineShowFullTitles: false
 		]
 	}
 
@@ -234,6 +236,17 @@ enum AppDefaults {
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.timelineNumberOfLines)
 			NotificationCenter.default.post(name: .timelineNumberOfLinesDidChange, object: nil)
+		}
+	}
+
+	/// The whole title and no summary, instead of `timelineNumberOfLines` shared by both.
+	static var timelineShowFullTitles: Bool {
+		get {
+			UserDefaults.standard.bool(forKey: Key.timelineShowFullTitles)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.timelineShowFullTitles)
+			NotificationCenter.default.post(name: .timelineShowFullTitlesDidChange, object: nil)
 		}
 	}
 }

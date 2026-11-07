@@ -256,6 +256,13 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			}
 		}
 	}
+	private var showFullTitles = AppDefaults.timelineShowFullTitles {
+		didSet {
+			if showFullTitles != oldValue {
+				cellAppearanceSettingDidChange()
+			}
+		}
+	}
 
 	private struct ArticleIdentityKey: Equatable {
 		let accountID: String
@@ -288,6 +295,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		// The search timeline can be created long before its view loads, and defaults are observed only from here on.
 		textSize = AppDefaults.timelineTextSize
 		numberOfLines = AppDefaults.timelineNumberOfLines
+		showFullTitles = AppDefaults.timelineShowFullTitles
 		updateGridStyle()
 		thumbnailsDisplay = AppDefaults.timelineThumbnailsDisplay
 		updateCellAppearances()
@@ -325,6 +333,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineIconSizeDidChange(_:)), name: .timelineIconSizeDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineTextSizeDidChange(_:)), name: .timelineTextSizeDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineNumberOfLinesDidChange(_:)), name: .timelineNumberOfLinesDidChange, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineShowFullTitlesDidChange(_:)), name: .timelineShowFullTitlesDidChange, object: nil)
 			didRegisterForNotifications = true
 		}
 
@@ -830,6 +839,10 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	@objc func handleTimelineNumberOfLinesDidChange(_ notification: Notification) {
 		numberOfLines = AppDefaults.timelineNumberOfLines
+	}
+
+	@objc func handleTimelineShowFullTitlesDidChange(_ notification: Notification) {
+		showFullTitles = AppDefaults.timelineShowFullTitles
 	}
 
 	@objc func handleTimelineIconSizeDidChange(_ notification: Notification) {
@@ -1625,8 +1638,8 @@ private extension TimelineViewController {
 
 	private func updateCellAppearances() {
 		let iconSize = AppDefaults.timelineIconSize
-		cellAppearance = TimelineCellAppearance(showIcon: false, textSize: textSize, iconSize: iconSize, numberOfLines: numberOfLines, showsLargeThumbnails: thumbnailsDisplay == .large)
-		cellAppearanceWithIcon = TimelineCellAppearance(showIcon: true, textSize: textSize, iconSize: iconSize, numberOfLines: numberOfLines, showsLargeThumbnails: thumbnailsDisplay == .large)
+		cellAppearance = TimelineCellAppearance(showIcon: false, textSize: textSize, iconSize: iconSize, numberOfLines: numberOfLines, showsFullTitles: showFullTitles, showsLargeThumbnails: thumbnailsDisplay == .large)
+		cellAppearanceWithIcon = TimelineCellAppearance(showIcon: true, textSize: textSize, iconSize: iconSize, numberOfLines: numberOfLines, showsFullTitles: showFullTitles, showsLargeThumbnails: thumbnailsDisplay == .large)
 	}
 
 	private func cellAppearanceSettingDidChange() {

@@ -17,4 +17,5 @@ extension Notification.Name {
 	static let sidebarSmartFeedsVisibilityDidChange = Notification.Name("SidebarSmartFeedsVisibilityDidChangeNotification")
 	static let timelineIconSizeDidChange = Notification.Name("TimelineIconSizeDidChangeNotification")
 	static let timelineNumberOfLinesDidChange = Notification.Name("TimelineNumberOfLinesDidChangeNotification")
+	static let timelineShowFullTitlesDidChange = Notification.Name("TimelineShowFullTitlesDidChangeNotification")
 }

@@ -142,7 +142,7 @@ import RSCore
 	}
 
 	static func rectForSummary(_ textBoxRect: NSRect, _ titleRect: NSRect, _ titleNumberOfLines: Int, _ appearance: TimelineCellAppearance, _ cellData: TimelineCellData) -> NSRect {
-		if titleNumberOfLines >= appearance.numberOfLines || cellData.text.isEmpty {
+		if !appearance.showsSummary || titleNumberOfLines >= appearance.numberOfLines || cellData.text.isEmpty {
 			return NSRect.zero
 		}
 

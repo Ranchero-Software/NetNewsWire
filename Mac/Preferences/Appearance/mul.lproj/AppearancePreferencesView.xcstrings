@@ -361,14 +361,26 @@
         }
       }
     },
-    "tlL-nL-0c1.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Number of Lines:\"; ObjectID = \"tlL-nL-0c1\";",
+    "tlL-ln-0c1.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"lines\"; ObjectID = \"tlL-ln-0c1\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Number of Lines:"
+            "value" : "lines"
+          }
+        }
+      }
+    },
+    "tlL-nL-0c1.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Timeline Rows:\"; ObjectID = \"tlL-nL-0c1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Timeline Rows:"
           }
         }
       }
@@ -638,13 +650,13 @@
       }
     },
     "tlN-cL-0c1.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Feed icon size, thumbnails, number of lines, and separators apply only to the standard layout.\"; ObjectID = \"tlN-cL-0c1\";",
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Feed icon size, thumbnails, timeline rows, and separators apply only to the standard layout.\"; ObjectID = \"tlN-cL-0c1\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Feed icon size, thumbnails, number of lines, and separators apply only to the standard layout."
+            "value" : "Feed icon size, thumbnails, timeline rows, and separators apply only to the standard layout."
           }
         }
       }
@@ -657,6 +669,42 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Automatic shows icons for folders, smart feeds, and authors with avatars."
+          }
+        }
+      }
+    },
+    "tlN-fT-0c1.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Shows the whole title, up to 12 lines.\"; ObjectID = \"tlN-fT-0c1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Shows the whole title, up to 12 lines."
+          }
+        }
+      }
+    },
+    "tlR-fT-0c1.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Full title, no preview\"; ObjectID = \"tlR-fT-0c1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Full title, no preview"
+          }
+        }
+      }
+    },
+    "tlR-tP-0c1.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Title and preview, in\"; ObjectID = \"tlR-tP-0c1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Title and preview, in"
           }
         }
       }

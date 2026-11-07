@@ -21,7 +21,9 @@ final class AppearancePreferencesViewController: NSViewController {
 
 	@IBOutlet var timelineIconsPopup: NSPopUpButton?
 	@IBOutlet var timelineIconSizePopup: NSPopUpButton?
+	@IBOutlet var timelineTitleAndSummaryButton: NSButton?
 	@IBOutlet var timelineNumberOfLinesPopup: NSPopUpButton?
+	@IBOutlet var timelineFullTitlesButton: NSButton?
 	@IBOutlet var timelineThumbnailsPopup: NSPopUpButton?
 	@IBOutlet var timelineTextSizePopup: NSPopUpButton?
 	@IBOutlet var timelineShowSeparatorsButton: NSButton?
@@ -60,7 +62,7 @@ final class AppearancePreferencesViewController: NSViewController {
 		updateTimelineIconSizePopup()
 		updateTimelineThumbnailsPopup()
 		updateTimelineTextSizePopup()
-		updateTimelineNumberOfLinesPopup()
+		updateTimelineRowsControls()
 		updateTimelineShowSeparatorsButton()
 		updateArticleThemePopup()
 	}
@@ -108,7 +110,11 @@ final class AppearancePreferencesViewController: NSViewController {
 	}
 
 	@objc func handleTimelineNumberOfLinesDidChange(_ notification: Notification) {
-		updateTimelineNumberOfLinesPopup()
+		updateTimelineRowsControls()
+	}
+
+	@objc func handleTimelineShowFullTitlesDidChange(_ notification: Notification) {
+		updateTimelineRowsControls()
 	}
 
 	@objc func handleTimelineShowSeparatorsDidChange(_ notification: Notification) {
@@ -182,6 +188,10 @@ final class AppearancePreferencesViewController: NSViewController {
 		AppDefaults.timelineNumberOfLines = numberOfLines
 	}
 
+	@IBAction func timelineRowsRadioButtonDidChange(_ sender: NSButton) {
+		AppDefaults.timelineShowFullTitles = sender === timelineFullTitlesButton
+	}
+
 	@IBAction func timelineShowSeparatorsDidChange(_ sender: NSButton) {
 		AppDefaults.timelineShowSeparators = sender.state == .on
 	}
@@ -216,6 +226,7 @@ private extension AppearancePreferencesViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineThumbnailsDisplayDidChange(_:)), name: .timelineThumbnailsDisplayDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineTextSizeDidChange(_:)), name: .timelineTextSizeDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineNumberOfLinesDidChange(_:)), name: .timelineNumberOfLinesDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineShowFullTitlesDidChange(_:)), name: .timelineShowFullTitlesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineShowSeparatorsDidChange(_:)), name: .timelineShowSeparatorsDidChange, object: nil)
 	}
 
@@ -284,8 +295,13 @@ private extension AppearancePreferencesViewController {
 		timelineTextSizePopup?.selectItem(withTag: AppDefaults.timelineTextSize.rawValue)
 	}
 
-	func updateTimelineNumberOfLinesPopup() {
+	/// The number of lines applies only to title and summary, so its popup is disabled with full titles.
+	func updateTimelineRowsControls() {
+		let showFullTitles = AppDefaults.timelineShowFullTitles
+		timelineTitleAndSummaryButton?.state = showFullTitles ? .off : .on
+		timelineFullTitlesButton?.state = showFullTitles ? .on : .off
 		timelineNumberOfLinesPopup?.selectItem(withTag: AppDefaults.timelineNumberOfLines)
+		timelineNumberOfLinesPopup?.isEnabled = !showFullTitles
 	}
 
 	func updateTimelineShowSeparatorsButton() {
