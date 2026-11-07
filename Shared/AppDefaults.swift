@@ -24,6 +24,7 @@ enum AppDefaults {
 		static let unreadCountDisplay = "unreadCountDisplay"
 		static let timelineThumbnailsDisplay = "timelineThumbnailsDisplay"
 		static let timelineFeedIconsDisplay = "timelineFeedIconsDisplay"
+		static let userInterfaceColorPalette = "userInterfaceColorPalette"
 	}
 
 	/// Registered by both platforms. Each platform’s registerDefaults adds its own.
@@ -34,7 +35,8 @@ enum AppDefaults {
 			Key.currentThemeName: defaultThemeName,
 			Key.articleContentJavascriptEnabled: true,
 			Key.timelineThumbnailsDisplay: TimelineThumbnailsDisplay.none.rawValue,
-			Key.timelineFeedIconsDisplay: TimelineFeedIconsDisplay.automatic.rawValue
+			Key.timelineFeedIconsDisplay: TimelineFeedIconsDisplay.automatic.rawValue,
+			Key.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue
 		]
 	}
 
@@ -125,6 +127,16 @@ enum AppDefaults {
 		set {
 			UserDefaults.standard.set(newValue.rawValue, forKey: Key.timelineFeedIconsDisplay)
 			NotificationCenter.default.post(name: .timelineFeedIconsDisplayDidChange, object: nil)
+		}
+	}
+
+	static var userInterfaceColorPalette: UserInterfaceColorPalette {
+		get {
+			UserInterfaceColorPalette(rawValue: UserDefaults.standard.integer(forKey: Key.userInterfaceColorPalette)) ?? .automatic
+		}
+		set {
+			UserDefaults.standard.set(newValue.rawValue, forKey: Key.userInterfaceColorPalette)
+			NotificationCenter.default.post(name: .userInterfaceColorPaletteDidUpdate, object: nil)
 		}
 	}
 }

@@ -59,6 +59,9 @@
                             <constraints>
                                 <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="apK-10-0k1"/>
                             </constraints>
+                            <connections>
+                                <action selector="appearancePopUpDidChange:" target="-2" id="apA-cM-0a1"/>
+                            </connections>
                         </popUpButton>
                         <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="sp1-Bx-0s1">
                             <rect key="frame" x="0.0" y="556" width="383" height="5"/>

@@ -13,31 +13,12 @@ import Account
 import Articles
 import Images
 
-enum UserInterfaceColorPalette: Int, CustomStringConvertible, CaseIterable {
-	case automatic = 0
-	case light = 1
-	case dark = 2
-
-	var description: String {
-		switch self {
-		case .automatic:
-			NSLocalizedString("Automatic", comment: "Automatic")
-		case .light:
-			NSLocalizedString("Light", comment: "Light")
-		case .dark:
-			NSLocalizedString("Dark", comment: "Dark")
-		}
-	}
-}
-
 extension Notification.Name {
-	public static let userInterfaceColorPaletteDidUpdate = Notification.Name("UserInterfaceColorPaletteDidUpdateNotification")
 	public static let timelineIconSizeDidChange = Notification.Name("TimelineIconSizeDidChangeNotification")
 	public static let timelineNumberOfLinesDidChange = Notification.Name("TimelineNumberOfLinesDidChangeNotification")
 }
 
 extension AppDefaults.Key {
-	static let userInterfaceColorPalette = "userInterfaceColorPalette"
 	static let refreshClearsReadArticles = "refreshClearsReadArticles"
 	static let timelineNumberOfLines = "timelineNumberOfLines"
 	static let timelineIconDimension = "timelineIconSize"
@@ -68,19 +49,6 @@ extension AppDefaults.Key {
 extension AppDefaults {
 
 	fileprivate static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "AppDefaults")
-
-	static var userInterfaceColorPalette: UserInterfaceColorPalette {
-		get {
-			if let result = UserInterfaceColorPalette(rawValue: UserDefaults.standard.integer(forKey: Key.userInterfaceColorPalette)) {
-				return result
-			}
-			return .automatic
-		}
-		set {
-			UserDefaults.standard.set(newValue.rawValue, forKey: Key.userInterfaceColorPalette)
-			NotificationCenter.default.post(name: .userInterfaceColorPaletteDidUpdate, object: nil)
-		}
-	}
 
 	static var useSystemBrowser: Bool {
 		get {
@@ -341,7 +309,6 @@ extension AppDefaults {
 		migrateAppGroupDefaultsIfNeeded()
 
 		let platformDefaults: [String: Any] = [
-			Key.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue,
 			Key.refreshClearsReadArticles: false,
 			Key.timelineNumberOfLines: 2,
 			Key.timelineIconDimension: IconSize.medium.rawValue,

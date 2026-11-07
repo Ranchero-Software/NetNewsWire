@@ -51,6 +51,7 @@ final class AppearancePreferencesViewController: NSViewController {
 
 	override func viewWillAppear() {
 		super.viewWillAppear()
+		updateAppearancePopup()
 		updateArticleThemePopup()
 	}
 
@@ -64,7 +65,18 @@ final class AppearancePreferencesViewController: NSViewController {
 		updateArticleThemePopup()
 	}
 
+	@objc func handleUserInterfaceColorPaletteDidUpdate(_ notification: Notification) {
+		updateAppearancePopup()
+	}
+
 	// MARK: - Actions
+
+	@IBAction func appearancePopUpDidChange(_ sender: Any) {
+		guard let tag = appearancePopup?.selectedTag(), let colorPalette = UserInterfaceColorPalette(rawValue: tag) else {
+			return
+		}
+		AppDefaults.userInterfaceColorPalette = colorPalette
+	}
 
 	@IBAction func showThemesFolder(_ sender: Any) {
 		let url = URL(fileURLWithPath: ArticleThemesManager.shared.folderPath)
@@ -87,6 +99,7 @@ private extension AppearancePreferencesViewController {
 	func commonInit() {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleApplicationWillBecomeActive(_:)), name: NSApplication.willBecomeActiveNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThemeNamesDidChange(_:)), name: .ArticleThemeNamesDidChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleUserInterfaceColorPaletteDidUpdate(_:)), name: .userInterfaceColorPaletteDidUpdate, object: nil)
 	}
 
 	/// On macOS 15 the "Article Text Size:" label is vertically misaligned
@@ -118,6 +131,10 @@ private extension AppearancePreferencesViewController {
 				break
 			}
 		}
+	}
+
+	func updateAppearancePopup() {
+		appearancePopup?.selectItem(withTag: AppDefaults.userInterfaceColorPalette.rawValue)
 	}
 
 	func updateArticleThemePopup() {

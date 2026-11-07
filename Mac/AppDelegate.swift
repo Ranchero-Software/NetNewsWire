@@ -121,6 +121,7 @@ let appName = "NetNewsWire"
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: AccountManager.shared)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleUserInterfaceColorPaletteDidUpdate(_:)), name: .userInterfaceColorPaletteDidUpdate, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(inspectableObjectsDidChange(_:)), name: .InspectableObjectsDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(importDownloadedTheme(_:)), name: .didEndDownloadingTheme, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(themeImportError(_:)), name: .didFailToImportThemeWithError, object: nil)
@@ -144,6 +145,7 @@ let appName = "NetNewsWire"
 
 	func applicationWillFinishLaunching(_ notification: Notification) {
 		FaviconGenerator.templateImage = Assets.Images.faviconTemplate
+		applyUserInterfaceColorPalette()
 
 		installAppleEventHandlers()
 
@@ -364,6 +366,10 @@ let appName = "NetNewsWire"
 
 	@objc func handleUnreadCountDisplaySettingDidChange(_ notification: Notification) {
 		updateDockBadge()
+	}
+
+	@objc func handleUserInterfaceColorPaletteDidUpdate(_ notification: Notification) {
+		applyUserInterfaceColorPalette()
 	}
 
 	@objc func inspectableObjectsDidChange(_ note: Notification) {
@@ -1057,6 +1063,17 @@ extension AppDelegate: NSWindowRestoration {
 // Handle Notification Actions
 
 private extension AppDelegate {
+
+	func applyUserInterfaceColorPalette() {
+		switch AppDefaults.userInterfaceColorPalette {
+		case .automatic:
+			NSApp.appearance = nil
+		case .light:
+			NSApp.appearance = NSAppearance(named: .aqua)
+		case .dark:
+			NSApp.appearance = NSAppearance(named: .darkAqua)
+		}
+	}
 
 	func handleMarkAsRead(userInfo: [AnyHashable: Any]) {
 		handleStatusNotification(userInfo: userInfo, statusKey: .read)
