@@ -25,6 +25,7 @@ enum AppDefaults {
 		static let timelineThumbnailsDisplay = "timelineThumbnailsDisplay"
 		static let timelineFeedIconsDisplay = "timelineFeedIconsDisplay"
 		static let userInterfaceColorPalette = "userInterfaceColorPalette"
+		static let sidebarShowsIcons = "sidebarShowsIcons"
 	}
 
 	/// Registered by both platforms. Each platform’s registerDefaults adds its own.
@@ -36,7 +37,8 @@ enum AppDefaults {
 			Key.articleContentJavascriptEnabled: true,
 			Key.timelineThumbnailsDisplay: TimelineThumbnailsDisplay.none.rawValue,
 			Key.timelineFeedIconsDisplay: TimelineFeedIconsDisplay.automatic.rawValue,
-			Key.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue
+			Key.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue,
+			Key.sidebarShowsIcons: true
 		]
 	}
 
@@ -137,6 +139,16 @@ enum AppDefaults {
 		set {
 			UserDefaults.standard.set(newValue.rawValue, forKey: Key.userInterfaceColorPalette)
 			NotificationCenter.default.post(name: .userInterfaceColorPaletteDidUpdate, object: nil)
+		}
+	}
+
+	static var sidebarShowsIcons: Bool {
+		get {
+			UserDefaults.standard.bool(forKey: Key.sidebarShowsIcons)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.sidebarShowsIcons)
+			NotificationCenter.default.post(name: .sidebarShowsIconsDidChange, object: nil)
 		}
 	}
 }

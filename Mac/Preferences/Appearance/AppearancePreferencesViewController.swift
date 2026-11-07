@@ -52,6 +52,7 @@ final class AppearancePreferencesViewController: NSViewController {
 	override func viewWillAppear() {
 		super.viewWillAppear()
 		updateAppearancePopup()
+		updateSidebarShowIconsButton()
 		updateArticleThemePopup()
 	}
 
@@ -69,6 +70,10 @@ final class AppearancePreferencesViewController: NSViewController {
 		updateAppearancePopup()
 	}
 
+	@objc func handleSidebarShowsIconsDidChange(_ notification: Notification) {
+		updateSidebarShowIconsButton()
+	}
+
 	// MARK: - Actions
 
 	@IBAction func appearancePopUpDidChange(_ sender: Any) {
@@ -76,6 +81,10 @@ final class AppearancePreferencesViewController: NSViewController {
 			return
 		}
 		AppDefaults.userInterfaceColorPalette = colorPalette
+	}
+
+	@IBAction func sidebarShowIconsDidChange(_ sender: NSButton) {
+		AppDefaults.sidebarShowsIcons = sender.state == .on
 	}
 
 	@IBAction func showThemesFolder(_ sender: Any) {
@@ -100,6 +109,7 @@ private extension AppearancePreferencesViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleApplicationWillBecomeActive(_:)), name: NSApplication.willBecomeActiveNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThemeNamesDidChange(_:)), name: .ArticleThemeNamesDidChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUserInterfaceColorPaletteDidUpdate(_:)), name: .userInterfaceColorPaletteDidUpdate, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarShowsIconsDidChange(_:)), name: .sidebarShowsIconsDidChange, object: nil)
 	}
 
 	/// On macOS 15 the "Article Text Size:" label is vertically misaligned
@@ -135,6 +145,10 @@ private extension AppearancePreferencesViewController {
 
 	func updateAppearancePopup() {
 		appearancePopup?.selectItem(withTag: AppDefaults.userInterfaceColorPalette.rawValue)
+	}
+
+	func updateSidebarShowIconsButton() {
+		sidebarShowFeedIconsButton?.state = AppDefaults.sidebarShowsIcons ? .on : .off
 	}
 
 	func updateArticleThemePopup() {

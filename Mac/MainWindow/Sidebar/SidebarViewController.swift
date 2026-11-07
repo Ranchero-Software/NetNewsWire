@@ -102,6 +102,7 @@ extension Notification.Name {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidInitialize(_:)), name: .UnreadCountDidInitialize, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarShowsIconsDidChange(_:)), name: .sidebarShowsIconsDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidAddAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidDeleteAccount, object: nil)
@@ -243,6 +244,11 @@ extension Notification.Name {
 		applyToAvailableCells { cell, _ in
 			cell.updateUnreadCountView()
 		}
+	}
+
+	@objc func handleSidebarShowsIconsDidChange(_ notification: Notification) {
+		prefetchFeedIcons()
+		applyToAvailableCells(configure)
 	}
 
 	@objc func handleClipViewFrameDidChange(_ notification: Notification) {
@@ -491,6 +497,9 @@ extension Notification.Name {
 			delegate?.sidebarInvalidatedRestorationState(self)
 		}
 
+		guard AppDefaults.sidebarShowsIcons else {
+			return
+		}
 		var feeds = [Feed]()
 		collectExpandedFeeds(in: node, into: &feeds)
 		IconImageCache.shared.prefetchImagesForFeeds(feeds)
@@ -707,6 +716,9 @@ private extension SidebarViewController {
 	}
 
 	func prefetchFeedIcons() {
+		guard AppDefaults.sidebarShowsIcons else {
+			return
+		}
 		var feeds = [Feed]()
 		collectExpandedFeeds(in: treeController.rootNode, into: &feeds)
 		IconImageCache.shared.prefetchImagesForFeeds(feeds)
@@ -883,7 +895,7 @@ private extension SidebarViewController {
 		configureUnreadCount(cell, node)
 		cell.updateUnreadCountView() // A reused cell may predate a display setting change
 		configureFavicon(cell, node)
-		cell.shouldShowImage = node.representedObject is SmallIconProvider
+		cell.shouldShowImage = AppDefaults.sidebarShowsIcons && node.representedObject is SmallIconProvider
 	}
 
 	func configureUnreadCount(_ cell: SidebarCell, _ node: Node) {
@@ -891,7 +903,7 @@ private extension SidebarViewController {
 	}
 
 	func configureFavicon(_ cell: SidebarCell, _ node: Node) {
-		cell.iconImage = imageFor(node)
+		cell.iconImage = AppDefaults.sidebarShowsIcons ? imageFor(node) : nil
 	}
 
 	func configureGroupCell(_ cell: NSTableCellView, _ node: Node) {

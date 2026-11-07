@@ -80,6 +80,9 @@
                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
+                            <connections>
+                                <action selector="sidebarShowIconsDidChange:" target="-2" id="sbA-fI-0a1"/>
+                            </connections>
                         </button>
                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sbL-tX-0l1">
                             <rect key="frame" x="-2" y="490" width="129" height="16"/>
