@@ -178,6 +178,9 @@
                                     </items>
                                 </menu>
                             </popUpButtonCell>
+                            <connections>
+                                <action selector="timelineFeedIconsPopUpDidChange:" target="-2" id="tlA-fD-0a1"/>
+                            </connections>
                         </popUpButton>
                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="tlN-fD-0l1">
                             <rect key="frame" x="131" y="309" width="255" height="32"/>
@@ -189,7 +192,7 @@
                         </textField>
                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlL-fS-0l1">
                             <rect key="frame" x="-2" y="277" width="129" height="16"/>
-                            <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="right" title="Timeline Icon Size:" id="tlL-fS-0c1">
+                            <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="right" title="Timeline Feed Icon Size:" id="tlL-fS-0c1">
                                 <font key="font" metaFont="system"/>
                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>

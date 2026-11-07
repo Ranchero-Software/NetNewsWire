@@ -71,7 +71,8 @@ extension TimelineViewController {
 			let cell = dequeueCell(TimelineFeedColumnCellView.self, identifier: identifier)
 			cell.textField?.font = textFont
 			cell.textField?.stringValue = article?.feed?.nameForDisplay ?? ""
-			cell.imageView?.image = article?.feed.flatMap { IconImageCache.shared.imageForFeed($0) }?.image
+			cell.showsIcon = showIcons
+			cell.imageView?.image = showIcons ? article?.feed.flatMap { IconImageCache.shared.imageForFeed($0) }?.image : nil
 			return cell
 
 		case .date:

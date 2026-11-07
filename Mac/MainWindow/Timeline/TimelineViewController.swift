@@ -190,7 +190,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 	}
 
-	private var showIcons = false
+	private(set) var showIcons = false
 	private var currentRowHeight: CGFloat = 0.0
 	private var largeThumbnailRowHeight: CGFloat = 0.0
 	private var articleIDsWithLargeThumbnailHeight = Set<String>() // Articles heightOfRow last gave largeThumbnailRowHeight
@@ -297,6 +297,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleUserDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineThumbnailsDisplayDidChange(_:)), name: .timelineThumbnailsDisplayDidChange, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFeedIconsDisplayDidChange(_:)), name: .timelineFeedIconsDisplayDidChange, object: nil)
 			didRegisterForNotifications = true
 		}
 
@@ -788,6 +789,16 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	@objc func handleTimelineThumbnailsDisplayDidChange(_ notification: Notification) {
 		thumbnailsDisplay = AppDefaults.timelineThumbnailsDisplay
+	}
+
+	@objc func handleTimelineFeedIconsDisplayDidChange(_ notification: Notification) {
+		updateShowIcons()
+		if showIcons {
+			IconImageCache.shared.prefetchImagesForArticles(articles)
+		}
+		performBlockAndRestoreSelection {
+			tableView.reloadData()
+		}
 	}
 
 	@objc func accountDidDownloadArticles(_ note: Notification) {
@@ -1292,8 +1303,19 @@ private extension TimelineViewController {
 	}
 
 	func updateShowIcons() {
+		switch AppDefaults.timelineFeedIconsDisplay {
+		case .always:
+			self.showIcons = true
+			return
+		case .never:
+			self.showIcons = false
+			return
+		case .automatic:
+			break
+		}
+
 		if layout == .column {
-			// The Feed column always shows the feed icon.
+			// With Automatic, the Feed column shows the feed icon.
 			self.showIcons = true
 			return
 		}

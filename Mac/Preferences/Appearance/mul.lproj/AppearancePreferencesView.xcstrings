@@ -350,13 +350,13 @@
       }
     },
     "tlL-fS-0c1.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Timeline Icon Size:\"; ObjectID = \"tlL-fS-0c1\";",
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Timeline Feed Icon Size:\"; ObjectID = \"tlL-fS-0c1\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Timeline Icon Size:"
+            "value" : "Timeline Feed Icon Size:"
           }
         }
       }

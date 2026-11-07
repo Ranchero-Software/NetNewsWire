@@ -55,6 +55,7 @@ final class AppearancePreferencesViewController: NSViewController {
 		updateSidebarShowIconsButton()
 		updateSidebarTextSizePopup()
 		updateSmartFeedsButtons()
+		updateTimelineFeedIconsPopup()
 		updateArticleThemePopup()
 	}
 
@@ -82,6 +83,10 @@ final class AppearancePreferencesViewController: NSViewController {
 
 	@objc func handleSidebarSmartFeedsVisibilityDidChange(_ notification: Notification) {
 		updateSmartFeedsButtons()
+	}
+
+	@objc func handleTimelineFeedIconsDisplayDidChange(_ notification: Notification) {
+		updateTimelineFeedIconsPopup()
 	}
 
 	// MARK: - Actions
@@ -116,6 +121,13 @@ final class AppearancePreferencesViewController: NSViewController {
 		AppDefaults.showStarredFeed = sender.state == .on
 	}
 
+	@IBAction func timelineFeedIconsPopUpDidChange(_ sender: Any) {
+		guard let tag = timelineIconsPopup?.selectedTag(), let feedIconsDisplay = TimelineFeedIconsDisplay(rawValue: tag) else {
+			return
+		}
+		AppDefaults.timelineFeedIconsDisplay = feedIconsDisplay
+	}
+
 	@IBAction func showThemesFolder(_ sender: Any) {
 		let url = URL(fileURLWithPath: ArticleThemesManager.shared.folderPath)
 		NSWorkspace.shared.open(url)
@@ -141,6 +153,7 @@ private extension AppearancePreferencesViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarShowsIconsDidChange(_:)), name: .sidebarShowsIconsDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarTextSizeDidChange(_:)), name: .sidebarTextSizeDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarSmartFeedsVisibilityDidChange(_:)), name: .sidebarSmartFeedsVisibilityDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFeedIconsDisplayDidChange(_:)), name: .timelineFeedIconsDisplayDidChange, object: nil)
 	}
 
 	/// On macOS 15 the "Article Text Size:" label is vertically misaligned
@@ -190,6 +203,10 @@ private extension AppearancePreferencesViewController {
 		sidebarShowTodayButton?.state = AppDefaults.showTodayFeed ? .on : .off
 		sidebarShowAllUnreadButton?.state = AppDefaults.showUnreadFeed ? .on : .off
 		sidebarShowStarredButton?.state = AppDefaults.showStarredFeed ? .on : .off
+	}
+
+	func updateTimelineFeedIconsPopup() {
+		timelineIconsPopup?.selectItem(withTag: AppDefaults.timelineFeedIconsDisplay.rawValue)
 	}
 
 	func updateArticleThemePopup() {
