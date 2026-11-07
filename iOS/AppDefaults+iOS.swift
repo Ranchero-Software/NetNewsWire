@@ -13,13 +13,8 @@ import Account
 import Articles
 import Images
 
-extension Notification.Name {
-	public static let timelineNumberOfLinesDidChange = Notification.Name("TimelineNumberOfLinesDidChangeNotification")
-}
-
 extension AppDefaults.Key {
 	static let refreshClearsReadArticles = "refreshClearsReadArticles"
-	static let timelineNumberOfLines = "timelineNumberOfLines"
 	static let articleFullscreenAvailable = "articleFullscreenAvailable"
 	static let articleFullscreenEnabled = "articleFullscreenEnabled"
 	static let confirmMarkAllAsRead = "confirmMarkAllAsRead"
@@ -158,16 +153,6 @@ extension AppDefaults {
 		}
 		set {
 			AppDefaults.setDate(for: Key.lastRefresh, newValue)
-		}
-	}
-
-	static var timelineNumberOfLines: Int {
-		get {
-			UserDefaults.standard.integer(forKey: Key.timelineNumberOfLines)
-		}
-		set {
-			UserDefaults.standard.set(newValue, forKey: Key.timelineNumberOfLines)
-			NotificationCenter.default.post(name: .timelineNumberOfLinesDidChange, object: nil)
 		}
 	}
 

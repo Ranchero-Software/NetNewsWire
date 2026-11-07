@@ -239,7 +239,14 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private var textSize = AppDefaults.timelineTextSize {
 		didSet {
 			if textSize != oldValue {
-				textSizeDidChange()
+				cellAppearanceSettingDidChange()
+			}
+		}
+	}
+	private var numberOfLines = AppDefaults.timelineNumberOfLines {
+		didSet {
+			if numberOfLines != oldValue {
+				cellAppearanceSettingDidChange()
 			}
 		}
 	}
@@ -301,6 +308,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFeedIconsDisplayDidChange(_:)), name: .timelineFeedIconsDisplayDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineIconSizeDidChange(_:)), name: .timelineIconSizeDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineTextSizeDidChange(_:)), name: .timelineTextSizeDidChange, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineNumberOfLinesDidChange(_:)), name: .timelineNumberOfLinesDidChange, object: nil)
 			didRegisterForNotifications = true
 		}
 
@@ -806,6 +814,10 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	@objc func handleTimelineTextSizeDidChange(_ notification: Notification) {
 		textSize = AppDefaults.timelineTextSize
+	}
+
+	@objc func handleTimelineNumberOfLinesDidChange(_ notification: Notification) {
+		numberOfLines = AppDefaults.timelineNumberOfLines
 	}
 
 	@objc func handleTimelineIconSizeDidChange(_ notification: Notification) {
@@ -1463,11 +1475,11 @@ private extension TimelineViewController {
 
 	private func updateCellAppearances() {
 		let iconSize = AppDefaults.timelineIconSize
-		cellAppearance = TimelineCellAppearance(showIcon: false, textSize: textSize, iconSize: iconSize, showsLargeThumbnails: thumbnailsDisplay == .large)
-		cellAppearanceWithIcon = TimelineCellAppearance(showIcon: true, textSize: textSize, iconSize: iconSize, showsLargeThumbnails: thumbnailsDisplay == .large)
+		cellAppearance = TimelineCellAppearance(showIcon: false, textSize: textSize, iconSize: iconSize, numberOfLines: numberOfLines, showsLargeThumbnails: thumbnailsDisplay == .large)
+		cellAppearanceWithIcon = TimelineCellAppearance(showIcon: true, textSize: textSize, iconSize: iconSize, numberOfLines: numberOfLines, showsLargeThumbnails: thumbnailsDisplay == .large)
 	}
 
-	private func textSizeDidChange() {
+	private func cellAppearanceSettingDidChange() {
 		updateCellAppearances()
 		updateRowHeights()
 		performBlockAndRestoreSelection {

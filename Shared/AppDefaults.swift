@@ -33,6 +33,7 @@ enum AppDefaults {
 		static let showStarredFeed = "showStarredFeed"
 		static let timelineIconDimension = "timelineIconSize"
 		static let timelineTextSize = "timelineTextSize"
+		static let timelineNumberOfLines = "timelineNumberOfLines"
 	}
 
 	/// Registered by both platforms. Each platform’s registerDefaults adds its own.
@@ -222,6 +223,17 @@ enum AppDefaults {
 		set {
 			UserDefaults.standard.set(newValue.rawValue, forKey: Key.timelineTextSize)
 			NotificationCenter.default.post(name: .timelineTextSizeDidChange, object: nil)
+		}
+	}
+
+	/// Lines shared by the title and summary. Registered per platform: iOS defaults to 2, Mac to 3.
+	static var timelineNumberOfLines: Int {
+		get {
+			UserDefaults.standard.integer(forKey: Key.timelineNumberOfLines)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.timelineNumberOfLines)
+			NotificationCenter.default.post(name: .timelineNumberOfLinesDidChange, object: nil)
 		}
 	}
 }

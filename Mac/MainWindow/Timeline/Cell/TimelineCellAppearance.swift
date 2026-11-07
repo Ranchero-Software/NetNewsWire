@@ -23,7 +23,7 @@ struct TimelineCellAppearance: Equatable {
 
 	let titleFont: NSFont
 	let titleBottomMargin: CGFloat = 1.0
-	let titleNumberOfLines = 3
+	let numberOfLines: Int // Shared by the title and summary
 
 	let textFont: NSFont
 
@@ -50,7 +50,7 @@ struct TimelineCellAppearance: Equatable {
 
 	let boxLeftMargin: CGFloat
 
-	init(showIcon: Bool, textSize: TimelineTextSize, iconSize: IconSize, showsLargeThumbnails: Bool) {
+	init(showIcon: Bool, textSize: TimelineTextSize, iconSize: IconSize, numberOfLines: Int, showsLargeThumbnails: Bool) {
 
 		let largeItemFontSize = textSize.pointSize
 		let smallItemFontSize = floor(largeItemFontSize * 0.90)
@@ -63,6 +63,7 @@ struct TimelineCellAppearance: Equatable {
 
 		self.showIcon = showIcon
 		self.iconSize = iconSize.size
+		self.numberOfLines = numberOfLines
 		self.showsLargeThumbnails = showsLargeThumbnails
 
 		cellPadding = NSEdgeInsets(top: 8.0, left: 4.0, bottom: 10.0, right: 4.0)

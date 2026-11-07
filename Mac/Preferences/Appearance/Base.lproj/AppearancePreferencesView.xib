@@ -295,6 +295,9 @@
                                     </items>
                                 </menu>
                             </popUpButtonCell>
+                            <connections>
+                                <action selector="timelineNumberOfLinesPopUpDidChange:" target="-2" id="tlA-nL-0a1"/>
+                            </connections>
                         </popUpButton>
                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlB-sP-0b1">
                             <rect key="frame" x="155" y="193" width="251" height="16"/>

@@ -284,7 +284,8 @@ extension AppDefaults {
 			Key.refreshInterval: RefreshInterval.every2Hours.rawValue,
 			Key.showDebugMenu: showDebugMenu,
 			Key.timelineShowsSeparators: false,
-			Key.timelineIconDimension: IconSize.large.rawValue
+			Key.timelineIconDimension: IconSize.large.rawValue,
+			Key.timelineNumberOfLines: 3
 		]
 
 		let defaults = commonRegisteredDefaults.merging(platformDefaults) { _, platformValue in platformValue }

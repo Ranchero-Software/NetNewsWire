@@ -64,7 +64,7 @@ import RSCore
 		var lastTextRect = titleRect
 		if numberOfLinesForTitle == 0 {
 			lastTextRect = textRect
-		} else if numberOfLinesForTitle < appearance.titleNumberOfLines {
+		} else if numberOfLinesForTitle < appearance.numberOfLines {
 			if summaryRect.height > 0.1 {
 				lastTextRect = summaryRect
 			}
@@ -130,7 +130,7 @@ import RSCore
 		}
 
 		let attributedTitle = cellData.attributedTitle.applyingBaseFont(appearance.titleFont)
-		let sizeInfo = MultilineTextFieldSizer.size(for: attributedTitle, numberOfLines: appearance.titleNumberOfLines, width: Int(textBoxRect.width))
+		let sizeInfo = MultilineTextFieldSizer.size(for: attributedTitle, numberOfLines: appearance.numberOfLines, width: Int(textBoxRect.width))
 		r.size.height = sizeInfo.size.height
 		if sizeInfo.numberOfLinesUsed < 1 {
 			r.size.height = 0
@@ -139,13 +139,13 @@ import RSCore
 	}
 
 	static func rectForSummary(_ textBoxRect: NSRect, _ titleRect: NSRect, _ titleNumberOfLines: Int, _ appearance: TimelineCellAppearance, _ cellData: TimelineCellData) -> NSRect {
-		if titleNumberOfLines >= appearance.titleNumberOfLines || cellData.text.isEmpty {
+		if titleNumberOfLines >= appearance.numberOfLines || cellData.text.isEmpty {
 			return NSRect.zero
 		}
 
 		var r = textBoxRect
 		r.origin.y = titleRect.maxY
-		let summaryNumberOfLines = appearance.titleNumberOfLines - titleNumberOfLines
+		let summaryNumberOfLines = appearance.numberOfLines - titleNumberOfLines
 
 		let sizeInfo = MultilineTextFieldSizer.size(for: cellData.text, font: appearance.textOnlyFont, numberOfLines: summaryNumberOfLines, width: Int(textBoxRect.width))
 		r.size.height = sizeInfo.size.height
@@ -164,7 +164,7 @@ import RSCore
 			return r
 		}
 
-		let sizeInfo = MultilineTextFieldSizer.size(for: cellData.text, font: appearance.textOnlyFont, numberOfLines: appearance.titleNumberOfLines, width: Int(textBoxRect.width))
+		let sizeInfo = MultilineTextFieldSizer.size(for: cellData.text, font: appearance.textOnlyFont, numberOfLines: appearance.numberOfLines, width: Int(textBoxRect.width))
 		r.size.height = sizeInfo.size.height
 		if sizeInfo.numberOfLinesUsed < 1 {
 			r.size.height = 0
