@@ -14,14 +14,12 @@ import Articles
 import Images
 
 extension Notification.Name {
-	public static let timelineIconSizeDidChange = Notification.Name("TimelineIconSizeDidChangeNotification")
 	public static let timelineNumberOfLinesDidChange = Notification.Name("TimelineNumberOfLinesDidChangeNotification")
 }
 
 extension AppDefaults.Key {
 	static let refreshClearsReadArticles = "refreshClearsReadArticles"
 	static let timelineNumberOfLines = "timelineNumberOfLines"
-	static let timelineIconDimension = "timelineIconSize"
 	static let articleFullscreenAvailable = "articleFullscreenAvailable"
 	static let articleFullscreenEnabled = "articleFullscreenEnabled"
 	static let confirmMarkAllAsRead = "confirmMarkAllAsRead"
@@ -170,17 +168,6 @@ extension AppDefaults {
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.timelineNumberOfLines)
 			NotificationCenter.default.post(name: .timelineNumberOfLinesDidChange, object: nil)
-		}
-	}
-
-	static var timelineIconSize: IconSize {
-		get {
-			let rawValue = UserDefaults.standard.integer(forKey: Key.timelineIconDimension)
-			return IconSize(rawValue: rawValue) ?? IconSize.medium
-		}
-		set {
-			UserDefaults.standard.set(newValue.rawValue, forKey: Key.timelineIconDimension)
-			NotificationCenter.default.post(name: .timelineIconSizeDidChange, object: nil)
 		}
 	}
 

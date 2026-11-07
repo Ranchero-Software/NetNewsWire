@@ -7,6 +7,7 @@
 //
 
 import AppKit
+import Images
 
 enum FontSize: Int {
 	case small = 0
@@ -325,7 +326,8 @@ extension AppDefaults {
 			"NSScrollViewShouldScrollUnderTitlebar": false,
 			Key.refreshInterval: RefreshInterval.every2Hours.rawValue,
 			Key.showDebugMenu: showDebugMenu,
-			Key.timelineShowsSeparators: false
+			Key.timelineShowsSeparators: false,
+			Key.timelineIconDimension: IconSize.large.rawValue
 		]
 
 		let defaults = commonRegisteredDefaults.merging(platformDefaults) { _, platformValue in platformValue }

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Images
 
 /// Settings common to Mac and iOS. Platform-specific settings are in extensions in AppDefaults+Mac.swift and AppDefaults+iOS.swift.
 enum AppDefaults {
@@ -30,6 +31,7 @@ enum AppDefaults {
 		static let showTodayFeed = "showTodayFeed"
 		static let showUnreadFeed = "showUnreadFeed"
 		static let showStarredFeed = "showStarredFeed"
+		static let timelineIconDimension = "timelineIconSize"
 	}
 
 	/// Registered by both platforms. Each platform’s registerDefaults adds its own.
@@ -197,6 +199,17 @@ enum AppDefaults {
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.showStarredFeed)
 			NotificationCenter.default.post(name: .sidebarSmartFeedsVisibilityDidChange, object: nil)
+		}
+	}
+
+	/// Registered per platform: iOS defaults to medium, Mac to large.
+	static var timelineIconSize: IconSize {
+		get {
+			IconSize(rawValue: UserDefaults.standard.integer(forKey: Key.timelineIconDimension)) ?? .medium
+		}
+		set {
+			UserDefaults.standard.set(newValue.rawValue, forKey: Key.timelineIconDimension)
+			NotificationCenter.default.post(name: .timelineIconSizeDidChange, object: nil)
 		}
 	}
 }

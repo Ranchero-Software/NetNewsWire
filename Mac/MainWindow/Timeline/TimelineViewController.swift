@@ -299,6 +299,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			NotificationCenter.default.addObserver(self, selector: #selector(handleUserDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineThumbnailsDisplayDidChange(_:)), name: .timelineThumbnailsDisplayDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFeedIconsDisplayDidChange(_:)), name: .timelineFeedIconsDisplayDidChange, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineIconSizeDidChange(_:)), name: .timelineIconSizeDidChange, object: nil)
 			didRegisterForNotifications = true
 		}
 
@@ -797,6 +798,13 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		if showIcons {
 			IconImageCache.shared.prefetchImagesForArticles(articles)
 		}
+		performBlockAndRestoreSelection {
+			tableView.reloadData()
+		}
+	}
+
+	@objc func handleTimelineIconSizeDidChange(_ notification: Notification) {
+		updateCellAppearances()
 		performBlockAndRestoreSelection {
 			tableView.reloadData()
 		}
@@ -1450,8 +1458,9 @@ private extension TimelineViewController {
 	// MARK: - Appearance Change
 
 	private func updateCellAppearances() {
-		cellAppearance = TimelineCellAppearance(showIcon: false, fontSize: fontSize, showsLargeThumbnails: thumbnailsDisplay == .large)
-		cellAppearanceWithIcon = TimelineCellAppearance(showIcon: true, fontSize: fontSize, showsLargeThumbnails: thumbnailsDisplay == .large)
+		let iconSize = AppDefaults.timelineIconSize
+		cellAppearance = TimelineCellAppearance(showIcon: false, fontSize: fontSize, iconSize: iconSize, showsLargeThumbnails: thumbnailsDisplay == .large)
+		cellAppearanceWithIcon = TimelineCellAppearance(showIcon: true, fontSize: fontSize, iconSize: iconSize, showsLargeThumbnails: thumbnailsDisplay == .large)
 	}
 
 	private func fontSizeDidChange() {

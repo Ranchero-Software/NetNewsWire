@@ -15,4 +15,5 @@ extension Notification.Name {
 	static let WebInspectorEnabledDidChange = Notification.Name("WebInspectorEnabledDidChange")
 	static let sidebarShowsIconsDidChange = Notification.Name("SidebarShowsIconsDidChangeNotification")
 	static let sidebarSmartFeedsVisibilityDidChange = Notification.Name("SidebarSmartFeedsVisibilityDidChangeNotification")
+	static let timelineIconSizeDidChange = Notification.Name("TimelineIconSizeDidChangeNotification")
 }

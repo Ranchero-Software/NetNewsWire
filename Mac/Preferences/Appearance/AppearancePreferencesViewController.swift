@@ -7,6 +7,7 @@
 
 import AppKit
 import RSCore
+import Images
 
 final class AppearancePreferencesViewController: NSViewController {
 
@@ -56,6 +57,8 @@ final class AppearancePreferencesViewController: NSViewController {
 		updateSidebarTextSizePopup()
 		updateSmartFeedsButtons()
 		updateTimelineFeedIconsPopup()
+		updateTimelineIconSizePopup()
+		updateTimelineThumbnailsPopup()
 		updateArticleThemePopup()
 	}
 
@@ -87,6 +90,14 @@ final class AppearancePreferencesViewController: NSViewController {
 
 	@objc func handleTimelineFeedIconsDisplayDidChange(_ notification: Notification) {
 		updateTimelineFeedIconsPopup()
+	}
+
+	@objc func handleTimelineIconSizeDidChange(_ notification: Notification) {
+		updateTimelineIconSizePopup()
+	}
+
+	@objc func handleTimelineThumbnailsDisplayDidChange(_ notification: Notification) {
+		updateTimelineThumbnailsPopup()
 	}
 
 	// MARK: - Actions
@@ -128,6 +139,20 @@ final class AppearancePreferencesViewController: NSViewController {
 		AppDefaults.timelineFeedIconsDisplay = feedIconsDisplay
 	}
 
+	@IBAction func timelineIconSizePopUpDidChange(_ sender: Any) {
+		guard let tag = timelineIconSizePopup?.selectedTag(), let iconSize = IconSize(rawValue: tag) else {
+			return
+		}
+		AppDefaults.timelineIconSize = iconSize
+	}
+
+	@IBAction func timelineThumbnailsPopUpDidChange(_ sender: Any) {
+		guard let tag = timelineThumbnailsPopup?.selectedTag(), let thumbnailsDisplay = TimelineThumbnailsDisplay(rawValue: tag) else {
+			return
+		}
+		AppDefaults.timelineThumbnailsDisplay = thumbnailsDisplay
+	}
+
 	@IBAction func showThemesFolder(_ sender: Any) {
 		let url = URL(fileURLWithPath: ArticleThemesManager.shared.folderPath)
 		NSWorkspace.shared.open(url)
@@ -154,6 +179,8 @@ private extension AppearancePreferencesViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarTextSizeDidChange(_:)), name: .sidebarTextSizeDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarSmartFeedsVisibilityDidChange(_:)), name: .sidebarSmartFeedsVisibilityDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFeedIconsDisplayDidChange(_:)), name: .timelineFeedIconsDisplayDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineIconSizeDidChange(_:)), name: .timelineIconSizeDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineThumbnailsDisplayDidChange(_:)), name: .timelineThumbnailsDisplayDidChange, object: nil)
 	}
 
 	/// On macOS 15 the "Article Text Size:" label is vertically misaligned
@@ -207,6 +234,14 @@ private extension AppearancePreferencesViewController {
 
 	func updateTimelineFeedIconsPopup() {
 		timelineIconsPopup?.selectItem(withTag: AppDefaults.timelineFeedIconsDisplay.rawValue)
+	}
+
+	func updateTimelineIconSizePopup() {
+		timelineIconSizePopup?.selectItem(withTag: AppDefaults.timelineIconSize.rawValue)
+	}
+
+	func updateTimelineThumbnailsPopup() {
+		timelineThumbnailsPopup?.selectItem(withTag: AppDefaults.timelineThumbnailsDisplay.rawValue)
 	}
 
 	func updateArticleThemePopup() {

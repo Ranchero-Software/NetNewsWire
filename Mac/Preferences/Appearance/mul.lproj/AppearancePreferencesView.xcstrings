@@ -637,6 +637,18 @@
         }
       }
     },
+    "tlN-cL-0c1.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Feed icon size, thumbnails, number of lines, and separators apply only to the standard layout.\"; ObjectID = \"tlN-cL-0c1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Feed icon size, thumbnails, number of lines, and separators apply only to the standard layout."
+          }
+        }
+      }
+    },
     "tlN-fD-0c1.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Automatic shows icons for folders, smart feeds, and authors with avatars.\"; ObjectID = \"tlN-fD-0c1\";",
       "extractionState" : "extracted_with_value",
