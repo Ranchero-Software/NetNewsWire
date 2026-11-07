@@ -2005,30 +2005,6 @@
         }
       }
     },
-    "tHm-nu-mI1.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Thumbnails\"; ObjectID = \"tHm-nu-mI1\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Thumbnails"
-          }
-        }
-      }
-    },
-    "tHm-nu-mN1.title" : {
-      "comment" : "Class = \"NSMenu\"; title = \"Thumbnails\"; ObjectID = \"tHm-nu-mN1\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Thumbnails"
-          }
-        }
-      }
-    },
     "TNS-TV-n0U.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Descending\"; ObjectID = \"TNS-TV-n0U\";",
       "extractionState" : "extracted_with_value",

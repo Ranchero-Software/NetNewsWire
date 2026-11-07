@@ -18,7 +18,6 @@
                 <outlet property="debugMenuItem" destination="UqE-mp-gtV" id="OnR-lr-Zlt"/>
                 <outlet property="showStatusBarMenuItem" destination="stB-ar-mI1" id="stB-ar-oU1"/>
                 <outlet property="showStatusBarThemeMenuMenuItem" destination="stT-hm-mI1" id="stT-hm-oU1"/>
-                <outlet property="thumbnailsMenu" destination="tHm-nu-mN1" id="tHm-nu-oU1"/>
                 <outlet property="useColumnLayoutMenuItem" destination="ucL-ay-0ut" id="ucL-ou-tl1"/>
             </connections>
         </customObject>
@@ -439,10 +438,6 @@
                                 <connections>
                                     <action selector="toggleColumnLayout:" target="Voe-Tx-rLC" id="ucL-ac-t0n"/>
                                 </connections>
-                            </menuItem>
-                            <menuItem title="Thumbnails" id="tHm-nu-mI1">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" title="Thumbnails" id="tHm-nu-mN1"/>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="3ut-x3-H83"/>
                             <menuItem title="Show Status Bar" id="stB-ar-mI1">
