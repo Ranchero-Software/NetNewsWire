@@ -1349,6 +1349,9 @@
         }
       }
     },
+    "System" : {
+      "comment" : "System"
+    },
     "System Default (%@)" : {
       "comment" : "Default browser item title format",
       "localizations" : {

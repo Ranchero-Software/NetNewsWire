@@ -83,6 +83,8 @@ extension Notification.Name {
 	}
 
 	private static let rowViewIdentifier = NSUserInterfaceItemIdentifier(rawValue: "sidebarRow")
+	private static let extraLargeRowHeight: CGFloat = 36
+	private static let extraExtraLargeRowHeight: CGFloat = 42
 	private let keyboardDelegate = SidebarKeyboardDelegate()
 
 	// MARK: - NSViewController
@@ -103,6 +105,7 @@ extension Notification.Name {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarShowsIconsDidChange(_:)), name: .sidebarShowsIconsDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarTextSizeDidChange(_:)), name: .sidebarTextSizeDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidAddAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidDeleteAccount, object: nil)
@@ -119,6 +122,7 @@ extension Notification.Name {
 			NotificationCenter.default.addObserver(self, selector: #selector(handleClipViewFrameDidChange(_:)), name: NSView.frameDidChangeNotification, object: clipView)
 		}
 
+		updateRowSizeStyle()
 		outlineView.reloadData()
 
 		// Expand top level items by default.  If there is state to restore, overlay this.
@@ -251,6 +255,13 @@ extension Notification.Name {
 		applyToAvailableCells(configure)
 	}
 
+	@objc func handleSidebarTextSizeDidChange(_ notification: Notification) {
+		updateRowSizeStyle()
+		let savedSelection = selectedNodes
+		outlineView.reloadData()
+		restoreSelection(to: savedSelection, sendNotificationIfChanged: true)
+	}
+
 	@objc func handleClipViewFrameDidChange(_ notification: Notification) {
 		fitOutlineViewToVisibleWidth()
 	}
@@ -305,6 +316,9 @@ extension Notification.Name {
 	}
 
 	@objc func appleSideBarDefaultIconSizeChanged(_ note: Notification) {
+		guard AppDefaults.sidebarTextSize == .system else {
+			return
+		}
 		// The outline view doesn't have the new row style size set yet when we get
 		// this notification, so give it half a second to catch up.
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -715,6 +729,25 @@ private extension SidebarViewController {
 		}
 	}
 
+	func updateRowSizeStyle() {
+		switch AppDefaults.sidebarTextSize {
+		case .system:
+			outlineView.rowSizeStyle = .default
+		case .small:
+			outlineView.rowSizeStyle = .small
+		case .medium:
+			outlineView.rowSizeStyle = .medium
+		case .large:
+			outlineView.rowSizeStyle = .large
+		case .extraLarge:
+			outlineView.rowSizeStyle = .custom
+			outlineView.rowHeight = Self.extraLargeRowHeight
+		case .extraExtraLarge:
+			outlineView.rowSizeStyle = .custom
+			outlineView.rowHeight = Self.extraExtraLargeRowHeight
+		}
+	}
+
 	func prefetchFeedIcons() {
 		guard AppDefaults.sidebarShowsIcons else {
 			return
@@ -890,7 +923,7 @@ private extension SidebarViewController {
 	}
 
 	func configure(_ cell: SidebarCell, _ node: Node) {
-		cell.cellAppearance = SidebarCellAppearance(rowSizeStyle: outlineView.effectiveRowSizeStyle)
+		cell.cellAppearance = SidebarCellAppearance(textSize: AppDefaults.sidebarTextSize, systemRowSizeStyle: outlineView.effectiveRowSizeStyle)
 		cell.name = nameFor(node)
 		configureUnreadCount(cell, node)
 		cell.updateUnreadCountView() // A reused cell may predate a display setting change

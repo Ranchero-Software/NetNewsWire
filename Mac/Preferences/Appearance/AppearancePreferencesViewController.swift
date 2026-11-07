@@ -53,6 +53,7 @@ final class AppearancePreferencesViewController: NSViewController {
 		super.viewWillAppear()
 		updateAppearancePopup()
 		updateSidebarShowIconsButton()
+		updateSidebarTextSizePopup()
 		updateArticleThemePopup()
 	}
 
@@ -74,6 +75,10 @@ final class AppearancePreferencesViewController: NSViewController {
 		updateSidebarShowIconsButton()
 	}
 
+	@objc func handleSidebarTextSizeDidChange(_ notification: Notification) {
+		updateSidebarTextSizePopup()
+	}
+
 	// MARK: - Actions
 
 	@IBAction func appearancePopUpDidChange(_ sender: Any) {
@@ -85,6 +90,13 @@ final class AppearancePreferencesViewController: NSViewController {
 
 	@IBAction func sidebarShowIconsDidChange(_ sender: NSButton) {
 		AppDefaults.sidebarShowsIcons = sender.state == .on
+	}
+
+	@IBAction func sidebarTextSizePopUpDidChange(_ sender: Any) {
+		guard let tag = sidebarTextSizePopup?.selectedTag(), let textSize = SidebarTextSize(rawValue: tag) else {
+			return
+		}
+		AppDefaults.sidebarTextSize = textSize
 	}
 
 	@IBAction func showThemesFolder(_ sender: Any) {
@@ -110,6 +122,7 @@ private extension AppearancePreferencesViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThemeNamesDidChange(_:)), name: .ArticleThemeNamesDidChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUserInterfaceColorPaletteDidUpdate(_:)), name: .userInterfaceColorPaletteDidUpdate, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarShowsIconsDidChange(_:)), name: .sidebarShowsIconsDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarTextSizeDidChange(_:)), name: .sidebarTextSizeDidChange, object: nil)
 	}
 
 	/// On macOS 15 the "Article Text Size:" label is vertically misaligned
@@ -149,6 +162,10 @@ private extension AppearancePreferencesViewController {
 
 	func updateSidebarShowIconsButton() {
 		sidebarShowFeedIconsButton?.state = AppDefaults.sidebarShowsIcons ? .on : .off
+	}
+
+	func updateSidebarTextSizePopup() {
+		sidebarTextSizePopup?.selectItem(withTag: AppDefaults.sidebarTextSize.rawValue)
 	}
 
 	func updateArticleThemePopup() {
