@@ -96,11 +96,14 @@ import RSCore
 @MainActor private extension TimelineCellLayout {
 
 	/// The small right-side thumbnail’s width and height. Zero when there’s no small thumbnail.
-	/// Fits the thumbnail within the row’s padding, since the row height doesn’t grow for it.
-	/// A calculated height (zero) never includes a small thumbnail.
+	/// A calculated height (zero) makes room for the full-size thumbnail.
+	/// Otherwise it fits within the row’s padding, shrinking if the row is shorter than that.
 	static func thumbnailDimension(_ cellData: TimelineCellData, _ appearance: TimelineCellAppearance, _ height: CGFloat) -> CGFloat {
-		guard cellData.showThumbnail, !appearance.showsLargeThumbnails, height > 0.1 else {
+		guard cellData.showThumbnail, !appearance.showsLargeThumbnails else {
 			return 0.0
+		}
+		guard height > 0.1 else {
+			return appearance.thumbnailMaximumDimension
 		}
 		let availableHeight = floor(height - appearance.cellPadding.top - appearance.cellPadding.bottom)
 		return max(0.0, min(appearance.thumbnailMaximumDimension, availableHeight))
@@ -245,8 +248,8 @@ import RSCore
 
 	/// Below the text and icon, `largeThumbnailHeight` tall, from the icon’s left edge
 	/// (or the text’s, when there’s no icon) to the right padding.
-	/// In a cell, it’s bottom-aligned, since rows share one height and titles vary in length,
-	/// and it shrinks rather than overlap the text if the row is shorter than expected.
+	/// In a cell, it’s bottom-aligned, and it shrinks rather than overlap the text
+	/// if the row is shorter than its calculated height, as when its height is still an estimate.
 	static func rectForLargeThumbnail(_ cellData: TimelineCellData, _ appearance: TimelineCellAppearance, _ textBoxRect: NSRect, _ iconImageRect: NSRect, _ width: CGFloat, _ height: CGFloat) -> NSRect {
 		guard cellData.showThumbnail else {
 			return NSRect.zero

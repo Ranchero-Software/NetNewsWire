@@ -133,12 +133,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				// but some data in some of the articles may have changed.
 				// Just reload visible cells in this case: don’t call reloadData.
 				articleRowMap = [String: [Int]]()
-				if thumbnailMode == .large {
-					let rows = rowsThatGainedOrLostThumbnail(comparedWith: oldValue)
-					if !rows.isEmpty {
-						noteHeightOfRowsKeepingScrollPosition(rows)
-					}
-				}
+				remeasureRowHeights(rowsWithChangedArticles(comparedWith: oldValue))
 				reloadVisibleCells()
 				return
 			}
@@ -158,6 +153,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			updateShowIcons() // Automatic depends on these articles’ author avatars, even when showFeedNames didn’t change
 
 			articleRowMap = [String: [Int]]()
+			removeRowHeightsForMissingArticles()
 			tableView.reloadData()
 			if showIcons {
 				IconImageCache.shared.prefetchImagesForArticles(articles)
@@ -184,6 +180,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private var showFeedNames: TimelineShowFeedName = .none {
 		didSet {
 			if showFeedNames != oldValue {
+				rowHeights.removeAll()
 				updateShowIcons()
 				updateTableViewRowHeight()
 				reloadVisibleCells()
@@ -191,10 +188,19 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 	}
 
-	private(set) var showIcons = false
-	private var currentRowHeight: CGFloat = 0.0
-	private var largeThumbnailRowHeight: CGFloat = 0.0
-	private var articleIDsWithLargeThumbnailHeight = Set<String>() // Articles heightOfRow last gave largeThumbnailRowHeight
+	private(set) var showIcons = false {
+		didSet {
+			if showIcons != oldValue {
+				rowHeights.removeAll()
+			}
+		}
+	}
+	private var estimatedRowHeight: CGFloat = 0.0 // For rows not yet measured
+	private var rowHeights = [String: TimelineRowHeight]() // articleID: height measured at rowHeightWidth
+	private var rowHeightWidth: CGFloat = 0.0 // The width of a standard-layout cell
+	private var rowHeightMeasuringStartRow: Int? // Where the next measuring pass starts
+	private var isRowHeightMeasuringScheduled = false
+	private static let rowHeightBatchSize = 500
 	private var thumbnailsDisplay = AppDefaults.timelineThumbnailsDisplay {
 		didSet {
 			if thumbnailsDisplay != oldValue {
@@ -256,6 +262,13 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		let articleID: String
 	}
 
+	/// A changed article is a new instance, so `article` tells whether the height is still current.
+	private struct TimelineRowHeight {
+		let article: Article
+		let showsThumbnail: Bool
+		let height: CGFloat
+	}
+
 	private var previouslySelectedArticleKeys: [ArticleIdentityKey]?
 
 	private var oneSelectedArticle: Article? {
@@ -279,11 +292,12 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		thumbnailsDisplay = AppDefaults.timelineThumbnailsDisplay
 		updateCellAppearances()
 
-		updateRowHeights()
+		updateEstimatedRowHeight()
 		tableView.target = self
 		tableView.doubleAction = #selector(openArticleInBrowser(_:))
 		tableView.setDraggingSourceOperationMask(.copy, forLocal: false)
 		tableView.keyboardDelegate = keyboardDelegate
+		tableView.rowHeightDelegate = self
 		tableView.style = .inset
 		tableView.gridColor = .separatorColor
 
@@ -784,9 +798,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 		// After ArticleThumbnailFinder forgets its choices, which it does on this notification too.
 		Task { @MainActor in
-			if thumbnailMode == .large {
-				noteHeightOfRowsThatGainedOrLostLargeThumbnail()
-			}
+			remeasureRowsWhoseThumbnailChanged()
 			// Thumbnails that couldn’t download while offline or in Low Data Mode try again.
 			if ThumbnailDownloader.shared.networkAllowsDownloads {
 				reloadVisibleCells()
@@ -822,6 +834,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	@objc func handleTimelineIconSizeDidChange(_ notification: Notification) {
 		updateCellAppearances()
+		rowHeights.removeAll()
 		performBlockAndRestoreSelection {
 			tableView.reloadData()
 		}
@@ -881,9 +894,9 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 	}
 
-	/// The one place the row height is set — it depends on the layout and the font size.
+	/// The one place the row height is set. In standard layout, it’s the estimate for rows not yet measured.
 	func updateTableViewRowHeight() {
-		tableView.rowHeight = layout == .column ? columnRowHeight() : currentRowHeight
+		tableView.rowHeight = layout == .column ? columnRowHeight() : estimatedRowHeight
 	}
 
 	// MARK: - Reloading Data
@@ -936,58 +949,175 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	// MARK: - Cell Configuring
 
-	private func calculateRowHeight(showThumbnail: Bool) -> CGFloat {
+	/// The full number of lines, with no icon or thumbnail.
+	private func calculateEstimatedRowHeight() -> CGFloat {
 		let longTitle = "But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?"
 		let prototypeID = "prototype"
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, dateArrived: Date())
 		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, feedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, markdown: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, thumbnailURL: nil, datePublished: nil, dateModified: nil, authors: nil, attachments: nil, status: status)
 
-		let prototypeCellData = TimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, thumbnail: nil, showThumbnail: showThumbnail)
-		let height = TimelineCellLayout.height(for: Self.prototypeRowWidth, cellData: prototypeCellData, appearance: cellAppearance)
-		return height
+		let prototypeCellData = TimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, thumbnail: nil, showThumbnail: false)
+		return TimelineCellLayout.height(for: Self.prototypeRowWidth, cellData: prototypeCellData, appearance: cellAppearance)
 	}
 
-	private func updateRowHeights() {
-		currentRowHeight = calculateRowHeight(showThumbnail: false)
-		updateLargeThumbnailRowHeight()
+	private func updateEstimatedRowHeight() {
+		estimatedRowHeight = calculateEstimatedRowHeight()
 		updateTableViewRowHeight()
 	}
 
-	/// Depends on the cell appearance, which has the large thumbnail’s height only in large mode.
-	private func updateLargeThumbnailRowHeight() {
-		largeThumbnailRowHeight = calculateRowHeight(showThumbnail: true)
+	// MARK: - Row Heights
+
+	/// Nil when the row hasn’t been measured, or its article changed since.
+	private func measuredRowHeight(for article: Article) -> CGFloat? {
+		guard let rowHeight = rowHeights[article.articleID], rowHeight.article === article else {
+			return nil
+		}
+		return rowHeight.height
 	}
 
-	/// `oldArticles` are the same articles in the same order. An article with the same instance has the same images.
-	private func rowsThatGainedOrLostThumbnail(comparedWith oldArticles: ArticleArray) -> IndexSet {
-		var rows = IndexSet()
+	private func measureRowHeight(for article: Article) {
+		let showThumbnail = articleShowsThumbnail(article)
+		let cellData = TimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: nil, showIcon: showIcons, thumbnail: nil, showThumbnail: showThumbnail)
+		let appearance: TimelineCellAppearance = showIcons ? cellAppearanceWithIcon : cellAppearance
+		let height = TimelineCellLayout.height(for: rowHeightWidth, cellData: cellData, appearance: appearance)
+		rowHeights[article.articleID] = TimelineRowHeight(article: article, showsThumbnail: showThumbnail, height: height)
+	}
+
+	private func articleShowsThumbnail(_ article: Article) -> Bool {
 		guard let thumbnailMode else {
-			return rows
+			return false
 		}
-		for (row, (oldArticle, article)) in zip(oldArticles, articles).enumerated() where oldArticle !== article {
-			let hadThumbnail = ArticleThumbnailFinder.shared.thumbnailURL(for: oldArticle, mode: thumbnailMode) != nil
-			let hasThumbnail = ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) != nil
-			if hadThumbnail != hasThumbnail {
-				rows.insert(row)
+		return ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) != nil
+	}
+
+	/// Measures right away when there are few rows, so they don’t show the estimate first.
+	private func remeasureRowHeights(_ rows: IndexSet) {
+		guard layout == .standard, !rows.isEmpty else {
+			return
+		}
+		let measuresNow = rows.count <= Self.rowHeightBatchSize && rowHeightWidth > 0.0
+		for row in rows {
+			guard let article = articles.articleAtRow(row) else {
+				continue
 			}
+			rowHeights[article.articleID] = nil
+			if measuresNow {
+				measureRowHeight(for: article)
+			}
+		}
+		noteHeightOfRowsKeepingScrollPosition(rows)
+	}
+
+	/// `oldArticles` are the same articles in the same order. A changed article is a new instance.
+	private func rowsWithChangedArticles(comparedWith oldArticles: ArticleArray) -> IndexSet {
+		var rows = IndexSet()
+		for (row, (oldArticle, article)) in zip(oldArticles, articles).enumerated() where oldArticle !== article {
+			rows.insert(row)
 		}
 		return rows
 	}
 
 	/// For thumbnail choices that change with no failure notification, such as after a network change.
-	private func noteHeightOfRowsThatGainedOrLostLargeThumbnail() {
-		guard largeThumbnailRowHeight > 0.0 else {
-			return
-		}
+	private func remeasureRowsWhoseThumbnailChanged() {
 		var rows = IndexSet()
 		for (row, article) in articles.enumerated() {
-			let hasThumbnail = ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: .large) != nil
-			if hasThumbnail != articleIDsWithLargeThumbnailHeight.contains(article.articleID) {
+			if let rowHeight = rowHeights[article.articleID], rowHeight.showsThumbnail != articleShowsThumbnail(article) {
 				rows.insert(row)
 			}
 		}
-		if !rows.isEmpty {
-			noteHeightOfRowsKeepingScrollPosition(rows)
+		remeasureRowHeights(rows)
+	}
+
+	private func removeRowHeightsForMissingArticles() {
+		let articleIDs = Set(articles.articleIDs())
+		rowHeights = rowHeights.filter { articleIDs.contains($0.key) }
+	}
+
+	/// A width change makes every height stale. Rows near the visible ones are measured during layout, the rest in passes.
+	private func updateRowHeightWidth() {
+		let width = standardCellWidth()
+		guard width > 0.0, width != rowHeightWidth else {
+			return
+		}
+		rowHeightWidth = width
+		rowHeights.removeAll()
+		scheduleRowHeightMeasuring(from: 0)
+	}
+
+	/// A shown cell’s width when there is one. Otherwise the width the table gives cells.
+	private func standardCellWidth() -> CGFloat {
+		let visibleRows = tableView.rows(in: tableView.visibleRect)
+		if visibleRows.length > 0, let cell = tableView.view(atColumn: 0, row: visibleRows.location, makeIfNecessary: false) {
+			return cell.frame.width
+		}
+		if tableView.numberOfRows > 0 {
+			return tableView.frameOfCell(atColumn: 0, row: 0).width
+		}
+		guard let column = tableView.tableColumns.first else {
+			return 0.0
+		}
+		return column.width - tableView.intercellSpacing.width
+	}
+
+	/// The visible rows plus a screenful above and below, so scrolling a little doesn’t show estimates.
+	private func measureRowHeightsNearVisibleRows() {
+		guard rowHeightWidth > 0.0 else {
+			return
+		}
+		let visibleRect = tableView.visibleRect
+		let nearbyRows = tableView.rows(in: visibleRect.insetBy(dx: 0.0, dy: -visibleRect.height))
+		guard nearbyRows.length > 0 else {
+			return
+		}
+		var measuredRows = IndexSet()
+		for row in nearbyRows.location..<NSMaxRange(nearbyRows) {
+			guard let article = articles.articleAtRow(row), measuredRowHeight(for: article) == nil else {
+				continue
+			}
+			measureRowHeight(for: article)
+			measuredRows.insert(row)
+		}
+		if !measuredRows.isEmpty {
+			noteHeightOfRowsKeepingScrollPosition(measuredRows)
+		}
+	}
+
+	private func scheduleRowHeightMeasuring(from row: Int) {
+		rowHeightMeasuringStartRow = min(rowHeightMeasuringStartRow ?? row, row)
+		guard !isRowHeightMeasuringScheduled else {
+			return
+		}
+		isRowHeightMeasuringScheduled = true
+		Task { @MainActor [weak self] in
+			self?.measureNextRowHeightBatch()
+		}
+	}
+
+	/// Measures up to `rowHeightBatchSize` rows per pass, so a large timeline doesn’t block the main thread.
+	/// Waits during live resize, when only rows near the visible ones are measured.
+	private func measureNextRowHeightBatch() {
+		isRowHeightMeasuringScheduled = false
+		guard let startRow = rowHeightMeasuringStartRow, layout == .standard, rowHeightWidth > 0.0, !tableView.inLiveResize else {
+			return
+		}
+		rowHeightMeasuringStartRow = nil
+
+		var measuredRows = IndexSet()
+		var row = startRow
+		while row < articles.count && measuredRows.count < Self.rowHeightBatchSize {
+			let article = articles[row]
+			if measuredRowHeight(for: article) == nil {
+				measureRowHeight(for: article)
+				measuredRows.insert(row)
+			}
+			row += 1
+		}
+
+		if !measuredRows.isEmpty {
+			noteHeightOfRowsKeepingScrollPosition(measuredRows)
+		}
+		if row < articles.count {
+			scheduleRowHeightMeasuring(from: row)
 		}
 	}
 
@@ -1096,16 +1226,35 @@ extension TimelineViewController: NSTableViewDataSource {
 	}
 
 	func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
-		if let article = articles.articleAtRow(row) {
-			if thumbnailMode == .large, largeThumbnailRowHeight > 0.0, ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: .large) != nil {
-				articleIDsWithLargeThumbnailHeight.insert(article.articleID)
-				return largeThumbnailRowHeight
-			}
-			articleIDsWithLargeThumbnailHeight.remove(article.articleID)
-		}
 		// Keeping -[NSTableViewDelegate tableView:heightOfRow:] implemented fixes
 		// an issue that the bottom inset of NSTableView disappears on macOS Monterey.
+		guard layout == .standard, let article = articles.articleAtRow(row) else {
+			return tableView.rowHeight
+		}
+		if let height = measuredRowHeight(for: article) {
+			return height
+		}
+		scheduleRowHeightMeasuring(from: row)
 		return tableView.rowHeight
+	}
+}
+
+// MARK: - TimelineTableViewRowHeightDelegate
+
+extension TimelineViewController: TimelineTableViewRowHeightDelegate {
+
+	func timelineTableViewDidLayout(_ tableView: TimelineTableView) {
+		guard layout == .standard else {
+			return
+		}
+		updateRowHeightWidth()
+		measureRowHeightsNearVisibleRows()
+	}
+
+	func timelineTableViewDidEndLiveResize(_ tableView: TimelineTableView) {
+		if let rowHeightMeasuringStartRow {
+			scheduleRowHeightMeasuring(from: rowHeightMeasuringStartRow)
+		}
 	}
 }
 
@@ -1142,6 +1291,10 @@ extension TimelineViewController: NSTableViewDelegate {
 			cell.cellAppearance = showIcons ? cellAppearanceWithIcon : cellAppearance
 			if let article = articles.articleAtRow(row) {
 				configureTimelineCell(cell, article: article)
+				if measuredRowHeight(for: article) == nil {
+					// Measured after layout, before it draws.
+					tableView.needsLayout = true
+				}
 			} else {
 				makeTimelineCellEmpty(cell)
 			}
@@ -1312,6 +1465,7 @@ private extension TimelineViewController {
 	}
 
 	func layoutDidChange() {
+		rowHeights.removeAll()
 		performBlockAndRestoreSelection {
 			configureTableView(for: layout)
 			updateGridStyle()
@@ -1442,20 +1596,20 @@ private extension TimelineViewController {
 
 	// MARK: - Thumbnails
 
-	/// Updates row heights in large mode, and visible cells.
+	/// Updates row heights and visible cells.
 	func thumbnailURLsDidChange(for articleIDs: Set<String>) {
 		guard !articleIDs.isEmpty else {
 			return
 		}
-		if thumbnailMode == .large {
-			noteHeightOfRowsKeepingScrollPosition(indexesForArticleIDs(articleIDs))
+		if thumbnailMode != nil {
+			remeasureRowHeights(indexesForArticleIDs(articleIDs))
 		}
 		reloadVisibleCells(for: articleIDs)
 	}
 
 	func thumbnailsDisplayDidChange() {
 		updateCellAppearances()
-		updateLargeThumbnailRowHeight()
+		rowHeights.removeAll()
 		guard layout == .standard else {
 			return
 		}
@@ -1477,7 +1631,8 @@ private extension TimelineViewController {
 
 	private func cellAppearanceSettingDidChange() {
 		updateCellAppearances()
-		updateRowHeights()
+		updateEstimatedRowHeight()
+		rowHeights.removeAll()
 		performBlockAndRestoreSelection {
 			tableView.reloadData()
 		}
