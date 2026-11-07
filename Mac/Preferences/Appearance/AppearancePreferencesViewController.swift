@@ -9,6 +9,7 @@ import AppKit
 import RSCore
 
 final class AppearancePreferencesViewController: NSViewController {
+
 	@IBOutlet var appearancePopup: NSPopUpButton?
 
 	@IBOutlet var sidebarShowFeedIconsButton: NSButton?
