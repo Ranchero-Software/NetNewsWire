@@ -155,6 +155,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			} else {
 				showFeedNames = .feed
 			}
+			updateShowIcons() // Automatic depends on these articles’ author avatars, even when showFeedNames didn’t change
 
 			articleRowMap = [String: [Int]]()
 			tableView.reloadData()
