@@ -54,6 +54,7 @@ final class AppearancePreferencesViewController: NSViewController {
 		updateAppearancePopup()
 		updateSidebarShowIconsButton()
 		updateSidebarTextSizePopup()
+		updateSmartFeedsButtons()
 		updateArticleThemePopup()
 	}
 
@@ -79,6 +80,10 @@ final class AppearancePreferencesViewController: NSViewController {
 		updateSidebarTextSizePopup()
 	}
 
+	@objc func handleSidebarSmartFeedsVisibilityDidChange(_ notification: Notification) {
+		updateSmartFeedsButtons()
+	}
+
 	// MARK: - Actions
 
 	@IBAction func appearancePopUpDidChange(_ sender: Any) {
@@ -97,6 +102,18 @@ final class AppearancePreferencesViewController: NSViewController {
 			return
 		}
 		AppDefaults.sidebarTextSize = textSize
+	}
+
+	@IBAction func sidebarShowTodayDidChange(_ sender: NSButton) {
+		AppDefaults.showTodayFeed = sender.state == .on
+	}
+
+	@IBAction func sidebarShowAllUnreadDidChange(_ sender: NSButton) {
+		AppDefaults.showUnreadFeed = sender.state == .on
+	}
+
+	@IBAction func sidebarShowStarredDidChange(_ sender: NSButton) {
+		AppDefaults.showStarredFeed = sender.state == .on
 	}
 
 	@IBAction func showThemesFolder(_ sender: Any) {
@@ -123,6 +140,7 @@ private extension AppearancePreferencesViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUserInterfaceColorPaletteDidUpdate(_:)), name: .userInterfaceColorPaletteDidUpdate, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarShowsIconsDidChange(_:)), name: .sidebarShowsIconsDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarTextSizeDidChange(_:)), name: .sidebarTextSizeDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarSmartFeedsVisibilityDidChange(_:)), name: .sidebarSmartFeedsVisibilityDidChange, object: nil)
 	}
 
 	/// On macOS 15 the "Article Text Size:" label is vertically misaligned
@@ -166,6 +184,12 @@ private extension AppearancePreferencesViewController {
 
 	func updateSidebarTextSizePopup() {
 		sidebarTextSizePopup?.selectItem(withTag: AppDefaults.sidebarTextSize.rawValue)
+	}
+
+	func updateSmartFeedsButtons() {
+		sidebarShowTodayButton?.state = AppDefaults.showTodayFeed ? .on : .off
+		sidebarShowAllUnreadButton?.state = AppDefaults.showUnreadFeed ? .on : .off
+		sidebarShowStarredButton?.state = AppDefaults.showStarredFeed ? .on : .off
 	}
 
 	func updateArticleThemePopup() {

@@ -106,6 +106,7 @@ extension Notification.Name {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarShowsIconsDidChange(_:)), name: .sidebarShowsIconsDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarTextSizeDidChange(_:)), name: .sidebarTextSizeDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarSmartFeedsVisibilityDidChange(_:)), name: .sidebarSmartFeedsVisibilityDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidAddAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidDeleteAccount, object: nil)
@@ -253,6 +254,11 @@ extension Notification.Name {
 	@objc func handleSidebarShowsIconsDidChange(_ notification: Notification) {
 		prefetchFeedIcons()
 		applyToAvailableCells(configure)
+	}
+
+	@objc func handleSidebarSmartFeedsVisibilityDidChange(_ notification: Notification) {
+		rebuildTreeAndRestoreSelection()
+		expandNodes()
 	}
 
 	@objc func handleSidebarTextSizeDidChange(_ notification: Notification) {
@@ -602,7 +608,24 @@ extension SidebarViewController: NSUserInterfaceValidations {
 		if item.action == #selector(copy(_:)) {
 			return NSPasteboard.general.canCopyAtLeastOneObject(selectedObjects)
 		}
+		if let isShown = Self.smartFeedIsShown(forGoToAction: item.action) {
+			return isShown
+		}
 		return true
+	}
+
+	/// Whether the smart feed that a Go menu action selects is shown in the sidebar. Nil for other actions.
+	static func smartFeedIsShown(forGoToAction action: Selector?) -> Bool? {
+		switch action {
+		case #selector(gotoToday(_:)):
+			AppDefaults.showTodayFeed
+		case #selector(gotoAllUnread(_:)):
+			AppDefaults.showUnreadFeed
+		case #selector(gotoStarred(_:)):
+			AppDefaults.showStarredFeed
+		default:
+			nil
+		}
 	}
 }
 

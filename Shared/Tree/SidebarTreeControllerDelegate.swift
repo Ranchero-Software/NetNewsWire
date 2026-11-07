@@ -43,10 +43,12 @@ private extension SidebarTreeControllerDelegate {
 	func childNodesForRootNode(_ rootNode: Node) -> [Node]? {
 		var topLevelNodes = [Node]()
 
-		let smartFeedsNode = rootNode.existingOrNewChildNode(with: SmartFeedsController.shared)
-		smartFeedsNode.canHaveChildNodes = true
-		smartFeedsNode.isGroupItem = true
-		topLevelNodes.append(smartFeedsNode)
+		if !SmartFeedsController.shared.shownSmartFeeds.isEmpty {
+			let smartFeedsNode = rootNode.existingOrNewChildNode(with: SmartFeedsController.shared)
+			smartFeedsNode.canHaveChildNodes = true
+			smartFeedsNode.isGroupItem = true
+			topLevelNodes.append(smartFeedsNode)
+		}
 
 		topLevelNodes.append(contentsOf: sortedAccountNodes(rootNode))
 
@@ -54,7 +56,7 @@ private extension SidebarTreeControllerDelegate {
 	}
 
 	func childNodesForSmartFeeds(_ parentNode: Node) -> [Node] {
-		return SmartFeedsController.shared.smartFeeds.compactMap { (feed) -> Node? in
+		return SmartFeedsController.shared.shownSmartFeeds.compactMap { (feed) -> Node? in
 			// All Smart Feeds should remain visible despite the Hide Read Feeds setting
 			return parentNode.existingOrNewChildNode(with: feed as AnyObject)
 		}

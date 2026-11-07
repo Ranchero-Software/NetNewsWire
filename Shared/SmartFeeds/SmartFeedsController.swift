@@ -21,6 +21,21 @@ import Account
 	let unreadFeed = UnreadFeed()
 	let starredFeed = SmartFeed(delegate: StarredFeedDelegate())
 
+	/// The smart feeds shown in the sidebar. All smart feeds exist regardless.
+	var shownSmartFeeds: [SidebarItem] {
+		var feeds = [SidebarItem]()
+		if AppDefaults.showTodayFeed {
+			feeds.append(todayFeed)
+		}
+		if AppDefaults.showUnreadFeed {
+			feeds.append(unreadFeed)
+		}
+		if AppDefaults.showStarredFeed {
+			feeds.append(starredFeed)
+		}
+		return feeds
+	}
+
 	private init() {
 		self.smartFeeds = [todayFeed, unreadFeed, starredFeed]
 	}

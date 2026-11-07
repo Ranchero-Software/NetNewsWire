@@ -347,6 +347,10 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 			return validateSortDirection(item, direction: .orderedDescending)
 		}
 
+		if let isShown = SidebarViewController.smartFeedIsShown(forGoToAction: item.action) {
+			return isShown
+		}
+
 		return true
 	}
 

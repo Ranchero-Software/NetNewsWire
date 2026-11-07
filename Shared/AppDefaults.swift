@@ -27,6 +27,9 @@ enum AppDefaults {
 		static let userInterfaceColorPalette = "userInterfaceColorPalette"
 		static let sidebarShowsIcons = "sidebarShowsIcons"
 		static let sidebarTextSize = "sidebarTextSize"
+		static let showTodayFeed = "showTodayFeed"
+		static let showUnreadFeed = "showUnreadFeed"
+		static let showStarredFeed = "showStarredFeed"
 	}
 
 	/// Registered by both platforms. Each platform’s registerDefaults adds its own.
@@ -40,7 +43,10 @@ enum AppDefaults {
 			Key.timelineFeedIconsDisplay: TimelineFeedIconsDisplay.automatic.rawValue,
 			Key.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue,
 			Key.sidebarShowsIcons: true,
-			Key.sidebarTextSize: SidebarTextSize.system.rawValue
+			Key.sidebarTextSize: SidebarTextSize.system.rawValue,
+			Key.showTodayFeed: true,
+			Key.showUnreadFeed: true,
+			Key.showStarredFeed: true
 		]
 	}
 
@@ -161,6 +167,36 @@ enum AppDefaults {
 		set {
 			UserDefaults.standard.set(newValue.rawValue, forKey: Key.sidebarTextSize)
 			NotificationCenter.default.post(name: .sidebarTextSizeDidChange, object: nil)
+		}
+	}
+
+	static var showTodayFeed: Bool {
+		get {
+			UserDefaults.standard.bool(forKey: Key.showTodayFeed)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.showTodayFeed)
+			NotificationCenter.default.post(name: .sidebarSmartFeedsVisibilityDidChange, object: nil)
+		}
+	}
+
+	static var showUnreadFeed: Bool {
+		get {
+			UserDefaults.standard.bool(forKey: Key.showUnreadFeed)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.showUnreadFeed)
+			NotificationCenter.default.post(name: .sidebarSmartFeedsVisibilityDidChange, object: nil)
+		}
+	}
+
+	static var showStarredFeed: Bool {
+		get {
+			UserDefaults.standard.bool(forKey: Key.showStarredFeed)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.showStarredFeed)
+			NotificationCenter.default.post(name: .sidebarSmartFeedsVisibilityDidChange, object: nil)
 		}
 	}
 }

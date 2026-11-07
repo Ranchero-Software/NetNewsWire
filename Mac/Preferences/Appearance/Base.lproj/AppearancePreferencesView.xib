@@ -130,6 +130,9 @@
                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
+                            <connections>
+                                <action selector="sidebarShowTodayDidChange:" target="-2" id="sbA-tD-0a1"/>
+                            </connections>
                         </button>
                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sbB-aU-0b1">
                             <rect key="frame" x="133" y="436" width="251" height="16"/>
@@ -137,6 +140,9 @@
                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
+                            <connections>
+                                <action selector="sidebarShowAllUnreadDidChange:" target="-2" id="sbA-aU-0a1"/>
+                            </connections>
                         </button>
                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sbB-sT-0b1">
                             <rect key="frame" x="133" y="414" width="251" height="16"/>
@@ -144,6 +150,9 @@
                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
+                            <connections>
+                                <action selector="sidebarShowStarredDidChange:" target="-2" id="sbA-sT-0a1"/>
+                            </connections>
                         </button>
                         <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="sp2-Bx-0s1">
                             <rect key="frame" x="0.0" y="391" width="383" height="5"/>

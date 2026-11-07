@@ -494,6 +494,10 @@ let appName = "NetNewsWire"
 			(item as! NSMenuItem).state = AppDefaults.webInspectorEnabled ? .on : .off
 		}
 
+		if let isShown = SidebarViewController.smartFeedIsShown(forGoToAction: item.action) {
+			return isShown
+		}
+
 		return true
 	}
 
