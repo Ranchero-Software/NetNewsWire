@@ -263,6 +263,14 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			}
 		}
 	}
+	private var fadesReadArticles = AppDefaults.timelineFadeReadArticles {
+		didSet {
+			if fadesReadArticles != oldValue {
+				reloadVisibleCells()
+			}
+		}
+	}
+	private static let readArticleAlphaValue: CGFloat = 0.6
 
 	private struct ArticleIdentityKey: Equatable {
 		let accountID: String
@@ -296,6 +304,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		textSize = AppDefaults.timelineTextSize
 		numberOfLines = AppDefaults.timelineNumberOfLines
 		showFullTitles = AppDefaults.timelineShowFullTitles
+		fadesReadArticles = AppDefaults.timelineFadeReadArticles
 		updateGridStyle()
 		thumbnailsDisplay = AppDefaults.timelineThumbnailsDisplay
 		updateCellAppearances()
@@ -334,6 +343,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineTextSizeDidChange(_:)), name: .timelineTextSizeDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineNumberOfLinesDidChange(_:)), name: .timelineNumberOfLinesDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineShowFullTitlesDidChange(_:)), name: .timelineShowFullTitlesDidChange, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFadeReadArticlesDidChange(_:)), name: .timelineFadeReadArticlesDidChange, object: nil)
 			didRegisterForNotifications = true
 		}
 
@@ -845,6 +855,10 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		showFullTitles = AppDefaults.timelineShowFullTitles
 	}
 
+	@objc func handleTimelineFadeReadArticlesDidChange(_ notification: Notification) {
+		fadesReadArticles = AppDefaults.timelineFadeReadArticles
+	}
+
 	@objc func handleTimelineIconSizeDidChange(_ notification: Notification) {
 		updateCellAppearances()
 		rowHeights.removeAll()
@@ -1296,10 +1310,14 @@ extension TimelineViewController: NSTableViewDelegate {
 	private static let timelineCellIdentifier = NSUserInterfaceItemIdentifier(rawValue: "timelineCell")
 
 	func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-		if layout == .column {
-			return columnCellView(for: tableColumn, row: row)
+		let cellView = layout == .column ? columnCellView(for: tableColumn, row: row) : standardCellView(for: row)
+		if let cellView {
+			applyReadFading(to: cellView, row: row)
 		}
+		return cellView
+	}
 
+	private func standardCellView(for row: Int) -> NSView {
 		func configure(_ cell: TimelineTableCellView) {
 			cell.cellAppearance = showIcons ? cellAppearanceWithIcon : cellAppearance
 			if let article = articles.articleAtRow(row) {
@@ -1325,6 +1343,8 @@ extension TimelineViewController: NSTableViewDelegate {
 	}
 
 	func tableViewSelectionDidChange(_ notification: Notification) {
+		applyReadFadingToAvailableRows()
+
 		if selectedArticles.isEmpty {
 			selectionDidChange(nil)
 			return
@@ -1363,6 +1383,29 @@ extension TimelineViewController: NSTableViewDelegate {
 			thumbnail = ThumbnailDownloader.shared.thumbnail(url: thumbnailURL, mode: thumbnailMode, articleTitle: article.title)
 		}
 		cell.cellData = TimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcons, thumbnail: thumbnail, showThumbnail: showThumbnail)
+	}
+
+	/// Fades the cell views, not the row view, so the selection highlight and separators stay full strength.
+	/// The selected row never fades, since selecting an article marks it read.
+	private func applyReadFading(to cellView: NSView, row: Int) {
+		var alphaValue: CGFloat = 1.0
+		if fadesReadArticles, let article = articles.articleAtRow(row), article.status.read, !tableView.isRowSelected(row) {
+			alphaValue = Self.readArticleAlphaValue
+		}
+		if cellView.alphaValue != alphaValue {
+			cellView.alphaValue = alphaValue
+		}
+	}
+
+	/// Selection changes don’t reload cells.
+	private func applyReadFadingToAvailableRows() {
+		tableView.enumerateAvailableRowViews { rowView, row in
+			for column in 0..<rowView.numberOfColumns {
+				if let cellView = rowView.view(atColumn: column) as? NSView {
+					applyReadFading(to: cellView, row: row)
+				}
+			}
+		}
 	}
 
 	private func makeTimelineCellEmpty(_ cell: TimelineTableCellView) {

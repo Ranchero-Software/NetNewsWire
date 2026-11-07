@@ -35,6 +35,7 @@ enum AppDefaults {
 		static let timelineTextSize = "timelineTextSize"
 		static let timelineNumberOfLines = "timelineNumberOfLines"
 		static let timelineShowFullTitles = "timelineShowFullTitles"
+		static let timelineFadeReadArticles = "timelineFadeReadArticles"
 	}
 
 	/// Registered by both platforms. Each platform’s registerDefaults adds its own.
@@ -53,7 +54,8 @@ enum AppDefaults {
 			Key.showUnreadFeed: true,
 			Key.showStarredFeed: true,
 			Key.timelineTextSize: TimelineTextSize.medium.rawValue,
-			Key.timelineShowFullTitles: false
+			Key.timelineShowFullTitles: false,
+			Key.timelineFadeReadArticles: false
 		]
 	}
 
@@ -247,6 +249,16 @@ enum AppDefaults {
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.timelineShowFullTitles)
 			NotificationCenter.default.post(name: .timelineShowFullTitlesDidChange, object: nil)
+		}
+	}
+
+	static var timelineFadeReadArticles: Bool {
+		get {
+			UserDefaults.standard.bool(forKey: Key.timelineFadeReadArticles)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.timelineFadeReadArticles)
+			NotificationCenter.default.post(name: .timelineFadeReadArticlesDidChange, object: nil)
 		}
 	}
 }

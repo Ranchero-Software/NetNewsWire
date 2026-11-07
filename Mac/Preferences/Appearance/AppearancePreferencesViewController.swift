@@ -27,6 +27,7 @@ final class AppearancePreferencesViewController: NSViewController {
 	@IBOutlet var timelineThumbnailsPopup: NSPopUpButton?
 	@IBOutlet var timelineTextSizePopup: NSPopUpButton?
 	@IBOutlet var timelineShowSeparatorsButton: NSButton?
+	@IBOutlet var timelineFadeReadArticlesButton: NSButton?
 
 	@IBOutlet var articleTextSizeLabel: NSTextField?
 	@IBOutlet var articleTextSizePopup: NSPopUpButton?
@@ -64,6 +65,7 @@ final class AppearancePreferencesViewController: NSViewController {
 		updateTimelineTextSizePopup()
 		updateTimelineRowsControls()
 		updateTimelineShowSeparatorsButton()
+		updateTimelineFadeReadArticlesButton()
 		updateArticleThemePopup()
 	}
 
@@ -119,6 +121,10 @@ final class AppearancePreferencesViewController: NSViewController {
 
 	@objc func handleTimelineShowSeparatorsDidChange(_ notification: Notification) {
 		updateTimelineShowSeparatorsButton()
+	}
+
+	@objc func handleTimelineFadeReadArticlesDidChange(_ notification: Notification) {
+		updateTimelineFadeReadArticlesButton()
 	}
 
 	// MARK: - Actions
@@ -196,6 +202,10 @@ final class AppearancePreferencesViewController: NSViewController {
 		AppDefaults.timelineShowSeparators = sender.state == .on
 	}
 
+	@IBAction func timelineFadeReadArticlesDidChange(_ sender: NSButton) {
+		AppDefaults.timelineFadeReadArticles = sender.state == .on
+	}
+
 	@IBAction func showThemesFolder(_ sender: Any) {
 		let url = URL(fileURLWithPath: ArticleThemesManager.shared.folderPath)
 		NSWorkspace.shared.open(url)
@@ -228,6 +238,7 @@ private extension AppearancePreferencesViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineNumberOfLinesDidChange(_:)), name: .timelineNumberOfLinesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineShowFullTitlesDidChange(_:)), name: .timelineShowFullTitlesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineShowSeparatorsDidChange(_:)), name: .timelineShowSeparatorsDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFadeReadArticlesDidChange(_:)), name: .timelineFadeReadArticlesDidChange, object: nil)
 	}
 
 	/// On macOS 15 the "Article Text Size:" label is vertically misaligned
@@ -306,6 +317,10 @@ private extension AppearancePreferencesViewController {
 
 	func updateTimelineShowSeparatorsButton() {
 		timelineShowSeparatorsButton?.state = AppDefaults.timelineShowSeparators ? .on : .off
+	}
+
+	func updateTimelineFadeReadArticlesButton() {
+		timelineFadeReadArticlesButton?.state = AppDefaults.timelineFadeReadArticles ? .on : .off
 	}
 
 	func updateArticleThemePopup() {

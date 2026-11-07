@@ -18,6 +18,7 @@
                 <outlet property="sidebarTextSizePopup" destination="sbP-tX-0p1" id="sbO-tX-0o1"/>
                 <outlet property="timelineIconSizePopup" destination="tlP-fS-0p1" id="tlO-fS-0o1"/>
                 <outlet property="timelineIconsPopup" destination="tlP-fD-0p1" id="tlO-fD-0o1"/>
+                <outlet property="timelineFadeReadArticlesButton" destination="tlB-fR-0b1" id="tlO-fR-0o1"/>
                 <outlet property="timelineFullTitlesButton" destination="tlR-fT-0b1" id="tlO-fT-0o1"/>
                 <outlet property="timelineNumberOfLinesPopup" destination="tlP-nL-0p1" id="tlO-nL-0o1"/>
                 <outlet property="timelineShowSeparatorsButton" destination="tlB-sP-0b1" id="tlO-sP-0o1"/>
@@ -30,14 +31,14 @@
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <view id="apV-iw-0v1">
-            <rect key="frame" x="0.0" y="0.0" width="515" height="745"/>
+            <rect key="frame" x="0.0" y="0.0" width="515" height="767"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <customView translatesAutoresizingMaskIntoConstraints="NO" id="apC-nT-0c1">
-                    <rect key="frame" x="55" y="20" width="406" height="705"/>
+                    <rect key="frame" x="55" y="20" width="406" height="727"/>
                     <subviews>
                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="apL-cM-0l1">
-                            <rect key="frame" x="-2" y="685" width="151" height="16"/>
+                            <rect key="frame" x="-2" y="707" width="151" height="16"/>
                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="right" title="Appearance:" id="apL-cM-0c1">
                                 <font key="font" metaFont="system"/>
                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -45,7 +46,7 @@
                             </textFieldCell>
                         </textField>
                         <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="apP-cM-0p1">
-                            <rect key="frame" x="155" y="681" width="250" height="24"/>
+                            <rect key="frame" x="155" y="703" width="250" height="24"/>
                             <popUpButtonCell key="cell" type="push" title="System" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="apM-cM-0m0" id="apP-cM-0c1">
                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="message"/>
@@ -66,10 +67,10 @@
                             </connections>
                         </popUpButton>
                         <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="sp1-Bx-0s1">
-                            <rect key="frame" x="0.0" y="658" width="405" height="5"/>
+                            <rect key="frame" x="0.0" y="680" width="405" height="5"/>
                         </box>
                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sbL-fI-0l1">
-                            <rect key="frame" x="-2" y="624" width="151" height="16"/>
+                            <rect key="frame" x="-2" y="646" width="151" height="16"/>
                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="right" title="Sidebar Icons:" id="sbL-fI-0c1">
                                 <font key="font" metaFont="system"/>
                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -77,7 +78,7 @@
                             </textFieldCell>
                         </textField>
                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sbB-fI-0b1">
-                            <rect key="frame" x="155" y="624" width="251" height="16"/>
+                            <rect key="frame" x="155" y="646" width="251" height="16"/>
                             <buttonCell key="cell" type="check" title="Show" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="sbB-fI-0c1">
                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -87,7 +88,7 @@
                             </connections>
                         </button>
                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sbL-tX-0l1">
-                            <rect key="frame" x="-2" y="592" width="151" height="16"/>
+                            <rect key="frame" x="-2" y="614" width="151" height="16"/>
                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="right" title="Sidebar Text Size:" id="sbL-tX-0c1">
                                 <font key="font" metaFont="system"/>
                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -95,7 +96,7 @@
                             </textFieldCell>
                         </textField>
                         <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sbP-tX-0p1">
-                            <rect key="frame" x="155" y="588" width="250" height="24"/>
+                            <rect key="frame" x="155" y="610" width="250" height="24"/>
                             <popUpButtonCell key="cell" type="push" title="System" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="sbM-tX-0m0" id="sbP-tX-0c1">
                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="message"/>
@@ -119,7 +120,7 @@
                             </connections>
                         </popUpButton>
                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sbL-sF-0l1">
-                            <rect key="frame" x="-2" y="560" width="151" height="16"/>
+                            <rect key="frame" x="-2" y="582" width="151" height="16"/>
                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="right" title="Smart Feeds:" id="sbL-sF-0c1">
                                 <font key="font" metaFont="system"/>
                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -127,7 +128,7 @@
                             </textFieldCell>
                         </textField>
                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sbB-tD-0b1">
-                            <rect key="frame" x="155" y="560" width="251" height="16"/>
+                            <rect key="frame" x="155" y="582" width="251" height="16"/>
                             <buttonCell key="cell" type="check" title="Today" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="sbB-tD-0c1">
                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -137,7 +138,7 @@
                             </connections>
                         </button>
                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sbB-aU-0b1">
-                            <rect key="frame" x="155" y="538" width="251" height="16"/>
+                            <rect key="frame" x="155" y="560" width="251" height="16"/>
                             <buttonCell key="cell" type="check" title="All Unread" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="sbB-aU-0c1">
                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -147,7 +148,7 @@
                             </connections>
                         </button>
                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sbB-sT-0b1">
-                            <rect key="frame" x="155" y="516" width="251" height="16"/>
+                            <rect key="frame" x="155" y="538" width="251" height="16"/>
                             <buttonCell key="cell" type="check" title="Starred" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="sbB-sT-0c1">
                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -157,10 +158,10 @@
                             </connections>
                         </button>
                         <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="sp2-Bx-0s1">
-                            <rect key="frame" x="0.0" y="493" width="405" height="5"/>
+                            <rect key="frame" x="0.0" y="515" width="405" height="5"/>
                         </box>
                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlL-fI-0l1">
-                            <rect key="frame" x="-2" y="455" width="151" height="16"/>
+                            <rect key="frame" x="-2" y="477" width="151" height="16"/>
                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="right" title="Timeline Feed Icons:" id="tlL-fI-0c1">
                                 <font key="font" metaFont="system"/>
                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -168,7 +169,7 @@
                             </textFieldCell>
                         </textField>
                         <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlP-fD-0p1">
-                            <rect key="frame" x="155" y="451" width="250" height="24"/>
+                            <rect key="frame" x="155" y="473" width="250" height="24"/>
                             <popUpButtonCell key="cell" type="push" title="Automatic" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="tlM-fD-0m0" id="tlP-fD-0c1">
                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="message"/>
@@ -185,7 +186,7 @@
                             </connections>
                         </popUpButton>
                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="tlN-fD-0l1">
-                            <rect key="frame" x="153" y="411" width="255" height="32"/>
+                            <rect key="frame" x="153" y="433" width="255" height="32"/>
                             <textFieldCell key="cell" controlSize="small" title="Automatic shows icons for folders, smart feeds, and authors with avatars." id="tlN-fD-0c1">
                                 <font key="font" usesAppearanceFont="YES"/>
                                 <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
@@ -193,7 +194,7 @@
                             </textFieldCell>
                         </textField>
                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlL-fS-0l1">
-                            <rect key="frame" x="-2" y="379" width="151" height="16"/>
+                            <rect key="frame" x="-2" y="401" width="151" height="16"/>
                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="right" title="Timeline Feed Icon Size:" id="tlL-fS-0c1">
                                 <font key="font" metaFont="system"/>
                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -201,7 +202,7 @@
                             </textFieldCell>
                         </textField>
                         <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlP-fS-0p1">
-                            <rect key="frame" x="155" y="375" width="250" height="24"/>
+                            <rect key="frame" x="155" y="397" width="250" height="24"/>
                             <popUpButtonCell key="cell" type="push" title="Medium" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="2" imageScaling="proportionallyDown" inset="2" selectedItem="tlM-fS-0m2" id="tlP-fS-0c1">
                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="message"/>
@@ -218,7 +219,7 @@
                             </connections>
                         </popUpButton>
                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlL-tH-0l1">
-                            <rect key="frame" x="-2" y="343" width="151" height="16"/>
+                            <rect key="frame" x="-2" y="365" width="151" height="16"/>
                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="right" title="Thumbnails:" id="tlL-tH-0c1">
                                 <font key="font" metaFont="system"/>
                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -226,7 +227,7 @@
                             </textFieldCell>
                         </textField>
                         <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlP-tS-0p1">
-                            <rect key="frame" x="155" y="339" width="250" height="24"/>
+                            <rect key="frame" x="155" y="361" width="250" height="24"/>
                             <popUpButtonCell key="cell" type="push" title="None" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="tlM-tS-0m0" id="tlP-tS-0c1">
                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="message"/>
@@ -244,7 +245,7 @@
                             </connections>
                         </popUpButton>
                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlL-tX-0l1">
-                            <rect key="frame" x="-2" y="307" width="151" height="16"/>
+                            <rect key="frame" x="-2" y="329" width="151" height="16"/>
                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="right" title="Timeline Text Size:" id="tlL-tX-0c1">
                                 <font key="font" metaFont="system"/>
                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -252,7 +253,7 @@
                             </textFieldCell>
                         </textField>
                         <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlP-tX-0p1">
-                            <rect key="frame" x="155" y="303" width="250" height="24"/>
+                            <rect key="frame" x="155" y="325" width="250" height="24"/>
                             <popUpButtonCell key="cell" type="push" title="Medium" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="2" imageScaling="proportionallyDown" inset="2" selectedItem="tlM-tX-0m2" id="tlP-tX-0c1">
                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="message"/>
@@ -274,7 +275,7 @@
                             </connections>
                         </popUpButton>
                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlL-nL-0l1">
-                            <rect key="frame" x="-2" y="271" width="151" height="16"/>
+                            <rect key="frame" x="-2" y="293" width="151" height="16"/>
                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="right" title="Timeline Rows:" id="tlL-nL-0c1">
                                 <font key="font" metaFont="system"/>
                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -282,7 +283,7 @@
                             </textFieldCell>
                         </textField>
                         <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlP-nL-0p1">
-                            <rect key="frame" x="306" y="267" width="57" height="24"/>
+                            <rect key="frame" x="306" y="289" width="57" height="24"/>
                             <popUpButtonCell key="cell" type="push" title="2" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="2" imageScaling="proportionallyDown" inset="2" selectedItem="tlM-nL-0m2" id="tlP-nL-0c1">
                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="message"/>
@@ -302,7 +303,7 @@
                             </connections>
                         </popUpButton>
                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlR-tP-0b1">
-                            <rect key="frame" x="155" y="271" width="143" height="16"/>
+                            <rect key="frame" x="155" y="293" width="143" height="16"/>
                             <buttonCell key="cell" type="radio" title="Title and preview, in" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="tlR-tP-0c1">
                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -312,7 +313,7 @@
                             </connections>
                         </button>
                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlL-ln-0l1">
-                            <rect key="frame" x="369" y="271" width="32" height="16"/>
+                            <rect key="frame" x="369" y="293" width="32" height="16"/>
                             <textFieldCell key="cell" lineBreakMode="clipping" title="lines" id="tlL-ln-0c1">
                                 <font key="font" metaFont="system"/>
                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -320,7 +321,7 @@
                             </textFieldCell>
                         </textField>
                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlR-fT-0b1">
-                            <rect key="frame" x="155" y="243" width="144" height="16"/>
+                            <rect key="frame" x="155" y="265" width="144" height="16"/>
                             <buttonCell key="cell" type="radio" title="Full title, no preview" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="tlR-fT-0c1">
                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                 <font key="font" metaFont="system"/>
@@ -330,7 +331,7 @@
                             </connections>
                         </button>
                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="tlN-fT-0l1">
-                            <rect key="frame" x="173" y="221" width="235" height="16"/>
+                            <rect key="frame" x="173" y="243" width="235" height="16"/>
                             <textFieldCell key="cell" controlSize="small" title="Shows the whole title, up to 12 lines." id="tlN-fT-0c1">
                                 <font key="font" usesAppearanceFont="YES"/>
                                 <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
@@ -338,13 +339,23 @@
                             </textFieldCell>
                         </textField>
                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlB-sP-0b1">
-                            <rect key="frame" x="155" y="193" width="251" height="16"/>
+                            <rect key="frame" x="155" y="215" width="251" height="16"/>
                             <buttonCell key="cell" type="check" title="Show separators" bezelStyle="regularSquare" imagePosition="left" inset="2" id="tlB-sP-0c1">
                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
                             <connections>
                                 <action selector="timelineShowSeparatorsDidChange:" target="-2" id="tlA-sP-0a1"/>
+                            </connections>
+                        </button>
+                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlB-fR-0b1">
+                            <rect key="frame" x="155" y="193" width="251" height="16"/>
+                            <buttonCell key="cell" type="check" title="Fade read articles" bezelStyle="regularSquare" imagePosition="left" inset="2" id="tlB-fR-0c1">
+                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="timelineFadeReadArticlesDidChange:" target="-2" id="tlA-fR-0a1"/>
                             </connections>
                         </button>
                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="tlN-cL-0l1">
@@ -514,7 +525,10 @@
                         <constraint firstItem="tlB-sP-0b1" firstAttribute="top" secondItem="tlN-fT-0l1" secondAttribute="bottom" constant="12" id="c69-Ly-Out"/>
                         <constraint firstItem="tlB-sP-0b1" firstAttribute="leading" secondItem="apP-cM-0p1" secondAttribute="leading" id="c70-Ly-Out"/>
                         <constraint firstAttribute="trailing" secondItem="tlB-sP-0b1" secondAttribute="trailing" id="c71-Ly-Out"/>
-                        <constraint firstItem="tlN-cL-0l1" firstAttribute="top" secondItem="tlB-sP-0b1" secondAttribute="bottom" constant="8" id="cN1-Ly-Out"/>
+                        <constraint firstItem="tlB-fR-0b1" firstAttribute="top" secondItem="tlB-sP-0b1" secondAttribute="bottom" constant="6" id="cF1-Ly-Out"/>
+                        <constraint firstItem="tlB-fR-0b1" firstAttribute="leading" secondItem="apP-cM-0p1" secondAttribute="leading" id="cF2-Ly-Out"/>
+                        <constraint firstAttribute="trailing" secondItem="tlB-fR-0b1" secondAttribute="trailing" id="cF3-Ly-Out"/>
+                        <constraint firstItem="tlN-cL-0l1" firstAttribute="top" secondItem="tlB-fR-0b1" secondAttribute="bottom" constant="8" id="cN1-Ly-Out"/>
                         <constraint firstItem="tlN-cL-0l1" firstAttribute="leading" secondItem="apP-cM-0p1" secondAttribute="leading" id="cN2-Ly-Out"/>
                         <constraint firstAttribute="trailing" secondItem="tlN-cL-0l1" secondAttribute="trailing" id="cN3-Ly-Out"/>
                         <constraint firstItem="sp3-Bx-0s1" firstAttribute="top" secondItem="tlN-cL-0l1" secondAttribute="bottom" constant="20" id="c72-Ly-Out"/>

@@ -325,6 +325,18 @@
         }
       }
     },
+    "tlB-fR-0c1.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Fade read articles\"; ObjectID = \"tlB-fR-0c1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Fade read articles"
+          }
+        }
+      }
+    },
     "tlB-sP-0c1.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Show separators\"; ObjectID = \"tlB-sP-0c1\";",
       "extractionState" : "extracted_with_value",
