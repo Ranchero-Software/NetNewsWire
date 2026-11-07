@@ -511,8 +511,11 @@ extension WebViewController: WKNavigationDelegate {
 					UIApplication.shared.open(url, options: [.universalLinksOnly: false], completionHandler: nil)
 				}
 
+			} else if let externalURL = url.preparedForOpeningInExternalApplication(excluding: [ArticleRenderer.imageIconScheme, ArticleRenderer.articleImageScheme]) {
+				decisionHandler(.cancel, preferences)
+				UIApplication.shared.open(externalURL, options: [:], completionHandler: nil)
 			} else {
-				decisionHandler(.allow, preferences)
+				decisionHandler(url.scheme == nil ? .allow : .cancel, preferences)
 			}
 		} else {
 			decisionHandler(.allow, preferences)
@@ -960,8 +963,16 @@ private extension WebViewController {
 		}
 	}
 
-	// If the resource cannot be opened with an installed app, present the web view.
+	// Web URLs fall back to the web view when no installed app opens them.
 	func openURL(_ url: URL) {
+		if let externalURL = url.preparedForOpeningInExternalApplication(excluding: [ArticleRenderer.imageIconScheme, ArticleRenderer.articleImageScheme]) {
+			UIApplication.shared.open(externalURL, options: [:], completionHandler: nil)
+			return
+		}
+		guard url.isHTTPOrHTTPSURL() || url.scheme?.lowercased() == "mailto" || url.scheme?.lowercased() == "tel" else {
+			return
+		}
+
 		UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { didOpen in
 			assert(Thread.isMainThread)
 			guard didOpen == false else {
