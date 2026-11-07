@@ -47,6 +47,39 @@ struct URLPreparedForOpeningTests {
 		#expect(prepared.absoluteString == "http://example.com/path?q=1")
 	}
 
+	@Test func externalApplicationURLsPassThroughUnchanged() throws {
+		for string in [
+			"octal://item?id=12345678",
+			"OCTAL://item?id=1",
+			"netnewswire://theme/add?url=https://example.com/t.nnwtheme",
+			"netnewswire://theme/add",
+			"feed:https://example.com/rss.xml",
+			"feeds:https://example.com/rss.xml"
+		] {
+			let prepared = try #require(url(string).preparedForOpeningInExternalApplication())
+			#expect(prepared.absoluteString == string)
+		}
+	}
+
+	@Test func blocksNonExternalApplicationURLs() throws {
+		for string in [
+			"http://example.com/", "https://example.com/", "mailto:me@example.com", "tel:+15555555555",
+			"javascript:alert(1)", "JAVASCRIPT:alert(1)", "data:text/html,x", "file:///etc/passwd",
+			"about:blank", "blob:https://example.com/id", "vbscript:msgbox(1)", "relative/path"
+		] {
+			#expect(try url(string).preparedForOpeningInExternalApplication() == nil)
+		}
+	}
+
+	@Test func excludesInternalSchemesCaseInsensitively() throws {
+		let excludedSchemes: Set<String> = ["nnwImageIcon", "nnwArticleImage"]
+		for string in ["nnwImageIcon:abc", "nnwArticleImage:abc", "NNWIMAGEICON:abc", "NNWARTICLEIMAGE:abc"] {
+			let original = try url(string)
+			#expect(original.preparedForOpeningInExternalApplication(excluding: excludedSchemes) == nil)
+			#expect(original.preparedForOpeningInExternalApplication() != nil)
+		}
+	}
+
 	private func url(_ string: String) throws -> URL {
 		try #require(URL(string: string))
 	}
