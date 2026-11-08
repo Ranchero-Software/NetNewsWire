@@ -86,10 +86,14 @@ final class MainWindowStatusBarView: NSView {
 	private static let spacingBeforeThemeMenu: CGFloat = 8
 	private static let progressIndicatorWidth: CGFloat = 40
 
-	private static let topLineColor = dynamicColor(lightWhite: 224 / 255, darkWhite: 0.1)
-	// Lighter than the grip, close to the system’s sidebar divider above the bar.
-	private static let dividerColor = dynamicColor(lightWhite: 204 / 255, darkWhite: 0.28)
-	private static let gripColor = dynamicColor(lightWhite: 180 / 255, darkWhite: 0.35)
+	private static let topLineColor = dynamicColor(lightWhite: 168 / 255, darkWhite: 0.04)
+	// A hairline just below the top line, so the bar looks raised.
+	private static let highlightColor = NSColor(name: nil) { appearance in
+		NSColor(white: 1, alpha: isDark(appearance) ? 0.07 : 0.7)
+	}
+	// Lighter than the grip.
+	private static let dividerColor = dynamicColor(lightWhite: 176 / 255, darkWhite: 0.28)
+	private static let gripColor = dynamicColor(lightWhite: 120 / 255, darkWhite: 0.45)
 
 	// The ||| grip: three hairlines, the last one 6.5 points before the divider.
 	private static let gripLineCount = 3
@@ -100,7 +104,7 @@ final class MainWindowStatusBarView: NSView {
 	private static let dragAreaReachBeforeDivider: CGFloat = 17
 	private static let dragAreaReachAfterDivider: CGFloat = 6
 	private static let textColor = dynamicColor(lightWhite: 44 / 255, darkWhite: 0.85)
-	private static let gradient = NSGradient(starting: dynamicColor(lightWhite: 217 / 255, darkWhite: 0.17), ending: dynamicColor(lightWhite: 242 / 255, darkWhite: 0.22))
+	private static let gradient = NSGradient(starting: dynamicColor(lightWhite: 200 / 255, darkWhite: 0.14), ending: dynamicColor(lightWhite: 236 / 255, darkWhite: 0.22))
 	// Bottom to top, so the gradient starts with the darker color at the bottom.
 	private static let gradientAngle: CGFloat = 90
 
@@ -172,22 +176,31 @@ final class MainWindowStatusBarView: NSView {
 		Self.topLineColor.setFill()
 		NSRect(x: bounds.minX, y: bounds.maxY - Self.topLineThickness, width: bounds.width, height: Self.topLineThickness).fill()
 
+		let hairline = 1 / (window?.backingScaleFactor ?? 1)
+		Self.highlightColor.setFill()
+		NSRect(x: bounds.minX, y: bounds.maxY - Self.topLineThickness - hairline, width: bounds.width, height: hairline).fill()
+
 		// The sidebar divider continues through the bar as a hairline, with the ||| grip just before it.
 		guard let sidebarDividerPosition else {
 			return
 		}
 		Self.dividerColor.setFill()
-		let hairline = 1 / (window?.backingScaleFactor ?? 1)
 		let dividerX = sidebarDividerPosition + sidebarDividerLineOffset
 		let contentHeight = bounds.height - Self.topLineThickness
 		NSRect(x: dividerX, y: bounds.minY, width: sidebarDividerLineWidth, height: contentHeight).fill()
 
-		Self.gripColor.setFill()
+		// Each grip line is etched, like the text: a highlight hairline just to its right.
 		let gripY = floor((contentHeight - Self.gripLineHeight) / 2)
+		let gripEtchColor = Self.etchedShadow.shadowColor
 		for index in 0..<Self.gripLineCount {
 			let distanceFromLastLine = CGFloat(Self.gripLineCount - 1 - index) * Self.gripLineInterval
 			let x = dividerX - Self.gripTrailingInset - distanceFromLastLine
+			Self.gripColor.setFill()
 			NSRect(x: x, y: gripY, width: hairline, height: Self.gripLineHeight).fill()
+			if let gripEtchColor {
+				gripEtchColor.setFill()
+				NSRect(x: x + hairline, y: gripY, width: hairline, height: Self.gripLineHeight).fill()
+			}
 		}
 	}
 
