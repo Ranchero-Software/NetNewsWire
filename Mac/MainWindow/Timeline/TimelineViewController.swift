@@ -138,15 +138,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				return
 			}
 
-			if let representedObjects = representedObjects, representedObjects.count == 1 && representedObjects.first is Feed {
-				showFeedNames = {
-					for article in articles {
-						if !article.byline().isEmpty {
-							return .byline
-						}
-					}
-					return .none
-				}()
+			if let representedObjects, representedObjects.count == 1 && representedObjects.first is Feed {
+				showFeedNames = .byline
 			} else {
 				showFeedNames = .feed
 			}

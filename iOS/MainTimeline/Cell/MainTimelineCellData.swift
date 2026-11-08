@@ -60,10 +60,11 @@ import Images
 			self.feedName = ""
 		}
 
-		if let byline = byline {
+		// Falls back to the feed name so the line is never empty.
+		if let byline, !byline.isEmpty {
 			self.byline = byline
 		} else {
-			self.byline = ""
+			self.byline = self.feedName
 		}
 
 		self.showFeedName = showFeedName

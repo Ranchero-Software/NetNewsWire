@@ -2149,14 +2149,7 @@ private extension SceneCoordinator {
 	func updateShowNamesAndIcons() {
 
 		if timelineFeed is Feed {
-			showFeedNames = {
-				for article in articles {
-					if !article.byline().isEmpty {
-						return .byline
-					}
-				}
-				return .none
-			}()
+			showFeedNames = .byline
 		} else {
 			showFeedNames = .feed
 		}
