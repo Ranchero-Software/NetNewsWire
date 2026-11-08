@@ -7,6 +7,24 @@
     <language>en</language>
 
 <item>
+	<title>NetNewsWire 7.3b5</title>
+	<description><![CDATA[
+<ul>
+<li>Added an Appearance settings pane — appearance (system, light, or dark), sidebar text size, sidebar icons, which smart feeds to show (Today, All Unread, Starred), and the article theme and text size (moved from General)
+<li>Added a Timeline settings pane — text size, feed icons (automatic, always, or never), feed icon size, thumbnails, rows (full title with no preview, or title and preview in 1 to 6 lines), separators, fading read articles, and showing the feed name and date above the title
+<li>Moved the Thumbnails setting from the View menu to Settings > Timeline
+<li>Made rows fit their content (variable row heights) in timeline
+<li>Made separators a regular setting (it was a hidden preference) — your existing choice carries over
+<li>Gave the status bar a crisper top edge, a deeper gradient, and an etched, higher-contrast divider grip
+<li>Made the main window’s split view dividers a little darker in light mode
+</ul>
+	]]></description>
+	<pubDate>Sun, 07 Nov 2026 17:00:00 -0800</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.3b5/NetNewsWire7.3b5.zip" sparkle:version="7232" sparkle:shortVersionString="7.3b5" length="10419440" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
 	<title>NetNewsWire 7.3b4</title>
 	<description><![CDATA[
 <ul>
