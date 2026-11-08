@@ -21,11 +21,12 @@ final class SettingsViewController: UITableViewController {
 		case notifications = 0
 		case accounts = 1
 		case feeds = 2
-		case timeline = 3
-		case articles = 4
-		case appearance = 5
-		case troubleshooting = 6
-		case help = 7
+		case sidebar = 3
+		case timeline = 4
+		case articles = 5
+		case appearance = 6
+		case troubleshooting = 7
+		case help = 8
 	}
 
 	private enum TroubleshootingRow: Int {
@@ -77,6 +78,7 @@ final class SettingsViewController: UITableViewController {
 	@IBOutlet var unreadCountDisplayCell: UITableViewCell?
 	@IBOutlet var openLinksInNetNewsWire: UISwitch!
 	@IBOutlet var enableJavaScriptSwitch: UISwitch!
+	@IBOutlet var sidebarShowsIconsSwitch: UISwitch?
 
 	var scrollToArticlesSection = false
 	weak var presentingParentController: UIViewController?
@@ -94,6 +96,7 @@ final class SettingsViewController: UITableViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUserInterfaceColorPaletteDidUpdate(_:)), name: .userInterfaceColorPaletteDidUpdate, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarShowsIconsDidChange(_:)), name: .sidebarShowsIconsDidChange, object: nil)
 
 		tableView.register(UINib(nibName: "SettingsComboTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsComboTableViewCell")
 		tableView.register(UINib(nibName: "SettingsTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsTableViewCell")
@@ -105,6 +108,7 @@ final class SettingsViewController: UITableViewController {
 		addPopUpButton(unreadCountDisplayPopUpButton, to: unreadCountDisplayCell, accessibilityLabel: NSLocalizedString("Unread Counts", comment: "Unread Counts"))
 		updateColorPalettePopUpButton()
 		updateUnreadCountDisplayPopUpButton()
+		updateSidebarShowsIconsSwitch()
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
@@ -360,6 +364,10 @@ final class SettingsViewController: UITableViewController {
 		dismiss(animated: true)
 	}
 
+	@IBAction func switchSidebarShowsIcons(_ sender: UISwitch) {
+		AppDefaults.sidebarShowsIcons = sender.isOn
+	}
+
 	@IBAction func switchTimelineOrder(_ sender: Any) {
 		if timelineSortOrderSwitch.isOn {
 			AppDefaults.timelineSortDirection = .orderedAscending
@@ -438,6 +446,10 @@ final class SettingsViewController: UITableViewController {
 		updateUnreadCountDisplayPopUpButton()
 	}
 
+	@objc func handleSidebarShowsIconsDidChange(_ notification: Notification) {
+		updateSidebarShowsIconsSwitch()
+	}
+
 }
 
 // MARK: - OPML Document Picker
@@ -510,6 +522,10 @@ private extension SettingsViewController {
 		}
 		unreadCountDisplayPopUpButton.menu = UIMenu(children: actions)
 		unreadCountDisplayPopUpButton.accessibilityValue = String(describing: currentUnreadCountDisplay)
+	}
+
+	func updateSidebarShowsIconsSwitch() {
+		sidebarShowsIconsSwitch?.isOn = AppDefaults.sidebarShowsIcons
 	}
 
 	func addFeed() {

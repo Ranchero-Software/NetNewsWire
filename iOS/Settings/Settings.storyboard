@@ -115,6 +115,43 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
+                            <tableViewSection headerTitle="Sidebar" id="tFI-AQ-Umj">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" id="w3Y-p9-z8p" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
+                                        <rect key="frame" x="20" y="478.5" width="374" height="51.5"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="w3Y-p9-z8p" id="1sW-x1-YOA">
+                                            <rect key="frame" x="0.0" y="0.0" width="374" height="51.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="250" text="Show Feed Icons" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tKT-7c-dVn" customClass="VibrantLabel" customModule="NetNewsWire" customModuleProvider="target">
+                                                    <rect key="frame" x="20" y="15" width="167.5" height="21.5"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="ty7-nO-vmW">
+                                                    <rect key="frame" x="293" y="12" width="63" height="28"/>
+                                                    <color key="onTintColor" name="primaryAccentColor"/>
+                                                    <connections>
+                                                        <action selector="switchSidebarShowsIcons:" destination="a0p-rk-skQ" eventType="valueChanged" id="mhE-9m-RdD"/>
+                                                    </connections>
+                                                </switch>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="ty7-nO-vmW" firstAttribute="top" relation="greaterThanOrEqual" secondItem="1sW-x1-YOA" secondAttribute="top" constant="6" id="7ZX-Iu-TtD"/>
+                                                <constraint firstItem="ty7-nO-vmW" firstAttribute="centerY" secondItem="1sW-x1-YOA" secondAttribute="centerY" id="Mr5-mQ-hD3"/>
+                                                <constraint firstItem="tKT-7c-dVn" firstAttribute="top" secondItem="1sW-x1-YOA" secondAttribute="topMargin" id="Euu-QJ-bwj"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="tKT-7c-dVn" secondAttribute="bottom" id="dXi-Xs-qSm"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="ty7-nO-vmW" secondAttribute="trailing" id="GSC-py-hGF"/>
+                                                <constraint firstItem="ty7-nO-vmW" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="tKT-7c-dVn" secondAttribute="trailing" constant="8" id="Qgp-cW-13e"/>
+                                                <constraint firstItem="tKT-7c-dVn" firstAttribute="leading" secondItem="1sW-x1-YOA" secondAttribute="leadingMargin" id="mb5-hb-ywG"/>
+                                                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="ty7-nO-vmW" secondAttribute="bottom" constant="6" id="pI7-WU-JTs"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
                             <tableViewSection headerTitle="Timeline" id="9Pk-Y8-JVJ">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" id="MpA-w1-Wwh" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
@@ -675,6 +712,7 @@
                         <outlet property="groupByFeedSwitch" destination="JNi-Wz-RbU" id="TwH-Kd-o6N"/>
                         <outlet property="openLinksInNetNewsWire" destination="dhR-L2-PX3" id="z1b-pX-bwG"/>
                         <outlet property="refreshClearsReadArticlesSwitch" destination="duV-CN-JmH" id="xTd-jF-Ei1"/>
+                        <outlet property="sidebarShowsIconsSwitch" destination="ty7-nO-vmW" id="ODo-qY-xMD"/>
                         <outlet property="showFullscreenArticlesSwitch" destination="2Md-2E-7Z4" id="lEN-VP-wEO"/>
                         <outlet property="timelineSortOrderSwitch" destination="Keq-Np-l9O" id="Zm7-HG-r5h"/>
                         <outlet property="unreadCountDisplayCell" destination="Ucd-a1-Cel" id="Ucd-u1-Out"/>

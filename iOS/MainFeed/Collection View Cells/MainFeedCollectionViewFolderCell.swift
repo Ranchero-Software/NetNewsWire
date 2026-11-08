@@ -19,6 +19,23 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 	@IBOutlet var faviconView: IconView!
 	@IBOutlet var unreadCountLabel: UILabel!
 	@IBOutlet var disclosureButton: UIButton!
+	@IBOutlet var faviconWidthConstraint: NSLayoutConstraint?
+	@IBOutlet var folderTitleLeadingConstraint: NSLayoutConstraint?
+
+	private static let faviconWidth: CGFloat = 24
+	private static let folderTitleSpacing: CGFloat = 8
+
+	/// Without the icon, the title starts where the icon would be.
+	var showsIcon = true {
+		didSet {
+			guard showsIcon != oldValue else {
+				return
+			}
+			faviconView.isHidden = !showsIcon
+			faviconWidthConstraint?.constant = showsIcon ? Self.faviconWidth : 0
+			folderTitleLeadingConstraint?.constant = showsIcon ? Self.folderTitleSpacing : 0
+		}
+	}
 
 	var delegate: MainFeedCollectionViewFolderCellDelegate?
 

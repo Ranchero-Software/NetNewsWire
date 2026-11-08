@@ -193,6 +193,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		NotificationCenter.default.addObserver(self, selector: #selector(handleFeedIconImageDidChange(_:)), name: .feedIconImageDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .feedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarShowsIconsDidChange(_:)), name: .sidebarShowsIconsDidChange, object: nil)
 
 		registerForTraitChanges([UITraitPreferredContentSizeCategory.self], target: self, action: #selector(preferredContentSizeCategoryDidChange))
 	}
@@ -816,6 +817,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			cell.feedTitle.text = sidebarItem.nameForDisplay
 			cell.unreadCount = sidebarItem.unreadCount
 			cell.indentationLevel = indentationLevel
+			cell.showsIcon = AppDefaults.sidebarShowsIcons
 			configureIcon(cell, sidebarItem: sidebarItem)
 		}
 	}
@@ -827,6 +829,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		if let folder = node.representedObject as? Folder {
 			cell.folderTitle.text = folder.nameForDisplay
 			cell.unreadCount = folder.unreadCount
+			cell.showsIcon = AppDefaults.sidebarShowsIcons
 			configureIcon(cell, sidebarItem: folder)
 		}
 
@@ -914,6 +917,11 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			}
 		}
 
+		// Only realized cells are reconfigured. Others pick up the setting when dequeued.
+		reconfigureItems(dataSource.snapshot().itemIdentifiers)
+	}
+
+	@objc func handleSidebarShowsIconsDidChange(_ notification: Notification) {
 		// Only realized cells are reconfigured. Others pick up the setting when dequeued.
 		reconfigureItems(dataSource.snapshot().itemIdentifiers)
 	}

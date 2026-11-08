@@ -16,7 +16,24 @@ final class MainFeedCollectionViewCell: UICollectionViewCell {
 	@IBOutlet var feedTitle: UILabel!
 	@IBOutlet var faviconView: IconView!
 	@IBOutlet var unreadCountLabel: UILabel!
+	@IBOutlet var faviconWidthConstraint: NSLayoutConstraint?
+	@IBOutlet var feedTitleLeadingConstraint: NSLayoutConstraint?
 	private var faviconLeadingConstraint: NSLayoutConstraint?
+
+	private static let faviconWidth: CGFloat = 24
+	private static let feedTitleSpacing: CGFloat = 8
+
+	/// Without the icon, the title starts where the icon would be.
+	var showsIcon = true {
+		didSet {
+			guard showsIcon != oldValue else {
+				return
+			}
+			faviconView.isHidden = !showsIcon
+			faviconWidthConstraint?.constant = showsIcon ? Self.faviconWidth : 0
+			feedTitleLeadingConstraint?.constant = showsIcon ? Self.feedTitleSpacing : 0
+		}
+	}
 
 	var iconImage: IconImage? {
 		didSet {
