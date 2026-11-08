@@ -1,5 +1,15 @@
 # Mac Release Notes
 
+### 7.3b5 7232 7 Nov 2026 - branch: main tag: mac-7.3b5
+
+Added an Appearance settings pane — appearance (system, light, or dark), sidebar text size, sidebar icons, which smart feeds to show (Today, All Unread, Starred), and the article theme and text size (moved from General)
+Added a Timeline settings pane — text size, feed icons (automatic, always, or never), feed icon size, thumbnails, rows (full title with no preview, or title and preview in 1 to 6 lines), separators, fading read articles, and showing the feed name and date above the title
+Moved the Thumbnails setting from the View menu to Settings > Timeline
+Made rows fit their content (variable row heights) in timeline
+Made separators a regular setting (it was a hidden preference) — your existing choice carries over
+Gave the status bar a crisper top edge, a deeper gradient, and an etched, higher-contrast divider grip
+Made the main window’s split view dividers a little darker in light mode
+
 ### 7.3b4 7229 6 Nov 2026 - branch: main tag: mac-7.3b4
 
 Made small thumbnails fill the space (aspect fill) — images are cropped from the sides and bottom, never the top, so faces and other important parts are more likely to stay in view
