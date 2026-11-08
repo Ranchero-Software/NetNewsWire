@@ -32,8 +32,9 @@ import Images
 	let thumbnail: UIImage?
 	let showThumbnail: Bool // Make space even when thumbnail is nil
 	let thumbnailsDisplay: TimelineThumbnailsDisplay
+	let fadesReadArticles: Bool
 
-	init(article: Article, showFeedName: ShowFeedName, feedName: String?, byline: String?, iconImage: IconImage?, showIcon: Bool, numberOfLines: Int, iconSize: IconSize, thumbnail: UIImage?, showThumbnail: Bool, thumbnailsDisplay: TimelineThumbnailsDisplay) {
+	init(article: Article, showFeedName: ShowFeedName, feedName: String?, byline: String?, iconImage: IconImage?, showIcon: Bool, numberOfLines: Int, iconSize: IconSize, thumbnail: UIImage?, showThumbnail: Bool, thumbnailsDisplay: TimelineThumbnailsDisplay, fadesReadArticles: Bool) {
 
 		self.accountID = article.accountID
 		self.articleID = article.articleID
@@ -73,6 +74,7 @@ import Images
 		self.thumbnail = thumbnail
 		self.showThumbnail = showThumbnail
 		self.thumbnailsDisplay = thumbnailsDisplay
+		self.fadesReadArticles = fadesReadArticles
 	}
 
 	init() { // Empty
@@ -94,6 +96,7 @@ import Images
 		self.thumbnail = nil
 		self.showThumbnail = false
 		self.thumbnailsDisplay = .none
+		self.fadesReadArticles = false
 	}
 
 }

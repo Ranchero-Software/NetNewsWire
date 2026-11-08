@@ -35,6 +35,7 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 	private enum OptionsRow: Int, CaseIterable {
 		case feedIcons
 		case thumbnails
+		case fadeReadArticles
 	}
 
 	private var previewArticle: Article {
@@ -95,6 +96,7 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 		}
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFeedIconsDisplayDidChange(_:)), name: .timelineFeedIconsDisplayDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineThumbnailsDisplayDidChange(_:)), name: .timelineThumbnailsDisplayDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFadeReadArticlesDidChange(_:)), name: .timelineFadeReadArticlesDidChange, object: nil)
 
 		configureCollectionView()
 	}
@@ -217,6 +219,10 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 	@objc func handleTimelineThumbnailsDisplayDidChange(_ notification: Notification) {
 		reloadOptionsRowsAndPreviews()
 	}
+
+	@objc func handleTimelineFadeReadArticlesDidChange(_ notification: Notification) {
+		reloadOptionsRowsAndPreviews()
+	}
 }
 
 // MARK: - Private
@@ -272,7 +278,8 @@ private extension TimelineCustomizerCollectionViewController {
 											 iconSize: AppDefaults.timelineIconSize,
 											 thumbnail: Assets.Images.timelinePreviewThumbnail,
 											 showThumbnail: section.showsThumbnail,
-											 thumbnailsDisplay: AppDefaults.timelineThumbnailsDisplay)
+											 thumbnailsDisplay: AppDefaults.timelineThumbnailsDisplay,
+											 fadesReadArticles: AppDefaults.timelineFadeReadArticles)
 		cell.isPreview = true
 		return cell
 	}
@@ -289,6 +296,16 @@ private extension TimelineCustomizerCollectionViewController {
 			content.text = NSLocalizedString("Thumbnail Size", comment: "Thumbnail Size")
 			content.secondaryText = AppDefaults.timelineThumbnailsDisplay.description
 			cell.accessories = [.popUpMenu(timelineThumbnailsDisplayMenu())]
+		case .fadeReadArticles:
+			content = UIListContentConfiguration.cell()
+			content.text = NSLocalizedString("Fade Read Articles", comment: "Timeline Layout: switch that fades read articles in the timeline")
+			let fadeReadArticlesSwitch = UISwitch(frame: .zero, primaryAction: UIAction { action in
+				if let fadeReadArticlesSwitch = action.sender as? UISwitch {
+					AppDefaults.timelineFadeReadArticles = fadeReadArticlesSwitch.isOn
+				}
+			})
+			fadeReadArticlesSwitch.isOn = AppDefaults.timelineFadeReadArticles
+			cell.accessories = [.customView(configuration: .init(customView: fadeReadArticlesSwitch, placement: .trailing()))]
 		}
 		cell.contentConfiguration = content
 

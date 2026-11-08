@@ -601,6 +601,9 @@
     "Extra Large" : {
       "comment" : "X-Large"
     },
+    "Fade Read Articles" : {
+      "comment" : "Timeline Layout: switch that fades read articles in the timeline"
+    },
     "Failed" : {
       "comment" : "Failed"
     },

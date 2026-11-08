@@ -14,6 +14,7 @@ import Images
 final class MainTimelineCell: UICollectionViewListCell {
 
 	static let reuseIdentifier = "MainTimelineCell"
+	private static let readArticleAlpha: CGFloat = 0.6
 
 	var isPreview = false
 
@@ -135,6 +136,7 @@ final class MainTimelineCell: UICollectionViewListCell {
 		// Text goes white only on the accent background. On gray, labels keep their normal colors.
 		updateColors(active: showsAccentSelection)
 		updateIndicatorView(active: showsAccentSelection)
+		updateFading(isSelected: state.isSelected)
 	}
 }
 
@@ -244,6 +246,7 @@ private extension MainTimelineCell {
 		let active = isActiveSelection(configurationState)
 		updateColors(active: active)
 		updateIndicatorView(active: active)
+		updateFading(isSelected: configurationState.isSelected)
 		updateAccessibilityLabel()
 		setNeedsLayout()
 	}
@@ -275,6 +278,18 @@ private extension MainTimelineCell {
 			indicatorView.isHidden = false
 		} else {
 			indicatorView.isHidden = true
+		}
+	}
+
+	/// Fades the content view, not the background, so the selection highlight stays full strength.
+	/// The selected row never fades, since selecting an article marks it read.
+	func updateFading(isSelected: Bool) {
+		var alpha: CGFloat = 1.0
+		if let cellData, cellData.fadesReadArticles, cellData.read, !isSelected {
+			alpha = Self.readArticleAlpha
+		}
+		if contentView.alpha != alpha {
+			contentView.alpha = alpha
 		}
 	}
 
