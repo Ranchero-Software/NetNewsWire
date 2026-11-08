@@ -675,6 +675,9 @@
     "from cache" : {
       "comment" : "Activity log — appended when a download was served from cache instead of the network"
     },
+    "Full Titles, No Preview" : {
+      "comment" : "Timeline Layout: switch that shows whole titles, without the article preview, in the timeline"
+    },
     "General" : {
       "comment" : "Preferences",
       "localizations" : {

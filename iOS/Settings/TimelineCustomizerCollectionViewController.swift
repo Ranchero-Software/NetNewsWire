@@ -35,6 +35,7 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 	private enum OptionsRow: Int, CaseIterable {
 		case feedIcons
 		case thumbnails
+		case fullTitles
 		case fadeReadArticles
 		case feedNameAndDateAboveTitle
 	}
@@ -97,6 +98,7 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 		}
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFeedIconsDisplayDidChange(_:)), name: .timelineFeedIconsDisplayDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineThumbnailsDisplayDidChange(_:)), name: .timelineThumbnailsDisplayDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineShowFullTitlesDidChange(_:)), name: .timelineShowFullTitlesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFadeReadArticlesDidChange(_:)), name: .timelineFadeReadArticlesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFeedNameAndDateAboveTitleDidChange(_:)), name: .timelineFeedNameAndDateAboveTitleDidChange, object: nil)
 
@@ -155,6 +157,8 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 		case .numberOfLines:
 			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NumberOfLinesSelector", for: indexPath) as! TimelineCustomizerCell
 			cell.sliderConfiguration = .numberOfLines
+			// The number of lines applies only to the title and summary.
+			cell.slider.isEnabled = !AppDefaults.timelineShowFullTitles
 			return cell
 		case .options:
 			let optionsRow = OptionsRow(rawValue: indexPath.item) ?? .feedIcons
@@ -222,6 +226,11 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 		reloadOptionsRowsAndPreviews()
 	}
 
+	@objc func handleTimelineShowFullTitlesDidChange(_ notification: Notification) {
+		collectionView.reloadSections(IndexSet(integer: Section.numberOfLines.rawValue))
+		reloadOptionsRowsAndPreviews()
+	}
+
 	@objc func handleTimelineFadeReadArticlesDidChange(_ notification: Notification) {
 		reloadOptionsRowsAndPreviews()
 	}
@@ -286,7 +295,8 @@ private extension TimelineCustomizerCollectionViewController {
 											 showThumbnail: section.showsThumbnail,
 											 thumbnailsDisplay: AppDefaults.timelineThumbnailsDisplay,
 											 fadesReadArticles: AppDefaults.timelineFadeReadArticles,
-											 feedNameAndDateAboveTitle: AppDefaults.timelineFeedNameAndDateAboveTitle)
+											 feedNameAndDateAboveTitle: AppDefaults.timelineFeedNameAndDateAboveTitle,
+											 showsFullTitles: AppDefaults.timelineShowFullTitles)
 		cell.isPreview = true
 		return cell
 	}
@@ -303,6 +313,12 @@ private extension TimelineCustomizerCollectionViewController {
 			content.text = NSLocalizedString("Thumbnail Size", comment: "Thumbnail Size")
 			content.secondaryText = AppDefaults.timelineThumbnailsDisplay.description
 			cell.accessories = [.popUpMenu(timelineThumbnailsDisplayMenu())]
+		case .fullTitles:
+			content = UIListContentConfiguration.cell()
+			content.text = NSLocalizedString("Full Titles, No Preview", comment: "Timeline Layout: switch that shows whole titles, without the article preview, in the timeline")
+			configureSwitch(cell, isOn: AppDefaults.timelineShowFullTitles) { isOn in
+				AppDefaults.timelineShowFullTitles = isOn
+			}
 		case .fadeReadArticles:
 			content = UIListContentConfiguration.cell()
 			content.text = NSLocalizedString("Fade Read Articles", comment: "Timeline Layout: switch that fades read articles in the timeline")

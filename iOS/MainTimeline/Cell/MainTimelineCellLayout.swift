@@ -68,7 +68,8 @@ extension MainTimelineCellLayout {
 	static func rectForSummary(_ cellData: MainTimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat, _ linesUsed: Int) -> CGRect {
 		let linesLeft = cellData.numberOfLines - linesUsed
 		var r = CGRect.zero
-		if cellData.summary.isEmpty || linesLeft < 1 {
+		// With full titles, the summary shows only when there’s no title.
+		if cellData.summary.isEmpty || linesLeft < 1 || (cellData.showsFullTitles && linesUsed > 0) {
 			return r
 		}
 		r.origin = point
