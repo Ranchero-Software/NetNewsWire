@@ -57,25 +57,34 @@ import RSCore
 		let thumbnailDimension = TimelineCellLayout.thumbnailDimension(cellData, appearance, height)
 		var textBoxRect = TimelineCellLayout.rectForTextBox(appearance, cellData, showIcon, thumbnailDimension, width)
 
-		let (titleRect, numberOfLinesForTitle) = TimelineCellLayout.rectForTitle(textBoxRect, appearance, cellData)
-		let summaryRect = numberOfLinesForTitle > 0 ? TimelineCellLayout.rectForSummary(textBoxRect, titleRect, numberOfLinesForTitle, appearance, cellData) : NSRect.zero
-		let textRect = numberOfLinesForTitle > 0 ? NSRect.zero : TimelineCellLayout.rectForText(textBoxRect, appearance, cellData)
-
-		var lastTextRect = titleRect
-		if numberOfLinesForTitle == 0 {
-			lastTextRect = textRect
-		} else if numberOfLinesForTitle < appearance.numberOfLines {
-			if summaryRect.height > 0.1 {
-				lastTextRect = summaryRect
-			}
+		var bodyRect = textBoxRect
+		var dateRect = NSRect.zero
+		if appearance.feedNameAndDateAboveTitle {
+			dateRect = TimelineCellLayout.rectForDate(textBoxRect, textBoxRect.minY, appearance, cellData)
+			bodyRect.origin.y = dateRect.maxY + appearance.feedNameAndDateBottomMargin
 		}
-		let dateRect = TimelineCellLayout.rectForDate(textBoxRect, lastTextRect, appearance, cellData)
+
+		let (titleRect, numberOfLinesForTitle) = TimelineCellLayout.rectForTitle(bodyRect, appearance, cellData)
+		let summaryRect = numberOfLinesForTitle > 0 ? TimelineCellLayout.rectForSummary(bodyRect, titleRect, numberOfLinesForTitle, appearance, cellData) : NSRect.zero
+		let textRect = numberOfLinesForTitle > 0 ? NSRect.zero : TimelineCellLayout.rectForText(bodyRect, appearance, cellData)
+
+		if !appearance.feedNameAndDateAboveTitle {
+			var lastTextRect = titleRect
+			if numberOfLinesForTitle == 0 {
+				lastTextRect = textRect
+			} else if numberOfLinesForTitle < appearance.numberOfLines {
+				if summaryRect.height > 0.1 {
+					lastTextRect = summaryRect
+				}
+			}
+			dateRect = TimelineCellLayout.rectForDate(textBoxRect, lastTextRect.maxY + appearance.titleBottomMargin, appearance, cellData)
+		}
 		let feedNameRect = TimelineCellLayout.rectForFeedName(textBoxRect, dateRect, appearance, cellData)
 
 		textBoxRect.size.height = ceil([titleRect, summaryRect, textRect, dateRect, feedNameRect].maxY() - textBoxRect.origin.y)
 		let iconImageRect = TimelineCellLayout.rectForIcon(cellData, appearance, showIcon, textBoxRect, width, height)
 		let thumbnailRect = appearance.showsLargeThumbnails ? TimelineCellLayout.rectForLargeThumbnail(cellData, appearance, textBoxRect, iconImageRect, width, height) : TimelineCellLayout.rectForThumbnail(appearance, thumbnailDimension, width)
-		let unreadIndicatorRect = TimelineCellLayout.rectForUnreadIndicator(appearance, textBoxRect)
+		let unreadIndicatorRect = TimelineCellLayout.rectForUnreadIndicator(appearance, textBoxRect, appearance.feedNameAndDateAboveTitle ? dateRect : nil)
 		let starRect = TimelineCellLayout.rectForStar(appearance, unreadIndicatorRect)
 		let separatorRect = TimelineCellLayout.rectForSeparator(cellData, appearance, showIcon ? iconImageRect : titleRect, width, height)
 
@@ -175,12 +184,12 @@ import RSCore
 		return r
 	}
 
-	static func rectForDate(_ textBoxRect: NSRect, _ rectAbove: NSRect, _ appearance: TimelineCellAppearance, _ cellData: TimelineCellData) -> NSRect {
+	static func rectForDate(_ textBoxRect: NSRect, _ originY: CGFloat, _ appearance: TimelineCellAppearance, _ cellData: TimelineCellData) -> NSRect {
 		let textFieldSize = SingleLineTextFieldSizer.size(for: cellData.dateString, font: appearance.dateFont)
 
 		var r = NSRect.zero
 		r.size = textFieldSize
-		r.origin.y = rectAbove.maxY + appearance.titleBottomMargin
+		r.origin.y = originY
 		r.size.width = textFieldSize.width
 
 		r.origin.x = textBoxRect.maxX - textFieldSize.width
@@ -203,12 +212,17 @@ import RSCore
 		return r
 	}
 
-	static func rectForUnreadIndicator(_ appearance: TimelineCellAppearance, _ titleRect: NSRect) -> NSRect {
+	/// Lines up with the title’s first line, or is centered on `firstLineRect` when the feed name and date line is on top.
+	static func rectForUnreadIndicator(_ appearance: TimelineCellAppearance, _ titleRect: NSRect, _ firstLineRect: NSRect?) -> NSRect {
 
 		var r = NSRect.zero
 		r.size = NSSize(width: appearance.unreadCircleDimension, height: appearance.unreadCircleDimension)
 		r.origin.x = appearance.cellPadding.left
-		r.origin.y = titleRect.minY + 6
+		if let firstLineRect {
+			r.origin.y = floor(firstLineRect.midY - (appearance.unreadCircleDimension / 2.0))
+		} else {
+			r.origin.y = titleRect.minY + 6
+		}
 //		r = RSRectCenteredVerticallyInRect(r, titleRect)
 //		r.origin.y += 1
 

@@ -54,7 +54,7 @@ import XCTest
 
 private extension TimelineRowHeightPerformanceTests {
 
-	static let appearance = TimelineCellAppearance(showIcon: true, textSize: .medium, iconSize: .large, numberOfLines: 3, showsFullTitles: false, showsLargeThumbnails: false)
+	static let appearance = TimelineCellAppearance(showIcon: true, textSize: .medium, iconSize: .large, numberOfLines: 3, showsFullTitles: false, feedNameAndDateAboveTitle: false, showsLargeThumbnails: false)
 
 	static func calculateRowHeights(_ articles: [Article]) {
 		for article in articles {

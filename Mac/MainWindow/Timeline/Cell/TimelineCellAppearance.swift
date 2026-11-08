@@ -21,6 +21,9 @@ struct TimelineCellAppearance: Equatable {
 	let dateFont: NSFont
 	let dateMarginLeft: CGFloat = 8.0
 
+	let feedNameAndDateAboveTitle: Bool
+	let feedNameAndDateBottomMargin: CGFloat = 2.0 // Above the title, when feedNameAndDateAboveTitle
+
 	let titleFont: NSFont
 	let titleBottomMargin: CGFloat = 1.0
 	let numberOfLines: Int // Shared by the title and summary, or the title alone when there’s no summary
@@ -53,7 +56,7 @@ struct TimelineCellAppearance: Equatable {
 	let boxLeftMargin: CGFloat
 
 	/// With `showsFullTitles`, the title gets up to `fullTitleMaximumNumberOfLines` lines and there’s no summary.
-	init(showIcon: Bool, textSize: TimelineTextSize, iconSize: IconSize, numberOfLines: Int, showsFullTitles: Bool, showsLargeThumbnails: Bool) {
+	init(showIcon: Bool, textSize: TimelineTextSize, iconSize: IconSize, numberOfLines: Int, showsFullTitles: Bool, feedNameAndDateAboveTitle: Bool, showsLargeThumbnails: Bool) {
 
 		let largeItemFontSize = textSize.pointSize
 		let smallItemFontSize = floor(largeItemFontSize * 0.90)
@@ -68,6 +71,7 @@ struct TimelineCellAppearance: Equatable {
 		self.iconSize = iconSize.size
 		self.numberOfLines = showsFullTitles ? Self.fullTitleMaximumNumberOfLines : numberOfLines
 		self.showsSummary = !showsFullTitles
+		self.feedNameAndDateAboveTitle = feedNameAndDateAboveTitle
 		self.showsLargeThumbnails = showsLargeThumbnails
 
 		cellPadding = NSEdgeInsets(top: 8.0, left: 4.0, bottom: 10.0, right: 4.0)

@@ -19,4 +19,5 @@ extension Notification.Name {
 	static let timelineNumberOfLinesDidChange = Notification.Name("TimelineNumberOfLinesDidChangeNotification")
 	static let timelineShowFullTitlesDidChange = Notification.Name("TimelineShowFullTitlesDidChangeNotification")
 	static let timelineFadeReadArticlesDidChange = Notification.Name("TimelineFadeReadArticlesDidChangeNotification")
+	static let timelineFeedNameAndDateAboveTitleDidChange = Notification.Name("TimelineFeedNameAndDateAboveTitleDidChangeNotification")
 }

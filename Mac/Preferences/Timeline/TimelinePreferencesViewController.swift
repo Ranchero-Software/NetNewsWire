@@ -20,6 +20,7 @@ final class TimelinePreferencesViewController: NSViewController {
 	@IBOutlet var timelineTextSizePopup: NSPopUpButton?
 	@IBOutlet var timelineShowSeparatorsButton: NSButton?
 	@IBOutlet var timelineFadeReadArticlesButton: NSButton?
+	@IBOutlet var timelineFeedNameAndDateAboveTitleButton: NSButton?
 
 	convenience init() {
 		self.init(nibName: "TimelinePreferencesView", bundle: nil)
@@ -49,6 +50,7 @@ final class TimelinePreferencesViewController: NSViewController {
 		updateTimelineRowsControls()
 		updateTimelineShowSeparatorsButton()
 		updateTimelineFadeReadArticlesButton()
+		updateTimelineFeedNameAndDateAboveTitleButton()
 	}
 
 	// MARK: - Notifications
@@ -83,6 +85,10 @@ final class TimelinePreferencesViewController: NSViewController {
 
 	@objc func handleTimelineFadeReadArticlesDidChange(_ notification: Notification) {
 		updateTimelineFadeReadArticlesButton()
+	}
+
+	@objc func handleTimelineFeedNameAndDateAboveTitleDidChange(_ notification: Notification) {
+		updateTimelineFeedNameAndDateAboveTitleButton()
 	}
 
 	// MARK: - Actions
@@ -133,6 +139,10 @@ final class TimelinePreferencesViewController: NSViewController {
 	@IBAction func timelineFadeReadArticlesDidChange(_ sender: NSButton) {
 		AppDefaults.timelineFadeReadArticles = sender.state == .on
 	}
+
+	@IBAction func timelineFeedNameAndDateAboveTitleDidChange(_ sender: NSButton) {
+		AppDefaults.timelineFeedNameAndDateAboveTitle = sender.state == .on
+	}
 }
 
 // MARK: - Private
@@ -148,6 +158,7 @@ private extension TimelinePreferencesViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineShowFullTitlesDidChange(_:)), name: .timelineShowFullTitlesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineShowSeparatorsDidChange(_:)), name: .timelineShowSeparatorsDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFadeReadArticlesDidChange(_:)), name: .timelineFadeReadArticlesDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFeedNameAndDateAboveTitleDidChange(_:)), name: .timelineFeedNameAndDateAboveTitleDidChange, object: nil)
 	}
 
 	func updateTimelineFeedIconsPopup() {
@@ -181,5 +192,9 @@ private extension TimelinePreferencesViewController {
 
 	func updateTimelineFadeReadArticlesButton() {
 		timelineFadeReadArticlesButton?.state = AppDefaults.timelineFadeReadArticles ? .on : .off
+	}
+
+	func updateTimelineFeedNameAndDateAboveTitleButton() {
+		timelineFeedNameAndDateAboveTitleButton?.state = AppDefaults.timelineFeedNameAndDateAboveTitle ? .on : .off
 	}
 }

@@ -263,6 +263,13 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			}
 		}
 	}
+	private var feedNameAndDateAboveTitle = AppDefaults.timelineFeedNameAndDateAboveTitle {
+		didSet {
+			if feedNameAndDateAboveTitle != oldValue {
+				cellAppearanceSettingDidChange()
+			}
+		}
+	}
 	private var fadesReadArticles = AppDefaults.timelineFadeReadArticles {
 		didSet {
 			if fadesReadArticles != oldValue {
@@ -304,6 +311,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		textSize = AppDefaults.timelineTextSize
 		numberOfLines = AppDefaults.timelineNumberOfLines
 		showFullTitles = AppDefaults.timelineShowFullTitles
+		feedNameAndDateAboveTitle = AppDefaults.timelineFeedNameAndDateAboveTitle
 		fadesReadArticles = AppDefaults.timelineFadeReadArticles
 		updateGridStyle()
 		thumbnailsDisplay = AppDefaults.timelineThumbnailsDisplay
@@ -343,6 +351,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineTextSizeDidChange(_:)), name: .timelineTextSizeDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineNumberOfLinesDidChange(_:)), name: .timelineNumberOfLinesDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineShowFullTitlesDidChange(_:)), name: .timelineShowFullTitlesDidChange, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFeedNameAndDateAboveTitleDidChange(_:)), name: .timelineFeedNameAndDateAboveTitleDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFadeReadArticlesDidChange(_:)), name: .timelineFadeReadArticlesDidChange, object: nil)
 			didRegisterForNotifications = true
 		}
@@ -853,6 +862,10 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	@objc func handleTimelineShowFullTitlesDidChange(_ notification: Notification) {
 		showFullTitles = AppDefaults.timelineShowFullTitles
+	}
+
+	@objc func handleTimelineFeedNameAndDateAboveTitleDidChange(_ notification: Notification) {
+		feedNameAndDateAboveTitle = AppDefaults.timelineFeedNameAndDateAboveTitle
 	}
 
 	@objc func handleTimelineFadeReadArticlesDidChange(_ notification: Notification) {
@@ -1681,8 +1694,8 @@ private extension TimelineViewController {
 
 	private func updateCellAppearances() {
 		let iconSize = AppDefaults.timelineIconSize
-		cellAppearance = TimelineCellAppearance(showIcon: false, textSize: textSize, iconSize: iconSize, numberOfLines: numberOfLines, showsFullTitles: showFullTitles, showsLargeThumbnails: thumbnailsDisplay == .large)
-		cellAppearanceWithIcon = TimelineCellAppearance(showIcon: true, textSize: textSize, iconSize: iconSize, numberOfLines: numberOfLines, showsFullTitles: showFullTitles, showsLargeThumbnails: thumbnailsDisplay == .large)
+		cellAppearance = TimelineCellAppearance(showIcon: false, textSize: textSize, iconSize: iconSize, numberOfLines: numberOfLines, showsFullTitles: showFullTitles, feedNameAndDateAboveTitle: feedNameAndDateAboveTitle, showsLargeThumbnails: thumbnailsDisplay == .large)
+		cellAppearanceWithIcon = TimelineCellAppearance(showIcon: true, textSize: textSize, iconSize: iconSize, numberOfLines: numberOfLines, showsFullTitles: showFullTitles, feedNameAndDateAboveTitle: feedNameAndDateAboveTitle, showsLargeThumbnails: thumbnailsDisplay == .large)
 	}
 
 	private func cellAppearanceSettingDidChange() {

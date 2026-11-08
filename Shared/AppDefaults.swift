@@ -36,6 +36,7 @@ enum AppDefaults {
 		static let timelineNumberOfLines = "timelineNumberOfLines"
 		static let timelineShowFullTitles = "timelineShowFullTitles"
 		static let timelineFadeReadArticles = "timelineFadeReadArticles"
+		static let timelineFeedNameAndDateAboveTitle = "timelineFeedNameAndDateAboveTitle"
 	}
 
 	/// Registered by both platforms. Each platform’s registerDefaults adds its own.
@@ -55,7 +56,8 @@ enum AppDefaults {
 			Key.showStarredFeed: true,
 			Key.timelineTextSize: TimelineTextSize.medium.rawValue,
 			Key.timelineShowFullTitles: false,
-			Key.timelineFadeReadArticles: false
+			Key.timelineFadeReadArticles: false,
+			Key.timelineFeedNameAndDateAboveTitle: false
 		]
 	}
 
@@ -259,6 +261,17 @@ enum AppDefaults {
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.timelineFadeReadArticles)
 			NotificationCenter.default.post(name: .timelineFadeReadArticlesDidChange, object: nil)
+		}
+	}
+
+	/// The feed name (or author) and date line goes above the title instead of below the text.
+	static var timelineFeedNameAndDateAboveTitle: Bool {
+		get {
+			UserDefaults.standard.bool(forKey: Key.timelineFeedNameAndDateAboveTitle)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.timelineFeedNameAndDateAboveTitle)
+			NotificationCenter.default.post(name: .timelineFeedNameAndDateAboveTitleDidChange, object: nil)
 		}
 	}
 }
