@@ -210,7 +210,10 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			guard let self else {
 				return nil
 			}
-			if indexPath.section == 0 { return UISwipeActionsConfiguration(actions: []) }
+			// The smart feeds section has an empty identifier. It’s absent when every smart feed is hidden.
+			if let sectionID = self.dataSource.sectionIdentifier(for: indexPath.section), sectionID.isEmpty {
+				return UISwipeActionsConfiguration(actions: [])
+			}
 			var actions = [UIContextualAction]()
 
 			// Set up the delete action
@@ -840,9 +843,6 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 	private func findHeaderViewForAccount(_ account: Account) -> MainFeedCollectionHeaderReusableView? {
 		guard let sectionIndex = dataSource.snapshot().sectionIdentifiers.firstIndex(of: account.accountID) else {
-			return nil
-		}
-		guard sectionIndex > 0 else { // Skip smart feeds.
 			return nil
 		}
 

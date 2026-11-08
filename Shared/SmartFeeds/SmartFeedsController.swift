@@ -36,6 +36,10 @@ import Account
 		return feeds
 	}
 
+	func isShown(_ smartFeed: SidebarItem) -> Bool {
+		shownSmartFeeds.contains { $0.sidebarItemID == smartFeed.sidebarItemID }
+	}
+
 	private init() {
 		self.smartFeeds = [todayFeed, unreadFeed, starredFeed]
 	}

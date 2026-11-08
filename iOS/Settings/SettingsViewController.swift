@@ -79,6 +79,9 @@ final class SettingsViewController: UITableViewController {
 	@IBOutlet var openLinksInNetNewsWire: UISwitch!
 	@IBOutlet var enableJavaScriptSwitch: UISwitch!
 	@IBOutlet var sidebarShowsIconsSwitch: UISwitch?
+	@IBOutlet var showTodayFeedSwitch: UISwitch?
+	@IBOutlet var showUnreadFeedSwitch: UISwitch?
+	@IBOutlet var showStarredFeedSwitch: UISwitch?
 
 	var scrollToArticlesSection = false
 	weak var presentingParentController: UIViewController?
@@ -97,6 +100,7 @@ final class SettingsViewController: UITableViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUserInterfaceColorPaletteDidUpdate(_:)), name: .userInterfaceColorPaletteDidUpdate, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarShowsIconsDidChange(_:)), name: .sidebarShowsIconsDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarSmartFeedsVisibilityDidChange(_:)), name: .sidebarSmartFeedsVisibilityDidChange, object: nil)
 
 		tableView.register(UINib(nibName: "SettingsComboTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsComboTableViewCell")
 		tableView.register(UINib(nibName: "SettingsTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsTableViewCell")
@@ -109,6 +113,7 @@ final class SettingsViewController: UITableViewController {
 		updateColorPalettePopUpButton()
 		updateUnreadCountDisplayPopUpButton()
 		updateSidebarShowsIconsSwitch()
+		updateSmartFeedsSwitches()
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
@@ -368,6 +373,18 @@ final class SettingsViewController: UITableViewController {
 		AppDefaults.sidebarShowsIcons = sender.isOn
 	}
 
+	@IBAction func switchShowTodayFeed(_ sender: UISwitch) {
+		AppDefaults.showTodayFeed = sender.isOn
+	}
+
+	@IBAction func switchShowUnreadFeed(_ sender: UISwitch) {
+		AppDefaults.showUnreadFeed = sender.isOn
+	}
+
+	@IBAction func switchShowStarredFeed(_ sender: UISwitch) {
+		AppDefaults.showStarredFeed = sender.isOn
+	}
+
 	@IBAction func switchTimelineOrder(_ sender: Any) {
 		if timelineSortOrderSwitch.isOn {
 			AppDefaults.timelineSortDirection = .orderedAscending
@@ -450,6 +467,10 @@ final class SettingsViewController: UITableViewController {
 		updateSidebarShowsIconsSwitch()
 	}
 
+	@objc func handleSidebarSmartFeedsVisibilityDidChange(_ notification: Notification) {
+		updateSmartFeedsSwitches()
+	}
+
 }
 
 // MARK: - OPML Document Picker
@@ -526,6 +547,12 @@ private extension SettingsViewController {
 
 	func updateSidebarShowsIconsSwitch() {
 		sidebarShowsIconsSwitch?.isOn = AppDefaults.sidebarShowsIcons
+	}
+
+	func updateSmartFeedsSwitches() {
+		showTodayFeedSwitch?.isOn = AppDefaults.showTodayFeed
+		showUnreadFeedSwitch?.isOn = AppDefaults.showUnreadFeed
+		showStarredFeedSwitch?.isOn = AppDefaults.showStarredFeed
 	}
 
 	func addFeed() {

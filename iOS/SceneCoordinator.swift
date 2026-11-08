@@ -398,6 +398,7 @@ struct SidebarItemNode: Hashable, Sendable {
 		NotificationCenter.default.addObserver(self, selector: #selector(updateNavigationBarSubtitles(_:)), name: .progressInfoDidChange, object: CombinedRefreshProgress.shared)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFeedIconsDisplayDidChange(_:)), name: .timelineFeedIconsDisplayDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarSmartFeedsVisibilityDidChange(_:)), name: .sidebarSmartFeedsVisibilityDidChange, object: nil)
 
 		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
 			Task { @MainActor in
@@ -523,6 +524,9 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func selectFirstUnreadInAllUnread() {
+		guard SmartFeedsController.shared.isShown(SmartFeedsController.shared.unreadFeed) else {
+			return
+		}
 		markExpanded(SmartFeedsController.shared)
 		self.ensureFeedIsAvailableToSelect(SmartFeedsController.shared.unreadFeed) {
 			self.selectFeed(SmartFeedsController.shared.unreadFeed) {
@@ -707,6 +711,16 @@ struct SidebarItemNode: Hashable, Sendable {
 
 	@objc func handleUnreadCountDisplaySettingDidChange(_ notification: Notification) {
 		updateNavigationBarSubtitles(nil)
+	}
+
+	/// Clears the selection when the selected smart feed is hidden, the same as on Mac.
+	@objc func handleSidebarSmartFeedsVisibilityDidChange(_ notification: Notification) {
+		rebuildBackingStores(completion: {
+			guard let timelineFeed = self.timelineFeed, let sidebarItemID = timelineFeed.sidebarItemID, SmartFeedsController.shared.find(by: sidebarItemID) != nil, !SmartFeedsController.shared.isShown(timelineFeed) else {
+				return
+			}
+			self.selectSidebarItem(indexPath: nil)
+		})
 	}
 
 	@objc func handleTimelineFeedIconsDisplayDidChange(_ notification: Notification) {
@@ -1167,23 +1181,25 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func selectTodayFeed(completion: (() -> Void)? = nil) {
-		markExpanded(SmartFeedsController.shared)
-		self.ensureFeedIsAvailableToSelect(SmartFeedsController.shared.todayFeed) {
-			self.selectFeed(SmartFeedsController.shared.todayFeed, animations: [.navigation, .scroll], completion: completion)
-		}
+		selectSmartFeed(SmartFeedsController.shared.todayFeed, completion: completion)
 	}
 
 	func selectAllUnreadFeed(completion: (() -> Void)? = nil) {
-		markExpanded(SmartFeedsController.shared)
-		self.ensureFeedIsAvailableToSelect(SmartFeedsController.shared.unreadFeed) {
-			self.selectFeed(SmartFeedsController.shared.unreadFeed, animations: [.navigation, .scroll], completion: completion)
-		}
+		selectSmartFeed(SmartFeedsController.shared.unreadFeed, completion: completion)
 	}
 
 	func selectStarredFeed(completion: (() -> Void)? = nil) {
+		selectSmartFeed(SmartFeedsController.shared.starredFeed, completion: completion)
+	}
+
+	/// Does nothing when the smart feed is hidden, since it isn’t in the sidebar to select.
+	private func selectSmartFeed(_ smartFeed: SidebarItem, completion: (() -> Void)?) {
+		guard SmartFeedsController.shared.isShown(smartFeed) else {
+			return
+		}
 		markExpanded(SmartFeedsController.shared)
-		self.ensureFeedIsAvailableToSelect(SmartFeedsController.shared.starredFeed) {
-			self.selectFeed(SmartFeedsController.shared.starredFeed, animations: [.navigation, .scroll], completion: completion)
+		ensureFeedIsAvailableToSelect(smartFeed) {
+			self.selectFeed(smartFeed, animations: [.navigation, .scroll], completion: completion)
 		}
 	}
 
