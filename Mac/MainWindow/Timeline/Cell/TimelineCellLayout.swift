@@ -176,7 +176,7 @@ import RSCore
 			return r
 		}
 
-		let sizeInfo = MultilineTextFieldSizer.size(for: cellData.text, font: appearance.textOnlyFont, numberOfLines: appearance.numberOfLines, width: Int(textBoxRect.width))
+		let sizeInfo = MultilineTextFieldSizer.size(for: cellData.text, font: appearance.textOnlyFont, numberOfLines: appearance.textOnlyNumberOfLines, width: Int(textBoxRect.width))
 		r.size.height = sizeInfo.size.height
 		if sizeInfo.numberOfLinesUsed < 1 {
 			r.size.height = 0

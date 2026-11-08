@@ -14,6 +14,7 @@ import Images
 
 	private static let noText = NSLocalizedString("(No Text)", comment: "No Text")
 	static let fullTitleMaximumNumberOfLines = 12
+	static let fullTitleSummaryOnlyMaximumNumberOfLines = 4
 
 	let accountID: String
 	let articleID: String
@@ -38,6 +39,7 @@ import Images
 	let showsFullTitles: Bool
 
 	/// With `showsFullTitles`, the title gets up to `fullTitleMaximumNumberOfLines` lines and there’s no summary.
+	/// An article with no title gets up to `fullTitleSummaryOnlyMaximumNumberOfLines` lines of summary instead.
 	init(article: Article, showFeedName: ShowFeedName, feedName: String?, byline: String?, iconImage: IconImage?, showIcon: Bool, numberOfLines: Int, iconSize: IconSize, thumbnail: UIImage?, showThumbnail: Bool, thumbnailsDisplay: TimelineThumbnailsDisplay, fadesReadArticles: Bool, feedNameAndDateAboveTitle: Bool, showsFullTitles: Bool) {
 
 		self.accountID = article.accountID

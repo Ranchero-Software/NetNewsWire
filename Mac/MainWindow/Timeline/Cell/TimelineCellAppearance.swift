@@ -28,7 +28,9 @@ struct TimelineCellAppearance: Equatable {
 	let titleBottomMargin: CGFloat = 1.0
 	let numberOfLines: Int // Shared by the title and summary, or the title alone when there’s no summary
 	let showsSummary: Bool
+	let textOnlyNumberOfLines: Int // For the text when there’s no title
 	static let fullTitleMaximumNumberOfLines = 12
+	static let fullTitleTextOnlyMaximumNumberOfLines = 4
 
 	let textFont: NSFont
 
@@ -56,6 +58,7 @@ struct TimelineCellAppearance: Equatable {
 	let boxLeftMargin: CGFloat
 
 	/// With `showsFullTitles`, the title gets up to `fullTitleMaximumNumberOfLines` lines and there’s no summary.
+	/// An article with no title gets up to `fullTitleTextOnlyMaximumNumberOfLines` lines of text instead.
 	init(showIcon: Bool, textSize: TimelineTextSize, iconSize: IconSize, numberOfLines: Int, showsFullTitles: Bool, feedNameAndDateAboveTitle: Bool, showsLargeThumbnails: Bool) {
 
 		let largeItemFontSize = textSize.pointSize
@@ -71,6 +74,7 @@ struct TimelineCellAppearance: Equatable {
 		self.iconSize = iconSize.size
 		self.numberOfLines = showsFullTitles ? Self.fullTitleMaximumNumberOfLines : numberOfLines
 		self.showsSummary = !showsFullTitles
+		self.textOnlyNumberOfLines = showsFullTitles ? Self.fullTitleTextOnlyMaximumNumberOfLines : numberOfLines
 		self.feedNameAndDateAboveTitle = feedNameAndDateAboveTitle
 		self.showsLargeThumbnails = showsLargeThumbnails
 
