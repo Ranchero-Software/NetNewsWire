@@ -118,6 +118,8 @@ struct MainTimelineDefaultCellLayout: MainTimelineCellLayout {
 	static var dateFont: UIFont { UIFont.preferredFont(forTextStyle: .footnote) }
 	static let dateMarginBottom = CGFloat(1)
 
+	static let feedNameAndDateBottomMargin = CGFloat(2) // Above the title, when feedNameAndDateAboveTitle
+
 	static var summaryFont: UIFont { UIFont.preferredFont(forTextStyle: .body) }
 
 	static let thumbnailDimension = CGFloat(76)
@@ -143,8 +145,8 @@ struct MainTimelineDefaultCellLayout: MainTimelineCellLayout {
 		currentPoint.x = Self.cellPadding.left + insets.left + Self.unreadCircleMarginLeft
 		currentPoint.y = Self.cellPadding.top
 
-		self.unreadIndicatorRect = Self.rectForUnreadIndicator(currentPoint)
-		self.starRect = Self.rectForStar(currentPoint)
+		var unreadIndicatorRect = Self.rectForUnreadIndicator(currentPoint)
+		var starRect = Self.rectForStar(currentPoint)
 
 		currentPoint.x += Self.unreadCircleDimension + Self.unreadCircleMarginRight
 
@@ -161,6 +163,16 @@ struct MainTimelineDefaultCellLayout: MainTimelineCellLayout {
 		let textAreaWidth = rightEdge - currentPoint.x - smallThumbnailSpace
 		self.separatorRect = CGRect(x: currentPoint.x, y: 0, width: rightEdge - currentPoint.x, height: 0)
 
+		var feedNameRect = CGRect.zero
+		var dateRect = CGRect.zero
+		if cellData.feedNameAndDateAboveTitle {
+			(feedNameRect, dateRect) = Self.rectsForFeedNameAndDate(cellData, currentPoint, textAreaWidth)
+			currentPoint.y = [feedNameRect, dateRect].maxY() + Self.feedNameAndDateBottomMargin
+			// Centered on the feed name and date line, which is the first line.
+			unreadIndicatorRect.origin.y = floor(dateRect.midY - (unreadIndicatorRect.height / 2.0))
+			starRect.origin.y = floor(dateRect.midY - (starRect.height / 2.0))
+		}
+
 		let (titleRect, numberOfLinesForTitle) = Self.rectForTitle(cellData, currentPoint, textAreaWidth)
 		self.titleRect = titleRect
 
@@ -169,18 +181,23 @@ struct MainTimelineDefaultCellLayout: MainTimelineCellLayout {
 		}
 		self.summaryRect = Self.rectForSummary(cellData, currentPoint, textAreaWidth, numberOfLinesForTitle)
 
-		var y = [self.titleRect, self.summaryRect].maxY()
-		if y == 0 {
-			y = iconImageRect.origin.y + iconImageRect.height
-			let tmp = Self.rectForDate(cellData, currentPoint, textAreaWidth)
-			y -= tmp.height
+		if !cellData.feedNameAndDateAboveTitle {
+			var y = [self.titleRect, self.summaryRect].maxY()
+			if y == 0 {
+				y = iconImageRect.origin.y + iconImageRect.height
+				let tmp = Self.rectForDate(cellData, currentPoint, textAreaWidth)
+				y -= tmp.height
+			}
+			currentPoint.y = y
+			(feedNameRect, dateRect) = Self.rectsForFeedNameAndDate(cellData, currentPoint, textAreaWidth)
 		}
-		currentPoint.y = y
 
-		self.dateRect = Self.rectForDate(cellData, currentPoint, textAreaWidth)
+		self.feedNameRect = feedNameRect
+		self.dateRect = dateRect
+		self.unreadIndicatorRect = unreadIndicatorRect
+		self.starRect = starRect
 
-		let feedNameWidth = textAreaWidth - (Self.feedRightMargin + self.dateRect.size.width)
-		self.feedNameRect = Self.rectForFeedName(cellData, currentPoint, feedNameWidth)
+		let textMaxY = [self.titleRect, self.summaryRect, self.feedNameRect, self.dateRect].maxY()
 
 		if showsSmallThumbnail {
 			// Top right. The cell grows if needed to fit it.
@@ -188,13 +205,21 @@ struct MainTimelineDefaultCellLayout: MainTimelineCellLayout {
 		} else if cellData.showThumbnail && cellData.thumbnailsDisplay == .large {
 			// Below the text and icon, from the icon’s left edge (or the text’s) to the right padding.
 			let originX = cellData.showIcon ? self.iconImageRect.minX : currentPoint.x
-			let originY = ceil(max([self.feedNameRect, self.dateRect].maxY(), self.iconImageRect.maxY) + Self.largeThumbnailMarginTop)
+			let originY = ceil(max(textMaxY, self.iconImageRect.maxY) + Self.largeThumbnailMarginTop)
 			self.thumbnailRect = CGRect(x: originX, y: originY, width: rightEdge - originX, height: Self.largeThumbnailHeight)
 		} else {
 			self.thumbnailRect = CGRect.zero
 		}
 
-		self.height = [self.iconImageRect, self.feedNameRect, self.dateRect, self.thumbnailRect].maxY() + Self.cellPadding.bottom
+		self.height = max(textMaxY, [self.iconImageRect, self.thumbnailRect].maxY()) + Self.cellPadding.bottom
+	}
+
+	/// One line: the feed name at the left and the date at the right.
+	static func rectsForFeedNameAndDate(_ cellData: MainTimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> (feedNameRect: CGRect, dateRect: CGRect) {
+		let dateRect = Self.rectForDate(cellData, point, textAreaWidth)
+		let feedNameWidth = textAreaWidth - (Self.feedRightMargin + dateRect.size.width)
+		let feedNameRect = Self.rectForFeedName(cellData, point, feedNameWidth)
+		return (feedNameRect, dateRect)
 	}
 
 	static func rectForDate(_ cellData: MainTimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> CGRect {
@@ -243,6 +268,13 @@ struct MainTimelineAccessibilityCellLayout: MainTimelineCellLayout {
 		let textAreaWidth = width - (currentPoint.x + MainTimelineDefaultCellLayout.cellPadding.right + insets.right)
 		self.separatorRect = CGRect(x: currentPoint.x, y: 0, width: textAreaWidth, height: 0)
 
+		var feedNameRect = CGRect.zero
+		var dateRect = CGRect.zero
+		if cellData.feedNameAndDateAboveTitle {
+			(feedNameRect, dateRect) = Self.rectsForFeedNameAndDate(cellData, currentPoint, textAreaWidth)
+			currentPoint.y = dateRect.maxY + MainTimelineDefaultCellLayout.feedNameAndDateBottomMargin
+		}
+
 		let (titleRect, numberOfLinesForTitle) = Self.rectForTitle(cellData, currentPoint, textAreaWidth)
 		self.titleRect = titleRect
 
@@ -251,20 +283,19 @@ struct MainTimelineAccessibilityCellLayout: MainTimelineCellLayout {
 		}
 		self.summaryRect = Self.rectForSummary(cellData, currentPoint, textAreaWidth, numberOfLinesForTitle)
 
-		currentPoint.y = [self.titleRect, self.summaryRect].maxY()
-
-		if cellData.showFeedName != .none {
-			self.feedNameRect = Self.rectForFeedName(cellData, currentPoint, textAreaWidth)
-			currentPoint.y = self.feedNameRect.maxY
-		} else {
-			self.feedNameRect = CGRect.zero
+		if !cellData.feedNameAndDateAboveTitle {
+			currentPoint.y = [self.titleRect, self.summaryRect].maxY()
+			(feedNameRect, dateRect) = Self.rectsForFeedNameAndDate(cellData, currentPoint, textAreaWidth)
 		}
 
-		self.dateRect = Self.rectForDate(cellData, currentPoint, textAreaWidth)
+		self.feedNameRect = feedNameRect
+		self.dateRect = dateRect
 
-		// Below the date, at the text’s left edge. Large spans the text area.
+		let textMaxY = [self.titleRect, self.summaryRect, self.feedNameRect, self.dateRect].maxY()
+
+		// Below the text, at the text’s left edge. Large spans the text area.
 		if cellData.showThumbnail && cellData.thumbnailsDisplay != .none {
-			let originY = ceil(self.dateRect.maxY + MainTimelineDefaultCellLayout.largeThumbnailMarginTop)
+			let originY = ceil(textMaxY + MainTimelineDefaultCellLayout.largeThumbnailMarginTop)
 			if cellData.thumbnailsDisplay == .large {
 				self.thumbnailRect = CGRect(x: currentPoint.x, y: originY, width: textAreaWidth, height: MainTimelineDefaultCellLayout.largeThumbnailHeight)
 			} else {
@@ -274,7 +305,19 @@ struct MainTimelineAccessibilityCellLayout: MainTimelineCellLayout {
 			self.thumbnailRect = CGRect.zero
 		}
 
-		self.height = [self.dateRect, self.thumbnailRect].maxY() + MainTimelineDefaultCellLayout.cellPadding.bottom
+		self.height = max(textMaxY, self.thumbnailRect.maxY) + MainTimelineDefaultCellLayout.cellPadding.bottom
+	}
+
+	/// Two lines: the feed name, when shown, and then the date.
+	static func rectsForFeedNameAndDate(_ cellData: MainTimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> (feedNameRect: CGRect, dateRect: CGRect) {
+		var datePoint = point
+		var feedNameRect = CGRect.zero
+		if cellData.showFeedName != .none {
+			feedNameRect = Self.rectForFeedName(cellData, point, textAreaWidth)
+			datePoint.y = feedNameRect.maxY
+		}
+		let dateRect = Self.rectForDate(cellData, datePoint, textAreaWidth)
+		return (feedNameRect, dateRect)
 	}
 
 	static func rectForDate(_ cellData: MainTimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> CGRect {

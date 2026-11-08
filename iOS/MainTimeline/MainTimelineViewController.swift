@@ -23,6 +23,7 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 	private var iconSize = IconSize.medium
 	private var thumbnailsDisplay = TimelineThumbnailsDisplay.none
 	private var fadesReadArticles = false
+	private var feedNameAndDateAboveTitle = false
 	private var articleIDsToReload = Set<String>()
 	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
 	private lazy var filterButton = UIBarButtonItem(image: Assets.Images.filter, style: .plain, target: self, action: #selector(toggleFilter(_:)))
@@ -191,6 +192,7 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 		iconSize = AppDefaults.timelineIconSize
 		thumbnailsDisplay = AppDefaults.timelineThumbnailsDisplay
 		fadesReadArticles = AppDefaults.timelineFadeReadArticles
+		feedNameAndDateAboveTitle = AppDefaults.timelineFeedNameAndDateAboveTitle
 
 		assert(collectionView?.refreshControl != nil)
 		collectionView?.refreshControl = UIRefreshControl()
@@ -760,6 +762,7 @@ private extension MainTimelineViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(timelineNumberOfLinesDidChange(_:)), name: .timelineNumberOfLinesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineThumbnailsDisplayDidChange(_:)), name: .timelineThumbnailsDisplayDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFadeReadArticlesDidChange(_:)), name: .timelineFadeReadArticlesDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFeedNameAndDateAboveTitleDidChange(_:)), name: .timelineFeedNameAndDateAboveTitleDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleThumbnailDidBecomeAvailable(_:)), name: .thumbnailDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThumbnailDownloadDidFail(_:)), name: .articleThumbnailDownloadDidFail, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleNetworkStatusDidChange(_:)), name: .networkStatusDidChange, object: nil)
@@ -994,7 +997,7 @@ private extension MainTimelineViewController {
 			showThumbnail = true
 			thumbnail = ThumbnailDownloader.shared.thumbnail(url: thumbnailURL, mode: thumbnailMode, articleTitle: article.title)
 		}
-		let cellData = MainTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, numberOfLines: numberOfTextLines, iconSize: iconSize, thumbnail: thumbnail, showThumbnail: showThumbnail, thumbnailsDisplay: thumbnailsDisplay, fadesReadArticles: fadesReadArticles)
+		let cellData = MainTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, numberOfLines: numberOfTextLines, iconSize: iconSize, thumbnail: thumbnail, showThumbnail: showThumbnail, thumbnailsDisplay: thumbnailsDisplay, fadesReadArticles: fadesReadArticles, feedNameAndDateAboveTitle: feedNameAndDateAboveTitle)
 		return cellData
 	}
 
@@ -1193,6 +1196,14 @@ private extension MainTimelineViewController {
 		}
 		fadesReadArticles = AppDefaults.timelineFadeReadArticles
 		reloadVisibleCells()
+	}
+
+	@objc func handleTimelineFeedNameAndDateAboveTitleDidChange(_ notification: Notification) {
+		guard feedNameAndDateAboveTitle != AppDefaults.timelineFeedNameAndDateAboveTitle else {
+			return
+		}
+		feedNameAndDateAboveTitle = AppDefaults.timelineFeedNameAndDateAboveTitle
+		reloadAllCells()
 	}
 
 	@objc func handleThumbnailDidBecomeAvailable(_ notification: Notification) {

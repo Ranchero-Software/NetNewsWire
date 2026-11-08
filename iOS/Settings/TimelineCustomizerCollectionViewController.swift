@@ -36,6 +36,7 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 		case feedIcons
 		case thumbnails
 		case fadeReadArticles
+		case feedNameAndDateAboveTitle
 	}
 
 	private var previewArticle: Article {
@@ -71,7 +72,7 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 	private var cachedIconSize: IconSize = AppDefaults.timelineIconSize
 
 	// Created up front, since UIKit disallows creating a registration in cellForItemAt.
-	private let optionsCellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, OptionsRow> { cell, _, optionsRow in
+	private let optionsCellRegistration = UICollectionView.CellRegistration<TimelineCustomizerOptionsCell, OptionsRow> { cell, _, optionsRow in
 		TimelineCustomizerCollectionViewController.configureOptionsCell(cell, optionsRow: optionsRow)
 	}
 
@@ -97,6 +98,7 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFeedIconsDisplayDidChange(_:)), name: .timelineFeedIconsDisplayDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineThumbnailsDisplayDidChange(_:)), name: .timelineThumbnailsDisplayDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFadeReadArticlesDidChange(_:)), name: .timelineFadeReadArticlesDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFeedNameAndDateAboveTitleDidChange(_:)), name: .timelineFeedNameAndDateAboveTitleDidChange, object: nil)
 
 		configureCollectionView()
 	}
@@ -223,6 +225,10 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 	@objc func handleTimelineFadeReadArticlesDidChange(_ notification: Notification) {
 		reloadOptionsRowsAndPreviews()
 	}
+
+	@objc func handleTimelineFeedNameAndDateAboveTitleDidChange(_ notification: Notification) {
+		reloadOptionsRowsAndPreviews()
+	}
 }
 
 // MARK: - Private
@@ -279,12 +285,13 @@ private extension TimelineCustomizerCollectionViewController {
 											 thumbnail: Assets.Images.timelinePreviewThumbnail,
 											 showThumbnail: section.showsThumbnail,
 											 thumbnailsDisplay: AppDefaults.timelineThumbnailsDisplay,
-											 fadesReadArticles: AppDefaults.timelineFadeReadArticles)
+											 fadesReadArticles: AppDefaults.timelineFadeReadArticles,
+											 feedNameAndDateAboveTitle: AppDefaults.timelineFeedNameAndDateAboveTitle)
 		cell.isPreview = true
 		return cell
 	}
 
-	static private func configureOptionsCell(_ cell: UICollectionViewListCell, optionsRow: OptionsRow) {
+	static private func configureOptionsCell(_ cell: TimelineCustomizerOptionsCell, optionsRow: OptionsRow) {
 		// The pop-up menu accessory shows only a chevron, so the value cell’s secondary text shows the current choice.
 		var content = UIListContentConfiguration.valueCell()
 		switch optionsRow {
@@ -299,13 +306,15 @@ private extension TimelineCustomizerCollectionViewController {
 		case .fadeReadArticles:
 			content = UIListContentConfiguration.cell()
 			content.text = NSLocalizedString("Fade Read Articles", comment: "Timeline Layout: switch that fades read articles in the timeline")
-			let fadeReadArticlesSwitch = UISwitch(frame: .zero, primaryAction: UIAction { action in
-				if let fadeReadArticlesSwitch = action.sender as? UISwitch {
-					AppDefaults.timelineFadeReadArticles = fadeReadArticlesSwitch.isOn
-				}
-			})
-			fadeReadArticlesSwitch.isOn = AppDefaults.timelineFadeReadArticles
-			cell.accessories = [.customView(configuration: .init(customView: fadeReadArticlesSwitch, placement: .trailing()))]
+			configureSwitch(cell, isOn: AppDefaults.timelineFadeReadArticles) { isOn in
+				AppDefaults.timelineFadeReadArticles = isOn
+			}
+		case .feedNameAndDateAboveTitle:
+			content = UIListContentConfiguration.cell()
+			content.text = NSLocalizedString("Feed Name and Date Above Title", comment: "Timeline Layout: switch that shows the feed name and date above the title in the timeline")
+			configureSwitch(cell, isOn: AppDefaults.timelineFeedNameAndDateAboveTitle) { isOn in
+				AppDefaults.timelineFeedNameAndDateAboveTitle = isOn
+			}
 		}
 		cell.contentConfiguration = content
 
@@ -316,6 +325,12 @@ private extension TimelineCustomizerCollectionViewController {
 			backgroundConfig.cornerRadius = 20
 			cell.backgroundConfiguration = backgroundConfig
 		}
+	}
+
+	static func configureSwitch(_ cell: TimelineCustomizerOptionsCell, isOn: Bool, switchDidChange: @escaping (Bool) -> Void) {
+		cell.switchControl.isOn = isOn
+		cell.switchDidChange = switchDidChange
+		cell.accessories = [.customView(configuration: .init(customView: cell.switchControl, placement: .trailing()))]
 	}
 
 	static func timelineFeedIconsDisplayMenu() -> UIMenu {
@@ -350,4 +365,23 @@ private extension TimelineCustomizerCollectionViewController {
 			reloadPreviews()
 		}
 	}
+}
+
+// MARK: - TimelineCustomizerOptionsCell
+
+/// Keeps one switch for the cell’s lifetime, since a new switch on every reconfigure animates into place.
+final class TimelineCustomizerOptionsCell: UICollectionViewListCell {
+
+	var switchDidChange: ((Bool) -> Void)?
+
+	lazy var switchControl: UISwitch = {
+		let switchControl = UISwitch()
+		switchControl.addAction(UIAction { [weak self] _ in
+			guard let self else {
+				return
+			}
+			self.switchDidChange?(self.switchControl.isOn)
+		}, for: .valueChanged)
+		return switchControl
+	}()
 }

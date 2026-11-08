@@ -627,6 +627,9 @@
     "Feed Inspector" : {
       "comment" : "Feed Inspector window title"
     },
+    "Feed Name and Date Above Title" : {
+      "comment" : "Timeline Layout: switch that shows the feed name and date above the title in the timeline"
+    },
     "Feeds" : {
       "comment" : "Feeds"
     },
