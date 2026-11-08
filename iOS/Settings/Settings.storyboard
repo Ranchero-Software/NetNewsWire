@@ -385,6 +385,39 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" id="pTc-Mp-c01" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
+                                        <rect key="frame" x="20" y="633" width="374" height="51.5"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="pTc-Mp-c01" id="pTc-Mp-c02">
+                                            <rect key="frame" x="0.0" y="0.0" width="374" height="51.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="Show Previews in Context Menus" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pTc-Mp-c03">
+                                                    <rect key="frame" x="20" y="15" width="191.5" height="21.5"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="pTc-Mp-c04">
+                                                    <rect key="frame" x="293" y="12" width="63" height="28"/>
+                                                    <color key="onTintColor" name="primaryAccentColor"/>
+                                                    <connections>
+                                                        <action selector="switchShowPreviewInTimelineContextMenu:" destination="a0p-rk-skQ" eventType="valueChanged" id="pTc-Mp-c05"/>
+                                                    </connections>
+                                                </switch>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="pTc-Mp-c03" firstAttribute="top" secondItem="pTc-Mp-c02" secondAttribute="topMargin" id="pTc-Mp-c06"/>
+                                                <constraint firstItem="pTc-Mp-c04" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="pTc-Mp-c03" secondAttribute="trailing" constant="8" id="pTc-Mp-c07"/>
+                                                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="pTc-Mp-c04" secondAttribute="bottom" constant="6" id="pTc-Mp-c08"/>
+                                                <constraint firstItem="pTc-Mp-c04" firstAttribute="centerY" secondItem="pTc-Mp-c02" secondAttribute="centerY" id="pTc-Mp-c09"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="pTc-Mp-c03" secondAttribute="bottom" id="pTc-Mp-c10"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="pTc-Mp-c04" secondAttribute="trailing" id="pTc-Mp-c11"/>
+                                                <constraint firstItem="pTc-Mp-c04" firstAttribute="top" relation="greaterThanOrEqual" secondItem="pTc-Mp-c02" secondAttribute="top" constant="6" id="pTc-Mp-c12"/>
+                                                <constraint firstItem="pTc-Mp-c03" firstAttribute="leading" secondItem="pTc-Mp-c02" secondAttribute="leadingMargin" id="pTc-Mp-c13"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" id="8Gj-qz-NMY" customClass="VibrantBasicTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
                                         <rect key="frame" x="20" y="684.5" width="374" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
@@ -807,6 +840,7 @@
                         <outlet property="articleThemeDetailLabel" destination="DUf-DZ-3Nm" id="QHN-Le-zyw"/>
                         <outlet property="colorPaletteCell" destination="EvG-yE-gDF" id="zdj-Ag-ZUw"/>
                         <outlet property="confirmMarkAllAsReadSwitch" destination="UOo-9z-IuL" id="yLZ-Kf-wDt"/>
+                        <outlet property="showPreviewInTimelineContextMenuSwitch" destination="pTc-Mp-c04" id="pTc-Mp-c14"/>
                         <outlet property="enableJavaScriptSwitch" destination="Djo-HE-LWS" id="muL-I5-eDE"/>
                         <outlet property="groupByFeedSwitch" destination="JNi-Wz-RbU" id="TwH-Kd-o6N"/>
                         <outlet property="openLinksInNetNewsWire" destination="dhR-L2-PX3" id="z1b-pX-bwG"/>

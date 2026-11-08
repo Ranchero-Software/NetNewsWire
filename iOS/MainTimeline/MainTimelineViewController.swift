@@ -599,11 +599,15 @@ extension MainTimelineViewController: UICollectionViewDelegate {
 	func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
 		guard let firstIndex = indexPaths.first, let dataSource, let article = dataSource.itemIdentifier(for: firstIndex) else { return nil }
 
-		let previewProvider: UIContextMenuContentPreviewProvider = { [weak self] in
-			guard let coordinator = self?.coordinator else {
-				return nil
+		// The preview is off by default, since it can cover part of the menu.
+		var previewProvider: UIContextMenuContentPreviewProvider?
+		if AppDefaults.showPreviewInTimelineContextMenu {
+			previewProvider = { [weak self] in
+				guard let coordinator = self?.coordinator else {
+					return nil
+				}
+				return ArticlePreviewViewController(article: article, coordinator: coordinator)
 			}
-			return ArticlePreviewViewController(article: article, coordinator: coordinator)
 		}
 
 		return UIContextMenuConfiguration(identifier: firstIndex.row as NSCopying, previewProvider: previewProvider, actionProvider: { [weak self] _ in

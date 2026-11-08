@@ -18,6 +18,7 @@ extension AppDefaults.Key {
 	static let articleFullscreenAvailable = "articleFullscreenAvailable"
 	static let articleFullscreenEnabled = "articleFullscreenEnabled"
 	static let confirmMarkAllAsRead = "confirmMarkAllAsRead"
+	static let showPreviewInTimelineContextMenu = "showPreviewInTimelineContextMenu"
 	static let lastRefresh = "lastRefresh"
 	static let useSystemBrowser = "useSystemBrowser"
 	static let hideReadFeeds = "hideReadFeeds"
@@ -107,6 +108,15 @@ extension AppDefaults {
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.confirmMarkAllAsRead)
+		}
+	}
+
+	static var showPreviewInTimelineContextMenu: Bool {
+		get {
+			UserDefaults.standard.bool(forKey: Key.showPreviewInTimelineContextMenu)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.showPreviewInTimelineContextMenu)
 		}
 	}
 
@@ -287,6 +297,7 @@ extension AppDefaults {
 			Key.articleFullscreenAvailable: false,
 			Key.articleFullscreenEnabled: false,
 			Key.confirmMarkAllAsRead: true,
+			Key.showPreviewInTimelineContextMenu: false,
 			Key.splitViewPreferredDisplayMode: UISplitViewController.DisplayMode.oneBesideSecondary.rawValue
 		]
 

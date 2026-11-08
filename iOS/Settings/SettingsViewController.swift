@@ -48,7 +48,8 @@ final class SettingsViewController: UITableViewController {
 		case groupByFeed = 1
 		case refreshClearsReadArticles = 2
 		case confirmMarkAllAsRead = 3
-		case timelineLayout = 4
+		case showPreviewInTimelineContextMenu = 4
+		case timelineLayout = 5
 	}
 
 	private enum ArticlesRow: Int, CaseIterable {
@@ -73,6 +74,7 @@ final class SettingsViewController: UITableViewController {
 	@IBOutlet var refreshClearsReadArticlesSwitch: UISwitch!
 	@IBOutlet var articleThemeDetailLabel: UILabel!
 	@IBOutlet var confirmMarkAllAsReadSwitch: UISwitch!
+	@IBOutlet var showPreviewInTimelineContextMenuSwitch: UISwitch?
 	@IBOutlet var showFullscreenArticlesSwitch: UISwitch!
 	@IBOutlet var colorPaletteCell: UITableViewCell?
 	@IBOutlet var unreadCountDisplayCell: UITableViewCell?
@@ -144,6 +146,8 @@ final class SettingsViewController: UITableViewController {
 		} else {
 			confirmMarkAllAsReadSwitch.isOn = false
 		}
+
+		showPreviewInTimelineContextMenuSwitch?.isOn = AppDefaults.showPreviewInTimelineContextMenu
 
 		if AppDefaults.articleFullscreenAvailable {
 			showFullscreenArticlesSwitch.isOn = true
@@ -415,6 +419,10 @@ final class SettingsViewController: UITableViewController {
 		} else {
 			AppDefaults.confirmMarkAllAsRead = false
 		}
+	}
+
+	@IBAction func switchShowPreviewInTimelineContextMenu(_ sender: UISwitch) {
+		AppDefaults.showPreviewInTimelineContextMenu = sender.isOn
 	}
 
 	@IBAction func switchFullscreenArticles(_ sender: Any) {
