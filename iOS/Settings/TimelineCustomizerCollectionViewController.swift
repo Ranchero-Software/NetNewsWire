@@ -13,8 +13,6 @@ import Images
 class TimelineCustomizerCollectionViewController: UICollectionViewController {
 
 	private enum Section: Int, CaseIterable {
-		case iconSize
-		case numberOfLines
 		case options
 		case preview
 		case previewWithThumbnail
@@ -32,13 +30,18 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 		}
 	}
 
+	/// Same order as the Mac Timeline settings.
 	private enum OptionsRow: Int, CaseIterable {
 		case feedIcons
+		case feedIconSize
 		case thumbnails
-		case fullTitles
+		case rows
+		case numberOfLines
 		case fadeReadArticles
 		case feedNameAndDateAboveTitle
 	}
+
+	private static let numberOfLinesChoices = 1...6
 
 	private var previewArticle: Article {
 		var components = DateComponents()
@@ -69,9 +72,6 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 				status: ArticleStatus(articleID: "_testArticleID", read: false, starred: false, dateArrived: .now))
 	}
 
-	private var cachedTimelineLines: Int = AppDefaults.timelineNumberOfLines
-	private var cachedIconSize: IconSize = AppDefaults.timelineIconSize
-
 	// Created up front, since UIKit disallows creating a registration in cellForItemAt.
 	private let optionsCellRegistration = UICollectionView.CellRegistration<TimelineCustomizerOptionsCell, OptionsRow> { cell, _, optionsRow in
 		TimelineCustomizerCollectionViewController.configureOptionsCell(cell, optionsRow: optionsRow)
@@ -81,23 +81,10 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 		super.viewDidLoad()
 		title = NSLocalizedString("Timeline Layout", comment: "Timeline Layout")
 
-		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
-			guard let self = self else { return }
-			Task { @MainActor in
-
-				if AppDefaults.timelineNumberOfLines != self.cachedTimelineLines {
-					self.cachedTimelineLines = AppDefaults.timelineNumberOfLines
-					self.userDefaultsDidChange()
-				}
-
-				if AppDefaults.timelineIconSize != self.cachedIconSize {
-					self.cachedIconSize = AppDefaults.timelineIconSize
-					self.userDefaultsDidChange()
-				}
-			}
-		}
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFeedIconsDisplayDidChange(_:)), name: .timelineFeedIconsDisplayDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineIconSizeDidChange(_:)), name: .timelineIconSizeDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineThumbnailsDisplayDidChange(_:)), name: .timelineThumbnailsDisplayDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineNumberOfLinesDidChange(_:)), name: .timelineNumberOfLinesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineShowFullTitlesDidChange(_:)), name: .timelineShowFullTitlesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFadeReadArticlesDidChange(_:)), name: .timelineFadeReadArticlesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFeedNameAndDateAboveTitleDidChange(_:)), name: .timelineFeedNameAndDateAboveTitleDidChange, object: nil)
@@ -150,16 +137,6 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 	override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 
 		switch Section(rawValue: indexPath.section) {
-		case .iconSize:
-			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "IconSizeSelector", for: indexPath) as! TimelineCustomizerCell
-			cell.sliderConfiguration = .iconSize
-			return cell
-		case .numberOfLines:
-			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NumberOfLinesSelector", for: indexPath) as! TimelineCustomizerCell
-			cell.sliderConfiguration = .numberOfLines
-			// The number of lines applies only to the title and summary.
-			cell.slider.isEnabled = !AppDefaults.timelineShowFullTitles
-			return cell
 		case .options:
 			let optionsRow = OptionsRow(rawValue: indexPath.item) ?? .feedIcons
 			return collectionView.dequeueConfiguredReusableCell(using: optionsCellRegistration, for: indexPath, item: optionsRow)
@@ -186,10 +163,6 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 		) as! TimelineHeaderView
 
 		switch Section(rawValue: indexPath.section) {
-		case .iconSize:
-			header.label.text = NSLocalizedString("Icon Size", comment: "Icon Size")
-		case .numberOfLines:
-			header.label.text = NSLocalizedString("Number of Lines", comment: "Number of Lines")
 		case .preview, .previewWithThumbnail, .previewWithFeedIcon, .previewWithFeedIconAndThumbnail:
 			header.label.text = Self.previewHeaderTitle(Section(rawValue: indexPath.section) ?? .preview)
 		case .options, .none:
@@ -204,21 +177,16 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 	}
 
 	override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-		switch Section(rawValue: indexPath.section) {
-		case .iconSize, .numberOfLines:
-			return true
-		default:
-			return false
-		}
+		false
 	}
 
 	// MARK: Notifications
 
-	func userDefaultsDidChange() {
-		reloadPreviews()
+	@objc func handleTimelineFeedIconsDisplayDidChange(_ notification: Notification) {
+		reloadOptionsRowsAndPreviews()
 	}
 
-	@objc func handleTimelineFeedIconsDisplayDidChange(_ notification: Notification) {
+	@objc func handleTimelineIconSizeDidChange(_ notification: Notification) {
 		reloadOptionsRowsAndPreviews()
 	}
 
@@ -226,8 +194,11 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 		reloadOptionsRowsAndPreviews()
 	}
 
+	@objc func handleTimelineNumberOfLinesDidChange(_ notification: Notification) {
+		reloadOptionsRowsAndPreviews()
+	}
+
 	@objc func handleTimelineShowFullTitlesDidChange(_ notification: Notification) {
-		collectionView.reloadSections(IndexSet(integer: Section.numberOfLines.rawValue))
 		reloadOptionsRowsAndPreviews()
 	}
 
@@ -304,20 +275,33 @@ private extension TimelineCustomizerCollectionViewController {
 	static private func configureOptionsCell(_ cell: TimelineCustomizerOptionsCell, optionsRow: OptionsRow) {
 		// The pop-up menu accessory shows only a chevron, so the value cell’s secondary text shows the current choice.
 		var content = UIListContentConfiguration.valueCell()
+		cell.isUserInteractionEnabled = true
 		switch optionsRow {
 		case .feedIcons:
 			content.text = NSLocalizedString("Feed Icons", comment: "Feed Icons")
 			content.secondaryText = AppDefaults.timelineFeedIconsDisplay.description
 			cell.accessories = [.popUpMenu(timelineFeedIconsDisplayMenu())]
+		case .feedIconSize:
+			content.text = NSLocalizedString("Feed Icon Size", comment: "Feed Icon Size")
+			content.secondaryText = iconSizeTitle(AppDefaults.timelineIconSize)
+			cell.accessories = [.popUpMenu(timelineIconSizeMenu())]
 		case .thumbnails:
-			content.text = NSLocalizedString("Thumbnail Size", comment: "Thumbnail Size")
+			content.text = NSLocalizedString("Thumbnails", comment: "Thumbnails")
 			content.secondaryText = AppDefaults.timelineThumbnailsDisplay.description
 			cell.accessories = [.popUpMenu(timelineThumbnailsDisplayMenu())]
-		case .fullTitles:
-			content = UIListContentConfiguration.cell()
-			content.text = NSLocalizedString("Full Titles, No Preview", comment: "Timeline Layout: switch that shows whole titles, without the article preview, in the timeline")
-			configureSwitch(cell, isOn: AppDefaults.timelineShowFullTitles) { isOn in
-				AppDefaults.timelineShowFullTitles = isOn
+		case .rows:
+			content.text = NSLocalizedString("Rows", comment: "Rows")
+			content.secondaryText = AppDefaults.timelineShowFullTitles ? fullTitleTitle : titleAndPreviewTitle
+			cell.accessories = [.popUpMenu(timelineRowsMenu())]
+		case .numberOfLines:
+			content.text = NSLocalizedString("Lines", comment: "Lines")
+			content.secondaryText = AppDefaults.timelineNumberOfLines.formatted()
+			cell.accessories = [.popUpMenu(timelineNumberOfLinesMenu())]
+			// The number of lines applies only to the title and preview.
+			if AppDefaults.timelineShowFullTitles {
+				content.textProperties.color = .secondaryLabel
+				content.secondaryTextProperties.color = .tertiaryLabel
+				cell.isUserInteractionEnabled = false
 			}
 		case .fadeReadArticles:
 			content = UIListContentConfiguration.cell()
@@ -334,7 +318,6 @@ private extension TimelineCustomizerCollectionViewController {
 		}
 		cell.contentConfiguration = content
 
-		// Matches TimelineCustomizerCell.
 		cell.configurationUpdateHandler = { cell, state in
 			var backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
 			backgroundConfig.backgroundColor = cell.traitCollection.userInterfaceStyle == .dark ? .secondarySystemBackground : .white
@@ -354,6 +337,52 @@ private extension TimelineCustomizerCollectionViewController {
 		let actions = TimelineFeedIconsDisplay.allCases.map { feedIconsDisplay in
 			UIAction(title: String(describing: feedIconsDisplay), subtitle: feedIconsDisplay.subtitle, state: feedIconsDisplay == currentFeedIconsDisplay ? .on : .off) { _ in
 				AppDefaults.timelineFeedIconsDisplay = feedIconsDisplay
+			}
+		}
+		return UIMenu(options: .singleSelection, children: actions)
+	}
+
+	static let titleAndPreviewTitle = NSLocalizedString("Title and Preview", comment: "Title and Preview")
+	static let fullTitleTitle = NSLocalizedString("Full Title, No Preview", comment: "Timeline Layout: Rows choice that shows the whole title, without the article preview, in the timeline")
+
+	static func iconSizeTitle(_ iconSize: IconSize) -> String {
+		switch iconSize {
+		case .small:
+			NSLocalizedString("Small", comment: "Small")
+		case .medium:
+			NSLocalizedString("Medium", comment: "Medium")
+		case .large:
+			NSLocalizedString("Large", comment: "Large")
+		}
+	}
+
+	static func timelineIconSizeMenu() -> UIMenu {
+		let currentIconSize = AppDefaults.timelineIconSize
+		let actions = IconSize.allCases.map { iconSize in
+			UIAction(title: iconSizeTitle(iconSize), state: iconSize == currentIconSize ? .on : .off) { _ in
+				AppDefaults.timelineIconSize = iconSize
+			}
+		}
+		return UIMenu(options: .singleSelection, children: actions)
+	}
+
+	static func timelineRowsMenu() -> UIMenu {
+		let showFullTitles = AppDefaults.timelineShowFullTitles
+		let titleAndPreviewAction = UIAction(title: titleAndPreviewTitle, state: showFullTitles ? .off : .on) { _ in
+			AppDefaults.timelineShowFullTitles = false
+		}
+		let fullTitleSubtitle = String(format: NSLocalizedString("Shows the whole title, up to %d lines.", comment: "Timeline Layout: explains the Full Title, No Preview choice"), MainTimelineCellData.fullTitleMaximumNumberOfLines)
+		let fullTitleAction = UIAction(title: fullTitleTitle, subtitle: fullTitleSubtitle, state: showFullTitles ? .on : .off) { _ in
+			AppDefaults.timelineShowFullTitles = true
+		}
+		return UIMenu(options: .singleSelection, children: [titleAndPreviewAction, fullTitleAction])
+	}
+
+	static func timelineNumberOfLinesMenu() -> UIMenu {
+		let currentNumberOfLines = AppDefaults.timelineNumberOfLines
+		let actions = numberOfLinesChoices.map { numberOfLines in
+			UIAction(title: numberOfLines.formatted(), state: numberOfLines == currentNumberOfLines ? .on : .off) { _ in
+				AppDefaults.timelineNumberOfLines = numberOfLines
 			}
 		}
 		return UIMenu(options: .singleSelection, children: actions)

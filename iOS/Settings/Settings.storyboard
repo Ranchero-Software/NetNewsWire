@@ -838,62 +838,6 @@
                             <size key="footerReferenceSize" width="0.0" height="0.0"/>
                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                         </collectionViewFlowLayout>
-                        <cells>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="IconSizeSelector" id="D4G-5K-wC0" userLabel="IconSizeSelector" customClass="TimelineCustomizerCell" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="54"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="KCR-jd-nKc">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="54"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="3" translatesAutoresizingMaskIntoConstraints="NO" id="B7g-v4-Vyj" customClass="TickMarkSlider" customModule="NetNewsWire" customModuleProvider="target">
-                                            <rect key="frame" x="16" y="10" width="382" height="34"/>
-                                            <color key="thumbTintColor" name="primaryAccentColor"/>
-                                            <connections>
-                                                <action selector="sliderValueChanges:" destination="D4G-5K-wC0" eventType="valueChanged" id="p5Q-8t-fNQ"/>
-                                            </connections>
-                                        </slider>
-                                    </subviews>
-                                    <constraints>
-                                        <constraint firstAttribute="bottom" secondItem="B7g-v4-Vyj" secondAttribute="bottom" constant="10" id="6za-2Z-U5t"/>
-                                        <constraint firstItem="B7g-v4-Vyj" firstAttribute="top" secondItem="KCR-jd-nKc" secondAttribute="top" constant="10" id="JZi-xF-Psi"/>
-                                        <constraint firstItem="B7g-v4-Vyj" firstAttribute="leading" secondItem="KCR-jd-nKc" secondAttribute="leading" constant="16" id="aJ8-xV-Mdg"/>
-                                        <constraint firstAttribute="trailing" secondItem="B7g-v4-Vyj" secondAttribute="trailing" constant="16" id="d88-PD-mJu"/>
-                                    </constraints>
-                                </collectionViewCellContentView>
-                                <size key="customSize" width="414" height="54"/>
-                                <connections>
-                                    <outlet property="slider" destination="B7g-v4-Vyj" id="mh8-e0-rd4"/>
-                                </connections>
-                            </collectionViewCell>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="NumberOfLinesSelector" id="f01-6d-e85" userLabel="NumberOfLinesSelector" customClass="TimelineCustomizerCell" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="74" width="414" height="54"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="y0A-pH-6Nn">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="54"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <subviews>
-                                        <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="5" translatesAutoresizingMaskIntoConstraints="NO" id="osf-aV-wdv" customClass="TickMarkSlider" customModule="NetNewsWire" customModuleProvider="target">
-                                            <rect key="frame" x="16" y="10" width="382" height="34"/>
-                                            <color key="thumbTintColor" name="primaryAccentColor"/>
-                                            <connections>
-                                                <action selector="sliderValueChanges:" destination="f01-6d-e85" eventType="valueChanged" id="owI-y2-iwc"/>
-                                            </connections>
-                                        </slider>
-                                    </subviews>
-                                    <constraints>
-                                        <constraint firstAttribute="trailing" secondItem="osf-aV-wdv" secondAttribute="trailing" constant="16" id="QfB-fu-ayp"/>
-                                        <constraint firstItem="osf-aV-wdv" firstAttribute="leading" secondItem="y0A-pH-6Nn" secondAttribute="leading" constant="16" id="VVw-mb-Enu"/>
-                                        <constraint firstItem="osf-aV-wdv" firstAttribute="top" secondItem="y0A-pH-6Nn" secondAttribute="top" constant="10" id="liu-SQ-rVh"/>
-                                        <constraint firstAttribute="bottom" secondItem="osf-aV-wdv" secondAttribute="bottom" constant="10" id="og1-I4-73F"/>
-                                    </constraints>
-                                </collectionViewCellContentView>
-                                <size key="customSize" width="414" height="54"/>
-                                <connections>
-                                    <outlet property="slider" destination="osf-aV-wdv" id="9mJ-Vb-q3o"/>
-                                </connections>
-                            </collectionViewCell>
-                        </cells>
                         <connections>
                             <outlet property="dataSource" destination="XEX-9Z-nVH" id="Ioc-M7-xcT"/>
                             <outlet property="delegate" destination="XEX-9Z-nVH" id="YJM-b1-Gtc"/>
