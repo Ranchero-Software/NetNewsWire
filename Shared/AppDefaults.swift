@@ -57,7 +57,7 @@ enum AppDefaults {
 			Key.timelineTextSize: TimelineTextSize.medium.rawValue,
 			Key.timelineShowFullTitles: false,
 			Key.timelineFadeReadArticles: false,
-			Key.timelineFeedNameAndDateAboveTitle: false
+			Key.timelineFeedNameAndDateAboveTitle: true
 		]
 	}
 
