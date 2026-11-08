@@ -168,12 +168,14 @@ struct MainTimelineDefaultCellLayout: MainTimelineCellLayout {
 		var feedNameRect = CGRect.zero
 		var dateRect = CGRect.zero
 		if cellData.feedNameAndDateAboveTitle {
-			(feedNameRect, dateRect) = Self.rectsForFeedNameAndDate(cellData, currentPoint, textAreaWidth)
+			// Spans the small thumbnail too, which lines up with the title.
+			(feedNameRect, dateRect) = Self.rectsForFeedNameAndDate(cellData, currentPoint, rightEdge - currentPoint.x)
 			currentPoint.y = [feedNameRect, dateRect].maxY() + Self.feedNameAndDateBottomMargin
 			// Centered on the feed name and date line, which is the first line.
 			unreadIndicatorRect.origin.y = floor(dateRect.midY - (unreadIndicatorRect.height / 2.0))
 			starRect.origin.y = floor(dateRect.midY - (starRect.height / 2.0))
 		}
+		let titleOriginY = currentPoint.y
 
 		let (titleRect, numberOfLinesForTitle) = Self.rectForTitle(cellData, currentPoint, textAreaWidth)
 		self.titleRect = titleRect
@@ -202,8 +204,8 @@ struct MainTimelineDefaultCellLayout: MainTimelineCellLayout {
 		let textMaxY = [self.titleRect, self.summaryRect, self.feedNameRect, self.dateRect].maxY()
 
 		if showsSmallThumbnail {
-			// Top right. The cell grows if needed to fit it.
-			self.thumbnailRect = CGRect(x: rightEdge - Self.thumbnailDimension, y: Self.cellPadding.top, width: Self.thumbnailDimension, height: Self.thumbnailDimension)
+			// Right side, top aligned with the title. The cell grows if needed to fit it.
+			self.thumbnailRect = CGRect(x: rightEdge - Self.thumbnailDimension, y: titleOriginY, width: Self.thumbnailDimension, height: Self.thumbnailDimension)
 		} else if cellData.showThumbnail && cellData.thumbnailsDisplay == .large {
 			// Below the text and icon, from the icon’s left edge (or the text’s) to the right padding.
 			let originX = cellData.showIcon ? self.iconImageRect.minX : currentPoint.x
