@@ -117,6 +117,7 @@ final class DetailWebViewController: NSViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(webInspectorEnabledDidChange(_:)), name: .WebInspectorEnabledDidChange, object: nil)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(handleFeedIconImageDidChange(_:)), name: .feedIconImageDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleGrayscaleIconsDidChange(_:)), name: .grayscaleIconsDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleAuthorAvatarImageDidChange(_:)), name: .authorAvatarImageDidChange, object: nil)
 		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
 			Task { @MainActor in
@@ -136,6 +137,10 @@ final class DetailWebViewController: NSViewController {
 
 	@objc func handleAuthorAvatarImageDidChange(_ notification: Notification) {
 		reloadArticleImageIfNeeded(notification)
+	}
+
+	@objc func handleGrayscaleIconsDidChange(_ notification: Notification) {
+		reloadArticleImage()
 	}
 
 	func userDefaultsDidChange() {
@@ -303,6 +308,13 @@ private extension DetailWebViewController {
 	/// Each reload draws and encodes the icon again, so icons for other feeds and authors are skipped.
 	func reloadArticleImageIfNeeded(_ notification: Notification) {
 		guard let article, article.mightShowIcon(in: notification) else {
+			return
+		}
+		reloadArticleImage()
+	}
+
+	func reloadArticleImage() {
+		guard let article else {
 			return
 		}
 
