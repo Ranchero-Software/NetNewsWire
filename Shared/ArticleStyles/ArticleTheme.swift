@@ -16,6 +16,11 @@ struct ArticleTheme: Equatable, Sendable {
 	private static let defaultThemeName = NSLocalizedString("Default", comment: "Default")
 	private static let unknownValue = NSLocalizedString("Unknown", comment: "Unknown Value")
 
+	/// Used instead of template.html when present. Older versions of NetNewsWire ignore it,
+	/// so a theme can use the 7.3 tags here and keep template.html free of them.
+	private static let template7_3Filename = "template7.3.html"
+	private static let templateFilename = "template.html"
+
 	let url: URL?
 	let template: String?
 	let css: String?
@@ -70,8 +75,9 @@ struct ArticleTheme: Equatable, Sendable {
 			self.css = nil
 		}
 
-		let templateURL = url.appendingPathComponent("template.html")
-		self.template = Self.stringAtPath(templateURL.path)
+		let template7_3URL = url.appendingPathComponent(Self.template7_3Filename)
+		let templateURL = url.appendingPathComponent(Self.templateFilename)
+		self.template = Self.stringAtPath(template7_3URL.path) ?? Self.stringAtPath(templateURL.path)
 
 		self.isAppTheme = isAppTheme
 
