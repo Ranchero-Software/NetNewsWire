@@ -81,6 +81,7 @@ final class SettingsViewController: UITableViewController {
 	@IBOutlet var openLinksInNetNewsWire: UISwitch!
 	@IBOutlet var enableJavaScriptSwitch: UISwitch!
 	@IBOutlet var sidebarShowsIconsSwitch: UISwitch?
+	@IBOutlet var grayscaleIconsSwitch: UISwitch?
 	@IBOutlet var showTodayFeedSwitch: UISwitch?
 	@IBOutlet var showUnreadFeedSwitch: UISwitch?
 	@IBOutlet var showStarredFeedSwitch: UISwitch?
@@ -102,6 +103,7 @@ final class SettingsViewController: UITableViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUserInterfaceColorPaletteDidUpdate(_:)), name: .userInterfaceColorPaletteDidUpdate, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarShowsIconsDidChange(_:)), name: .sidebarShowsIconsDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleGrayscaleIconsDidChange(_:)), name: .grayscaleIconsDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarSmartFeedsVisibilityDidChange(_:)), name: .sidebarSmartFeedsVisibilityDidChange, object: nil)
 
 		tableView.register(UINib(nibName: "SettingsComboTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsComboTableViewCell")
@@ -116,6 +118,7 @@ final class SettingsViewController: UITableViewController {
 		updateUnreadCountDisplayPopUpButton()
 		updateSidebarShowsIconsSwitch()
 		updateSmartFeedsSwitches()
+		updateGrayscaleIconsSwitch()
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
@@ -377,6 +380,10 @@ final class SettingsViewController: UITableViewController {
 		AppDefaults.sidebarShowsIcons = sender.isOn
 	}
 
+	@IBAction func switchGrayscaleIcons(_ sender: UISwitch) {
+		AppDefaults.grayscaleIcons = sender.isOn
+	}
+
 	@IBAction func switchShowTodayFeed(_ sender: UISwitch) {
 		AppDefaults.showTodayFeed = sender.isOn
 	}
@@ -479,6 +486,10 @@ final class SettingsViewController: UITableViewController {
 		updateSmartFeedsSwitches()
 	}
 
+	@objc func handleGrayscaleIconsDidChange(_ notification: Notification) {
+		updateGrayscaleIconsSwitch()
+	}
+
 }
 
 // MARK: - OPML Document Picker
@@ -555,6 +566,10 @@ private extension SettingsViewController {
 
 	func updateSidebarShowsIconsSwitch() {
 		sidebarShowsIconsSwitch?.isOn = AppDefaults.sidebarShowsIcons
+	}
+
+	func updateGrayscaleIconsSwitch() {
+		grayscaleIconsSwitch?.isOn = AppDefaults.grayscaleIcons
 	}
 
 	func updateSmartFeedsSwitches() {

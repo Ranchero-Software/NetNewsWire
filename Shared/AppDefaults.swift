@@ -27,6 +27,7 @@ enum AppDefaults {
 		static let timelineFeedIconsDisplay = "timelineFeedIconsDisplay"
 		static let userInterfaceColorPalette = "userInterfaceColorPalette"
 		static let sidebarShowsIcons = "sidebarShowsIcons"
+		static let grayscaleIcons = "grayscaleIcons"
 		static let sidebarTextSize = "sidebarTextSize"
 		static let showTodayFeed = "showTodayFeed"
 		static let showUnreadFeed = "showUnreadFeed"
@@ -50,6 +51,7 @@ enum AppDefaults {
 			Key.timelineFeedIconsDisplay: TimelineFeedIconsDisplay.automatic.rawValue,
 			Key.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue,
 			Key.sidebarShowsIcons: true,
+			Key.grayscaleIcons: false,
 			Key.sidebarTextSize: SidebarTextSize.system.rawValue,
 			Key.showTodayFeed: true,
 			Key.showUnreadFeed: true,
@@ -168,6 +170,17 @@ enum AppDefaults {
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.sidebarShowsIcons)
 			NotificationCenter.default.post(name: .sidebarShowsIconsDidChange, object: nil)
+		}
+	}
+
+	/// Feed icons, avatars, and sidebar symbols without color. Thumbnails keep their color.
+	static var grayscaleIcons: Bool {
+		get {
+			UserDefaults.standard.bool(forKey: Key.grayscaleIcons)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.grayscaleIcons)
+			NotificationCenter.default.post(name: .grayscaleIconsDidChange, object: nil)
 		}
 	}
 

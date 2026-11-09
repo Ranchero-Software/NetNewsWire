@@ -85,6 +85,18 @@
         }
       }
     },
+    "gyB-iC-0c1.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Grayscale icons\"; ObjectID = \"gyB-iC-0c1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Grayscale icons"
+          }
+        }
+      }
+    },
     "jMV-2o-5Oh.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Medium\"; ObjectID = \"jMV-2o-5Oh\";",
       "extractionState" : "extracted_with_value",
