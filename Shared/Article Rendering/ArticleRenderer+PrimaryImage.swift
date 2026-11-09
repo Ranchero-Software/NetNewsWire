@@ -12,16 +12,32 @@ import Articles
 /// The article’s main image, for the `[[primary_image]]` substitution.
 extension ArticleRenderer {
 
-	/// The article image (JSON Feed `image`, `itunes:image`, or a sync service’s image), else the first image attachment.
+	private static let shortPostMaximumBodyLength = 2048
+
+	/// Untitled and short, as with social media and microblog posts, which put their images after the text.
+	/// These get no primary image — its image goes in the enclosures.
+	static func isShortUntitledPost(title: String?, body: String) -> Bool {
+		guard title?.isEmpty ?? true else {
+			return false
+		}
+		return body.count < shortPostMaximumBodyLength
+	}
+
+	/// The article image (JSON Feed `image`, `itunes:image`, or a sync service’s image), else the first image attachment,
+	/// else the thumbnail (`media:thumbnail`, which Wired uses for its full-size lead image).
 	/// Nil when the body already has the image, or a resized copy of it at a different URL.
 	/// An attachment with the same URL supplies the dimensions and title.
-	static func primaryImage(imageLink: String?, attachments: [Attachment]?, body: String, bodyImageIdentities: Set<String>) -> Attachment? {
+	static func primaryImage(imageLink: String?, thumbnailLink: String?, attachments: [Attachment]?, body: String, bodyImageIdentities: Set<String>) -> Attachment? {
 		let attachments = attachments ?? []
 		let image: Attachment?
 		if let imageLink, !imageLink.isEmpty {
-			image = attachments.first { $0.url == imageLink } ?? Attachment(url: imageLink, mimeType: nil, title: nil, sizeInBytes: nil, durationInSeconds: nil, width: nil, height: nil, medium: .image)
+			image = attachments.first { $0.url == imageLink } ?? imageAttachment(imageLink)
+		} else if let firstImageAttachment = attachments.first(where: { $0.displayMedium == .image }) {
+			image = firstImageAttachment
+		} else if let thumbnailLink, !thumbnailLink.isEmpty {
+			image = imageAttachment(thumbnailLink)
 		} else {
-			image = attachments.first { $0.displayMedium == .image }
+			image = nil
 		}
 
 		guard let image, !bodyContains(image.url, body: body, bodyImageIdentities: bodyImageIdentities) else {
@@ -49,6 +65,10 @@ extension ArticleRenderer {
 }
 
 private extension ArticleRenderer {
+
+	static func imageAttachment(_ url: String) -> Attachment? {
+		Attachment(url: url, mimeType: nil, title: nil, sizeInBytes: nil, durationInSeconds: nil, width: nil, height: nil, medium: .image)
+	}
 
 	static func isSameTitle(_ imageTitle: String, _ articleTitle: String?) -> Bool {
 		guard let articleTitle else {

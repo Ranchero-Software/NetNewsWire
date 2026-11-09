@@ -19,7 +19,7 @@ import Articles
 		let body = "<ul><li>Facebook’s Onavo scam</li><li>Apple’s FaceTime bug</li></ul>"
 		let artworkURL = "http://static1.squarespace.com/static/513abd71e4b0fe58c655c105/t/52c45a37e4b0a77a5034aa84/1388599866232/1500w/Artwork.jpg"
 
-		let primaryImage = try #require(ArticleRenderer.primaryImage(imageLink: artworkURL, attachments: [attachment], body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil)))
+		let primaryImage = try #require(ArticleRenderer.primaryImage(imageLink: artworkURL, thumbnailLink: nil, attachments: [attachment], body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil)))
 		let primaryImageHTML = ArticleRenderer.primaryImageHTML(primaryImage, articleTitle: nil)
 		let html = ArticleRenderer.enclosuresHTML(attachments: [attachment], body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil), posterURL: artworkURL)
 
@@ -34,7 +34,7 @@ import Articles
 		let attachment = try #require(Attachment(url: imageURL, mimeType: "image/jpeg", title: "Great blue heron at Green Lake", sizeInBytes: nil, durationInSeconds: nil, width: 1200, height: 800, medium: nil))
 		let body = "<p>Spotted this morning on the north shore.</p>"
 
-		let primaryImage = try #require(ArticleRenderer.primaryImage(imageLink: imageURL, attachments: [attachment], body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil)))
+		let primaryImage = try #require(ArticleRenderer.primaryImage(imageLink: imageURL, thumbnailLink: nil, attachments: [attachment], body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil)))
 
 		#expect(ArticleRenderer.primaryImageHTML(primaryImage, articleTitle: nil) == "<div class=\"nnw-primary-image\"><img src=\"\(imageURL)\" alt=\"Great blue heron at Green Lake\" title=\"Great blue heron at Green Lake\" width=\"1200\" height=\"800\"><div class=\"nnw-primary-image-caption\">Great blue heron at Green Lake</div></div>")
 	}
@@ -64,7 +64,7 @@ import Articles
 		let imageURL = "https://example.com/uploads/2026/11/heron.jpg"
 		let body = "<p><img src=\"https://example.com/uploads/2026/11/heron-1024x683.jpg\"></p>"
 
-		#expect(ArticleRenderer.primaryImage(imageLink: imageURL, attachments: nil, body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil)) == nil)
+		#expect(ArticleRenderer.primaryImage(imageLink: imageURL, thumbnailLink: nil, attachments: nil, body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil)) == nil)
 	}
 
 	// The Atlantic’s “The Democrats’ Fight Over Israel Is Just Beginning”: every image is `original.jpg` in its own folder,
@@ -74,7 +74,7 @@ import Articles
 		let attachment = try #require(Attachment(url: imageURL, mimeType: nil, title: nil, sizeInBytes: nil, durationInSeconds: nil, width: nil, height: nil, medium: nil))
 		let body = "<figure class=\"full-width\"><img src=\"https://cdn.theatlantic.com/thumbor/0ETPM-UWHuoYrFvGb63KD7sdkg8=/https://cdn.theatlantic.com/media/img/posts/2026/11/2026_11_05_michigan_senate_5/original.jpg\" width=\"982\" height=\"737\" alt=\"people talk at a dinner at a restaurant\"></figure>"
 
-		#expect(ArticleRenderer.primaryImage(imageLink: nil, attachments: [attachment], body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil))?.url == imageURL)
+		#expect(ArticleRenderer.primaryImage(imageLink: nil, thumbnailLink: nil, attachments: [attachment], body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil))?.url == imageURL)
 	}
 
 	// The Atlantic’s “Can Beauty Make Us Good?”: a YouTube embed in the body, and the artwork in media:content.
@@ -83,7 +83,23 @@ import Articles
 		let attachment = try #require(Attachment(url: imageURL, mimeType: nil, title: nil, sizeInBytes: nil, durationInSeconds: nil, width: nil, height: nil, medium: nil))
 		let body = "<p><iframe allowfullscreen=\"\" height=\"315\" src=\"https://www.youtube.com/embed/oymND7-uO-o?si=1WXJG8rZ_IaHorMQ\" title=\"YouTube video player\" width=\"560\"></iframe></p>"
 
-		#expect(ArticleRenderer.primaryImage(imageLink: nil, attachments: [attachment], body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil))?.url == imageURL)
+		#expect(ArticleRenderer.primaryImage(imageLink: nil, thumbnailLink: nil, attachments: [attachment], body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil))?.url == imageURL)
+	}
+
+	// Wired: no attachments, and the full-size lead image is in media:thumbnail.
+	@Test func primaryImageFallsBackToThumbnail() {
+		let thumbnailURL = "https://media.wired.com/photos/6aee77f4ece1c19963602401/master/pass/gear-nyt-cooking-ai-assistant.jpg"
+		let body = "The New York Times has added a beta feature to its Cooking app that helps readers swap ingredients or adjust recipes to suit their needs. It mostly hits the mark."
+
+		#expect(ArticleRenderer.primaryImage(imageLink: nil, thumbnailLink: thumbnailURL, attachments: nil, body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil))?.url == thumbnailURL)
+	}
+
+	// Micro.blog: an untitled photo post with a short caption.
+	@Test func shortUntitledPostHasNoPrimaryImage() {
+		let body = "<p>Fog over Lake Union this morning. The seaplanes are grounded.</p>"
+
+		#expect(ArticleRenderer.isShortUntitledPost(title: nil, body: body))
+		#expect(!ArticleRenderer.isShortUntitledPost(title: "Fog", body: body))
 	}
 
 	// The body embeds the enclosure image, with `&` escaped in the src attribute.

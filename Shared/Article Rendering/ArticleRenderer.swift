@@ -275,12 +275,14 @@ private extension ArticleRenderer {
 			d["external_link"] = ""
 		}
 
-		// Templates without [[primary_image]] get the primary image in the enclosures.
+		// Templates without [[primary_image]], and short untitled posts, get the primary image in the enclosures.
+		// The thumbnail is used only for [[primary_image]].
 		let bodyImageIdentities = Self.bodyImageIdentities(body, baseURL: baseURL)
 		var attachments = article.attachments ?? []
 		var primaryImageHTML = ""
-		if let primaryImage = Self.primaryImage(imageLink: article.imageLink, attachments: attachments, body: body, bodyImageIdentities: bodyImageIdentities) {
-			if template().contains(Self.primaryImageMacro) {
+		let showsPrimaryImage = template().contains(Self.primaryImageMacro) && !Self.isShortUntitledPost(title: article.title, body: body)
+		if let primaryImage = Self.primaryImage(imageLink: article.imageLink, thumbnailLink: showsPrimaryImage ? article.thumbnailLink : nil, attachments: attachments, body: body, bodyImageIdentities: bodyImageIdentities) {
+			if showsPrimaryImage {
 				primaryImageHTML = Self.primaryImageHTML(primaryImage, articleTitle: article.title)
 				attachments.removeAll { $0.url == primaryImage.url }
 			} else if !attachments.contains(primaryImage) {
