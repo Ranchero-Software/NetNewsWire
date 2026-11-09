@@ -42,9 +42,12 @@ extension ArticleRenderer {
 		Set(HTMLImageParser.significantImageURLStrings(html: body, baseURL: baseURL, maximumCount: Int.max).compactMap(imageIdentity))
 	}
 
-	/// True when the body has `url`, or a resized copy of the image at `url`.
+	/// True when the body has `url`, a resized copy of the image at `url`, or the YouTube video the image at `url` is a still of.
 	static func bodyContains(_ url: String, body: String, bodyImageIdentities: Set<String>) -> Bool {
 		if bodyContainsURL(body, url) {
+			return true
+		}
+		if ArticleRenderingSpecialCases.bodyEmbedsYouTubeVideo(stillImageURL: url, body: body) {
 			return true
 		}
 		guard let identity = imageIdentity(url) else {

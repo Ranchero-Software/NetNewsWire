@@ -69,7 +69,8 @@ final class RSSItem {
 		return s.md5String
 	}
 
-	func toParsedItem(feedURL: String) -> ParsedItem {
+	/// Attachments at `feedImageURL` are skipped. Substack lists the feed’s image as an enclosure on posts that have no image of their own.
+	func toParsedItem(feedURL: String, feedImageURL: String?) -> ParsedItem {
 		// If body is empty and summary has content,
 		// promote summary to body and drop summary.
 		var contentHTML = body
@@ -110,7 +111,7 @@ final class RSSItem {
 			dateModified: dateModified,
 			authors: authorsWithAvatars.isEmpty ? nil : authorsWithAvatars,
 			tags: nil,
-			attachments: mergedAttachments(attachments.filter { !avatarURLs.contains($0.url) })
+			attachments: mergedAttachments(attachments.filter { !avatarURLs.contains($0.url) && $0.url != feedImageURL })
 		)
 	}
 

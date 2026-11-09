@@ -97,6 +97,15 @@ import Articles
 		#expect(ArticleRenderer.primaryImage(imageLink: nil, thumbnailLink: nil, attachments: [attachment], body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil))?.url == imageURL)
 	}
 
+	// Letters from an American’s “Amanda Litman | American Conversations”: the enclosure is Substack’s still of the YouTube video the body embeds.
+	@Test func primaryImageSkippedWhenBodyEmbedsItsYouTubeVideo() throws {
+		let imageURL = "https://substackcdn.com/image/youtube/w_728,c_limit/V1DtMzaVvfA"
+		let attachment = try #require(Attachment(url: imageURL, mimeType: "image/jpeg", title: nil, sizeInBytes: 0, durationInSeconds: nil, width: nil, height: nil, medium: nil))
+		let body = "<div id=\"youtube2-V1DtMzaVvfA\" class=\"youtube-wrap\"><div class=\"youtube-inner\"><iframe src=\"https://www.youtube-nocookie.com/embed/V1DtMzaVvfA?rel=0&amp;autoplay=0&amp;showinfo=0&amp;enablejsapi=0\" frameborder=\"0\" loading=\"lazy\" width=\"728\" height=\"409\"></iframe></div></div>"
+
+		#expect(ArticleRenderer.primaryImage(imageLink: nil, thumbnailLink: nil, attachments: [attachment], body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil)) == nil)
+	}
+
 	// Wired: no attachments, and the full-size lead image is in media:thumbnail.
 	@Test func primaryImageFallsBackToThumbnail() {
 		let thumbnailURL = "https://media.wired.com/photos/6aee77f4ece1c19963602401/master/pass/gear-nyt-cooking-ai-assistant.jpg"

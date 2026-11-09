@@ -52,7 +52,7 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 	// MARK: Building output
 
 	func buildParsedFeed() -> ParsedFeed {
-		let parsedItems = Set(items.map { $0.toParsedItem(feedURL: feedURLString) })
+		let parsedItems = Set(items.map { $0.toParsedItem(feedURL: feedURLString, feedImageURL: channelImageURLString) })
 		return ParsedFeed(
 			type: .rss,
 			title: title,

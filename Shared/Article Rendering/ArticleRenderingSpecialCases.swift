@@ -209,6 +209,27 @@ struct ArticleRenderingSpecialCases {
 		return youTubeEmbedURLPrefix + videoID
 	}
 
+	private static let youTubeVideoIDLength = 11
+	private static let youTubeEmbedPaths = ["youtube.com/embed/", "youtube-nocookie.com/embed/"]
+
+	/// True when `body` embeds the YouTube video that the image at `stillImageURL` is a still of.
+	/// Substack lists the still as an enclosure, as in `substackcdn.com/image/youtube/w_728,c_limit/VIDEO_ID`.
+	/// YouTube’s own stills are like `i.ytimg.com/vi/VIDEO_ID/hqdefault.jpg`.
+	static func bodyEmbedsYouTubeVideo(stillImageURL: String, body: String) -> Bool {
+		guard let url = URL(string: stillImageURL) else {
+			return false
+		}
+		let possibleVideoIDs = url.pathComponents.filter { pathComponent in
+			pathComponent.count == youTubeVideoIDLength && pathComponent.unicodeScalars.allSatisfy { youTubeVideoIDCharacters.contains($0) }
+		}
+		for videoID in possibleVideoIDs {
+			if youTubeEmbedPaths.contains(where: { body.contains($0 + videoID) }) {
+				return true
+			}
+		}
+		return false
+	}
+
 	private static func anyURLStringMatchesAnyDomain(_ urlStrings: [String?], _ domains: [String]) -> Bool {
 		for urlString in urlStrings {
 			if let urlString, SpecialCase.urlStringMatchesDomain(urlString, domains) {

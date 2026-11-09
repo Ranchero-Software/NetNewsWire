@@ -115,6 +115,20 @@ import RSParser
 		])
 	}
 
+	@Test func feedImageEnclosureIsSkipped() throws {
+		// Letters from an American: Substack lists the feed’s image as the enclosure of a post with no image of its own.
+		let feedImageURL = "https://substackcdn.com/image/fetch/$s_!yKDv!,w_256,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F4b47f775-3df7-41dd-8bc9-a64cdd72d948_600x600.png"
+		let rss = """
+		<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>Letters from an American</title><link>https://heathercoxrichardson.substack.com</link><image><url>\(feedImageURL)</url><title>Letters from an American</title><link>https://heathercoxrichardson.substack.com</link></image><item><title>November 8, 2026</title><link>https://heathercoxrichardson.substack.com/p/november-8-2026</link><guid isPermaLink="false">https://heathercoxrichardson.substack.com/p/november-8-2026</guid><enclosure url="\(feedImageURL)" length="0" type="image/jpeg"/><description>Since the dramatic victories of the Democrats on Tuesday, Trump has been posting increasingly provocative material on social media.</description></item></channel></rss>
+		"""
+		let d = ParserData(url: "https://heathercoxrichardson.substack.com/feed", data: Data(rss.utf8))
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		let item = try #require(parsedFeed.items.first)
+
+		#expect(parsedFeed.iconURL == feedImageURL)
+		#expect(item.attachments == nil)
+	}
+
 	@Test func theOmniShowUniqueIDs() throws {
 		let d = parserData("theomnishow", "rss", "https://theomnishow.omnigroup.com/")
 		let parsedFeed = try #require(try FeedParser.parse(d))

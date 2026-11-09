@@ -79,7 +79,7 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 		// If no logo, fall back to icon for both.
 		let iconURL = logoURLString ?? iconURLString
 		let faviconURL = iconURLString
-		let parsedItems = Set(items.map { $0.toParsedItem(feedURL: feedURLString) })
+		let parsedItems = Set(items.map { $0.toParsedItem(feedURL: feedURLString, feedImageURL: iconURL) })
 
 		return ParsedFeed(
 			type: .atom,
