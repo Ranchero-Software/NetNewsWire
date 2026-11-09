@@ -967,8 +967,8 @@ private extension SidebarViewController {
 	}
 
 	func imageFor(_ node: Node) -> IconImage? {
-		if let feed = node.representedObject as? Feed, let feedIcon = IconImageCache.shared.imageForFeed(feed) {
-			return feedIcon
+		if let sidebarItem = node.representedObject as? SidebarItem, let iconImage = IconImageCache.shared.imageForFeed(sidebarItem) {
+			return iconImage
 		}
 		if let smallIconProvider = node.representedObject as? SmallIconProvider {
 			return smallIconProvider.smallIcon

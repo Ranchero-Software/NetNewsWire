@@ -126,26 +126,9 @@ extension Notification.Name {
 		return iconImage(for: feed)
 	}
 
-	/// Precedence: feed icon, home page icon, favicon, generated favicon.
-	///
-	/// While a source is loading, or after the downloaders empty their caches, the icon found last is shown,
-	/// so an icon doesn’t flash. Without one, the generated favicon is shown.
-	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/5376>
+	/// Grayscale when `AppDefaults.grayscaleIcons` is on.
 	func iconImage(for feed: Feed) -> IconImage {
-		if Self.isNetNewsWireBrandedFeed(feed) {
-			return IconImage.nnwFeedIcon
-		}
-		let feedID = feed.sidebarItemID
-		if let iconImage = feedIcon(for: feed).iconImage {
-			if let feedID {
-				lastFoundFeedIconImages[feedID] = iconImage
-			}
-			return iconImage
-		}
-		if let feedID, let iconImage = lastFoundFeedIconImages[feedID] {
-			return iconImage
-		}
-		return FaviconGenerator.shared.favicon(feed)
+		displayedIconImage(colorIconImage(for: feed))
 	}
 
 	func emptyCache() {
@@ -181,6 +164,32 @@ private extension IconImageCache {
 		return FaviconDownloader.shared.favicon(for: feed)
 	}
 
+	/// Precedence: feed icon, home page icon, favicon, generated favicon.
+	///
+	/// While a source is loading, or after the downloaders empty their caches, the icon found last is shown,
+	/// so an icon doesn’t flash. Without one, the generated favicon is shown.
+	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/5376>
+	func colorIconImage(for feed: Feed) -> IconImage {
+		if Self.isNetNewsWireBrandedFeed(feed) {
+			return IconImage.nnwFeedIcon
+		}
+		let feedID = feed.sidebarItemID
+		if let iconImage = feedIcon(for: feed).iconImage {
+			if let feedID {
+				lastFoundFeedIconImages[feedID] = iconImage
+			}
+			return iconImage
+		}
+		if let feedID, let iconImage = lastFoundFeedIconImages[feedID] {
+			return iconImage
+		}
+		return FaviconGenerator.shared.favicon(feed)
+	}
+
+	func displayedIconImage(_ iconImage: IconImage) -> IconImage {
+		AppDefaults.grayscaleIcons ? iconImage.grayscaleIconImage : iconImage
+	}
+
 	func postFeedIconImageDidChange(_ feeds: Set<Feed>?) {
 		guard let feeds else {
 			return
@@ -192,22 +201,22 @@ private extension IconImageCache {
 
 	func imageForSmartFeed(_ smartFeed: PseudoFeed, _ feedID: SidebarItemIdentifier) -> IconImage? {
 		if let iconImage = smartFeedIconImageCache[feedID] {
-			return iconImage
+			return displayedIconImage(iconImage)
 		}
 		if let iconImage = smartFeed.smallIcon {
 			smartFeedIconImageCache[feedID] = iconImage
-			return iconImage
+			return displayedIconImage(iconImage)
 		}
 		return nil
 	}
 
 	func imageForSmallIconProvider(_ provider: SmallIconProvider, _ feedID: SidebarItemIdentifier) -> IconImage? {
 		if let iconImage = smallIconImageCache[feedID] {
-			return iconImage
+			return displayedIconImage(iconImage)
 		}
 		if let iconImage = provider.smallIcon {
 			smallIconImageCache[feedID] = iconImage
-			return iconImage
+			return displayedIconImage(iconImage)
 		}
 		return nil
 	}
@@ -222,8 +231,11 @@ private extension IconImageCache {
 	func imageForAuthor(_ author: Author) -> IconImage? {
 		if let iconImage = AuthorAvatarDownloader.shared.avatar(for: author).iconImage {
 			authorIconImageCache[author] = iconImage
-			return iconImage
+			return displayedIconImage(iconImage)
 		}
-		return authorIconImageCache[author]
+		guard let iconImage = authorIconImageCache[author] else {
+			return nil
+		}
+		return displayedIconImage(iconImage)
 	}
 }

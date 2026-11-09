@@ -36,7 +36,7 @@ public final class IconImage: @unchecked Sendable {
 		luminanceType == .bright
 	}
 
-	/// This icon without color: bitmaps converted to grayscale, symbols without their preferred color.
+	/// This icon without color: bitmaps converted to grayscale, symbols tinted gray.
 	public var grayscaleIconImage: IconImage {
 		if let grayscaleIconImage = cachedGrayscaleIconImage.withLock({ $0 }) {
 			return grayscaleIconImage
@@ -117,7 +117,7 @@ private extension IconImage {
 
 	func makeGrayscaleIconImage() -> IconImage {
 		if isSymbol {
-			return IconImage(image, isSymbol: true, isBackgroundSuppressed: isBackgroundSuppressed)
+			return IconImage(image, isSymbol: true, isBackgroundSuppressed: isBackgroundSuppressed, preferredColor: IconImage.grayscaleSymbolColor)
 		}
 		guard let cgImage = IconImage.cgImage(of: image), let grayscaleCGImage = IconImage.grayscaleCGImage(cgImage) else {
 			return self
@@ -165,6 +165,14 @@ private extension IconImage {
 			}
 		}
 		return context.makeImage()
+	}
+
+	static var grayscaleSymbolColor: RSColor {
+		#if os(macOS)
+		NSColor.secondaryLabelColor
+		#else
+		UIColor.secondaryLabel
+		#endif
 	}
 
 	static func cgImage(of image: RSImage) -> CGImage? {
