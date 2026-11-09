@@ -63,6 +63,21 @@ img.twemoji, img.emoji {
 	width: auto;
 }
 
+/* Primary image: the article’s main image, from the feed */
+
+.nnw-primary-image {
+	margin: 1em 0;
+}
+
+.nnw-primary-image img {
+	height: auto;
+}
+
+.nnw-primary-image-caption {
+	margin: 0.5em 0 0;
+	font-size: 0.9em;
+}
+
 /* Enclosures: audio and video players and images after the article body */
 
 .nnw-enclosures {

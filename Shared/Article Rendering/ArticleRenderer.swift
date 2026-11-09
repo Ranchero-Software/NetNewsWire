@@ -47,6 +47,11 @@ import Images
 	private let baseURL: URL?
 	private let routesThumbnailImages: Bool
 
+	private static let primaryImageKey = "primary_image"
+	private static let primaryImageMacro = "[[primary_image]]"
+	private static let enclosuresKey = "enclosures"
+	private static let enclosuresMacro = "[[enclosures]]"
+
 	private static let longDateTimeFormatter: DateFormatter = {
 		let formatter = DateFormatter()
 		formatter.dateStyle = .long
@@ -270,16 +275,31 @@ private extension ArticleRenderer {
 			d["external_link"] = ""
 		}
 
+		// Templates without [[primary_image]] get the primary image in the enclosures.
+		let bodyImageIdentities = Self.bodyImageIdentities(body, baseURL: baseURL)
+		var attachments = article.attachments ?? []
+		var primaryImageHTML = ""
+		if let primaryImage = Self.primaryImage(imageLink: article.imageLink, attachments: attachments, body: body, bodyImageIdentities: bodyImageIdentities) {
+			if template().contains(Self.primaryImageMacro) {
+				primaryImageHTML = Self.primaryImageHTML(primaryImage, articleTitle: article.title)
+				attachments.removeAll { $0.url == primaryImage.url }
+			} else if !attachments.contains(primaryImage) {
+				attachments.insert(primaryImage, at: 0)
+			}
+		}
+
 		// Templates without [[enclosures]] get them at the end of the body.
-		var enclosures = Self.enclosuresHTML(attachments: article.attachments, body: body, imageURL: article.imageLink ?? article.thumbnailLink)
+		var enclosures = Self.enclosuresHTML(attachments: attachments, body: body, bodyImageIdentities: bodyImageIdentities, posterURL: article.imageLink ?? article.thumbnailLink)
 		var body = body
 		if routesThumbnailImages, let thumbnailMode = AppDefaults.timelineThumbnailsDisplay.thumbnailMode, let thumbnailURL = ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) {
 			body = Self.routingThumbnailImages(body, thumbnailURL: thumbnailURL, baseURL: baseURL)
 			enclosures = Self.routingThumbnailImages(enclosures, thumbnailURL: thumbnailURL, baseURL: baseURL)
+			primaryImageHTML = Self.routingThumbnailImages(primaryImageHTML, thumbnailURL: thumbnailURL, baseURL: baseURL)
 		}
-		if template().contains("[[enclosures]]") {
+		d[Self.primaryImageKey] = primaryImageHTML
+		if template().contains(Self.enclosuresMacro) {
 			d["body"] = body
-			d["enclosures"] = enclosures
+			d[Self.enclosuresKey] = enclosures
 		} else if enclosures.isEmpty {
 			d["body"] = body
 		} else {
