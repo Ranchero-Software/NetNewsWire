@@ -78,6 +78,16 @@ import Articles
 		#expect(ArticleRenderer.primaryImage(imageLink: imageURL, thumbnailLink: nil, attachments: nil, body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil)) == nil)
 	}
 
+	// Engadget’s “NHTSA investigates if Waymo robotaxis are still running school bus stop signs”:
+	// the enclosure is the body’s image with an `l-` prefix.
+	@Test func primaryImageSkippedWhenBodyHasEngadgetCopy() throws {
+		let imageURL = "https://www.engadget.com/img/gallery/nhtsa-investigates-if-waymo-robotaxis-are-still-running-school-bus-stop-signs/l-intro-1794240937.jpg"
+		let attachment = try #require(Attachment(url: imageURL, mimeType: "image/jpg", title: nil, sizeInBytes: 384418, durationInSeconds: nil, width: nil, height: nil, medium: nil))
+		let body = "The latest probe questions the effectiveness of Waymo's software recall from 2025.<p><img src=\"https://www.engadget.com/img/gallery/nhtsa-investigates-if-waymo-robotaxis-are-still-running-school-bus-stop-signs/intro-1794240937.jpg\" /></p>"
+
+		#expect(ArticleRenderer.primaryImage(imageLink: nil, thumbnailLink: imageURL, attachments: [attachment], body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil)) == nil)
+	}
+
 	// The Atlantic’s “The Democrats’ Fight Over Israel Is Just Beginning”: every image is `original.jpg` in its own folder,
 	// and the body’s photos are different ones from the media:content image.
 	@Test func primaryImageShownWhenBodyHasDifferentImages() throws {
