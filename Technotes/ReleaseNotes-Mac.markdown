@@ -1,5 +1,24 @@
 # Mac Release Notes
 
+### 7.3b6 7233 9 Nov 2026 - branch: main tag: mac-7.3b6
+
+Added a Grayscale icons setting to Settings > Appearance — for feed icons and author avatars (article thumbnails stay in color)
+Made Feed Name and Date Above Title the default in the timeline
+Put the date above the thumbnail when small thumbnails and Feed Name and Date Above Title are both on
+Made timeline rows always show the author or feed name, instead of leaving that spot empty
+Limited articles with no title to four lines when rows show the full title with no preview
+Added [[primary_media]] and [[enclosures]] tags for themes — primary_media is the article’s main image, video, or audio from the feed, when the article’s HTML doesn’t already include it
+Allowed themes to include a template7.3.html file, which is used in 7.3 and later instead of template.html
+Updated the built-in themes to use [[primary_media]] and [[enclosures]]
+Skipped enclosure images that are the same as the feed image (as with Letters from an American), so they don’t become redundant thumbnails or primary images
+Skipped primary images for microblog-style (Mastodon, etc.) posts — their images appear with the enclosures at the bottom
+Used media:thumbnail as a fallback when an article has no other images (as with Wired)
+Picked the widest image when Guardian image enclosures differ only by width
+Fixed duplicate images in Engadget articles
+Fixed embedded YouTube videos (and other iframes) not loading on sites that use Optimole lazy loading
+Fixed blog.rust-lang.org articles — JavaScript is turned off for them, and their noscript content is shown
+Used an item’s only Gravatar as its author’s avatar, even when the author name is a username
+
 ### 7.3b5 7232 7 Nov 2026 - branch: main tag: mac-7.3b5
 
 Added an Appearance settings pane — appearance (system, light, or dark), sidebar text size, sidebar icons, which smart feeds to show (Today, All Unread, Starred), and the article theme and text size (moved from General)

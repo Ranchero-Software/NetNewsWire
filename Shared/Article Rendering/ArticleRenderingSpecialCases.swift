@@ -230,6 +230,18 @@ struct ArticleRenderingSpecialCases {
 		return false
 	}
 
+	private static let engadgetImageDomains = ["engadget.com"]
+	private static let engadgetLargeImagePrefix = "l-"
+
+	/// Engadget’s enclosure and `media:thumbnail` are the body’s image with an `l-` prefix,
+	/// as in `l-intro-1794240937.jpg` and `intro-1794240937.jpg`.
+	static func removingEngadgetImagePrefix(_ fileName: String, imageURL: String) -> String {
+		guard fileName.hasPrefix(engadgetLargeImagePrefix), SpecialCase.urlStringMatchesDomain(imageURL, engadgetImageDomains) else {
+			return fileName
+		}
+		return String(fileName.dropFirst(engadgetLargeImagePrefix.count))
+	}
+
 	private static func anyURLStringMatchesAnyDomain(_ urlStrings: [String?], _ domains: [String]) -> Bool {
 		for urlString in urlStrings {
 			if let urlString, SpecialCase.urlStringMatchesDomain(urlString, domains) {

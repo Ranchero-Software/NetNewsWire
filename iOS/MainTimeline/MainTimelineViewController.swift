@@ -763,6 +763,7 @@ private extension MainTimelineViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleFeedIconImageDidChange(_:)), name: .feedIconImageDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleGrayscaleIconsDidChange(_:)), name: .grayscaleIconsDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleAuthorAvatarImageDidChange(_:)), name: .authorAvatarImageDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(timelineIconSizeDidChange(_:)), name: .timelineIconSizeDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(timelineNumberOfLinesDidChange(_:)), name: .timelineNumberOfLinesDidChange, object: nil)
@@ -1168,6 +1169,14 @@ private extension MainTimelineViewController {
 	@objc func handleAuthorAvatarImageDidChange(_ notification: Notification) {
 		Self.logger.debug("MainTimelineViewController: handleAuthorAvatarImageDidChange")
 		queueReloadIfVisibleArticleMightShowIcon(in: notification)
+	}
+
+	@objc func handleGrayscaleIconsDidChange(_ notification: Notification) {
+		Self.logger.debug("MainTimelineViewController: handleGrayscaleIconsDidChange")
+		guard showIcons else {
+			return
+		}
+		reloadVisibleCells()
 	}
 
 	@objc func timelineIconSizeDidChange(_ note: Notification) {

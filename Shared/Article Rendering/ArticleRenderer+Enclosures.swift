@@ -140,7 +140,7 @@ private extension ArticleRenderer {
 		body.contains(url) || body.contains(url.escapingSpecialXMLCharacters)
 	}
 
-	/// The last two path components, lowercased, without a WordPress size suffix.
+	/// The last two path components, lowercased, without a WordPress size suffix or Engadget size prefix.
 	/// Two components, since some sites name every image `original.jpg` in its own folder.
 	/// Ignores the host and query, since resized copies are often served through a resizing service.
 	static func imageIdentity(_ urlString: String) -> String? {
@@ -148,10 +148,11 @@ private extension ArticleRenderer {
 			return nil
 		}
 		let pathComponents = url.pathComponents.filter { $0 != "/" }
-		guard let fileName = pathComponents.last else {
+		guard let lastPathComponent = pathComponents.last else {
 			return nil
 		}
+		let fileName = ArticleRenderingSpecialCases.removingEngadgetImagePrefix(lastPathComponent, imageURL: urlString).replacing(wordPressSizeSuffix, with: "")
 		let folderName = pathComponents.dropLast().suffix(1)
-		return (folderName + [fileName.replacing(wordPressSizeSuffix, with: "")]).joined(separator: "/").lowercased()
+		return (folderName + [fileName]).joined(separator: "/").lowercased()
 	}
 }

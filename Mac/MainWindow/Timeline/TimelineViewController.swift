@@ -328,6 +328,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleFeedIconImageDidChange(_:)), name: .feedIconImageDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleAuthorAvatarImageDidChange(_:)), name: .authorAvatarImageDidChange, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(handleGrayscaleIconsDidChange(_:)), name: .grayscaleIconsDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleThumbnailDidBecomeAvailable(_:)), name: .thumbnailDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThumbnailDownloadDidFail(_:)), name: .articleThumbnailDownloadDidFail, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleNetworkStatusDidChange(_:)), name: .networkStatusDidChange, object: nil)
@@ -790,6 +791,13 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		if let indexesToReload = indexesToReload {
 			reloadCells(for: indexesToReload)
 		}
+	}
+
+	@objc func handleGrayscaleIconsDidChange(_ notification: Notification) {
+		guard showIcons else {
+			return
+		}
+		reloadVisibleCells()
 	}
 
 	@objc func handleThumbnailDidBecomeAvailable(_ notification: Notification) {

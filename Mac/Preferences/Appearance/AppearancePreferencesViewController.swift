@@ -11,6 +11,7 @@ import RSCore
 final class AppearancePreferencesViewController: NSViewController {
 
 	@IBOutlet var appearancePopup: NSPopUpButton?
+	@IBOutlet var grayscaleIconsButton: NSButton?
 
 	@IBOutlet var sidebarShowFeedIconsButton: NSButton?
 	@IBOutlet var sidebarTextSizePopup: NSPopUpButton?
@@ -45,6 +46,7 @@ final class AppearancePreferencesViewController: NSViewController {
 	override func viewWillAppear() {
 		super.viewWillAppear()
 		updateAppearancePopup()
+		updateGrayscaleIconsButton()
 		updateSidebarShowIconsButton()
 		updateSidebarTextSizePopup()
 		updateSmartFeedsButtons()
@@ -63,6 +65,10 @@ final class AppearancePreferencesViewController: NSViewController {
 
 	@objc func handleUserInterfaceColorPaletteDidUpdate(_ notification: Notification) {
 		updateAppearancePopup()
+	}
+
+	@objc func handleGrayscaleIconsDidChange(_ notification: Notification) {
+		updateGrayscaleIconsButton()
 	}
 
 	@objc func handleSidebarShowsIconsDidChange(_ notification: Notification) {
@@ -84,6 +90,10 @@ final class AppearancePreferencesViewController: NSViewController {
 			return
 		}
 		AppDefaults.userInterfaceColorPalette = colorPalette
+	}
+
+	@IBAction func grayscaleIconsDidChange(_ sender: NSButton) {
+		AppDefaults.grayscaleIcons = sender.state == .on
 	}
 
 	@IBAction func sidebarShowIconsDidChange(_ sender: NSButton) {
@@ -131,6 +141,7 @@ private extension AppearancePreferencesViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleApplicationWillBecomeActive(_:)), name: NSApplication.willBecomeActiveNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThemeNamesDidChange(_:)), name: .ArticleThemeNamesDidChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUserInterfaceColorPaletteDidUpdate(_:)), name: .userInterfaceColorPaletteDidUpdate, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleGrayscaleIconsDidChange(_:)), name: .grayscaleIconsDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarShowsIconsDidChange(_:)), name: .sidebarShowsIconsDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarTextSizeDidChange(_:)), name: .sidebarTextSizeDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarSmartFeedsVisibilityDidChange(_:)), name: .sidebarSmartFeedsVisibilityDidChange, object: nil)
@@ -169,6 +180,10 @@ private extension AppearancePreferencesViewController {
 
 	func updateAppearancePopup() {
 		appearancePopup?.selectItem(withTag: AppDefaults.userInterfaceColorPalette.rawValue)
+	}
+
+	func updateGrayscaleIconsButton() {
+		grayscaleIconsButton?.state = AppDefaults.grayscaleIcons ? .on : .off
 	}
 
 	func updateSidebarShowIconsButton() {

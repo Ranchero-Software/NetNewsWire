@@ -191,6 +191,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	func registerForNotifications() {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleFeedIconImageDidChange(_:)), name: .feedIconImageDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleGrayscaleIconsDidChange(_:)), name: .grayscaleIconsDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .feedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarShowsIconsDidChange(_:)), name: .sidebarShowsIconsDidChange, object: nil)
@@ -922,6 +923,11 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	@objc func handleSidebarShowsIconsDidChange(_ notification: Notification) {
+		// Only realized cells are reconfigured. Others pick up the setting when dequeued.
+		reconfigureItems(dataSource.snapshot().itemIdentifiers)
+	}
+
+	@objc func handleGrayscaleIconsDidChange(_ notification: Notification) {
 		// Only realized cells are reconfigured. Others pick up the setting when dequeued.
 		reconfigureItems(dataSource.snapshot().itemIdentifiers)
 	}

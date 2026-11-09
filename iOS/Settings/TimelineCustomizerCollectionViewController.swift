@@ -258,7 +258,7 @@ private extension TimelineCustomizerCollectionViewController {
 											 showFeedName: .byline,
 											 feedName: "The Fellowship of the Ring",
 											 byline: "J. R. R. Tolkien",
-											 iconImage: IconImage.nnwFeedIcon,
+											 iconImage: IconImageCache.shared.displayedIconImage(IconImage.nnwFeedIcon),
 											 showIcon: section.showsFeedIcon,
 											 numberOfLines: AppDefaults.timelineNumberOfLines,
 											 iconSize: AppDefaults.timelineIconSize,

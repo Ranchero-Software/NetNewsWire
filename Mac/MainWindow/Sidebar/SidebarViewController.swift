@@ -114,6 +114,7 @@ extension Notification.Name {
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleFeedIconImageDidChange(_:)), name: .feedIconImageDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleGrayscaleIconsDidChange(_:)), name: .grayscaleIconsDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .feedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 		DistributedNotificationCenter.default().addObserver(self, selector: #selector(appleSideBarDefaultIconSizeChanged(_:)), name: .appleSideBarDefaultIconSizeChanged, object: nil)
@@ -253,6 +254,10 @@ extension Notification.Name {
 
 	@objc func handleSidebarShowsIconsDidChange(_ notification: Notification) {
 		prefetchFeedIcons()
+		applyToAvailableCells(configure)
+	}
+
+	@objc func handleGrayscaleIconsDidChange(_ notification: Notification) {
 		applyToAvailableCells(configure)
 	}
 
@@ -967,8 +972,8 @@ private extension SidebarViewController {
 	}
 
 	func imageFor(_ node: Node) -> IconImage? {
-		if let feed = node.representedObject as? Feed, let feedIcon = IconImageCache.shared.imageForFeed(feed) {
-			return feedIcon
+		if let sidebarItem = node.representedObject as? SidebarItem, let iconImage = IconImageCache.shared.imageForFeed(sidebarItem) {
+			return iconImage
 		}
 		if let smallIconProvider = node.representedObject as? SmallIconProvider {
 			return smallIconProvider.smallIcon

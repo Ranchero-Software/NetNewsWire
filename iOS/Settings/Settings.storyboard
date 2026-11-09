@@ -595,7 +595,7 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection headerTitle="Appearance" id="TkH-4v-yhk">
+                            <tableViewSection headerTitle="Appearance" footerTitle="This is for feed icons and author avatars. Article thumbnails remain in color." id="TkH-4v-yhk">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" id="EvG-yE-gDF" customClass="VibrantBasicTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
                                         <rect key="frame" x="20" y="1152" width="374" height="51"/>
@@ -642,6 +642,39 @@
                                         <connections>
                                             <outlet property="label" destination="Ucd-c3-Lbl" id="Ucd-k1-Ol1"/>
                                         </connections>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" id="Gry-c1-Cel" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
+                                        <rect key="frame" x="20" y="1254" width="374" height="51.5"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Gry-c1-Cel" id="Gry-c2-Cnt">
+                                            <rect key="frame" x="0.0" y="0.0" width="374" height="51.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="250" text="Grayscale Icons" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Gry-l3-Lbl" customClass="VibrantLabel" customModule="NetNewsWire" customModuleProvider="target">
+                                                    <rect key="frame" x="20" y="15" width="167.5" height="21.5"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Gry-s4-Swt">
+                                                    <rect key="frame" x="293" y="12" width="63" height="28"/>
+                                                    <color key="onTintColor" name="primaryAccentColor"/>
+                                                    <connections>
+                                                        <action selector="switchGrayscaleIcons:" destination="a0p-rk-skQ" eventType="valueChanged" id="Gry-a5-Act"/>
+                                                    </connections>
+                                                </switch>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="Gry-s4-Swt" firstAttribute="top" relation="greaterThanOrEqual" secondItem="Gry-c2-Cnt" secondAttribute="top" constant="6" id="Gry-k6-Ct1"/>
+                                                <constraint firstItem="Gry-s4-Swt" firstAttribute="centerY" secondItem="Gry-c2-Cnt" secondAttribute="centerY" id="Gry-k7-Ct2"/>
+                                                <constraint firstItem="Gry-l3-Lbl" firstAttribute="top" secondItem="Gry-c2-Cnt" secondAttribute="topMargin" id="Gry-k8-Ct3"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="Gry-l3-Lbl" secondAttribute="bottom" id="Gry-k9-Ct4"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="Gry-s4-Swt" secondAttribute="trailing" id="Gry-ka-Ct5"/>
+                                                <constraint firstItem="Gry-s4-Swt" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Gry-l3-Lbl" secondAttribute="trailing" constant="8" id="Gry-kb-Ct6"/>
+                                                <constraint firstItem="Gry-l3-Lbl" firstAttribute="leading" secondItem="Gry-c2-Cnt" secondAttribute="leadingMargin" id="Gry-kc-Ct7"/>
+                                                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="Gry-s4-Swt" secondAttribute="bottom" constant="6" id="Gry-kd-Ct8"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
@@ -842,6 +875,7 @@
                         <outlet property="confirmMarkAllAsReadSwitch" destination="UOo-9z-IuL" id="yLZ-Kf-wDt"/>
                         <outlet property="showPreviewInTimelineContextMenuSwitch" destination="pTc-Mp-c04" id="pTc-Mp-c14"/>
                         <outlet property="enableJavaScriptSwitch" destination="Djo-HE-LWS" id="muL-I5-eDE"/>
+                        <outlet property="grayscaleIconsSwitch" destination="Gry-s4-Swt" id="Gry-o1-Out"/>
                         <outlet property="groupByFeedSwitch" destination="JNi-Wz-RbU" id="TwH-Kd-o6N"/>
                         <outlet property="openLinksInNetNewsWire" destination="dhR-L2-PX3" id="z1b-pX-bwG"/>
                         <outlet property="refreshClearsReadArticlesSwitch" destination="duV-CN-JmH" id="xTd-jF-Ei1"/>
