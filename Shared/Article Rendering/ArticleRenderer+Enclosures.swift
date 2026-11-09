@@ -52,10 +52,8 @@ extension ArticleRenderer {
 		}
 		return bodyImageIdentities.contains(identity)
 	}
-}
 
-private extension ArticleRenderer {
-
+	/// A player or image for one attachment. Nil when it’s not something that can be shown.
 	static func enclosureHTML(_ attachment: Attachment, posterURL: String?) -> String? {
 		if let youTubeEmbedURL = ArticleRenderingSpecialCases.youTubeEmbedURL(forAttachmentURL: attachment.url) {
 			let iframe = "<iframe src=\"\(youTubeEmbedURL)\"" + dimensionAttributes(attachment) + " allowfullscreen></iframe>"
@@ -95,6 +93,10 @@ private extension ArticleRenderer {
 		html += "</div>"
 		return html
 	}
+
+}
+
+private extension ArticleRenderer {
 
 	/// Title (or file name), duration, and size, such as “Episode 311 · 1:54:09 · 54.9 MB”.
 	static func audioCaption(_ attachment: Attachment) -> String {

@@ -1,5 +1,5 @@
 //
-//  ArticleRenderer+PrimaryImage.swift
+//  ArticleRenderer+PrimaryMedia.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 11/8/26.
@@ -9,18 +9,41 @@ import Foundation
 import RSCore
 import Articles
 
-/// The article’s main image, for the `[[primary_image]]` substitution.
+/// The article’s main media, for the `[[primary_media]]` substitution: a video, else audio with the article image, else the article image.
 extension ArticleRenderer {
 
-	private static let shortPostMaximumBodyLength = 2048
+	typealias PrimaryMedia = (html: String, attachmentURLs: Set<String>)
 
-	/// Untitled and short, as with social media and microblog posts, which put their images after the text.
-	/// These get no primary image — its image goes in the enclosures.
-	static func isShortUntitledPost(title: String?, body: String) -> Bool {
-		guard title?.isEmpty ?? true else {
-			return false
+	/// Nil when there’s nothing to show. `attachmentURLs` are the attachments (and article image) it shows, for the enclosures to skip.
+	/// A video’s poster is the article image or thumbnail, so the image isn’t shown separately.
+	static func primaryMedia(imageLink: String?, thumbnailLink: String?, attachments: [Attachment]?, articleTitle: String?, body: String, bodyImageIdentities: Set<String>) -> PrimaryMedia? {
+		let playableAttachments = (attachments ?? []).filter { !bodyContains($0.url, body: body, bodyImageIdentities: bodyImageIdentities) }
+
+		let posterURL = imageLink ?? thumbnailLink
+		if let video = playableAttachments.first(where: isVideo), let videoHTML = enclosureHTML(video, posterURL: posterURL) {
+			var attachmentURLs: Set<String> = [video.url]
+			if let posterURL {
+				attachmentURLs.insert(posterURL)
+			}
+			return (primaryMediaHTML(videoHTML), attachmentURLs)
 		}
-		return body.count < shortPostMaximumBodyLength
+
+		var imageHTML = ""
+		var attachmentURLs = Set<String>()
+		if let image = primaryImage(imageLink: imageLink, thumbnailLink: thumbnailLink, attachments: attachments, body: body, bodyImageIdentities: bodyImageIdentities) {
+			imageHTML = primaryImageHTML(image, articleTitle: articleTitle)
+			attachmentURLs.insert(image.url)
+		}
+
+		if let audio = playableAttachments.first(where: { $0.displayMedium == .audio }), let audioHTML = enclosureHTML(audio, posterURL: nil) {
+			attachmentURLs.insert(audio.url)
+			return (primaryMediaHTML(imageHTML + audioHTML), attachmentURLs)
+		}
+
+		guard !imageHTML.isEmpty else {
+			return nil
+		}
+		return (primaryMediaHTML(imageHTML), attachmentURLs)
 	}
 
 	/// The article image (JSON Feed `image`, `itunes:image`, or a sync service’s image), else the first image attachment,
@@ -65,6 +88,14 @@ extension ArticleRenderer {
 }
 
 private extension ArticleRenderer {
+
+	static func primaryMediaHTML(_ html: String) -> String {
+		"<div class=\"nnw-primary-media\">\(html)</div>"
+	}
+
+	static func isVideo(_ attachment: Attachment) -> Bool {
+		attachment.displayMedium == .video || ArticleRenderingSpecialCases.youTubeEmbedURL(forAttachmentURL: attachment.url) != nil
+	}
 
 	static func imageAttachment(_ url: String) -> Attachment? {
 		Attachment(url: url, mimeType: nil, title: nil, sizeInBytes: nil, durationInSeconds: nil, width: nil, height: nil, medium: .image)

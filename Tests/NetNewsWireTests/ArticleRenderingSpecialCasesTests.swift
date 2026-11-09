@@ -129,6 +129,16 @@ import Testing
 		#expect(result == html)
 	}
 
+	// MARK: - Flickr small body images
+
+	// From Flickr’s public photos feed on 2026-11-08.
+	@Test func flickrBodyImageGetsLargeCopy() {
+		let html = #"<p><a href="https://www.flickr.com/photos/28072695@N03/55640727267/" title="312/365"><img src="https://live.staticflickr.com/65535/55640727267_a94c9ae7e7_m.jpg" width="180" height="240" alt="312/365" /></a></p>"#
+		let expected = #"<p><a href="https://www.flickr.com/photos/28072695@N03/55640727267/" title="312/365"><img src="https://live.staticflickr.com/65535/55640727267_a94c9ae7e7_b.jpg" alt="312/365" /></a></p>"#
+		let result = ArticleRenderingSpecialCases.enlargeFlickrImagesIfNeeded(html, feedURL: "https://www.flickr.com/services/feeds/photos_public.gne?format=rss2", attachmentURLs: ["https://live.staticflickr.com/65535/55640727267_a94c9ae7e7_b.jpg"])
+		#expect(result == expected)
+	}
+
 	// MARK: - Base URL for YouTube articles
 
 	// <https://github.com/Ranchero-Software/NetNewsWire/issues/4860>

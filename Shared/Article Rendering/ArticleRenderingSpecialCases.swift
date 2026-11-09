@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RSCore
 import RSWeb
 import Articles
 
@@ -66,6 +67,43 @@ struct ArticleRenderingSpecialCases {
 
 		let range = NSRange(html.startIndex..., in: html)
 		return strayLineBreaksRegex.stringByReplacingMatches(in: html, range: range, withTemplate: "$1")
+	}
+
+	private static let feedDomainsWithSmallBodyImages = ["flickr.com"]
+
+	// A Flickr image’s `<img src="…" width="…" height="…"` — the URL up to the size suffix, then the dimensions.
+	private static let flickrImageRegex = try? NSRegularExpression(
+		pattern: "<img src=\"(https://live\\.staticflickr\\.com/[^\"]+_)[a-z]\\.jpg\" width=\"\\d+\" height=\"\\d+\"",
+		options: [.caseInsensitive]
+	)
+
+	/// Flickr feeds embed a small copy of the photo (`_m.jpg`, 240 pixels) and list a large copy
+	/// (`_b.jpg`, or `_z.jpg` for smaller photos) as the enclosure. Use the enclosure’s copy in the body,
+	/// so the enclosure is skipped as a duplicate.
+	static func enlargeFlickrImagesIfNeeded(_ html: String, feedURL: String?, attachmentURLs: [String]) -> String {
+		guard anyURLStringMatchesAnyDomain([feedURL], feedDomainsWithSmallBodyImages) else {
+			return html
+		}
+		guard !attachmentURLs.isEmpty, html.contains("staticflickr.com"), let flickrImageRegex else {
+			return html
+		}
+
+		var result = ""
+		var remainderStart = html.startIndex
+		for match in flickrImageRegex.matches(in: html, range: NSRange(html.startIndex..., in: html)) {
+			guard let tagRange = Range(match.range, in: html), let prefixRange = Range(match.range(at: 1), in: html) else {
+				continue
+			}
+			let prefix = html[prefixRange]
+			guard let largeImageURL = attachmentURLs.first(where: { $0.hasPrefix(prefix) }) else {
+				continue
+			}
+			result += html[remainderStart..<tagRange.lowerBound]
+			result += "<img src=\"\(largeImageURL.escapingSpecialXMLCharacters)\""
+			remainderStart = tagRange.upperBound
+		}
+		result += html[remainderStart...]
+		return result
 	}
 
 	static func filterHTMLIfNeeded(baseURL: String, html: String) -> String {

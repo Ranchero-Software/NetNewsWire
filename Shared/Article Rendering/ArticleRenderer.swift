@@ -47,8 +47,8 @@ import Images
 	private let baseURL: URL?
 	private let routesThumbnailImages: Bool
 
-	private static let primaryImageKey = "primary_image"
-	private static let primaryImageMacro = "[[primary_image]]"
+	private static let primaryMediaKey = "primary_media"
+	private static let primaryMediaMacro = "[[primary_media]]"
 	private static let enclosuresKey = "enclosures"
 	private static let enclosuresMacro = "[[enclosures]]"
 
@@ -136,6 +136,7 @@ import Images
 			articleBody = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(Self.bodyHTML(article))
 			articleBody = ArticleRenderingSpecialCases.insertParagraphTagsIfNeeded(articleBody, feedURL: feedURL, homePageURL: homePageURL)
 			articleBody = ArticleRenderingSpecialCases.removeStrayLineBreaksIfNeeded(articleBody, feedURL: feedURL, homePageURL: homePageURL)
+			articleBody = ArticleRenderingSpecialCases.enlargeFlickrImagesIfNeeded(articleBody, feedURL: feedURL, attachmentURLs: article?.attachments?.map { $0.url } ?? [])
 			if article?.account?.type == .freshRSS {
 				articleBody = ArticleRenderingSpecialCases.desanitizeFreshRSSContent(articleBody)
 			}
@@ -275,19 +276,18 @@ private extension ArticleRenderer {
 			d["external_link"] = ""
 		}
 
-		// Templates without [[primary_image]], and short untitled posts, get the primary image in the enclosures.
-		// The thumbnail is used only for [[primary_image]].
+		// Templates without [[primary_media]] get the article image in the enclosures.
+		// The thumbnail is used only for [[primary_media]].
 		let bodyImageIdentities = Self.bodyImageIdentities(body, baseURL: baseURL)
 		var attachments = article.attachments ?? []
-		var primaryImageHTML = ""
-		let showsPrimaryImage = template().contains(Self.primaryImageMacro) && !Self.isShortUntitledPost(title: article.title, body: body)
-		if let primaryImage = Self.primaryImage(imageLink: article.imageLink, thumbnailLink: showsPrimaryImage ? article.thumbnailLink : nil, attachments: attachments, body: body, bodyImageIdentities: bodyImageIdentities) {
-			if showsPrimaryImage {
-				primaryImageHTML = Self.primaryImageHTML(primaryImage, articleTitle: article.title)
-				attachments.removeAll { $0.url == primaryImage.url }
-			} else if !attachments.contains(primaryImage) {
-				attachments.insert(primaryImage, at: 0)
+		var primaryMediaHTML = ""
+		if template().contains(Self.primaryMediaMacro) {
+			if let primaryMedia = Self.primaryMedia(imageLink: article.imageLink, thumbnailLink: article.thumbnailLink, attachments: attachments, articleTitle: article.title, body: body, bodyImageIdentities: bodyImageIdentities) {
+				primaryMediaHTML = primaryMedia.html
+				attachments.removeAll { primaryMedia.attachmentURLs.contains($0.url) }
 			}
+		} else if let primaryImage = Self.primaryImage(imageLink: article.imageLink, thumbnailLink: nil, attachments: attachments, body: body, bodyImageIdentities: bodyImageIdentities), !attachments.contains(primaryImage) {
+			attachments.insert(primaryImage, at: 0)
 		}
 
 		// Templates without [[enclosures]] get them at the end of the body.
@@ -296,9 +296,9 @@ private extension ArticleRenderer {
 		if routesThumbnailImages, let thumbnailMode = AppDefaults.timelineThumbnailsDisplay.thumbnailMode, let thumbnailURL = ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) {
 			body = Self.routingThumbnailImages(body, thumbnailURL: thumbnailURL, baseURL: baseURL)
 			enclosures = Self.routingThumbnailImages(enclosures, thumbnailURL: thumbnailURL, baseURL: baseURL)
-			primaryImageHTML = Self.routingThumbnailImages(primaryImageHTML, thumbnailURL: thumbnailURL, baseURL: baseURL)
+			primaryMediaHTML = Self.routingThumbnailImages(primaryMediaHTML, thumbnailURL: thumbnailURL, baseURL: baseURL)
 		}
-		d[Self.primaryImageKey] = primaryImageHTML
+		d[Self.primaryMediaKey] = primaryMediaHTML
 		if template().contains(Self.enclosuresMacro) {
 			d["body"] = body
 			d[Self.enclosuresKey] = enclosures

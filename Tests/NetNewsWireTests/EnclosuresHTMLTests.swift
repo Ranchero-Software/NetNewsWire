@@ -14,18 +14,29 @@ import Articles
 @MainActor @Suite struct EnclosuresHTMLTests {
 
 	// ATP 311: an untitled audio enclosure, show notes in the body, and itunes:image as the article image.
-	@Test func podcastEpisodeGetsAudioPlayerAndArtwork() throws {
+	@Test func podcastEpisodeGetsArtworkAndAudioPlayer() throws {
 		let attachment = try #require(Attachment(url: "http://traffic.libsyn.com/atpfm/atp311.mp3", mimeType: "audio/mpeg", title: nil, sizeInBytes: 54919661, durationInSeconds: 6849, width: nil, height: nil, medium: .audio))
 		let body = "<ul><li>Facebook’s Onavo scam</li><li>Apple’s FaceTime bug</li></ul>"
 		let artworkURL = "http://static1.squarespace.com/static/513abd71e4b0fe58c655c105/t/52c45a37e4b0a77a5034aa84/1388599866232/1500w/Artwork.jpg"
 
-		let primaryImage = try #require(ArticleRenderer.primaryImage(imageLink: artworkURL, thumbnailLink: nil, attachments: [attachment], body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil)))
-		let primaryImageHTML = ArticleRenderer.primaryImageHTML(primaryImage, articleTitle: nil)
-		let html = ArticleRenderer.enclosuresHTML(attachments: [attachment], body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil), posterURL: artworkURL)
+		let primaryMedia = try #require(ArticleRenderer.primaryMedia(imageLink: artworkURL, thumbnailLink: nil, attachments: [attachment], articleTitle: nil, body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil)))
 
-		#expect(primaryImageHTML == "<div class=\"nnw-primary-image\"><img src=\"\(artworkURL)\" alt=\"\"></div>")
-		#expect(html.contains("<audio controls preload=\"none\" src=\"http://traffic.libsyn.com/atpfm/atp311.mp3\"></audio>"))
-		#expect(html.contains("atp311.mp3 · 1:54:09 · "))
+		#expect(primaryMedia.html.hasPrefix("<div class=\"nnw-primary-media\"><div class=\"nnw-primary-image\"><img src=\"\(artworkURL)\" alt=\"\"></div><div class=\"nnw-enclosure nnw-enclosure-audio\"><audio controls preload=\"none\" src=\"http://traffic.libsyn.com/atpfm/atp311.mp3\"></audio>"))
+		#expect(primaryMedia.html.contains("atp311.mp3 · 1:54:09 · "))
+		#expect(primaryMedia.attachmentURLs == [artworkURL, attachment.url])
+	}
+
+	// TWiT 1108: a video enclosure, and itunes:image as the article image, which is the video’s poster.
+	@Test func videoEpisodeGetsVideoPlayerWithPoster() throws {
+		let videoURL = "https://pscrb.fm/rss/p/mgln.ai/e/294/cdn.twit.tv/video/twit/twit1108/twit1108_h264m_1920x1080.mp4"
+		let attachment = try #require(Attachment(url: videoURL, mimeType: "video/mp4", title: nil, sizeInBytes: 3010290787, durationInSeconds: nil, width: nil, height: nil, medium: .video))
+		let body = "<p>Are we headed for a slow-motion collapse of the AI bubble, or is this just the next phase of tech’s endless hype cycle?</p>"
+		let posterURL = "https://elroy.twit.tv/sites/default/files/styles/twit_thumb_720x405/public/images/episodes/2026/11/863590/hero/TWIT1108_thumbnail.jpg"
+
+		let primaryMedia = try #require(ArticleRenderer.primaryMedia(imageLink: posterURL, thumbnailLink: nil, attachments: [attachment], articleTitle: "TWiT 1108: Bad AI Vibes - Why Tech Leaders Miss the Mark on AI’s Real Impact", body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil)))
+
+		#expect(primaryMedia.html == "<div class=\"nnw-primary-media\"><div class=\"nnw-enclosure nnw-enclosure-video\"><video controls preload=\"metadata\" playsinline src=\"\(videoURL)\" poster=\"\(posterURL)\"></video></div></div>")
+		#expect(primaryMedia.attachmentURLs == [videoURL, posterURL])
 	}
 
 	// JSON Feed `image` that’s also listed as an attachment, which supplies the dimensions and title.
@@ -92,14 +103,6 @@ import Articles
 		let body = "The New York Times has added a beta feature to its Cooking app that helps readers swap ingredients or adjust recipes to suit their needs. It mostly hits the mark."
 
 		#expect(ArticleRenderer.primaryImage(imageLink: nil, thumbnailLink: thumbnailURL, attachments: nil, body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil))?.url == thumbnailURL)
-	}
-
-	// Micro.blog: an untitled photo post with a short caption.
-	@Test func shortUntitledPostHasNoPrimaryImage() {
-		let body = "<p>Fog over Lake Union this morning. The seaplanes are grounded.</p>"
-
-		#expect(ArticleRenderer.isShortUntitledPost(title: nil, body: body))
-		#expect(!ArticleRenderer.isShortUntitledPost(title: "Fog", body: body))
 	}
 
 	// The body embeds the enclosure image, with `&` escaped in the src attribute.

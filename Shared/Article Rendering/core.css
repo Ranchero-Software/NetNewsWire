@@ -63,7 +63,11 @@ img.twemoji, img.emoji {
 	width: auto;
 }
 
-/* Primary image: the article’s main image, from the feed */
+/* Primary media: the article’s main video, audio, or image, from the feed */
+
+.nnw-primary-media {
+	margin: 1em 0;
+}
 
 .nnw-primary-image {
 	margin: 1em 0;
