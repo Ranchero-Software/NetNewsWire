@@ -204,9 +204,6 @@ img[src*="/img/social/"] {
 	top: -0.5em;
 	height: 1em !important;
 	transform: rotate(45deg);
-	/* Only draw the upper half of the rotated square, so the arrow reads as a chevron
-	   whatever the popover body behind it looks like. */
-	clip-path: polygon(0 0, 100% 0, 0 100%);
 	z-index:0;
 }
 

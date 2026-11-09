@@ -114,14 +114,13 @@
 			this.popover.style.left = `${popoverLeft - containerRect.left}px`;
 			this.popover.style.width = `${popoverWidth}px`;
 
-			const arrowWidth = this.arrow.offsetWidth;
+			const arrowWidth = this.arrow.getBoundingClientRect().width / Math.SQRT2;
 			const arrowCenter = refCenter - popoverLeft;
 			const insetArrowCenter = Math.min(
 				Math.max(arrowCenter, arrowWidth),
 				popoverWidth - arrowWidth
 			);
 			this.arrow.style.left = `${insetArrowCenter - (arrowWidth / 2) - this.popover.clientLeft}px`;
-			this.arrow.style.top = `${-this.arrow.offsetHeight / 2}px`;
 		}
 	}
 

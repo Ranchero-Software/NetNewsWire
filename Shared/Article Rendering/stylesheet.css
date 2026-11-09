@@ -328,9 +328,9 @@ blockquote {
 	background: rgb(246, 246, 246);
 	border: 2px solid rgba(255, 255, 255, 0.72);
 	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
-	filter: drop-shadow(0 -1px 1.5px rgba(0, 0, 0, 0.16));
+	filter: drop-shadow(0 -0.5px 1.25px rgba(0, 0, 0, 0.13));
 	color: #171717;
-	padding: 1px;
+	padding: 0;
 }
 
 .newsfoot-footnote-popover-arrow {
@@ -340,7 +340,7 @@ blockquote {
 }
 
 .newsfoot-footnote-popover-inner {
-	background: transparent;
+	background: rgb(246, 246, 246);
 }
 
 body a.footnote,
@@ -374,7 +374,7 @@ a.footnote:hover,
 	}
 
 	.newsfoot-footnote-popover-inner {
-		background: transparent;
+		background: rgb(38, 38, 40);
 	}
 
 	body a.footnote,
