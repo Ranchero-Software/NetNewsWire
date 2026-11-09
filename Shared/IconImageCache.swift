@@ -131,6 +131,11 @@ extension Notification.Name {
 		displayedIconImage(colorIconImage(for: feed))
 	}
 
+	/// Grayscale when `AppDefaults.grayscaleIcons` is on.
+	func displayedIconImage(_ iconImage: IconImage) -> IconImage {
+		AppDefaults.grayscaleIcons ? iconImage.grayscaleIconImage : iconImage
+	}
+
 	func emptyCache() {
 		smartFeedIconImageCache.removeAll()
 		lastFoundFeedIconImages.removeAll()
@@ -184,10 +189,6 @@ private extension IconImageCache {
 			return iconImage
 		}
 		return FaviconGenerator.shared.favicon(feed)
-	}
-
-	func displayedIconImage(_ iconImage: IconImage) -> IconImage {
-		AppDefaults.grayscaleIcons ? iconImage.grayscaleIconImage : iconImage
 	}
 
 	func postFeedIconImageDidChange(_ feeds: Set<Feed>?) {

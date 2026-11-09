@@ -97,6 +97,18 @@
         }
       }
     },
+    "gyL-iC-0c1.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"This is for feed icons and author avatars. Article thumbnails remain in color.\"; ObjectID = \"gyL-iC-0c1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "This is for feed icons and author avatars. Article thumbnails remain in color."
+          }
+        }
+      }
+    },
     "jMV-2o-5Oh.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Medium\"; ObjectID = \"jMV-2o-5Oh\";",
       "extractionState" : "extracted_with_value",
