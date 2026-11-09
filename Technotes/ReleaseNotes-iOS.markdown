@@ -8,7 +8,6 @@ Added a Grayscale Icons setting — for feed icons and author avatars (article t
 Added Fade Read Articles, Feed Name and Date Above Title, and Full Titles, No Preview settings to Settings > Timeline Layout
 Reorganized Settings > Timeline Layout to better match the Mac version
 Added a Show Previews in Context Menus setting
-Replaced the photo in the Timeline Layout previews
 Made Feed Name and Date Above Title the default in the timeline
 Put the date above the thumbnail when small thumbnails and Feed Name and Date Above Title are both on
 Made timeline rows always show the author or feed name, instead of leaving that spot empty
