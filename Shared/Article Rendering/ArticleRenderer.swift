@@ -276,17 +276,20 @@ private extension ArticleRenderer {
 			d["external_link"] = ""
 		}
 
-		// Templates without [[primary_media]] get the article image in the enclosures.
+		// Templates without [[primary_media]], and short untitled posts, get the article image in the enclosures.
 		// The thumbnail is used only for [[primary_media]].
 		let bodyImageIdentities = Self.bodyImageIdentities(body, baseURL: baseURL)
 		var attachments = article.attachments ?? []
 		var primaryMediaHTML = ""
-		if template().contains(Self.primaryMediaMacro) {
-			if let primaryMedia = Self.primaryMedia(imageLink: article.imageLink, thumbnailLink: article.thumbnailLink, attachments: attachments, articleTitle: article.title, body: body, bodyImageIdentities: bodyImageIdentities) {
-				primaryMediaHTML = primaryMedia.html
-				attachments.removeAll { primaryMedia.attachmentURLs.contains($0.url) }
-			}
-		} else if let primaryImage = Self.primaryImage(imageLink: article.imageLink, thumbnailLink: nil, attachments: attachments, body: body, bodyImageIdentities: bodyImageIdentities), !attachments.contains(primaryImage) {
+		var primaryMediaURLs = Set<String>()
+		let hasPrimaryMedia = template().contains(Self.primaryMediaMacro)
+		let showsPrimaryImage = hasPrimaryMedia && !Self.isShortUntitledPost(title: article.title, body: body)
+		if hasPrimaryMedia, let primaryMedia = Self.primaryMedia(imageLink: article.imageLink, thumbnailLink: article.thumbnailLink, attachments: attachments, articleTitle: article.title, body: body, bodyImageIdentities: bodyImageIdentities, includesImage: showsPrimaryImage) {
+			primaryMediaHTML = primaryMedia.html
+			primaryMediaURLs = primaryMedia.attachmentURLs
+			attachments.removeAll { primaryMediaURLs.contains($0.url) }
+		}
+		if !showsPrimaryImage, let primaryImage = Self.primaryImage(imageLink: article.imageLink, thumbnailLink: nil, attachments: attachments, body: body, bodyImageIdentities: bodyImageIdentities), !primaryMediaURLs.contains(primaryImage.url), !attachments.contains(primaryImage) {
 			attachments.insert(primaryImage, at: 0)
 		}
 

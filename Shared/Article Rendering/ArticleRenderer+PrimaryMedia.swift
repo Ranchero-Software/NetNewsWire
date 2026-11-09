@@ -14,9 +14,21 @@ extension ArticleRenderer {
 
 	typealias PrimaryMedia = (html: String, attachmentURLs: Set<String>)
 
+	private static let shortPostMaximumBodyLength = 2048
+
+	/// Untitled and short, as with Mastodon and microblog posts, which put their images after the text.
+	/// Their images go in the enclosures, not the primary media.
+	static func isShortUntitledPost(title: String?, body: String) -> Bool {
+		guard title?.isEmpty ?? true else {
+			return false
+		}
+		return body.count < shortPostMaximumBodyLength
+	}
+
 	/// Nil when there’s nothing to show. `attachmentURLs` are the attachments (and article image) it shows, for the enclosures to skip.
 	/// A video’s poster is the article image or thumbnail, so the image isn’t shown separately.
-	static func primaryMedia(imageLink: String?, thumbnailLink: String?, attachments: [Attachment]?, articleTitle: String?, body: String, bodyImageIdentities: Set<String>) -> PrimaryMedia? {
+	/// When `includesImage` is false, only a video or audio is shown.
+	static func primaryMedia(imageLink: String?, thumbnailLink: String?, attachments: [Attachment]?, articleTitle: String?, body: String, bodyImageIdentities: Set<String>, includesImage: Bool) -> PrimaryMedia? {
 		let playableAttachments = (attachments ?? []).filter { !bodyContains($0.url, body: body, bodyImageIdentities: bodyImageIdentities) }
 
 		let posterURL = imageLink ?? thumbnailLink
@@ -30,7 +42,7 @@ extension ArticleRenderer {
 
 		var imageHTML = ""
 		var attachmentURLs = Set<String>()
-		if let image = primaryImage(imageLink: imageLink, thumbnailLink: thumbnailLink, attachments: attachments, body: body, bodyImageIdentities: bodyImageIdentities) {
+		if includesImage, let image = primaryImage(imageLink: imageLink, thumbnailLink: thumbnailLink, attachments: attachments, body: body, bodyImageIdentities: bodyImageIdentities) {
 			imageHTML = primaryImageHTML(image, articleTitle: articleTitle)
 			attachmentURLs.insert(image.url)
 		}

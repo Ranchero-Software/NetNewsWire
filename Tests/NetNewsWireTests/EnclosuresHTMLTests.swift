@@ -19,7 +19,7 @@ import Articles
 		let body = "<ul><li>Facebook’s Onavo scam</li><li>Apple’s FaceTime bug</li></ul>"
 		let artworkURL = "http://static1.squarespace.com/static/513abd71e4b0fe58c655c105/t/52c45a37e4b0a77a5034aa84/1388599866232/1500w/Artwork.jpg"
 
-		let primaryMedia = try #require(ArticleRenderer.primaryMedia(imageLink: artworkURL, thumbnailLink: nil, attachments: [attachment], articleTitle: nil, body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil)))
+		let primaryMedia = try #require(ArticleRenderer.primaryMedia(imageLink: artworkURL, thumbnailLink: nil, attachments: [attachment], articleTitle: nil, body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil), includesImage: true))
 
 		#expect(primaryMedia.html.hasPrefix("<div class=\"nnw-primary-media\"><div class=\"nnw-primary-image\"><img src=\"\(artworkURL)\" alt=\"\"></div><div class=\"nnw-enclosure nnw-enclosure-audio\"><audio controls preload=\"none\" src=\"http://traffic.libsyn.com/atpfm/atp311.mp3\"></audio>"))
 		#expect(primaryMedia.html.contains("atp311.mp3 · 1:54:09 · "))
@@ -33,7 +33,7 @@ import Articles
 		let body = "<p>Are we headed for a slow-motion collapse of the AI bubble, or is this just the next phase of tech’s endless hype cycle?</p>"
 		let posterURL = "https://elroy.twit.tv/sites/default/files/styles/twit_thumb_720x405/public/images/episodes/2026/11/863590/hero/TWIT1108_thumbnail.jpg"
 
-		let primaryMedia = try #require(ArticleRenderer.primaryMedia(imageLink: posterURL, thumbnailLink: nil, attachments: [attachment], articleTitle: "TWiT 1108: Bad AI Vibes - Why Tech Leaders Miss the Mark on AI’s Real Impact", body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil)))
+		let primaryMedia = try #require(ArticleRenderer.primaryMedia(imageLink: posterURL, thumbnailLink: nil, attachments: [attachment], articleTitle: "TWiT 1108: Bad AI Vibes - Why Tech Leaders Miss the Mark on AI’s Real Impact", body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil), includesImage: true))
 
 		#expect(primaryMedia.html == "<div class=\"nnw-primary-media\"><div class=\"nnw-enclosure nnw-enclosure-video\"><video controls preload=\"metadata\" playsinline src=\"\(videoURL)\" poster=\"\(posterURL)\"></video></div></div>")
 		#expect(primaryMedia.attachmentURLs == [videoURL, posterURL])
@@ -104,6 +104,19 @@ import Articles
 		let body = "<div id=\"youtube2-V1DtMzaVvfA\" class=\"youtube-wrap\"><div class=\"youtube-inner\"><iframe src=\"https://www.youtube-nocookie.com/embed/V1DtMzaVvfA?rel=0&amp;autoplay=0&amp;showinfo=0&amp;enablejsapi=0\" frameborder=\"0\" loading=\"lazy\" width=\"728\" height=\"409\"></iframe></div></div>"
 
 		#expect(ArticleRenderer.primaryImage(imageLink: nil, thumbnailLink: nil, attachments: [attachment], body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil)) == nil)
+	}
+
+	// Mastodon: an untitled post with a short caption and a photo attachment. The photo goes in the enclosures.
+	@Test func shortUntitledPostHasNoPrimaryImage() throws {
+		let imageURL = "https://files.mastodon.social/media_attachments/files/113/464/528/402/475/066/original/7a5c5bd1e2a41a3b.jpeg"
+		let attachment = try #require(Attachment(url: imageURL, mimeType: "image/jpeg", title: nil, sizeInBytes: nil, durationInSeconds: nil, width: nil, height: nil, medium: .image))
+		let body = "<p>Fog over Lake Union this morning. The seaplanes are grounded.</p>"
+		let bodyImageIdentities = ArticleRenderer.bodyImageIdentities(body, baseURL: nil)
+
+		#expect(ArticleRenderer.isShortUntitledPost(title: nil, body: body))
+		#expect(!ArticleRenderer.isShortUntitledPost(title: "Fog", body: body))
+		#expect(ArticleRenderer.primaryMedia(imageLink: nil, thumbnailLink: nil, attachments: [attachment], articleTitle: nil, body: body, bodyImageIdentities: bodyImageIdentities, includesImage: false) == nil)
+		#expect(ArticleRenderer.enclosuresHTML(attachments: [attachment], body: body, bodyImageIdentities: bodyImageIdentities, posterURL: nil).contains(imageURL))
 	}
 
 	// Wired: no attachments, and the full-size lead image is in media:thumbnail.
