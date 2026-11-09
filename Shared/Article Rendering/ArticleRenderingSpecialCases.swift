@@ -14,7 +14,7 @@ struct ArticleRenderingSpecialCases {
 
 	// Content JavaScript is always disabled for articles from these domains,
 	// regardless of the user setting. Subdomains match too.
-	private static let domainsWithJavaScriptDisabled = ["slashdot.org"]
+	private static let domainsWithJavaScriptDisabled = ["slashdot.org", "blog.rust-lang.org"]
 
 	/// True when any of the URL strings (article link, feed URL, feed home page URL)
 	/// is on a domain whose article content must render without JavaScript.
@@ -75,7 +75,26 @@ struct ArticleRenderingSpecialCases {
 			filteredHTML = filterVergeHTML(filteredHTML)
 		}
 
+		if shouldDisableJavaScript(urlStrings: [baseURL]) {
+			filteredHTML = unwrappingNoscriptTags(filteredHTML)
+		}
+
 		return filteredHTML
+	}
+
+	// Even with content JavaScript disabled for the page, WebKit’s user agent style sheet
+	// still hides <noscript> (display: none). Remove the tags so their content shows
+	// (the Rust blog’s charts, for example).
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/5518>
+	private static let noscriptTagRegex = try? NSRegularExpression(pattern: "</?noscript\\b[^>]*>", options: [.caseInsensitive])
+
+	static func unwrappingNoscriptTags(_ html: String) -> String {
+		guard html.range(of: "<noscript", options: .caseInsensitive) != nil, let noscriptTagRegex else {
+			return html
+		}
+
+		let range = NSRange(html.startIndex..., in: html)
+		return noscriptTagRegex.stringByReplacingMatches(in: html, range: range, withTemplate: "")
 	}
 
 	// Matches a `<script>` that assigns to `location.href` — `location.href =` but not `==`
