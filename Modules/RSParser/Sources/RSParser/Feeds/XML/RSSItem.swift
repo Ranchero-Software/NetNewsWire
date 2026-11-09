@@ -143,17 +143,30 @@ final class RSSItem {
 
 	/// Podcast feeds often list the same file as both `<enclosure>` and `media:content`,
 	/// so attachments with the same URL are merged into one, in the place of the first.
+	/// Renditions of one image at different widths are merged into the widest, in the place of the first.
 	/// `itunes:duration` applies to audio and video attachments that don’t have their own duration.
 	private func mergedAttachments(_ attachments: [ParsedAttachment]) -> [ParsedAttachment]? {
 		var mergedAttachments = [ParsedAttachment]()
 		var indexesByURL = [String: Int]()
+		var indexesByRenditionKey = [String: Int]()
 		for attachment in attachments {
 			if let index = indexesByURL[attachment.url] {
 				mergedAttachments[index] = mergedAttachments[index].filledIn(from: attachment)
-			} else {
-				indexesByURL[attachment.url] = mergedAttachments.count
-				mergedAttachments.append(attachment)
+				continue
 			}
+			let renditionKey = Self.renditionKey(attachment)
+			if let renditionKey, let index = indexesByRenditionKey[renditionKey], let mergedWidth = mergedAttachments[index].width, let width = attachment.width {
+				if width > mergedWidth {
+					mergedAttachments[index] = attachment
+				}
+				indexesByURL[attachment.url] = index
+				continue
+			}
+			indexesByURL[attachment.url] = mergedAttachments.count
+			if let renditionKey {
+				indexesByRenditionKey[renditionKey] = mergedAttachments.count
+			}
+			mergedAttachments.append(attachment)
 		}
 		guard !mergedAttachments.isEmpty else {
 			return nil
@@ -168,6 +181,17 @@ final class RSSItem {
 			}
 			return attachment.withDurationInSeconds(itunesDurationInSeconds)
 		}
+	}
+
+	/// The URL without its query, for an attachment with a width and a query.
+	/// The Guardian lists each image three times, as sibling `media:content` elements that differ only in `?width=`.
+	private static func renditionKey(_ attachment: ParsedAttachment) -> String? {
+		guard attachment.width != nil, var components = URLComponents(string: attachment.url), components.query != nil else {
+			return nil
+		}
+		components.query = nil
+		components.fragment = nil
+		return components.string
 	}
 
 	private static func isAudioOrVideo(_ attachment: ParsedAttachment) -> Bool {

@@ -96,6 +96,22 @@ import RSParser
 		#expect(attachment.durationInSeconds == 125)
 	}
 
+	@Test func guardianImageRenditionsMergedIntoWidest() throws {
+		// The Guardian lists each image at widths 140, 460, and 700, as sibling media:content elements.
+		let rss = """
+		<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/"><channel><title>The Guardian</title><link>https://www.theguardian.com/uk</link><item><title>‘A global political awakening’: how gen Z protests are sweeping the world</title><link>https://www.theguardian.com/world/2026/nov/06/gen-z-protests-sweeping-the-world</link><description>&lt;p&gt;From Serbia to Bangladesh and India to France, young people are pushing back against authoritarianism&lt;/p&gt;</description><guid>https://www.theguardian.com/world/2026/nov/06/gen-z-protests-sweeping-the-world</guid><media:content width="140" url="https://i.guim.co.uk/img/media/d8c802e22e952ef416894c5d0a6ecca11d13b496/459_0_4582_3666/master/4582.jpg?width=140&amp;quality=85&amp;auto=format&amp;fit=max&amp;s=92a98b53493301af4a38acb36c24d9e4"><media:credit scheme="urn:ebu">Photograph: Uros Arsic/Reuters</media:credit></media:content><media:content width="460" url="https://i.guim.co.uk/img/media/d8c802e22e952ef416894c5d0a6ecca11d13b496/459_0_4582_3666/master/4582.jpg?width=460&amp;quality=85&amp;auto=format&amp;fit=max&amp;s=696a83c3a860b507c37e09ffd47ae7c3"><media:credit scheme="urn:ebu">Photograph: Uros Arsic/Reuters</media:credit></media:content><media:content width="700" url="https://i.guim.co.uk/img/media/d8c802e22e952ef416894c5d0a6ecca11d13b496/459_0_4582_3666/master/4582.jpg?width=700&amp;quality=85&amp;auto=format&amp;fit=max&amp;s=0e6444e5dfc451bcc781cb563d8ef201"><media:credit scheme="urn:ebu">Photograph: Uros Arsic/Reuters</media:credit></media:content></item></channel></rss>
+		"""
+		let d = ParserData(url: "https://www.theguardian.com/uk/rss", data: Data(rss.utf8))
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		let item = try #require(parsedFeed.items.first)
+
+		let attachments = try #require(item.attachments)
+		#expect(attachments.count == 1)
+		let attachment = try #require(attachments.first)
+		#expect(attachment.url == "https://i.guim.co.uk/img/media/d8c802e22e952ef416894c5d0a6ecca11d13b496/459_0_4582_3666/master/4582.jpg?width=700&quality=85&auto=format&fit=max&s=0e6444e5dfc451bcc781cb563d8ef201")
+		#expect(attachment.width == 700)
+	}
+
 	@Test func gravatarBecomesAuthorAvatar() throws {
 		// WordPress adds the author’s Gravatar as a media:content titled with the author’s name.
 		let d = parserData("postpunkmonk", "rss", "https://postpunkmonk.com/")
