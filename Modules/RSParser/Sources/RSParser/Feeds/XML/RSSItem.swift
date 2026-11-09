@@ -115,12 +115,12 @@ final class RSSItem {
 		)
 	}
 
-	/// WordPress adds each post author’s Gravatar as a `media:content` titled with the author’s name.
+	/// WordPress adds each post author’s Gravatar as a `media:content` titled with the author’s username.
 	/// A match becomes the author’s avatar instead of an attachment.
 	private func authorsWithGravatars() -> (authors: Set<ParsedAuthor>, avatarURLs: Set<String>) {
 		var avatarURLs = Set<String>()
 		let authorsWithAvatars = Set(authors.map { author in
-			guard author.avatarURL == nil, let name = author.name, let avatarURL = gravatarURL(authorName: name) else {
+			guard author.avatarURL == nil, let avatarURL = gravatarURL(author) else {
 				return author
 			}
 			avatarURLs.insert(avatarURL)
@@ -129,8 +129,16 @@ final class RSSItem {
 		return (authorsWithAvatars, avatarURLs)
 	}
 
-	private func gravatarURL(authorName: String) -> String? {
-		gravatarTitlesByURL.first { $0.value.caseInsensitiveCompare(authorName) == .orderedSame }?.key
+	/// The Gravatar titled with the author’s name, or, with one author and one Gravatar, that Gravatar.
+	/// The username often differs from the name, as with “halmueller” and “Hal Mueller”.
+	private func gravatarURL(_ author: ParsedAuthor) -> String? {
+		if let name = author.name, let matchingURL = gravatarTitlesByURL.first(where: { $0.value.caseInsensitiveCompare(name) == .orderedSame })?.key {
+			return matchingURL
+		}
+		guard authors.count == 1, gravatarTitlesByURL.count == 1 else {
+			return nil
+		}
+		return gravatarTitlesByURL.first?.key
 	}
 
 	/// Podcast feeds often list the same file as both `<enclosure>` and `media:content`,

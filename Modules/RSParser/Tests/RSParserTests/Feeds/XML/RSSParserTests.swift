@@ -115,6 +115,22 @@ import RSParser
 		])
 	}
 
+	@Test func gravatarTitledWithUsernameBecomesAuthorAvatar() throws {
+		// Hal Mueller’s Blog: the Gravatar’s media:title is the username, which differs from dc:creator.
+		let gravatarURL = "https://2.gravatar.com/avatar/559e1cc83bb53cbd383cae605e1d28f720da7c925008e6c24eef5e0258f36878?s=96&d=https%3A%2F%2Fs0.wp.com%2Fi%2Fmu.gif&r=G"
+		let rss = """
+		<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/"><channel><title>Hal Mueller&#039;s Blog</title><link>https://halmueller.wordpress.com</link><item><title>election</title><link>https://halmueller.wordpress.com/2024/11/06/election/</link><dc:creator><![CDATA[Hal Mueller]]></dc:creator><guid isPermaLink="false">http://halmueller.wordpress.com/?p=148</guid><description><![CDATA[Really, people? You can&#8217;t vote for a woman????]]></description><media:content url="https://2.gravatar.com/avatar/559e1cc83bb53cbd383cae605e1d28f720da7c925008e6c24eef5e0258f36878?s=96&#38;d=https%3A%2F%2Fs0.wp.com%2Fi%2Fmu.gif&#38;r=G" medium="image"><media:title type="html">halmueller</media:title></media:content></item></channel></rss>
+		"""
+		let d = ParserData(url: "https://halmueller.wordpress.com/feed/", data: Data(rss.utf8))
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		let item = try #require(parsedFeed.items.first)
+
+		let author = try #require(item.authors?.first)
+		#expect(author.name == "Hal Mueller")
+		#expect(author.avatarURL == gravatarURL)
+		#expect(item.attachments == nil)
+	}
+
 	@Test func feedImageEnclosureIsSkipped() throws {
 		// Letters from an American: Substack lists the feed’s image as the enclosure of a post with no image of its own.
 		let feedImageURL = "https://substackcdn.com/image/fetch/$s_!yKDv!,w_256,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F4b47f775-3df7-41dd-8bc9-a64cdd72d948_600x600.png"
