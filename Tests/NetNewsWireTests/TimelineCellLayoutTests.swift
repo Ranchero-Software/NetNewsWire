@@ -26,7 +26,7 @@ import Testing
 	@Test func smallThumbnailAlignsWithTitleWhenFeedNameAndDateAboveTitle() {
 		let appearance = TimelineCellAppearance(showIcon: true, textSize: .medium, iconSize: .large, numberOfLines: 3, showsFullTitles: false, feedNameAndDateAboveTitle: true, showsLargeThumbnails: false)
 		let cellData = TimelineCellData(article: makeArticle(), showFeedName: .feed, feedName: "Daring Fireball", byline: nil, iconImage: nil, showIcon: true, thumbnail: nil, showThumbnail: true)
-		let width = 400.0
+		let width: CGFloat = 400.0
 
 		let layout = TimelineCellLayout(width: width, height: 0.0, cellData: cellData, appearance: appearance)
 
