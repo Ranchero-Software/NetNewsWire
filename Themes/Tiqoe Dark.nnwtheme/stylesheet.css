@@ -531,7 +531,7 @@ a.footnote:hover,
 
 /* Macworld */
 div:has([href*="macworld.com/newsletters/signup"]) :is(figcaption, button.lightbox-trigger, p.imageCredit) {
-display: none;
+	display: none;
 }
 
 /* 7.3 */
