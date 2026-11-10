@@ -533,3 +533,13 @@ a.footnote:hover,
 div:has([href*="macworld.com/newsletters/signup"]) :is(figcaption, button.lightbox-trigger, p.imageCredit) {
 display: none;
 }
+
+/* 7.3 */
+.nnw-primary-image img {
+	max-height: 66.6667vh;
+	width: auto;
+}
+
+.nnw-enclosure-caption {
+	display: none;
+}
