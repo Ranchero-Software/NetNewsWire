@@ -7,6 +7,18 @@
     <language>en</language>
 
 <item>
+	<title>NetNewsWire 7.3b7</title>
+	<description><![CDATA[
+<ul>
+<li>Made image cache eviction less aggressive, which should fix a loop where images get evicted, re-cached, evicted, re-cached, etc. (See this <a href=https://discourse.netnewswire.com/t/favicons-disappear-in-7-3b3/481>Discourse forum post</a>.)
+</ul>
+	]]></description>
+	<pubDate>Mon, 09 Nov 2026 21:35:00 -0800</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.3b7/NetNewsWire7.3b7.zip" sparkle:version="7234" sparkle:shortVersionString="7.3b7" length="10451567" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
 	<title>NetNewsWire 7.3b6</title>
 	<description><![CDATA[
 <ul>
