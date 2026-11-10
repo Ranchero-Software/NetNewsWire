@@ -7,6 +7,33 @@
     <language>en</language>
 
 <item>
+	<title>NetNewsWire 7.3b6</title>
+	<description><![CDATA[
+<ul>
+<li>Added a Grayscale icons setting to Settings > Appearance — for feed icons and author avatars (article thumbnails stay in color)
+<li>Made Feed Name and Date Above Title the default in the timeline
+<li>Put the date above the thumbnail when small thumbnails and Feed Name and Date Above Title are both on
+<li>Made timeline rows always show the author or feed name, instead of leaving that spot empty
+<li>Limited articles with no title to four lines when rows show the full title with no preview
+<li>Added [[primary_media]] and [[enclosures]] tags for themes — primary_media is the article’s main image, video, or audio from the feed, when the article’s HTML doesn’t already include it
+<li>Allowed themes to include a template7.3.html file, which is used in 7.3 and later instead of template.html
+<li>Updated the built-in themes to use [[primary_media]] and [[enclosures]]
+<li>Skipped enclosure images that are the same as the feed image (as with Letters from an American), so they don’t become redundant thumbnails or primary images
+<li>Skipped primary images for microblog-style (Mastodon, etc.) posts — their images appear with the enclosures at the bottom
+<li>Used media:thumbnail as a fallback when an article has no other images (as with Wired)
+<li>Picked the widest image when Guardian image enclosures differ only by width
+<li>Fixed duplicate images in Engadget articles
+<li>Fixed embedded YouTube videos (and other iframes) not loading on sites that use Optimole lazy loading
+<li>Fixed blog.rust-lang.org articles — JavaScript is turned off for them, and their noscript content is shown
+<li>Used an item’s only Gravatar as its author’s avatar, even when the author name is a username
+</ul>
+	]]></description>
+	<pubDate>Mon, 09 Nov 2026 10:45:00 -0800</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.3b6/NetNewsWire7.3b6.zip" sparkle:version="7233" sparkle:shortVersionString="7.3b6" length="10454415" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
 	<title>NetNewsWire 7.3b5</title>
 	<description><![CDATA[
 <ul>
