@@ -34,14 +34,32 @@ public extension NSTableView {
 	}
 
 	/// The part of the document the user can actually see. documentVisibleRect includes
-	/// the area under the toolbar, and under the sidebar on macOS 26.
+	/// the area under the toolbar, under the sidebar on macOS 26, and under the header view.
 	private var unobscuredDocumentRect: NSRect? {
 		guard let scrollView = self.enclosingScrollView else {
 			return nil
 		}
 		let contentInsets = scrollView.contentInsets
 		let documentVisibleRect = scrollView.documentVisibleRect
-		return NSRect(x: documentVisibleRect.minX + contentInsets.left, y: documentVisibleRect.minY + contentInsets.top, width: documentVisibleRect.width - contentInsets.left - contentInsets.right, height: documentVisibleRect.height - contentInsets.top - contentInsets.bottom)
+		var rect = NSRect(x: documentVisibleRect.minX + contentInsets.left, y: documentVisibleRect.minY + contentInsets.top, width: documentVisibleRect.width - contentInsets.left - contentInsets.right, height: documentVisibleRect.height - contentInsets.top - contentInsets.bottom)
+
+		// The header floats over the clip view but isn’t part of contentInsets.
+		if let headerView, headerView.window != nil {
+			let headerBottom = convert(headerView.bounds, from: headerView).maxY
+			if headerBottom > rect.minY {
+				rect.size.height = max(0, rect.maxY - headerBottom)
+				rect.origin.y = headerBottom
+			}
+		}
+
+		return rect
+	}
+
+	func isRowFullyVisible(_ row: Int) -> Bool {
+		guard let unobscuredDocumentRect else {
+			return false
+		}
+		return unobscuredDocumentRect.contains(rect(ofRow: row))
 	}
 
 	func scrollTo(row: Int, extraHeight: Int = 150) {
@@ -49,15 +67,19 @@ public extension NSTableView {
 			return
 		}
 
-		let r = rect(ofRow: row)
-		if unobscuredDocumentRect.contains(r) {
+		if isRowFullyVisible(row) {
 			return
 		}
 
-		// Center the row in the unobscured area, which starts contentInsets.top below the clip view’s origin.
+		let r = rect(ofRow: row)
+		// Center the row in the unobscured area, which starts obscuredTop below the clip view’s origin.
+		let obscuredTop = unobscuredDocumentRect.minY - scrollView.documentVisibleRect.minY
 		let rMidY = r.midY
+		// extraHeight shifts the row up from center — cap it so the row stays below the header in short tables.
+		let maximumExtraHeight = max(0, floor((unobscuredDocumentRect.size.height - r.height) / 2.0))
+		let clampedExtraHeight = min(CGFloat(extraHeight), maximumExtraHeight)
 		var scrollPoint = NSPoint.zero
-		scrollPoint.y = floor(rMidY - (unobscuredDocumentRect.size.height / 2.0) - scrollView.contentInsets.top) + CGFloat(extraHeight)
+		scrollPoint.y = floor(rMidY - (unobscuredDocumentRect.size.height / 2.0) - obscuredTop) + clampedExtraHeight
 
 		let clipView = scrollView.contentView
 
@@ -67,14 +89,26 @@ public extension NSTableView {
 		clipView.animator().bounds = clipView.constrainBoundsRect(rClipView)
 	}
 
-	func scrollToRowIfNotVisible(_ row: Int) {
-		if let followingRow = rowView(atRow: row, makeIfNecessary: false) {
-			if !(visibleRowViews()?.contains(followingRow) ?? false) {
-				scrollTo(row: row, extraHeight: 0)
-			}
-		} else {
-			scrollTo(row: row, extraHeight: 0)
+	/// A row above the visible area scrolls down just far enough to show it.
+	/// A row below the visible area is centered, so the rows after it show too.
+	func scrollRowFullyIntoView(_ row: Int) {
+		guard let scrollView = self.enclosingScrollView, let unobscuredDocumentRect else {
+			return
 		}
+
+		let r = rect(ofRow: row)
+		if r.maxY > unobscuredDocumentRect.maxY {
+			scrollTo(row: row, extraHeight: 0)
+			return
+		}
+		guard r.minY < unobscuredDocumentRect.minY else {
+			return
+		}
+
+		let clipView = scrollView.contentView
+		var bounds = clipView.bounds
+		bounds.origin.y += r.minY - unobscuredDocumentRect.minY
+		clipView.animator().bounds = clipView.constrainBoundsRect(bounds)
 	}
 
 	func visibleRowViews() -> [NSTableRowView]? {

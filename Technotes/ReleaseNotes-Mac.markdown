@@ -1,5 +1,139 @@
 # Mac Release Notes
 
+### 7.3b7 7234 9 Nov 2026 - branch: main tag: mac-7.3b7
+
+Make image cache eviction less aggressive, which should fix a loop where images get evicted, re-cached, evicted, re-cached, etc. (See this Discourse forum post <https://discourse.netnewswire.com/t/favicons-disappear-in-7-3b3/481>.)
+
+### 7.3b6 7233 9 Nov 2026 - branch: main tag: mac-7.3b6
+
+Added a Grayscale icons setting to Settings > Appearance — for feed icons and author avatars (article thumbnails stay in color)
+Made Feed Name and Date Above Title the default in the timeline
+Put the date above the thumbnail when small thumbnails and Feed Name and Date Above Title are both on
+Made timeline rows always show the author or feed name, instead of leaving that spot empty
+Limited articles with no title to four lines when rows show the full title with no preview
+Added [[primary_media]] and [[enclosures]] tags for themes — primary_media is the article’s main image, video, or audio from the feed, when the article’s HTML doesn’t already include it
+Allowed themes to include a template7.3.html file, which is used in 7.3 and later instead of template.html
+Updated the built-in themes to use [[primary_media]] and [[enclosures]]
+Skipped enclosure images that are the same as the feed image (as with Letters from an American), so they don’t become redundant thumbnails or primary images
+Skipped primary images for microblog-style (Mastodon, etc.) posts — their images appear with the enclosures at the bottom
+Used media:thumbnail as a fallback when an article has no other images (as with Wired)
+Picked the widest image when Guardian image enclosures differ only by width
+Fixed duplicate images in Engadget articles
+Fixed embedded YouTube videos (and other iframes) not loading on sites that use Optimole lazy loading
+Fixed blog.rust-lang.org articles — JavaScript is turned off for them, and their noscript content is shown
+Used an item’s only Gravatar as its author’s avatar, even when the author name is a username
+
+### 7.3b5 7232 7 Nov 2026 - branch: main tag: mac-7.3b5
+
+Added an Appearance settings pane — appearance (system, light, or dark), sidebar text size, sidebar icons, which smart feeds to show (Today, All Unread, Starred), and the article theme and text size (moved from General)
+Added a Timeline settings pane — text size, feed icons (automatic, always, or never), feed icon size, thumbnails, rows (full title with no preview, or title and preview in 1 to 6 lines), separators, fading read articles, and showing the feed name and date above the title
+Moved the Thumbnails setting from the View menu to Settings > Timeline
+Made rows fit their content (variable row heights) in timeline
+Made separators a regular setting (it was a hidden preference) — your existing choice carries over
+Gave the status bar a crisper top edge, a deeper gradient, and an etched, higher-contrast divider grip
+Made the main window’s split view dividers a little darker in light mode
+
+### 7.3b4 7229 6 Nov 2026 - branch: main tag: mac-7.3b4
+
+Made small thumbnails fill the space (aspect fill) — images are cropped from the sides and bottom, never the top, so faces and other important parts are more likely to stay in view
+Gave large thumbnails rounded corners, to match small thumbnails and feed icons
+Removed the background color behind thumbnails, and added a faint placeholder color that shows until a thumbnail loads
+Fixed footnote popover positioning near the edge of the article view and after resizing the window on Duo
+Fixed bug where the last article in the timeline had a separator below it (when separators are turned on via the hidden preference)
+
+### 7.3b3 7227 3 Nov 2026 - branch: main tag: mac-7.3b3
+
+Added support for enclosures and Media RSS
+Added enclosures to the article view (at the bottom) — you can see images from Mastodon feeds, play an MP3, etc.
+Made YouTube enclosures play in the privacy-enhanced YouTube player (youtube-nocookie.com)
+Made the article view show plain text or media:description when an article has no HTML content
+Made image downloading kinder to servers — honors Retry-After, waits after errors, and limits downloads to two at a time per host
+Reorganized the View menu into sections — sidebar, timeline, status bar, and toolbar
+Added article thumbnails to the timeline — choose View > Thumbnails to pick large or small. Default is none. (Works in standard layout but not column layout)
+
+### 7.3b2 7226 22 Oct 2026 - branch: main tag: mac-7.3b2
+
+Fixed a crash at midnight when the status bar is showing
+Added the last-refresh time to the status bar, and made it the default
+Changed the status bar to use a shorter date format
+Added Refresh and Show/Hide Sidebar commands to the status bar gear menu
+Made clicking the progress indicator in the status bar open the Current Activity window (as in NetNewsWire of Yore)
+Fixed bug where the status bar divider might drift from the split view divider
+Fixed inline footnotes in FreshRSS articles
+Added netnewswire, feed, feeds, and x-netnewswire-feed as allowed link schemes in the article view — so clicking a link to install a theme (for instance) works
+
+### 7.3b1 7225 20 Oct 2026 - branch: main tag: mac-7.3b1
+
+Restored the status bar from NetNewsWire of Yore (NetNewsWire 1-3). Show and hide it via the View menu
+Fixed extra vertical space in MacRumors articles
+
+### 7.2.1 7224 19 Oct 2026 - branch: main tag: mac-7.2.1
+
+Same as 7.2.1b1 — just bumped the version.
+
+Changes since 7.2:
+
+Fixed bug where navigated-to row, in column layout, might appear under column headers
+Fixed bug where scroller hiding/showing could mess up sidebar layout
+Added magnet as an allowed link scheme
+
+### 7.2.1b1 7223 18 Oct 2026 - branch: main tag: mac-7.2.1b1
+
+Fixed bug where navigated-to row, in column layout, might appear under column headers
+Fixed bug where scroller hiding/showing could mess up sidebar layout
+Added magnet as an allowed link scheme
+
+### 7.2 7222 14 Oct 2026 - branch: main tag: mac-7.2
+
+Changes since 7.2b4:
+
+Fixed column view bug where next-unread could scroll to a row that’s hidden under the column headers
+
+Changes since 7.1.5:
+
+Added unread count display setting — show the count, show a dot, or hide it — which applies to the Dock icon badge, window title, and sidebar
+Added column layout for the timeline — choose View > Use Column Layout
+Expanded View > Sort Articles By with more options (works with standard and column layouts)
+Made timeline sorting per window instead of one setting for the whole app
+Made the Add Feed sheet start with the folder or account selected in the sidebar
+Changed the message for adding a feed that’s already added to include the name of the folder (or folders)
+Fixed bug where YouTube embeds in articles showed an error instead of playing
+Fixed bug where embedded videos with no set height — such as Inoreader’s YouTube player — collapsed to a short strip
+Fixed extra whitespace at the end of Slashdot articles and paragraphs running together
+Fixed parsing of RSS feed titles when a feed contains a textinput section (Slashdot, for instance)
+Added support for the instapaper_ignore class — elements marked with it are now removed from articles
+Changed tabs in pre and code elements in articles to display as four spaces
+Improved finding feeds in a page by skipping links to PDFs, movies, and other files that can’t be feeds
+Changed finding a feed to use the redirected-to URL
+Sped up Today and unread count queries
+Added up to 500 characters of the HTTP error response body to Error Log entries
+Fixed bug where the sidebar could reopen with no width when it had been collapsed in 7.1.x
+Fixed a memory leak when closing a main window
+Fixed a possible crash when the sidebar or timeline had no visible rows
+Changed sorting by title and by feed to sort numbers by value — “Episode 2” comes before “Episode 10”
+Added support for Substack-style footnotes
+Improved CJK text rendering in the article view by adding text-autospace
+Fixed horizontal overflow of WordPress Math blocks and SVGs in the Tiqoe Dark theme
+Improved font sizing and fixed superscript orphans in table cells in the Tiqoe Dark theme
+
+### 7.2b4 7221 11 Oct 2026 - branch: main tag: mac-7.2b4
+
+Fixed bug where embedded videos with no set height — such as Inoreader’s YouTube player — collapsed to a short strip
+
+### 7.2b3 7220 10 Oct 2026 - branch: main tag: mac-7.2b3
+
+Fixed the Settings layout on macOS 15
+Added Spanish translations for Settings and the Sort Articles By menu
+Made each Settings pane size itself to fit, for languages that need more room
+Fixed bug where the sidebar could reopen with no width when it had been collapsed in 7.1.x
+Fixed a memory leak when closing a main window
+Fixed a possible crash when the sidebar or timeline had no visible rows
+Changed sorting by title and by feed to sort numbers by value — “Episode 2” comes before “Episode 10”
+Improved finding feeds in a page by skipping links to X, Twitter, Facebook, and Instagram, and links to files with uppercase extensions or URL queries (such as .PDF or .jpg?w=600)
+Fixed bug where some sites with “youtube” in their names were treated as YouTube
+Fixed Slashdot feed detection (for Slashdot special cases) when the feed comes through a proxy such as FeedBurner
+Changed VoiceOver to say “unread” for sidebar unread counts shown as dots
+
 ### 7.2b2 7219 7 Oct 2026 - branch: main tag: mac-7.2b2
 
 Added support for Substack-style footnotes

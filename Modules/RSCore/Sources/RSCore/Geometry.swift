@@ -44,6 +44,18 @@ public extension CGRect {
 	func centered(in containerRect: CGRect) -> CGRect {
 		self.centeredHorizontally(in: self.centeredVertically(in: containerRect))
 	}
+
+	/// The largest rectangle with `size`’s aspect ratio that fits in this one, centered, in whole points.
+	/// This rectangle when `size` has no width or height.
+	func aspectFitRect(for size: CGSize) -> CGRect {
+		guard size.width > 0.0, size.height > 0.0 else {
+			return self
+		}
+		let scale = Swift.min(width / size.width, height / size.height)
+		let fittedWidth = (size.width * scale).rounded()
+		let fittedHeight = (size.height * scale).rounded()
+		return CGRect(x: minX + floor((width - fittedWidth) / 2.0), y: minY + floor((height - fittedHeight) / 2.0), width: fittedWidth, height: fittedHeight)
+	}
 }
 
 public extension Array where Element == CGRect {

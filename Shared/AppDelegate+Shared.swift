@@ -16,7 +16,7 @@ import RSCore
 extension AppDelegate {
 
 	/// Vacuum every database the app owns — the app-level error-log, HTML-metadata,
-	/// and image-metadata databases, plus each account's databases.
+	/// and image databases, plus each account's databases.
 	func vacuumAllDatabases() async {
 		await vacuumAndLog(databasePath: AccountManager.shared.errorLogDatabase.databasePath) {
 			await AccountManager.shared.errorLogDatabase.vacuum()
@@ -24,8 +24,8 @@ extension AppDelegate {
 		await vacuumAndLog(databasePath: HTMLMetadataDatabase.shared.databasePath) {
 			await HTMLMetadataDatabase.shared.vacuum()
 		}
-		await vacuumAndLog(databasePath: ImageMetadataDatabase.shared.databasePath) {
-			await ImageMetadataDatabase.shared.vacuum()
+		await vacuumAndLog(databasePath: ImageDatabase.shared.databasePath) {
+			await ImageDatabase.shared.vacuum()
 		}
 		await AccountManager.shared.vacuumAccountDatabases()
 	}

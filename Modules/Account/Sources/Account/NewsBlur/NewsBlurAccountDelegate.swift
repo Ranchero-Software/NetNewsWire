@@ -264,7 +264,8 @@ import Secrets
 			guard let datePublished = $0.datePublished, let since else {
 				return true
 			}
-			return datePublished >= since
+			// Not >=, which is back-deployed and crashes on iOS 27.2 betas.
+			return datePublished > since
 		}
 		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL }).mapValues {
 			Set($0)

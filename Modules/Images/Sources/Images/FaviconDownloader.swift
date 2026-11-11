@@ -8,197 +8,147 @@
 
 import Foundation
 import os
-import CoreServices
 import Articles
 import Account
 import RSCore
 import RSWeb
 import HTMLMetadata
+import ActivityLog
 import UniformTypeIdentifiers
 
 extension Notification.Name {
-
-	public static let FaviconDidBecomeAvailable = Notification.Name("FaviconDidBecomeAvailableNotification") // userInfo key: FaviconDownloader.UserInfoKey.faviconURL
+	/// Posted when a favicon loads. userInfo key: `FaviconDownloader.feedsKey` (`Set<Feed>`, the feeds that looked it up and use it).
+	public static let faviconDidChange = Notification.Name("FaviconDidChange")
 }
 
+/// Gets a feed’s favicon: the one the feed specifies, or else the first that works of the favicons its home page’s metadata specifies, then `/favicon.ico`.
 @MainActor public final class FaviconDownloader {
+
 	public static let shared = FaviconDownloader()
+	public static let feedsKey = "feeds"
 
 	nonisolated static private let logger = Logger(subsystem: Logger.nnwSubsystem, category: "FaviconDownloader")
 
-	private let folder: String
-	private let diskCache: BinaryDiskCache
-	private var singleFaviconDownloaderCache = [String: SingleFaviconDownloader]() // faviconURL: SingleFaviconDownloader
-	private var remainingFaviconURLs = [String: ArraySlice<String>]() // homePageURL: array of faviconURLs that haven't been checked yet
-	private var currentHomePageHasOnlyFaviconICO = false
+	private var searches = [String: FaviconSearch]() // homePageURL: search through its favicon URLs
+	private var homePagesLookedUp = Set<String>()
+	private var homePagesAwaitingMetadataForSearch = Set<String>()
+	private var homePagesCheckedForNewFavicon = Set<String>()
+	private var homePagesWithTransientSearchFailure = Set<String>()
+	// Feeds that looked up their favicon, so its arrival is posted to them
+	private var feedsByDeclaredFaviconURL = [String: Set<Feed>]() // favicon URL the feed specifies: feeds
+	private var feedsByHomePageURL = [String: Set<Feed>]() // home page whose favicon they use: feeds
+	private var faviconURLs = Set<String>() // Every favicon URL looked up
+	private var faviconURLsThatAreNotImages = Set<String>()
 
-	private let queue: DispatchQueue
-	private var cache = [Feed: IconImage]() // faviconURL: RSImage
-
-	public struct UserInfoKey {
-		public static let faviconURL = "faviconURL"
-	}
-
-	init() {
-		let folderURL = AppConfig.cacheSubfolder(named: "Favicons")
-		let folder = folderURL.path
-		self.folder = folder
-		self.diskCache = BinaryDiskCache(folder: folder)
-		self.queue = DispatchQueue(label: "FaviconDownloader serial queue - \(folder)")
-
-		NotificationCenter.default.addObserver(self, selector: #selector(didLoadFavicon(_:)), name: .DidLoadFavicon, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(htmlMetadataIsAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)
+	private init() {
+		NotificationCenter.default.addObserver(self, selector: #selector(handleIconImageDidBecomeAvailable(_:)), name: .iconImageDidBecomeAvailable, object: IconImageDownloader.shared)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleIconImageDownloadDidFail(_:)), name: .iconImageDownloadDidFail, object: IconImageDownloader.shared)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleHTMLMetadataAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleNetworkStatusDidChange(_:)), name: .networkStatusDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleFeedSettingDidChange(_:)), name: .feedSettingDidChange, object: nil)
 	}
 
 	// MARK: - API
 
-	@objc func handleLowMemory(_ notification: Notification) {
-		cache.removeAll()
-		singleFaviconDownloaderCache.removeAll()
-	}
-
-	@objc func handleAppDidGoToBackground(_ notification: Notification) {
-		cache.removeAll()
-		singleFaviconDownloaderCache.removeAll()
-	}
-
-	public func favicon(for feed: Feed) -> IconImage? {
-		assert(Thread.isMainThread)
-
+	/// Loading while a search through the home page’s favicons is downloading one.
+	public func favicon(for feed: Feed) -> IconLookup {
 		if shouldSkipDownloadingFavicon(feed: feed) {
-			return nil
+			return .unavailable
 		}
-
-		var homePageURL = feed.homePageURL
-		if let faviconURL = feed.faviconURL {
-			return favicon(with: faviconURL, homePageURL: homePageURL)
+		if let faviconURL = usableDeclaredFaviconURL(for: feed) {
+			feedsByDeclaredFaviconURL[faviconURL, default: Set<Feed>()].insert(feed)
+			return iconImage(for: faviconURL, homePageURL: feed.homePageURL)
 		}
-
-		if homePageURL == nil {
-			// Base homePageURL off feedURL if needed. Won’t always be accurate, but is good enough.
-			if let feedURL = URL(string: feed.url), let scheme = feedURL.scheme, let host = feedURL.host {
-				homePageURL = scheme + "://" + host + "/"
-			}
+		guard let homePageURL = faviconHomePageURL(for: feed) else {
+			return .unavailable
 		}
-		if let homePageURL = homePageURL {
-			return favicon(withHomePageURL: homePageURL)
-		}
-
-		return nil
-	}
-
-	public func faviconAsIcon(for feed: Feed) -> IconImage? {
-
-		if let image = cache[feed] {
-			return image
-		}
-
-		if let iconImage = favicon(for: feed) {
-			cache[feed] = iconImage
-			return iconImage
-		}
-
-		return nil
-	}
-
-	/// Returns the in-memory favicon for `feed` without triggering a download.
-	public func cachedFaviconAsIcon(for feed: Feed) -> IconImage? {
-		if let image = cache[feed] {
-			return image
-		}
-		guard let faviconURL = cachedFaviconURL(for: feed) else {
-			return nil
-		}
-		guard let iconImage = singleFaviconDownloaderCache[faviconURL]?.iconImage else {
-			return nil
-		}
-		cache[feed] = iconImage
-		return iconImage
-	}
-
-	/// The known favicon URL for `feed` (from feed settings or the home-page→favicon map), without
-	/// triggering any download. Both lookups are in-memory, so this is cheap to call per row.
-	public func cachedFaviconURL(for feed: Feed) -> String? {
-		if let faviconURL = feed.faviconURL {
-			return faviconURL
-		}
-		if let homePageURL = feed.homePageURL, let faviconURL = ImageMetadataDatabase.shared.faviconURL(forHomePageURL: homePageURL) {
-			return faviconURL
-		}
-		return nil
-	}
-
-	public func favicon(with faviconURL: String, homePageURL: String?) -> IconImage? {
-		guard canAttemptDownload(faviconURL) else {
-			return nil
-		}
-		let downloader = faviconDownloader(withURL: faviconURL, homePageURL: homePageURL)
-		return downloader.iconImage
-	}
-
-	public func favicon(withHomePageURL homePageURL: String) -> IconImage? {
-
-		let url = homePageURL.normalizedURL
-
-		if ImageMetadataDatabase.shared.homePageHasNoFavicon(url) {
-			return nil
-		}
-
-		if let faviconURL = ImageMetadataDatabase.shared.faviconURL(forHomePageURL: url) {
-			return favicon(with: faviconURL, homePageURL: url)
-		}
-
-		if let faviconURLs = findFaviconURLs(with: url) {
-			// If the site explicitly specifies favicon.ico, it will appear twice.
-			self.currentHomePageHasOnlyFaviconICO = faviconURLs.count == 1
-			self.remainingFaviconURLs[url] = faviconURLs[...]
-			downloadNextFavicon(forHomePageURL: url)
-		}
-
-		return nil
+		feedsByHomePageURL[homePageURL, default: Set<Feed>()].insert(feed)
+		return favicon(forHomePageURL: homePageURL)
 	}
 
 	// MARK: - Notifications
 
-	@objc func didLoadFavicon(_ note: Notification) {
-
-		guard let singleFaviconDownloader = note.object as? SingleFaviconDownloader else {
+	/// Every home page searching with this favicon URL saves it.
+	@objc func handleIconImageDidBecomeAvailable(_ notification: Notification) {
+		guard let faviconURL = notification.userInfo?[IconImageDownloader.urlKey] as? String, faviconURLs.contains(faviconURL) else {
 			return
 		}
-
-		// URL-level outcome runs before the homePageURL guard so we record it even when homePageURL is nil.
-		if let error = singleFaviconDownloader.error {
-			ImageMetadataDatabase.shared.recordFailure(url: singleFaviconDownloader.faviconURL, statusCode: error.statusCode)
-		} else if singleFaviconDownloader.iconImage != nil {
-			ImageMetadataDatabase.shared.clearFailure(url: singleFaviconDownloader.faviconURL)
+		faviconURLsThatAreNotImages.remove(faviconURL)
+		for homePageURL in homePageURLsSearching(with: faviconURL) {
+			saveFoundFavicon(faviconURL, homePageURL: homePageURL)
 		}
-
-		guard let homePageURL = singleFaviconDownloader.homePageURL else {
-			return
-		}
-		guard singleFaviconDownloader.iconImage != nil else {
-			if remainingFaviconURLs[homePageURL] != nil {
-				downloadNextFavicon(forHomePageURL: homePageURL)
-			}
-			return
-		}
-
-		remainingFaviconURLs[homePageURL] = nil
-
-		postFaviconDidBecomeAvailableNotification(singleFaviconDownloader.faviconURL)
+		postFaviconDidChange(faviconURL)
 	}
 
-	@objc func htmlMetadataIsAvailable(_ note: Notification) {
+	/// Every home page searching with this favicon URL moves on to its next candidate.
+	///
+	/// When a saved favicon URL returns something that isn’t an image, the site may have moved its favicon,
+	/// so its home pages are searched again. The saved URL stays until a search finds another one,
+	/// so a captive portal can’t clear it.
+	@objc func handleIconImageDownloadDidFail(_ notification: Notification) {
+		guard let faviconURL = notification.userInfo?[IconImageDownloader.urlKey] as? String, faviconURLs.contains(faviconURL) else {
+			return
+		}
+		let error = notification.userInfo?[IconImageDownloader.errorKey] as? ImageDownloadError
 
-		guard let url = note.userInfo?[HTMLMetadataUserInfoKey.url] as? String else {
+		for homePageURL in homePageURLsSearching(with: faviconURL) {
+			if error?.isTransient == true {
+				searches[homePageURL]?.hadTransientFailure = true
+			}
+			downloadNextFavicon(forHomePageURL: homePageURL)
+		}
+
+		if error?.decodingFailed == true {
+			faviconURLsThatAreNotImages.insert(faviconURL)
+			for homePageURL in ImageDatabase.shared.homePageURLs(withFaviconURL: faviconURL) {
+				searchForFavicon(homePageURL: homePageURL)
+			}
+		}
+	}
+
+	/// Waits for transient failures may have just ended, so searches that had one are tried again.
+	/// `IconImageDownloader` tries favicons that failed transiently again on this notification too.
+	@objc func handleNetworkStatusDidChange(_ notification: Notification) {
+		guard NetworkMonitor.shared.isConnected else {
+			return
+		}
+		Task { @MainActor in
+			let homePageURLs = homePagesWithTransientSearchFailure
+			homePagesWithTransientSearchFailure.removeAll()
+			for homePageURL in homePageURLs {
+				searchForFavicon(homePageURL: homePageURL)
+			}
+		}
+	}
+
+	/// A favicon already in memory posts nothing when it’s looked up again, so it’s posted here.
+	@objc func handleFeedSettingDidChange(_ notification: Notification) {
+		guard let feed = notification.object as? Feed, let key = notification.userInfo?[Feed.SettingUserInfoKey] as? Feed.SettingKey else {
+			return
+		}
+		guard key == .faviconURL || key == .homePageURL else {
+			return
+		}
+		postFaviconDidChange(Set([feed]))
+	}
+
+	/// New metadata may name a different favicon.
+	@objc func handleHTMLMetadataAvailable(_ notification: Notification) {
+		guard let homePageURL = notification.userInfo?[HTMLMetadataUserInfoKey.url] as? String else {
 			assertionFailure("Expected URL string in .htmlMetadataAvailable Notification userInfo.")
+			return
+		}
+		guard homePagesLookedUp.contains(homePageURL) else {
 			return
 		}
 
 		Task { @MainActor in
-			_ = favicon(withHomePageURL: url)
+			homePagesCheckedForNewFavicon.remove(homePageURL)
+			if homePagesAwaitingMetadataForSearch.remove(homePageURL) != nil {
+				searchForFavicon(homePageURL: homePageURL)
+			} else {
+				_ = favicon(forHomePageURL: homePageURL)
+			}
 		}
 	}
 }
@@ -207,8 +157,61 @@ private extension FaviconDownloader {
 
 	static let specialCasesToSkip = [SpecialCase.rachelByTheBayHostName, SpecialCase.openRSSOrgHostName]
 
+	/// A home page’s favicon URLs are tried in order until one works.
+	struct FaviconSearch {
+		var remainingFaviconURLs: ArraySlice<String>
+		var faviconURL: String? // Being downloaded
+		var hadTransientFailure = false
+		/// A search for a better favicon than the saved one, which keeps working if none is found.
+		var keepsSavedFavicon = false
+	}
+
 	func shouldSkipDownloadingFavicon(feed: Feed) -> Bool {
 		SpecialCase.urlStringContainSpecialCase(feed.url, Self.specialCasesToSkip)
+	}
+
+	func favicon(forHomePageURL homePageURL: String) -> IconLookup {
+		homePagesLookedUp.insert(homePageURL)
+
+		if ImageDatabase.shared.homePageHasNoFavicon(homePageURL) {
+			return .unavailable
+		}
+
+		// A saved favicon that keeps failing is searched for again, in case the site moved it.
+		if let faviconURL = ImageDatabase.shared.faviconURL(forHomePageURL: homePageURL), !ImageDatabase.shared.recentlyFailed(url: faviconURL) {
+			checkForNewFaviconURL(homePageURL: homePageURL, savedFaviconURL: faviconURL)
+			return iconImage(for: faviconURL, homePageURL: homePageURL)
+		}
+
+		searchForFavicon(homePageURL: homePageURL)
+		return searches[homePageURL] == nil ? .unavailable : .loading
+	}
+
+	func iconImage(for faviconURL: String, homePageURL: String?) -> IconLookup {
+		faviconURLs.insert(faviconURL)
+		return IconImageDownloader.shared.iconImage(for: faviconURL, activityOwner: .faviconDownloader, activityKind: .downloadFavicon(faviconURL: faviconURL), activityDetail: homePageURL)
+	}
+
+	/// The favicon URL the feed specifies, unless it recently failed or isn’t an image,
+	/// in which case the home page’s favicon is used instead.
+	/// Called per row, so it doesn’t log the way `canAttemptDownload` does.
+	func usableDeclaredFaviconURL(for feed: Feed) -> String? {
+		guard let faviconURL = feed.faviconURL, faviconURL.hasPrefix("http://") || faviconURL.hasPrefix("https://"), !ImageDatabase.shared.recentlyFailed(url: faviconURL), !faviconURLsThatAreNotImages.contains(faviconURL) else {
+			return nil
+		}
+		return faviconURL
+	}
+
+	/// The home page that favicons are saved under: the feed’s home page, or else the feed URL’s scheme and host.
+	func faviconHomePageURL(for feed: Feed) -> String? {
+		if let homePageURL = feed.homePageURL {
+			return homePageURL.normalizedURL
+		}
+		// Won’t always be the real home page, but is good enough.
+		guard let feedURL = URL(string: feed.url), let scheme = feedURL.scheme, let host = feedURL.host else {
+			return nil
+		}
+		return (scheme + "://" + host + "/").normalizedURL
 	}
 
 	static let localeForLowercasing = Locale(identifier: "en_US")
@@ -231,66 +234,115 @@ private extension FaviconDownloader {
 		return faviconURLs + [defaultFaviconURL]
 	}
 
+	func homePageURLsSearching(with faviconURL: String) -> [String] {
+		searches.filter { $0.value.faviconURL == faviconURL }.map { $0.key }
+	}
+
+	/// Without the home page’s metadata in memory, the search starts when `.htmlMetadataAvailable` arrives.
+	func searchForFavicon(homePageURL: String) {
+		guard searches[homePageURL] == nil else {
+			return
+		}
+		guard let faviconURLs = findFaviconURLs(with: homePageURL) else {
+			homePagesAwaitingMetadataForSearch.insert(homePageURL)
+			return
+		}
+		searches[homePageURL] = FaviconSearch(remainingFaviconURLs: faviconURLs[...])
+		downloadNextFavicon(forHomePageURL: homePageURL)
+	}
+
+	/// The saved favicon keeps working after a site adds or moves its favicon, so once per session,
+	/// and again when the home page’s metadata arrives, the candidates ahead of the saved one are tried.
+	func checkForNewFaviconURL(homePageURL: String, savedFaviconURL: String) {
+		guard !homePagesCheckedForNewFavicon.contains(homePageURL), searches[homePageURL] == nil else {
+			return
+		}
+		homePagesCheckedForNewFavicon.insert(homePageURL)
+		guard let faviconURLs = findFaviconURLs(with: homePageURL) else {
+			return
+		}
+		let betterFaviconURLs = faviconURLs.prefix { $0 != savedFaviconURL }
+		guard !betterFaviconURLs.isEmpty else {
+			return
+		}
+		searches[homePageURL] = FaviconSearch(remainingFaviconURLs: betterFaviconURLs, keepsSavedFavicon: true)
+		downloadNextFavicon(forHomePageURL: homePageURL)
+	}
+
 	func canAttemptDownload(_ faviconURL: String) -> Bool {
 		if !faviconURL.hasPrefix("http://") && !faviconURL.hasPrefix("https://") {
 			Self.logger.debug("Skipping non-http(s) URL: \(faviconURL)")
 			return false
 		}
-		if ImageMetadataDatabase.shared.recentlyFailed(url: faviconURL) {
+		if ImageDatabase.shared.recentlyFailed(url: faviconURL) {
 			Self.logger.debug("Skipping recently-failed URL: \(faviconURL)")
 			return false
 		}
 		return true
 	}
 
-	// A skipped candidate advances to the next one — otherwise the queue
-	// would stall and the remaining candidates would never be tried.
-	// <https://github.com/Ranchero-Software/NetNewsWire/issues/4868>
+	/// A skipped candidate advances to the next one — otherwise the search
+	/// would stall and the remaining candidates would never be tried.
+	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/4868>
+	///
+	/// Without a transient failure, a search that runs out of candidates saves that the home page has no favicon.
 	func downloadNextFavicon(forHomePageURL homePageURL: String) {
-		while let faviconURL = remainingFaviconURLs[homePageURL]?.first {
-			remainingFaviconURLs[homePageURL] = remainingFaviconURLs[homePageURL]?.dropFirst()
-			if canAttemptDownload(faviconURL) {
-				_ = faviconDownloader(withURL: faviconURL, homePageURL: homePageURL)
+		while var search = searches[homePageURL], let faviconURL = search.remainingFaviconURLs.first {
+			search.remainingFaviconURLs = search.remainingFaviconURLs.dropFirst()
+			search.faviconURL = nil
+			searches[homePageURL] = search
+			guard canAttemptDownload(faviconURL) else {
+				continue
+			}
+
+			switch iconImage(for: faviconURL, homePageURL: homePageURL) {
+			case .found:
+				// Already in memory, such as for another home page on the same site, so no `.iconImageDidBecomeAvailable` is coming.
+				saveFoundFavicon(faviconURL, homePageURL: homePageURL)
+				postFaviconDidChange(faviconURL)
 				return
+			case .loading:
+				searches[homePageURL]?.faviconURL = faviconURL
+				return
+			case .unavailable:
+				// Failed earlier in this session, and isn’t due to be tried again yet.
+				if DownloadedImageCache.shared.isWaitingToRetry(faviconURL) {
+					searches[homePageURL]?.hadTransientFailure = true
+				}
 			}
 		}
 
-		remainingFaviconURLs[homePageURL] = nil
-		if currentHomePageHasOnlyFaviconICO {
-			ImageMetadataDatabase.shared.saveHomePageFavicon(homePageURL: homePageURL, faviconURL: nil)
+		guard let search = searches.removeValue(forKey: homePageURL) else {
+			return
+		}
+		if search.hadTransientFailure {
+			homePagesWithTransientSearchFailure.insert(homePageURL)
+		} else if !search.keepsSavedFavicon {
+			ImageDatabase.shared.saveHomePageFavicon(homePageURL: homePageURL, faviconURL: nil)
 		}
 	}
 
-	func faviconDownloader(withURL faviconURL: String, homePageURL: String?) -> SingleFaviconDownloader {
-
-		var firstTimeSeeingHomepageURL = false
-
-		if let homePageURL, ImageMetadataDatabase.shared.faviconURL(forHomePageURL: homePageURL) == nil {
-			ImageMetadataDatabase.shared.saveHomePageFavicon(homePageURL: homePageURL, faviconURL: faviconURL)
-			firstTimeSeeingHomepageURL = true
-		}
-
-		if let downloader = singleFaviconDownloaderCache[faviconURL] {
-			if firstTimeSeeingHomepageURL && !downloader.downloadFaviconIfNeeded() {
-				// This is to handle the scenario where we have different homepages, but the same favicon.
-				// This happens for Twitter and probably other sites like Blogger.  Because the favicon
-				// is cached, we wouldn't send out a notification that it is now available unless we send
-				// it here.
-				postFaviconDidBecomeAvailableNotification(faviconURL)
-			}
-			return downloader
-		}
-
-		let downloader = SingleFaviconDownloader(faviconURL: faviconURL, homePageURL: homePageURL, diskCache: diskCache, queue: queue)
-		singleFaviconDownloaderCache[faviconURL] = downloader
-		return downloader
+	/// Feeds showing the previous favicon get the new one on their next lookup.
+	func saveFoundFavicon(_ faviconURL: String, homePageURL: String) {
+		searches[homePageURL] = nil
+		ImageDatabase.shared.saveHomePageFavicon(homePageURL: homePageURL, faviconURL: faviconURL)
 	}
 
-	func postFaviconDidBecomeAvailableNotification(_ faviconURL: String) {
+	func postFaviconDidChange(_ faviconURL: String) {
+		var feedsUsingFavicon = feedsByDeclaredFaviconURL[faviconURL] ?? Set<Feed>()
+		for (homePageURL, feeds) in feedsByHomePageURL where ImageDatabase.shared.faviconURL(forHomePageURL: homePageURL) == faviconURL {
+			feedsUsingFavicon.formUnion(feeds)
+		}
+		guard !feedsUsingFavicon.isEmpty else {
+			return
+		}
+		postFaviconDidChange(feedsUsingFavicon)
+	}
 
+	/// Posted later, since a lookup can find a favicon already in memory.
+	func postFaviconDidChange(_ feeds: Set<Feed>) {
 		DispatchQueue.main.async {
-			let userInfo: [AnyHashable: Any] = [UserInfoKey.faviconURL: faviconURL]
-			NotificationCenter.default.post(name: .FaviconDidBecomeAvailable, object: self, userInfo: userInfo)
+			NotificationCenter.default.post(name: .faviconDidChange, object: self, userInfo: [Self.feedsKey: feeds])
 		}
 	}
 }

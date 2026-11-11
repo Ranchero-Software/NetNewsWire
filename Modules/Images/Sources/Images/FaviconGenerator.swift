@@ -19,7 +19,7 @@ import Account
 
 	private var cache = [String: IconImage]() // feedURL: IconImage
 
-	init() {
+	private init() {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)
 	}

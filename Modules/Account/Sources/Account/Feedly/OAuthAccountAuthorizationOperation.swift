@@ -9,6 +9,7 @@
 import Foundation
 @preconcurrency import AuthenticationServices
 import os
+import Synchronization
 import ActivityLog
 import RSCore
 
@@ -48,7 +49,7 @@ struct UnableToStartASWebAuthenticationSessionError: LocalizedError, Sendable {
 	private struct State: @unchecked Sendable {
 		var presentationAnchor: ASPresentationAnchor?
 	}
-	private let state = OSAllocatedUnfairLock(initialState: State())
+	private let state = Mutex(State())
 
 	var presentationAnchor: ASPresentationAnchor? {
 		get {
@@ -84,7 +85,7 @@ public final class OAuthAccountAuthorizationOperation: MainThreadOperation, @unc
 	private struct SessionState: @unchecked Sendable {
 		var session: ASWebAuthenticationSession?
 	}
-	private let sessionState = OSAllocatedUnfairLock(initialState: SessionState())
+	private let sessionState = Mutex(SessionState())
 	private let accountType: AccountType
 	private let oauthClient: OAuthAuthorizationClient
 	private let anchorProvider = PresentationAnchorProvider()

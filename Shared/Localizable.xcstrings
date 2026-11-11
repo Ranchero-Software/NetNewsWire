@@ -45,27 +45,8 @@
     "%lld months" : {
       "comment" : "Dinosaur staleness threshold in months"
     },
-    "Are you sure you want to delete the account “%@”? This cannot be undone." : {
-      "comment" : "Delete account alert message",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¿Seguro que quieres eliminar la cuenta «%@»? Esta acción no se puede deshacer."
-          }
-        }
-      }
-    },
-    "Delete “%@”?" : {
-      "comment" : "Delete account alert title",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¿Eliminar «%@»?"
-          }
-        }
-      }
+    "^[%lld folder](inflect: true), ^[%lld feed](inflect: true)" : {
+      "comment" : "Status bar: number of folders and feeds"
     },
     "🦖 Dinosaurs" : {
       "comment" : "The title of the Dinosaurs screen.",
@@ -115,6 +96,9 @@
           }
         }
       }
+    },
+    "Actions" : {
+      "comment" : "Status bar gear menu accessibility label"
     },
     "Active" : {
       "localizations" : {
@@ -200,11 +184,17 @@
     "Already added" : {
       "comment" : "Feed finder"
     },
+    "Always" : {
+      "comment" : "Always"
+    },
     "Always Use Reader View" : {
       "comment" : "Always Use Reader View"
     },
     "API URL: https://fresh.rss.net/api/greader.php" : {
       "comment" : "FreshRSS API Helper"
+    },
+    "Appearance" : {
+      "comment" : "Preferences"
     },
     "Are you sure you want to delete %d feeds?" : {
       "comment" : "Delete feeds alert message"
@@ -217,6 +207,17 @@
     },
     "Are you sure you want to delete the %d selected items?" : {
       "comment" : "Items delete text"
+    },
+    "Are you sure you want to delete the account “%@”? This cannot be undone." : {
+      "comment" : "Delete account alert message",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Seguro que quieres eliminar la cuenta «%@»? Esta acción no se puede deshacer."
+          }
+        }
+      }
     },
     "Are you sure you want to delete the feed “%@”?" : {
       "comment" : "Delete feed alert message"
@@ -371,6 +372,9 @@
         }
       }
     },
+    "Copy" : {
+      "comment" : "Command"
+    },
     "Copy Article URL" : {
       "comment" : "Command"
     },
@@ -449,6 +453,17 @@
         }
       }
     },
+    "Delete “%@”?" : {
+      "comment" : "Delete account alert title",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Eliminar «%@»?"
+          }
+        }
+      }
+    },
     "Delete Feed" : {
       "comment" : "Delete Feed"
     },
@@ -523,6 +538,9 @@
     "Downloading metadata" : {
       "comment" : "Downloading metadata"
     },
+    "Downloading thumbnail" : {
+      "comment" : "Downloading thumbnail"
+    },
     "Duplicate Theme" : {
       "comment" : "Duplicate Theme"
     },
@@ -583,6 +601,9 @@
     "Extra Large" : {
       "comment" : "X-Large"
     },
+    "Fade Read Articles" : {
+      "comment" : "Timeline Layout: switch that fades read articles in the timeline"
+    },
     "Failed" : {
       "comment" : "Failed"
     },
@@ -600,8 +621,17 @@
         }
       }
     },
+    "Feed Icon Size" : {
+      "comment" : "Feed Icon Size"
+    },
+    "Feed Icons" : {
+      "comment" : "Feed Icons"
+    },
     "Feed Inspector" : {
       "comment" : "Feed Inspector window title"
+    },
+    "Feed Name and Date Above Title" : {
+      "comment" : "Timeline Layout: switch that shows the feed name and date above the title in the timeline"
     },
     "Feeds" : {
       "comment" : "Feeds"
@@ -642,8 +672,14 @@
     "Folders" : {
       "comment" : "Folders"
     },
+    "Folders, smart feeds, and authors with avatars" : {
+      "comment" : "Feed Icons setting: explains when Automatic shows feed icons"
+    },
     "from cache" : {
       "comment" : "Activity log — appended when a download was served from cache instead of the network"
+    },
+    "Full Title, No Preview" : {
+      "comment" : "Timeline Layout: Rows choice that shows the whole title, without the article preview, in the timeline"
     },
     "General" : {
       "comment" : "Preferences",
@@ -695,6 +731,15 @@
     "Hide Read Feeds" : {
       "comment" : "Command"
     },
+    "Hide Sidebar" : {
+      "comment" : "Command"
+    },
+    "Hide Status Bar" : {
+      "comment" : "Command"
+    },
+    "Hide Theme Menu in Status Bar" : {
+      "comment" : "Command"
+    },
     "How to Optimize iCloud Syncing" : {
       "comment" : "Help link"
     },
@@ -717,12 +762,6 @@
     },
     "iCloud Storage Stats" : {
       "comment" : "iCloud Storage Stats window title"
-    },
-    "Icon Preview" : {
-      "comment" : "Icon Preview"
-    },
-    "Icon Size" : {
-      "comment" : "Icon Size"
     },
     "Import Failed" : {
       "comment" : "Import Failed"
@@ -773,6 +812,9 @@
     },
     "Light" : {
       "comment" : "Light"
+    },
+    "Lines" : {
+      "comment" : "Lines"
     },
     "Link:" : {
       "comment" : "Link"
@@ -865,6 +907,18 @@
     "Multiple" : {
       "comment" : "Multiple"
     },
+    "Multiple feeds" : {
+      "comment" : "Status bar gear menu: header for a selection of several feeds"
+    },
+    "Multiple folders" : {
+      "comment" : "Status bar gear menu: header for a selection of several folders"
+    },
+    "Multiple selection" : {
+      "comment" : "Status bar gear menu: header for a selection of different kinds of items"
+    },
+    "Multiple smart feeds" : {
+      "comment" : "Status bar gear menu: header for a selection of several smart feeds"
+    },
     "Name" : {
       "comment" : "Name field placeholder"
     },
@@ -891,6 +945,9 @@
     "Network error. Try again later." : {
       "comment" : "Credentials Error"
     },
+    "Never" : {
+      "comment" : "Never"
+    },
     "New Article Notifications" : {
       "comment" : "New Article Notifications"
     },
@@ -898,13 +955,13 @@
       "comment" : "Command"
     },
     "New Feed…" : {
-      "comment" : "New Feed"
+      "comment" : "Command"
     },
     "New Folder" : {
       "comment" : "Command"
     },
     "New Folder…" : {
-      "comment" : "New Folder"
+      "comment" : "Command"
     },
     "Newest Article on Top" : {
       "comment" : "Sort direction",
@@ -938,11 +995,14 @@
     "No Errors Logged" : {
       "comment" : "Error log empty state"
     },
-    "No Icon Preview" : {
-      "comment" : "No Icon Preview"
-    },
     "No results" : {
       "comment" : "No results"
+    },
+    "None" : {
+      "comment" : "None"
+    },
+    "Not updated yet" : {
+      "comment" : "Status bar: no refresh has completed yet"
     },
     "Notifications" : {
       "comment" : "Notifications"
@@ -956,9 +1016,6 @@
     },
     "Notifications need to be enabled in the Settings app." : {
       "comment" : "Notifications need to be enabled in the Settings app."
-    },
-    "Number of Lines" : {
-      "comment" : "Number of Lines"
     },
     "OK" : {
       "comment" : "OK button"
@@ -1019,6 +1076,18 @@
     "Pending" : {
       "comment" : "Pending"
     },
+    "Preview" : {
+      "comment" : "Preview"
+    },
+    "Preview with Feed Icon" : {
+      "comment" : "Timeline Layout: header for the preview that shows a feed icon"
+    },
+    "Preview with Feed Icon and Thumbnail" : {
+      "comment" : "Timeline Layout: header for the preview that shows a feed icon and a thumbnail"
+    },
+    "Preview with Thumbnail" : {
+      "comment" : "Timeline Layout: header for the preview that shows a thumbnail"
+    },
     "Previous Article" : {
       "comment" : "Previous Article"
     },
@@ -1066,6 +1135,9 @@
     },
     "Return to Previous Scan Results" : {
       "comment" : "Return to previous scan results button"
+    },
+    "Rows" : {
+      "comment" : "Rows"
     },
     "Running" : {
       "comment" : "Running"
@@ -1185,11 +1257,23 @@
     "Show Reader View" : {
       "comment" : "Show Reader View"
     },
+    "Show Sidebar" : {
+      "comment" : "Command"
+    },
+    "Show Status Bar" : {
+      "comment" : "Command"
+    },
+    "Show Theme Menu in Status Bar" : {
+      "comment" : "Command"
+    },
     "Show Website" : {
       "comment" : "Show Website"
     },
     "Shows current activity" : {
       "comment" : "Current Activity accessibility hint"
+    },
+    "Shows the whole title, up to %d lines." : {
+      "comment" : "Timeline Layout: explains the Full Title, No Preview choice"
     },
     "Sign in to your BazQux account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a BazQux account?" : {
       "comment" : "BazQux"
@@ -1248,6 +1332,9 @@
     "Starred" : {
       "comment" : "Starred"
     },
+    "Status Bar" : {
+      "comment" : "Main window status bar accessibility label"
+    },
     "Status Records" : {
       "comment" : "Status records section header"
     },
@@ -1276,6 +1363,9 @@
           }
         }
       }
+    },
+    "System" : {
+      "comment" : "System"
     },
     "System Default (%@)" : {
       "comment" : "Default browser item title format",
@@ -1357,6 +1447,9 @@
     "This will delete:" : {
       "comment" : "Clean up confirmation prefix"
     },
+    "Thumbnails" : {
+      "comment" : "Thumbnails"
+    },
     "Timeline" : {
       "comment" : "Timeline"
     },
@@ -1413,6 +1506,9 @@
     },
     "Title (Optional)" : {
       "comment" : "Feed title placeholder"
+    },
+    "Title and Preview" : {
+      "comment" : "Title and Preview"
     },
     "To add an account to NetNewsWire,\nclick its icon above.\n\nOr click the + button in the lower left." : {
       "comment" : "Add Account Explainer",

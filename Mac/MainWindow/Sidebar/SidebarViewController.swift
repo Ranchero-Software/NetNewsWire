@@ -26,8 +26,16 @@ extension Notification.Name {
 @objc final class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSMenuDelegate, UndoableCommandRunner {
 
 	@IBOutlet var outlineView: SidebarOutlineView!
+	@IBOutlet var progressView: SidebarProgressView?
 
 	weak var delegate: SidebarDelegate?
+
+	/// False when the main window status bar takes over refresh progress.
+	var showsProgressView = true {
+		didSet {
+			progressView?.isSuppressed = !showsProgressView
+		}
+	}
 
 	weak var splitViewItem: NSSplitViewItem?
 
@@ -75,6 +83,8 @@ extension Notification.Name {
 	}
 
 	private static let rowViewIdentifier = NSUserInterfaceItemIdentifier(rawValue: "sidebarRow")
+	private static let extraLargeRowHeight: CGFloat = 36
+	private static let extraExtraLargeRowHeight: CGFloat = 42
 	private let keyboardDelegate = SidebarKeyboardDelegate()
 
 	// MARK: - NSViewController
@@ -84,6 +94,7 @@ extension Notification.Name {
 	}
 
 	override func viewDidLoad() {
+		progressView?.isSuppressed = !showsProgressView
 		outlineView.keyboardDelegate = keyboardDelegate
 		outlineView.dataSource = dataSource
 		outlineView.doubleAction = #selector(doubleClickedSidebar(_:))
@@ -93,18 +104,27 @@ extension Notification.Name {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidInitialize(_:)), name: .UnreadCountDidInitialize, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarShowsIconsDidChange(_:)), name: .sidebarShowsIconsDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarTextSizeDidChange(_:)), name: .sidebarTextSizeDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarSmartFeedsVisibilityDidChange(_:)), name: .sidebarSmartFeedsVisibilityDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidAddAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidDeleteAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleFeedIconImageDidChange(_:)), name: .feedIconImageDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleGrayscaleIconsDidChange(_:)), name: .grayscaleIconsDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .feedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 		DistributedNotificationCenter.default().addObserver(self, selector: #selector(appleSideBarDefaultIconSizeChanged(_:)), name: .appleSideBarDefaultIconSizeChanged, object: nil)
 
+		if let clipView = outlineView.enclosingScrollView?.contentView {
+			clipView.postsFrameChangedNotifications = true
+			NotificationCenter.default.addObserver(self, selector: #selector(handleClipViewFrameDidChange(_:)), name: NSView.frameDidChangeNotification, object: clipView)
+		}
+
+		updateRowSizeStyle()
 		outlineView.reloadData()
 
 		// Expand top level items by default.  If there is state to restore, overlay this.
@@ -232,6 +252,31 @@ extension Notification.Name {
 		}
 	}
 
+	@objc func handleSidebarShowsIconsDidChange(_ notification: Notification) {
+		prefetchFeedIcons()
+		applyToAvailableCells(configure)
+	}
+
+	@objc func handleGrayscaleIconsDidChange(_ notification: Notification) {
+		applyToAvailableCells(configure)
+	}
+
+	@objc func handleSidebarSmartFeedsVisibilityDidChange(_ notification: Notification) {
+		rebuildTreeAndRestoreSelection()
+		expandNodes()
+	}
+
+	@objc func handleSidebarTextSizeDidChange(_ notification: Notification) {
+		updateRowSizeStyle()
+		let savedSelection = selectedNodes
+		outlineView.reloadData()
+		restoreSelection(to: savedSelection, sendNotificationIfChanged: true)
+	}
+
+	@objc func handleClipViewFrameDidChange(_ notification: Notification) {
+		fitOutlineViewToVisibleWidth()
+	}
+
 	@objc func containerChildrenDidChange(_ note: Notification) {
 		rebuildTreeAndRestoreSelection()
 	}
@@ -255,12 +300,10 @@ extension Notification.Name {
 		revealAndSelectRepresentedObject(feed as AnyObject)
 	}
 
-	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		applyToAvailableCells(configureFavicon)
-	}
-
-	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
-		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else { return }
+	@objc func handleFeedIconImageDidChange(_ notification: Notification) {
+		guard let feed = notification.userInfo?[UserInfoKey.feed] as? Feed else {
+			return
+		}
 		configureCellsForRepresentedObject(feed)
 	}
 
@@ -284,6 +327,9 @@ extension Notification.Name {
 	}
 
 	@objc func appleSideBarDefaultIconSizeChanged(_ note: Notification) {
+		guard AppDefaults.sidebarTextSize == .system else {
+			return
+		}
 		// The outline view doesn't have the new row style size set yet when we get
 		// this notification, so give it half a second to catch up.
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -321,7 +367,7 @@ extension Notification.Name {
 		guard outlineView.clickedRow == outlineView.selectedRow else {
 			return
 		}
-		if AppDefaults.shared.feedDoubleClickMarkAsRead, let articles = singleSelectedFeed?.fetchUnreadArticles() {
+		if AppDefaults.feedDoubleClickMarkAsRead, let articles = singleSelectedFeed?.fetchUnreadArticles() {
 			if let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: Array(articles), markingRead: true, undoManager: undoManager) {
 				runCommand(markReadCommand)
 			}
@@ -476,6 +522,9 @@ extension Notification.Name {
 			delegate?.sidebarInvalidatedRestorationState(self)
 		}
 
+		guard AppDefaults.sidebarShowsIcons else {
+			return
+		}
 		var feeds = [Feed]()
 		collectExpandedFeeds(in: node, into: &feeds)
 		IconImageCache.shared.prefetchImagesForFeeds(feeds)
@@ -564,13 +613,46 @@ extension SidebarViewController: NSUserInterfaceValidations {
 		if item.action == #selector(copy(_:)) {
 			return NSPasteboard.general.canCopyAtLeastOneObject(selectedObjects)
 		}
+		if let isShown = Self.smartFeedIsShown(forGoToAction: item.action) {
+			return isShown
+		}
 		return true
+	}
+
+	/// Whether the smart feed that a Go menu action selects is shown in the sidebar. Nil for other actions.
+	static func smartFeedIsShown(forGoToAction action: Selector?) -> Bool? {
+		switch action {
+		case #selector(gotoToday(_:)):
+			AppDefaults.showTodayFeed
+		case #selector(gotoAllUnread(_:)):
+			AppDefaults.showUnreadFeed
+		case #selector(gotoStarred(_:)):
+			AppDefaults.showStarredFeed
+		default:
+			nil
+		}
 	}
 }
 
 // MARK: - Private
 
 private extension SidebarViewController {
+
+	/// The outline view doesn’t resize its rows when the scroller appears or disappears,
+	/// which leaves the selection highlight at a stale width.
+	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/5487>
+	func fitOutlineViewToVisibleWidth() {
+		guard let scrollView = outlineView.enclosingScrollView else {
+			return
+		}
+		let contentInsets = scrollView.contentInsets
+		let visibleWidth = scrollView.contentView.bounds.width - contentInsets.left - contentInsets.right
+		guard visibleWidth > 0, outlineView.frame.width != visibleWidth else {
+			return
+		}
+		outlineView.setFrameSize(NSSize(width: visibleWidth, height: outlineView.frame.height))
+		outlineView.sizeLastColumnToFit()
+	}
 
 	var accountNodes: [Account] {
 		return treeController.rootNode.childNodes.compactMap { $0.representedObject as? Account }
@@ -675,7 +757,29 @@ private extension SidebarViewController {
 		}
 	}
 
+	func updateRowSizeStyle() {
+		switch AppDefaults.sidebarTextSize {
+		case .system:
+			outlineView.rowSizeStyle = .default
+		case .small:
+			outlineView.rowSizeStyle = .small
+		case .medium:
+			outlineView.rowSizeStyle = .medium
+		case .large:
+			outlineView.rowSizeStyle = .large
+		case .extraLarge:
+			outlineView.rowSizeStyle = .custom
+			outlineView.rowHeight = Self.extraLargeRowHeight
+		case .extraExtraLarge:
+			outlineView.rowSizeStyle = .custom
+			outlineView.rowHeight = Self.extraExtraLargeRowHeight
+		}
+	}
+
 	func prefetchFeedIcons() {
+		guard AppDefaults.sidebarShowsIcons else {
+			return
+		}
 		var feeds = [Feed]()
 		collectExpandedFeeds(in: treeController.rootNode, into: &feeds)
 		IconImageCache.shared.prefetchImagesForFeeds(feeds)
@@ -847,12 +951,12 @@ private extension SidebarViewController {
 	}
 
 	func configure(_ cell: SidebarCell, _ node: Node) {
-		cell.cellAppearance = SidebarCellAppearance(rowSizeStyle: outlineView.effectiveRowSizeStyle)
+		cell.cellAppearance = SidebarCellAppearance(textSize: AppDefaults.sidebarTextSize, systemRowSizeStyle: outlineView.effectiveRowSizeStyle)
 		cell.name = nameFor(node)
 		configureUnreadCount(cell, node)
 		cell.updateUnreadCountView() // A reused cell may predate a display setting change
 		configureFavicon(cell, node)
-		cell.shouldShowImage = node.representedObject is SmallIconProvider
+		cell.shouldShowImage = AppDefaults.sidebarShowsIcons && node.representedObject is SmallIconProvider
 	}
 
 	func configureUnreadCount(_ cell: SidebarCell, _ node: Node) {
@@ -860,7 +964,7 @@ private extension SidebarViewController {
 	}
 
 	func configureFavicon(_ cell: SidebarCell, _ node: Node) {
-		cell.iconImage = imageFor(node)
+		cell.iconImage = AppDefaults.sidebarShowsIcons ? imageFor(node) : nil
 	}
 
 	func configureGroupCell(_ cell: NSTableCellView, _ node: Node) {
@@ -868,8 +972,8 @@ private extension SidebarViewController {
 	}
 
 	func imageFor(_ node: Node) -> IconImage? {
-		if let feed = node.representedObject as? Feed, let feedIcon = IconImageCache.shared.imageForFeed(feed) {
-			return feedIcon
+		if let sidebarItem = node.representedObject as? SidebarItem, let iconImage = IconImageCache.shared.imageForFeed(sidebarItem) {
+			return iconImage
 		}
 		if let smallIconProvider = node.representedObject as? SmallIconProvider {
 			return smallIconProvider.smallIcon

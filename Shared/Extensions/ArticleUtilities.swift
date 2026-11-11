@@ -52,6 +52,10 @@ extension Article {
 		return URL.encodeSpacesIfNeeded(rawImageLink)
 	}
 
+	var thumbnailURL: URL? {
+		URL.encodeSpacesIfNeeded(rawThumbnailLink)
+	}
+
 	var link: String? {
 		// Prefer link from URL, if one can be created, as these are repaired if required.
 		// Provide the raw link if URL creation fails.
@@ -68,6 +72,10 @@ extension Article {
 		// Prefer link from imageURL, if one can be created, as these are repaired if required.
 		// Provide the raw link if URL creation fails.
 		return imageURL?.absoluteString ?? rawImageLink
+	}
+
+	var thumbnailLink: String? {
+		thumbnailURL?.absoluteString ?? rawThumbnailLink
 	}
 
 	var preferredLink: String? {
@@ -97,6 +105,33 @@ extension Article {
 
 	func iconImage() -> IconImage? {
 		return IconImageCache.shared.imageForArticle(self)
+	}
+
+	/// Grayscale when the current theme’s Info.plist sets `grayscaleIcon`.
+	func articleViewIconImage() -> IconImage? {
+		guard let iconImage = iconImage() else {
+			return nil
+		}
+		return ArticleThemesManager.shared.currentTheme.usesGrayscaleIcon ? iconImage.grayscaleIconImage : iconImage
+	}
+
+	/// True when an icon notification is about an icon this article might show:
+	/// its feed’s icon, or one of its authors’ avatars.
+	func mightShowIcon(in notification: Notification) -> Bool {
+		switch notification.name {
+		case .feedIconImageDidChange:
+			guard let feed, let notificationFeed = notification.userInfo?[UserInfoKey.feed] as? Feed else {
+				return false
+			}
+			return notificationFeed == feed
+		case .authorAvatarImageDidChange:
+			guard let avatarURL = notification.userInfo?[UserInfoKey.url] as? String else {
+				return false
+			}
+			return authors?.contains { $0.avatarURL == avatarURL } ?? false
+		default:
+			return false
+		}
 	}
 
 	func iconImageUrl(feed: Feed) -> URL? {

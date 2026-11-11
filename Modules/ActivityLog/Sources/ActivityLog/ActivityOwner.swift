@@ -16,6 +16,7 @@ public enum ActivityOwner: Sendable, Hashable {
 	case faviconDownloader
 	case avatarDownloader
 	case htmlMetadataDownloader
+	case thumbnailDownloader
 
 	public var displayName: String {
 		switch self {
@@ -33,6 +34,8 @@ public enum ActivityOwner: Sendable, Hashable {
 			return NSLocalizedString("Avatars", bundle: .module, comment: "Activity owner name")
 		case .htmlMetadataDownloader:
 			return NSLocalizedString("HTML Metadata", bundle: .module, comment: "Activity owner name")
+		case .thumbnailDownloader:
+			return NSLocalizedString("Thumbnails", bundle: .module, comment: "Activity owner name")
 		}
 	}
 
@@ -46,7 +49,8 @@ public enum ActivityOwner: Sendable, Hashable {
 			(.feedImageDownloader, .feedImageDownloader),
 			(.faviconDownloader, .faviconDownloader),
 			(.avatarDownloader, .avatarDownloader),
-			(.htmlMetadataDownloader, .htmlMetadataDownloader):
+			(.htmlMetadataDownloader, .htmlMetadataDownloader),
+			(.thumbnailDownloader, .thumbnailDownloader):
 			return true
 		case (.account(let lhsID, _), .account(let rhsID, _)):
 			return lhsID == rhsID
@@ -72,6 +76,8 @@ public enum ActivityOwner: Sendable, Hashable {
 			hasher.combine(5)
 		case .htmlMetadataDownloader:
 			hasher.combine(6)
+		case .thumbnailDownloader:
+			hasher.combine(7)
 		}
 	}
 }

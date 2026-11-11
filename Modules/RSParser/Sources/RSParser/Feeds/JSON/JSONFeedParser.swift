@@ -166,7 +166,7 @@ private extension JSONFeedParser {
 		}
 		let attachments = parseAttachments(itemDictionary)
 
-		return ParsedItem(syncServiceID: nil, uniqueID: uniqueID, feedURL: feedURL, url: url, externalURL: externalURL, title: title, language: language, contentHTML: contentHTML, contentText: contentText, markdown: nil, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments)
+		return ParsedItem(syncServiceID: nil, uniqueID: uniqueID, feedURL: feedURL, url: url, externalURL: externalURL, title: title, language: language, contentHTML: contentHTML, contentText: contentText, markdown: nil, summary: summary, imageURL: imageURL, thumbnailURL: nil, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments)
 	}
 
 	static func parseTitle(_ itemDictionary: JSONDictionary, _ feedURL: String) -> String? {
@@ -221,12 +221,12 @@ private extension JSONFeedParser {
 		return DateParser.date(from: dateString)
 	}
 
-	static func parseAttachments(_ itemDictionary: JSONDictionary) -> Set<ParsedAttachment>? {
+	static func parseAttachments(_ itemDictionary: JSONDictionary) -> [ParsedAttachment]? {
 
 		guard let attachmentsArray = itemDictionary[Key.attachments] as? JSONArray else {
 			return nil
 		}
-		return Set(attachmentsArray.compactMap { parseAttachment($0) })
+		return attachmentsArray.compactMap { parseAttachment($0) }
 	}
 
 	static func parseAttachment(_ attachmentObject: JSONDictionary) -> ParsedAttachment? {
@@ -234,14 +234,12 @@ private extension JSONFeedParser {
 		guard let url = attachmentObject[Key.url] as? String else {
 			return nil
 		}
-		guard let mimeType = attachmentObject[Key.mimeType] as? String else {
-			return nil
-		}
 
+		let mimeType = attachmentObject[Key.mimeType] as? String
 		let title = attachmentObject[Key.title] as? String
 		let sizeInBytes = attachmentObject[Key.sizeInBytes] as? Int
 		let durationInSeconds = attachmentObject[Key.durationInSeconds] as? Int
 
-		return ParsedAttachment(url: url, mimeType: mimeType, title: title, sizeInBytes: sizeInBytes, durationInSeconds: durationInSeconds)
+		return ParsedAttachment(url: url, mimeType: mimeType, title: title, sizeInBytes: sizeInBytes, durationInSeconds: durationInSeconds, width: nil, height: nil, medium: nil)
 	}
 }

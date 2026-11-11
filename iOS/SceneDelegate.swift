@@ -24,10 +24,10 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		let rootViewController = window!.rootViewController as! RootSplitViewController
 		rootViewController.presentsWithGesture = true
 		rootViewController.showsSecondaryOnlyButton = true
-		rootViewController.preferredDisplayMode = UISplitViewController.DisplayMode(rawValue: AppDefaults.shared.splitViewPreferredDisplayMode) ?? .oneBesideSecondary
+		rootViewController.preferredDisplayMode = UISplitViewController.DisplayMode(rawValue: AppDefaults.splitViewPreferredDisplayMode) ?? .oneBesideSecondary
 
 		// On first run on iPad, show all three columns so the sidebar is visible
-		if AppDefaults.shared.isFirstRun && UIDevice.current.userInterfaceIdiom == .pad {
+		if AppDefaults.isFirstRun && UIDevice.current.userInterfaceIdiom == .pad {
 			rootViewController.preferredDisplayMode = .twoBesideSecondary
 		}
 
@@ -49,7 +49,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 		updateUserInterfaceStyle()
 
-		NotificationCenter.default.addObserver(self, selector: #selector(handleUserInterfaceColorPaletteDidUpdate(_:)), name: .userInterfaceColorPaletteDidUpdate, object: AppDefaults.self)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleUserInterfaceColorPaletteDidUpdate(_:)), name: .userInterfaceColorPaletteDidUpdate, object: nil)
 
 		if connectionOptions.urlContexts.first?.url != nil {
 			self.scene(scene, openURLContexts: connectionOptions.urlContexts)

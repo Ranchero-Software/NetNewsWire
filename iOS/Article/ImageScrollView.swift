@@ -39,6 +39,7 @@ open class ImageScrollView: UIScrollView {
 	var imageSize: CGSize = CGSize.zero
 	private var pointToCenterAfterResize: CGPoint = CGPoint.zero
 	private var scaleToRestoreAfterResize: CGFloat = 1.0
+	private var lastLayoutSize = CGSize.zero
 	var maxScaleFromMinScale: CGFloat = 3.0
 
 	var zoomedFrame: CGRect {
@@ -69,6 +70,18 @@ open class ImageScrollView: UIScrollView {
 		super.init(coder: aDecoder)
 
 		initialize()
+	}
+
+	override open func layoutSubviews() {
+		super.layoutSubviews()
+
+		// Resize after UIScrollView’s own layout, so that layout can’t move the image
+		// partway through a rotation animation.
+		guard imageSize != .zero, bounds.size != lastLayoutSize else {
+			return
+		}
+		lastLayoutSize = bounds.size
+		resize()
 	}
 
 	private func initialize() {
@@ -298,6 +311,7 @@ open class ImageScrollView: UIScrollView {
 
 	open func resize() {
 		self.configureImageForSize(self.imageSize)
+		self.adjustFrameToCenter()
 	}
 }
 
@@ -343,7 +357,6 @@ extension ImageScrollView: UIScrollViewDelegate {
 		return false
 	}
 
-	@available(iOS 11.0, *)
 	public func scrollViewDidChangeAdjustedContentInset(_ scrollView: UIScrollView) {
 		imageScrollViewDelegate?.scrollViewDidChangeAdjustedContentInset?(scrollView)
 	}

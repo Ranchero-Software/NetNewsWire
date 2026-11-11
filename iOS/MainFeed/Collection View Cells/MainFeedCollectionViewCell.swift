@@ -16,7 +16,24 @@ final class MainFeedCollectionViewCell: UICollectionViewCell {
 	@IBOutlet var feedTitle: UILabel!
 	@IBOutlet var faviconView: IconView!
 	@IBOutlet var unreadCountLabel: UILabel!
+	@IBOutlet var faviconWidthConstraint: NSLayoutConstraint?
+	@IBOutlet var feedTitleLeadingConstraint: NSLayoutConstraint?
 	private var faviconLeadingConstraint: NSLayoutConstraint?
+
+	private static let faviconWidth: CGFloat = 24
+	private static let feedTitleSpacing: CGFloat = 8
+
+	/// Without the icon, the title starts where the icon would be.
+	var showsIcon = true {
+		didSet {
+			guard showsIcon != oldValue else {
+				return
+			}
+			faviconView.isHidden = !showsIcon
+			faviconWidthConstraint?.constant = showsIcon ? Self.faviconWidth : 0
+			feedTitleLeadingConstraint?.constant = showsIcon ? Self.feedTitleSpacing : 0
+		}
+	}
 
 	var iconImage: IconImage? {
 		didSet {
@@ -33,7 +50,7 @@ final class MainFeedCollectionViewCell: UICollectionViewCell {
 		}
 		set {
 			_unreadCount = newValue
-			unreadCountLabel.isHidden = AppDefaults.shared.unreadCountDisplay.text(for: newValue) == nil
+			unreadCountLabel.isHidden = AppDefaults.unreadCountDisplay.text(for: newValue) == nil
 			unreadCountLabel.setUnreadCount(newValue)
 			setNeedsUpdateConfiguration()
 		}
@@ -57,7 +74,7 @@ final class MainFeedCollectionViewCell: UICollectionViewCell {
 	override var accessibilityLabel: String? {
 		get {
 			let name = feedTitle.text ?? ""
-			guard let unreadText = AppDefaults.shared.unreadCountDisplay.accessibilityText(for: unreadCount) else {
+			guard let unreadText = AppDefaults.unreadCountDisplay.accessibilityText(for: unreadCount) else {
 				return name
 			}
 			return "\(name) \(unreadText)"
@@ -78,14 +95,7 @@ final class MainFeedCollectionViewCell: UICollectionViewCell {
     }
 
 	override func updateConfiguration(using state: UICellConfigurationState) {
-		var backgroundConfig: UIBackgroundConfiguration
-		if #available(iOS 18, *) {
-			backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
-		} else if traitCollection.userInterfaceIdiom == .pad {
-			backgroundConfig = UIBackgroundConfiguration.listSidebarCell().updated(for: state)
-		} else {
-			backgroundConfig = UIBackgroundConfiguration.listGroupedCell().updated(for: state)
-		}
+		var backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
 
 		// Matches the timeline: accent background and white text when the feeds list is first responder,
 		// and no highlight while a row is pressed, so the row goes straight to the selected style.

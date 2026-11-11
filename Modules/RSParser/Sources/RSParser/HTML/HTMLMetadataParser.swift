@@ -32,7 +32,6 @@ public enum HTMLMetadataParser {
 private final class MetadataParserDelegate: HTMLScannerDelegate {
 
 	private let scanPastHead: Bool
-	private var finished = false
 	private(set) var tags: [HTMLTag] = []
 
 	init(scanPastHead: Bool) {
@@ -43,16 +42,13 @@ private final class MetadataParserDelegate: HTMLScannerDelegate {
 	                 didStartTag name: ArraySlice<UInt8>,
 	                 attributes: HTMLAttributes,
 	                 selfClosing: Bool) {
-		if finished {
+		// Nothing after <body> is needed, so the rest of a large page isn’t scanned.
+		if !scanPastHead && HTMLScanner.tagNameEqualsIgnoringCase(name, Self.bodyBytes[...]) {
+			scanner.stopParsing()
 			return
 		}
 
-		if !scanPastHead && tagNameEqualsIgnoringCase(name, Self.bodyBytes) {
-			finished = true
-			return
-		}
-
-		if tagNameEqualsIgnoringCase(name, Self.linkBytes) {
+		if HTMLScanner.tagNameEqualsIgnoringCase(name, Self.linkBytes[...]) {
 			if attributes.isEmpty {
 				return
 			}
@@ -69,7 +65,7 @@ private final class MetadataParserDelegate: HTMLScannerDelegate {
 			return
 		}
 
-		if tagNameEqualsIgnoringCase(name, Self.metaBytes) {
+		if HTMLScanner.tagNameEqualsIgnoringCase(name, Self.metaBytes[...]) {
 			if attributes.isEmpty {
 				return
 			}
@@ -82,16 +78,4 @@ private final class MetadataParserDelegate: HTMLScannerDelegate {
 	static let bodyBytes: [UInt8] = Array("body".utf8)
 	static let linkBytes: [UInt8] = Array("link".utf8)
 	static let metaBytes: [UInt8] = Array("meta".utf8)
-
-	private func tagNameEqualsIgnoringCase(_ name: ArraySlice<UInt8>, _ lowercased: [UInt8]) -> Bool {
-		guard name.count == lowercased.count else {
-			return false
-		}
-		for (a, b) in zip(name, lowercased) {
-			if a.asciiLowercased != b {
-				return false
-			}
-		}
-		return true
-	}
 }

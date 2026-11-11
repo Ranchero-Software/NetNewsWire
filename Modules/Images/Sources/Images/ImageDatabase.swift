@@ -1,0 +1,309 @@
+//
+//  ImageDatabase.swift
+//  Images
+//
+//  Created by Brent Simmons on 5/28/26.
+//
+
+import Foundation
+import os
+import RSCore
+import RSDatabase
+import RSDatabaseObjC
+import RSParser
+import RSWeb
+
+/// Per-URL image metadata: discovered URLs, failure tracking, and the copies `DownloadedImageCache` stores.
+@MainActor public final class ImageDatabase {
+
+	public static let shared = ImageDatabase()
+
+	private static let failureRetryDays = 5
+
+	public let databasePath: String
+
+	nonisolated static private let logger = Logger(subsystem: Logger.nnwSubsystem, category: "ImageDatabase")
+
+	private let queue: DatabaseQueue
+
+	private var homePageToFaviconURL = [String: String]()
+	private var noFaviconDates = [String: Date]() // homePageURL: when no favicon was found
+	private var homePageToIconURL = [String: String]()
+	private var noIconDates = [String: Date]() // homePageURL: when no icon was found
+	private var failureDates = [String: Date]()
+	private var urlsUnsuitableForThumbnails = Set<String>()
+
+	private static let tableCreationStatements = """
+	CREATE TABLE IF NOT EXISTS downloadFailure (url TEXT PRIMARY KEY NOT NULL, lastChecked REAL NOT NULL);
+	CREATE TABLE IF NOT EXISTS homePageFavicon (homePageURL TEXT PRIMARY KEY NOT NULL, faviconURL TEXT, lastChecked REAL NOT NULL);
+	CREATE TABLE IF NOT EXISTS homePageIcon (homePageURL TEXT PRIMARY KEY NOT NULL, iconURL TEXT, lastChecked REAL NOT NULL);
+	CREATE TABLE IF NOT EXISTS downloadedImage (url TEXT PRIMARY KEY NOT NULL, pixelWidth INTEGER, pixelHeight INTEGER, lastAccessed REAL NOT NULL, etag TEXT, lastModified TEXT, nextCheck REAL NOT NULL, isIcon INTEGER NOT NULL DEFAULT 0);
+	"""
+
+	private static let databaseFileName = "Images.db"
+	private static let legacyDatabaseFileName = "ImageMetadata.db"
+
+	/// Tables and columns imported from ImageMetadata.db, which shipped before Images.db replaced it.
+	nonisolated private static let legacyTableColumns = [
+		(table: "downloadFailure", columns: "url, lastChecked"),
+		(table: "homePageFavicon", columns: "homePageURL, faviconURL, lastChecked")
+	]
+
+	private convenience init() {
+		self.init(databasePath: AppConfig.dataFolder.appendingPathComponent(Self.databaseFileName).path, legacyDatabasePath: AppConfig.dataFolder.appendingPathComponent(Self.legacyDatabaseFileName).path)
+	}
+
+	init(databasePath: String, legacyDatabasePath: String? = nil) {
+		self.databasePath = databasePath
+		let queue = DatabaseQueue(databasePath: databasePath, journalMode: .wal)
+		queue.runCreateStatements(Self.tableCreationStatements)
+		self.queue = queue
+
+		if let legacyDatabasePath, FileManager.default.fileExists(atPath: legacyDatabasePath) {
+			queue.runInDatabaseSync { database in
+				Self.importLegacyDatabase(path: legacyDatabasePath, database: database)
+			}
+			// Deleted even if the import failed: the data can be rebuilt, and this keeps the import to one run.
+			Self.deleteLegacyDatabase(path: legacyDatabasePath)
+		}
+
+		loadCachesFromDatabase()
+
+		let failureCutoff = Date().timeIntervalSince1970 - TimeInterval(days: Self.failureRetryDays)
+		queue.runInDatabase { database in
+			// Replaced by homePageIcon. Its home page icon URLs are found again from the home pages’ metadata.
+			database.executeStatements("DROP TABLE IF EXISTS feedIconURL;")
+			DownloadFailureTable.removeExpired(olderThan: failureCutoff, database: database)
+			database.checkpoint()
+		}
+	}
+
+	// MARK: - Vacuum
+
+	/// A WAL checkpoint, since this database is in WAL mode.
+	public func vacuum() async {
+		await queue.checkpoint()
+	}
+
+	// MARK: - HomePageFavicon
+
+	public func faviconURL(forHomePageURL homePageURL: String) -> String? {
+		homePageToFaviconURL[homePageURL]
+	}
+
+	public func homePageURLs(withFaviconURL faviconURL: String) -> [String] {
+		homePageToFaviconURL.filter { $0.value == faviconURL }.map { $0.key }
+	}
+
+	/// A no-favicon verdict expires after `failureRetryDays`, so the home page gets checked again.
+	public func homePageHasNoFavicon(_ homePageURL: String) -> Bool {
+		guard let noFaviconDate = noFaviconDates[homePageURL] else {
+			return false
+		}
+		return Date().timeIntervalSince(noFaviconDate) < TimeInterval(days: Self.failureRetryDays)
+	}
+
+	public func saveHomePageFavicon(homePageURL: String, faviconURL: String?) {
+		if let faviconURL {
+			homePageToFaviconURL[homePageURL] = faviconURL
+			noFaviconDates.removeValue(forKey: homePageURL)
+		} else {
+			noFaviconDates[homePageURL] = Date()
+			homePageToFaviconURL.removeValue(forKey: homePageURL)
+		}
+		queue.runInDatabase { database in
+			HomePageFaviconTable.save(homePageURL: homePageURL, faviconURL: faviconURL, database: database)
+		}
+	}
+
+	// MARK: - HomePageIcon
+
+	public func homePageIconURL(forHomePageURL homePageURL: String) -> String? {
+		homePageToIconURL[homePageURL]
+	}
+
+	/// A no-icon verdict expires after `failureRetryDays`, so the home page gets checked again.
+	public func homePageHasNoIcon(_ homePageURL: String) -> Bool {
+		guard let noIconDate = noIconDates[homePageURL] else {
+			return false
+		}
+		return Date().timeIntervalSince(noIconDate) < TimeInterval(days: Self.failureRetryDays)
+	}
+
+	public func saveHomePageIcon(homePageURL: String, iconURL: String?) {
+		if let iconURL {
+			homePageToIconURL[homePageURL] = iconURL
+			noIconDates.removeValue(forKey: homePageURL)
+		} else {
+			noIconDates[homePageURL] = Date()
+			homePageToIconURL.removeValue(forKey: homePageURL)
+		}
+		queue.runInDatabase { database in
+			HomePageIconTable.save(homePageURL: homePageURL, iconURL: iconURL, database: database)
+		}
+	}
+
+	// MARK: - DownloadFailure
+
+	public func recentlyFailed(url: String) -> Bool {
+		guard let lastFailure = failureDates[url] else {
+			return false
+		}
+		return Date().timeIntervalSince(lastFailure) < TimeInterval(days: Self.failureRetryDays)
+	}
+
+	public func recordFailure(url: String) {
+		failureDates[url] = Date()
+		queue.runInDatabase { database in
+			DownloadFailureTable.save(url: url, database: database)
+		}
+	}
+
+	public func clearFailure(url: String) {
+		guard failureDates.removeValue(forKey: url) != nil else {
+			return
+		}
+		queue.runInDatabase { database in
+			DownloadFailureTable.clear(url: url, database: database)
+		}
+	}
+
+	// MARK: - DownloadedImage
+
+	/// True when the image is too large to download for the timeline, or the stored copy is too small, too narrow, or unreadable by ImageIO.
+	/// It may still be a fine feed icon.
+	public func isUnsuitableForThumbnail(url: String) -> Bool {
+		urlsUnsuitableForThumbnails.contains(url)
+	}
+
+	/// For this session.
+	func saveUnsuitableForThumbnail(url: String) {
+		urlsUnsuitableForThumbnails.insert(url)
+	}
+
+	func saveDownloadedImage(_ record: DownloadedImageRecord) {
+		if Self.isSuitableForThumbnail(record.pixelSize) {
+			urlsUnsuitableForThumbnails.remove(record.url)
+		} else {
+			urlsUnsuitableForThumbnails.insert(record.url)
+		}
+		queue.runInDatabase { database in
+			DownloadedImageTable.save(record, database: database)
+		}
+	}
+
+	func saveDownloadedImageAccessDate(url: String) {
+		queue.runInDatabase { database in
+			DownloadedImageTable.saveAccessDate(url: url, database: database)
+		}
+	}
+
+	func saveDownloadedImageIsIcon(url: String) {
+		queue.runInDatabase { database in
+			DownloadedImageTable.saveIsIcon(url: url, database: database)
+		}
+	}
+
+	func fetchDownloadedImageValidation(url: String) async -> DownloadedImageValidation? {
+		await withCheckedContinuation { continuation in
+			queue.runInDatabase { database in
+				continuation.resume(returning: DownloadedImageTable.fetchValidation(url: url, database: database))
+			}
+		}
+	}
+
+	/// Saves `conditionalGetInfo` too when it’s not nil. Otherwise the saved validators are kept.
+	func saveDownloadedImageNextCheck(url: String, nextCheck: Date, conditionalGetInfo: HTTPConditionalGetInfo?) {
+		queue.runInDatabase { database in
+			DownloadedImageTable.saveNextCheck(url: url, nextCheck: nextCheck, conditionalGetInfo: conditionalGetInfo, database: database)
+		}
+	}
+
+	func fetchDownloadedImageUsageByLeastRecentAccess() async -> [DownloadedImageUsage]? {
+		await withCheckedContinuation { continuation in
+			queue.runInDatabase { database in
+				continuation.resume(returning: DownloadedImageTable.fetchUsageByLeastRecentAccess(database: database))
+			}
+		}
+	}
+
+	func deleteDownloadedImages(urls: [String]) {
+		guard !urls.isEmpty else {
+			return
+		}
+		urlsUnsuitableForThumbnails.subtract(urls)
+		queue.runInTransaction { database in
+			DownloadedImageTable.delete(urls: urls, database: database)
+		}
+	}
+}
+
+private extension ImageDatabase {
+
+	static func isSuitableForThumbnail(_ pixelSize: (width: Int, height: Int)?) -> Bool {
+		guard let pixelSize else {
+			return false
+		}
+		return SignificantImageFilter.hasSignificantDimensions(width: pixelSize.width, height: pixelSize.height)
+	}
+
+	nonisolated static func importLegacyDatabase(path: String, database: FMDatabase) {
+		guard database.executeUpdate("ATTACH DATABASE ? AS legacy", withArgumentsIn: [path]) else {
+			logger.error("Could not attach legacy database: \(database.lastErrorMessage() ?? "unknown", privacy: .public)")
+			return
+		}
+
+		// ATTACH and DETACH can’t run inside a transaction.
+		database.beginTransaction()
+		for (table, columns) in legacyTableColumns {
+			if database.executeUpdate("INSERT OR IGNORE INTO main.\(table) (\(columns)) SELECT \(columns) FROM legacy.\(table)", withArgumentsIn: []) {
+				let rowCount = database.changes()
+				logger.info("Imported \(rowCount) rows into \(table, privacy: .public) from legacy database")
+			} else {
+				logger.error("Could not import \(table, privacy: .public) from legacy database: \(database.lastErrorMessage() ?? "unknown", privacy: .public)")
+			}
+		}
+		database.commit()
+
+		database.executeStatements("DETACH DATABASE legacy;")
+	}
+
+	static func deleteLegacyDatabase(path: String) {
+		do {
+			try FileManager.default.removeItem(atPath: path)
+		} catch {
+			logger.error("Could not delete legacy database \(path, privacy: .public): \(error.localizedDescription, privacy: .public)")
+		}
+	}
+
+	func loadCachesFromDatabase() {
+		nonisolated(unsafe) var homePageRecords = [HomePageFaviconRecord]()
+		nonisolated(unsafe) var homePageIconRecords = [HomePageIconRecord]()
+		nonisolated(unsafe) var failures = [String: Date]()
+		nonisolated(unsafe) var pixelSizes = [(url: String, pixelSize: (width: Int, height: Int)?)]()
+
+		queue.runInDatabaseSync { database in
+			homePageRecords = HomePageFaviconTable.fetchAll(database: database)
+			homePageIconRecords = HomePageIconTable.fetchAll(database: database)
+			failures = DownloadFailureTable.fetchAll(database: database)
+			pixelSizes = DownloadedImageTable.fetchPixelSizes(database: database)
+		}
+
+		for record in homePageRecords {
+			if let faviconURL = record.faviconURL {
+				homePageToFaviconURL[record.homePageURL] = faviconURL
+			} else {
+				noFaviconDates[record.homePageURL] = record.lastChecked
+			}
+		}
+		for record in homePageIconRecords {
+			if let iconURL = record.iconURL {
+				homePageToIconURL[record.homePageURL] = iconURL
+			} else {
+				noIconDates[record.homePageURL] = record.lastChecked
+			}
+		}
+		failureDates = failures
+		urlsUnsuitableForThumbnails = Set(pixelSizes.filter { !Self.isSuitableForThumbnail($0.pixelSize) }.map(\.url))
+	}
+}

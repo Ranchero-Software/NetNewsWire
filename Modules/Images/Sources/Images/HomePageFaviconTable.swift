@@ -10,10 +10,10 @@ import RSDatabase
 import RSDatabaseObjC
 
 /// `faviconURL` is `nil` when the homepage has no usable favicon.
-public struct HomePageFaviconRecord: Sendable {
-	public let homePageURL: String
-	public let faviconURL: String?
-	public let lastChecked: Date
+struct HomePageFaviconRecord: Sendable {
+	let homePageURL: String
+	let faviconURL: String?
+	let lastChecked: Date
 }
 
 struct HomePageFaviconTable {

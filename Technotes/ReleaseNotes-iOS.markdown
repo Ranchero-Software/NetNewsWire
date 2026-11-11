@@ -1,5 +1,128 @@
 # iOS Release Notes
 
+### 7.3 build 7233 9 Nov 2026 - branch: main tag: iOS-7.3-7233
+
+Added Show Today, Show All Unread, and Show Starred settings, to hide smart feeds
+Added a Show Feed Icons setting for the sidebar
+Added a Grayscale Icons setting — for feed icons and author avatars (article thumbnails stay in color)
+Added Fade Read Articles, Feed Name and Date Above Title, and Full Titles, No Preview settings to Settings > Timeline Layout
+Reorganized Settings > Timeline Layout to better match the Mac version
+Added a Show Previews in Context Menus setting
+Made Feed Name and Date Above Title the default in the timeline
+Put the date above the thumbnail when small thumbnails and Feed Name and Date Above Title are both on
+Made timeline rows always show the author or feed name, instead of leaving that spot empty
+Limited articles with no title to four lines when rows show the full title with no preview
+Added [[primary_media]] and [[enclosures]] tags for themes — primary_media is the article’s main image, video, or audio from the feed, when the article’s HTML doesn’t already include it
+Allowed themes to include a template7.3.html file, which is used in 7.3 and later instead of template.html
+Updated the built-in themes to use [[primary_media]] and [[enclosures]]
+Skipped enclosure images that are the same as the feed image (as with Letters from an American), so they don’t become redundant thumbnails or primary images
+Skipped primary images for microblog-style (Mastodon, etc.) posts — their images appear with the enclosures at the bottom
+Used media:thumbnail as a fallback when an article has no other images (as with Wired)
+Picked the widest image when Guardian image enclosures differ only by width
+Fixed duplicate images in Engadget articles
+Fixed embedded YouTube videos (and other iframes) not loading on sites that use Optimole lazy loading
+Fixed blog.rust-lang.org articles — JavaScript is turned off for them, and their noscript content is shown
+Used an item’s only Gravatar as its author’s avatar, even when the author name is a username
+
+### 7.3 build 7231 6 Nov 2026 - branch: main tag: iOS-7.3-7231
+
+Work around Apple crashing bug in iOS 27.2 beta. (Stop using <= and >= with Dates.)
+
+### 7.3 build 7230 6 Nov 2026 - branch: main tag: iOS-7.3-7230
+
+Made separators more visible in the timeline, for real this time
+
+### 7.3 build 7229 6 Nov 2026 - branch: main tag: iOS-7.3-7229
+
+Made small thumbnails fill the space (aspect fill) — images are cropped from the sides and bottom, never the top, so faces and other important parts are more likely to stay in view
+Gave large thumbnails rounded corners, to match small thumbnails and feed icons
+Removed the background color behind thumbnails, and added a faint placeholder color that shows until a thumbnail loads
+Changed the background behind feed icons to the system fill color
+Made the timeline separators more visible — they now use the standard iOS separator color
+
+### 7.3 build 7228 5 Nov 2026 - branch: main tag: iOS-7.3-7228
+
+Added support for enclosures and Media RSS
+Added enclosures to the article view (at the bottom) — you can see images from Mastodon feeds, play an MP3, etc.
+Made YouTube enclosures play in the privacy-enhanced YouTube player (youtube-nocookie.com)
+Made the article view show plain text or media:description when an article has no HTML content
+Made image downloading kinder to servers — honors Retry-After, waits after errors, and limits downloads to two at a time per host
+Added a Feed Icons setting to Settings > Timeline Layout — Automatic (folders, smart feeds, and authors with avatars), Always, or Never
+Added article thumbnails to the timeline — choose Settings > Timeline Layout > Thumbnail Size to pick large or small. Default is none
+Refreshed the Find in Article controls — translucent, with spacing that adjusts for the keyboard
+Kept the reader’s place better in an article across a rotation
+Made a left-edge swipe over an article reveal the timeline
+Fixed the layout and resizing of the full-screen image viewer on Duo
+Fixed bug with footnote popover positioning on Duo
+Removed the empty navigation bar over articles when the bar buttons move to the side on iPhone Duo
+
+### 7.3 build 7226 22 Oct 2026 - branch: main tag: iOS-7.3-7226
+
+Added an article preview to the timeline context menu — touch and hold an article to see it, and tap the preview to open the article
+Added version string to the About view
+Added a Copy command to the version string in Settings and in the About view — touch and hold to copy
+Fixed inline footnotes in FreshRSS articles
+Fixed extra vertical space in MacRumors articles
+Bumped minimum iOS version from 17 to 18
+
+### 7.2 build 7221 11 Oct 2026 - branch: main tag: iOS-7.2-7221
+
+Submitted to App Store 15 Oct. 2026. Originally a TestFlight release.
+
+Changes since 7.1.4:
+
+Added unread count display setting — show the count, show a dot, or hide it — which applies to the app icon badge, feeds list, and widgets
+Sped up Today and unread count queries
+Fixed bug where the timeline selection was cleared when using the left arrow or shift-tab to go back to the feeds list (when multiple columns are showing)
+Changed the selection color in the feeds list to blue when it has keyboard focus and multiple columns are showing
+Fixed timeline text sometimes showing white on the gray selection background
+Stopped the scroll animation when restoring the selection in the feeds list and timeline
+Changed sort-by-feed to sort feed names with numbers by value — “Episode 2” comes before “Episode 10”
+Fixed bug where YouTube embeds in articles showed an error instead of playing
+Fixed extra whitespace at the end of Slashdot articles and paragraphs running together
+Added support for the instapaper_ignore class — elements marked with it are now removed from articles
+Added support for Substack-style footnotes
+Improved CJK text rendering in the article view by adding text-autospace
+Changed tabs in pre and code elements in articles to display as four spaces
+Improved font sizing and fixed superscript orphans in table cells in the Tiqoe Dark theme
+Fixed horizontal overflow of WordPress Math blocks and SVGs in the Tiqoe Dark theme
+Fixed parsing of RSS feed titles when a feed contains a textinput section (Slashdot, for instance)
+Fixed Slashdot feed detection (for Slashdot special cases) when the feed comes through a proxy such as FeedBurner
+Improved finding feeds in a page by skipping links to PDFs, movies, and other files that can’t be feeds
+Improved finding feeds in a page by skipping links to X, Twitter, Facebook, and Instagram
+Changed finding a feed to use the redirected-to URL
+Fixed bug where some sites with “youtube” in their names were treated as YouTube
+Offered Update Credentials in the account error alert for all username and password accounts, not just Feedbin
+Filled in the API URL when editing a FreshRSS account’s credentials
+Removed a newly added account when its credentials can’t be saved to the keychain
+Stopped account sheets from being swiped away while they’re working
+Added up to 500 characters of the HTTP error response body to Error Log entries
+Trimmed spaces from folder names when adding a folder
+
+Changes since 7.2 (7220):
+
+Fixed bug on iPad where fullscreen YouTube videos were black with audio only
+Fixed bug where embedded videos with no set height — such as Inoreader’s YouTube player — collapsed to a short strip
+
+### 7.2 build 7220 10 Oct 2026 - branch: main tag: iOS-7.2-7220
+
+Fixed bug where Add Feed lost the typed URL and title after choosing a folder
+Offered Update Credentials in the account error alert for all username and password accounts, not just Feedbin
+Filled in the API URL when editing a FreshRSS account’s credentials
+Removed a newly added account when its credentials can’t be saved to the keychain
+Stopped account sheets from being swiped away while they’re working
+Showed unavailable rows in Add Account and the Add Feed folder picker as disabled
+Trimmed spaces from folder names when adding a folder
+Fixed timeline text sometimes showing white on the gray selection background
+Stopped the scroll animation when restoring the selection in the feeds list and timeline
+Changed sort-by-feed to sort feed names with numbers by value — “Episode 2” comes before “Episode 10”
+Improved finding feeds in a page by skipping links to X, Twitter, Facebook, and Instagram, and links to files with uppercase extensions or URL queries (such as .PDF or .jpg?w=600)
+Fixed bug where some sites with “youtube” in their names were treated as YouTube
+Fixed Slashdot feed detection (for Slashdot special cases) when the feed comes through a proxy such as FeedBurner
+Changed VoiceOver to say “unread” for unread counts shown as dots
+Added VoiceOver labels and values for the Settings pop-up buttons
+Told VoiceOver which folder is selected in the Add Feed folder picker
+
 ### 7.2 build 7218 6 Oct 2026 - branch: main tag: iOS-7.2-7218
 
 Added unread count display setting — show the count, show a dot, or hide it — which applies to the app icon badge, feeds list, and widgets

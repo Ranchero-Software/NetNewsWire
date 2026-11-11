@@ -130,7 +130,7 @@ private extension RSSInJSONParser {
 		}
 
 		if let uniqueID = uniqueID {
-			return ParsedItem(syncServiceID: nil, uniqueID: uniqueID, feedURL: feedURL, url: nil, externalURL: externalURL, title: title, language: nil, contentHTML: contentHTML, contentText: contentText, markdown: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: datePublished, dateModified: nil, authors: authors, tags: tags, attachments: attachments)
+			return ParsedItem(syncServiceID: nil, uniqueID: uniqueID, feedURL: feedURL, url: nil, externalURL: externalURL, title: title, language: nil, contentHTML: contentHTML, contentText: contentText, markdown: nil, summary: nil, imageURL: nil, thumbnailURL: nil, bannerImageURL: nil, datePublished: datePublished, dateModified: nil, authors: authors, tags: tags, attachments: attachments)
 		}
 		return nil
 	}
@@ -157,7 +157,7 @@ private extension RSSInJSONParser {
 		return nil
 	}
 
-	static func parseAttachments(_ itemDictionary: JSONDictionary) -> Set<ParsedAttachment>? {
+	static func parseAttachments(_ itemDictionary: JSONDictionary) -> [ParsedAttachment]? {
 
 		guard let enclosureObject = itemDictionary["enclosure"] as? JSONDictionary else {
 			return nil
@@ -174,8 +174,8 @@ private extension RSSInJSONParser {
 		}
 
 		let type = enclosureObject["type"] as? String
-		if let attachment = ParsedAttachment(url: attachmentURL, mimeType: type, title: nil, sizeInBytes: attachmentSize, durationInSeconds: nil) {
-			return Set([attachment])
+		if let attachment = ParsedAttachment(url: attachmentURL, mimeType: type, title: nil, sizeInBytes: attachmentSize, durationInSeconds: nil, width: nil, height: nil, medium: nil) {
+			return [attachment]
 		}
 		return nil
 	}

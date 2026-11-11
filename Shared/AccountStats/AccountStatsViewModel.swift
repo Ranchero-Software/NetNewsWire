@@ -102,16 +102,21 @@ struct AccountStatsTotals {
 
 private extension AccountStatsViewModel {
 
+	/// A WAL-mode database also has -wal and -shm files.
+	static let databaseFileSuffixes = ["", "-wal", "-shm"]
+
 	func databaseSize(for account: Account) -> Int {
 		let dataFolder = account.dataFolder as NSString
 		let databaseNames = ["DB.sqlite3", "FeedSettings.db", "Sync.sqlite3"]
 		var totalSize = 0
 
 		for databaseName in databaseNames {
-			let path = dataFolder.appendingPathComponent(databaseName)
-			if let attributes = try? FileManager.default.attributesOfItem(atPath: path),
-			   let size = attributes[FileAttributeKey.size] as? Int {
-				totalSize += size
+			let databasePath = dataFolder.appendingPathComponent(databaseName)
+			for suffix in Self.databaseFileSuffixes {
+				if let attributes = try? FileManager.default.attributesOfItem(atPath: databasePath + suffix),
+				   let size = attributes[FileAttributeKey.size] as? Int {
+					totalSize += size
+				}
 			}
 		}
 

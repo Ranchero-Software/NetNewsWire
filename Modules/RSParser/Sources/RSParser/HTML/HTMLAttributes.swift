@@ -33,7 +33,7 @@ public struct HTMLAttributes: Sendable {
 
 	/// Case-insensitive lookup. `name` must be all lowercase.
 	public subscript(name: String) -> String? {
-		let needle = Array(name.utf8)
+		let needle = name.utf8
 		for attribute in attributes {
 			if attribute.name.count != needle.count {
 				continue

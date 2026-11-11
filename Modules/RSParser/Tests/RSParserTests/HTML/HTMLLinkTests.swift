@@ -145,4 +145,11 @@ import RSParser
 			#expect(!u.contains("&amp;"), "entity not decoded in href: \(u)")
 		}
 	}
+
+	@Test func entitiesInSVGTitleInLinkTextDecoded() {
+		let html = #"<html><body><a href="/feed"><svg><title>News &amp; Notes</title></svg></a></body></html>"#
+		let d = ParserData(url: "http://example.com/", data: Data(html.utf8))
+		let links = HTMLLinkParser.htmlLinks(with: d)
+		#expect(links.first?.text == "News & Notes")
+	}
 }

@@ -1963,6 +1963,30 @@
         }
       }
     },
+    "stB-ar-mI1.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Show Status Bar\"; ObjectID = \"stB-ar-mI1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show Status Bar"
+          }
+        }
+      }
+    },
+    "stT-hm-mI1.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Show Theme Menu in Status Bar\"; ObjectID = \"stT-hm-mI1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show Theme Menu in Status Bar"
+          }
+        }
+      }
+    },
     "Td7-aD-5lo.title" : {
       "comment" : "Class = \"NSMenu\"; title = \"Window\"; ObjectID = \"Td7-aD-5lo\";",
       "extractionState" : "extracted_with_value",

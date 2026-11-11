@@ -59,9 +59,6 @@ final class IconView: NSView {
 		return imageView.frame.size.height < bounds.size.height
 	}
 
-	private static var lightBackgroundColor = Assets.Colors.iconLightBackground
-	private static var darkBackgroundColor = Assets.Colors.iconDarkBackground
-
 	override init(frame frameRect: NSRect) {
 		super.init(frame: frameRect)
 		commonInit()
@@ -93,9 +90,9 @@ final class IconView: NSView {
 		guard !(iconImage?.isBackgroundSuppressed ?? false) else { return }
 		guard hasExposedVerticalBackground || !isDiscernable else { return }
 
-		let color = NSApplication.shared.effectiveAppearance.isDarkMode ? IconView.darkBackgroundColor : IconView.lightBackgroundColor
-		color.set()
-		dirtyRect.fill()
+		// The fill is translucent, so it’s blended, not copied.
+		Assets.Colors.iconBackground.set()
+		dirtyRect.fill(using: .sourceOver)
 	}
 }
 

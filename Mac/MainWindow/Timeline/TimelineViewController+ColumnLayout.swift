@@ -27,12 +27,12 @@ extension TimelineViewController {
 	}
 
 	var columnFont: NSFont {
-		NSFont.systemFont(ofSize: AppDefaults.shared.actualFontSize(for: AppDefaults.shared.timelineFontSize))
+		NSFont.systemFont(ofSize: AppDefaults.timelineTextSize.pointSize)
 	}
 
 	// Unread rows are bold, like Mail.
 	var boldColumnFont: NSFont {
-		NSFont.boldSystemFont(ofSize: AppDefaults.shared.actualFontSize(for: AppDefaults.shared.timelineFontSize))
+		NSFont.boldSystemFont(ofSize: AppDefaults.timelineTextSize.pointSize)
 	}
 
 	func columnRowHeight() -> CGFloat {
@@ -71,7 +71,8 @@ extension TimelineViewController {
 			let cell = dequeueCell(TimelineFeedColumnCellView.self, identifier: identifier)
 			cell.textField?.font = textFont
 			cell.textField?.stringValue = article?.feed?.nameForDisplay ?? ""
-			cell.imageView?.image = article?.feed.flatMap { IconImageCache.shared.imageForFeed($0) }?.image
+			cell.showsIcon = showIcons
+			cell.imageView?.image = showIcons ? article?.feed.flatMap { IconImageCache.shared.imageForFeed($0) }?.image : nil
 			return cell
 
 		case .date:

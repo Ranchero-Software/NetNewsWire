@@ -10,7 +10,7 @@ import AppKit
 
 /// The split between the timeline and the article view in column layout.
 /// On macOS 26 it extends under the sidebar, so the divider is drawn in the visible part only — otherwise the dimple is off-center.
-final class ColumnLayoutSplitView: NSSplitView {
+final class ColumnLayoutSplitView: MainWindowSplitView {
 
 	override func drawDivider(in rect: NSRect) {
 		super.drawDivider(in: rect.intersection(safeAreaRect))

@@ -41,6 +41,27 @@ extension SidebarViewController {
 			return nil
 		}
 	}
+
+	/// The status bar gear menu: New Feed and New Folder, then the contextual menu for the selection —
+	/// under a disabled item naming the selection, with its commands indented.
+	func statusBarMenu() -> NSMenu {
+		let statusBarMenu = menuForNoSelection()
+		let objects = selectedObjects
+		guard !objects.isEmpty, let selectionMenu = menu(for: objects), selectionMenu.numberOfItems > 0 else {
+			return statusBarMenu
+		}
+		statusBarMenu.addItem(NSMenuItem.separator())
+
+		let headerItem = NSMenuItem(title: statusBarMenuHeaderTitle(for: objects), action: nil, keyEquivalent: "")
+		headerItem.isEnabled = false
+		statusBarMenu.addItem(headerItem)
+
+		for item in selectionMenu.items {
+			item.indentationLevel = Self.statusBarMenuIndentationLevel
+		}
+		statusBarMenu.takeItems(from: selectionMenu)
+		return statusBarMenu
+	}
 }
 
 // MARK: Contextual Menu Actions
@@ -193,12 +214,31 @@ extension SidebarViewController: RenameWindowControllerDelegate {
 
 private extension SidebarViewController {
 
+	static let statusBarMenuIndentationLevel = 1
+
+	/// The name of the one selected item, or a description of a multiple selection.
+	func statusBarMenuHeaderTitle(for objects: [AnyObject]) -> String {
+		if objects.count == 1, let displayNameProvider = objects.first as? DisplayNameProvider {
+			return displayNameProvider.nameForDisplay
+		}
+		if objects.allSatisfy({ $0 is Feed }) {
+			return NSLocalizedString("Multiple feeds", comment: "Status bar gear menu: header for a selection of several feeds")
+		}
+		if objects.allSatisfy({ $0 is Folder }) {
+			return NSLocalizedString("Multiple folders", comment: "Status bar gear menu: header for a selection of several folders")
+		}
+		if objects.allSatisfy({ $0 is PseudoFeed }) {
+			return NSLocalizedString("Multiple smart feeds", comment: "Status bar gear menu: header for a selection of several smart feeds")
+		}
+		return NSLocalizedString("Multiple selection", comment: "Status bar gear menu: header for a selection of different kinds of items")
+	}
+
 	func menuForNoSelection() -> NSMenu {
 
 		let menu = NSMenu(title: "")
 
-		menu.addItem(withTitle: NSLocalizedString("New Feed", comment: "Command"), action: #selector(AppDelegate.showAddFeedWindow(_:)), keyEquivalent: "")
-		menu.addItem(withTitle: NSLocalizedString("New Folder", comment: "Command"), action: #selector(AppDelegate.showAddFolderWindow(_:)), keyEquivalent: "")
+		menu.addItem(withTitle: NSLocalizedString("New Feed…", comment: "Command"), action: #selector(AppDelegate.showAddFeedWindow(_:)), keyEquivalent: "")
+		menu.addItem(withTitle: NSLocalizedString("New Folder…", comment: "Command"), action: #selector(AppDelegate.showAddFolderWindow(_:)), keyEquivalent: "")
 
 		return menu
 	}

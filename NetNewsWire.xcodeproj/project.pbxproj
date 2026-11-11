@@ -52,6 +52,7 @@
 		843E2F1D2CF2B8D300ED170F /* RSWeb in Frameworks */ = {isa = PBXBuildFile; productRef = 843E2F1C2CF2B8D300ED170F /* RSWeb */; };
 		84719F4C2EE01A1100EEF332 /* Tests/NetNewsWire-iOSTests/ActivityItemSourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84719F4B2EE01A1100EEF332 /* Tests/NetNewsWire-iOSTests/ActivityItemSourceTests.swift */; };
 		84719F4E2EE01A1100EEF332 /* Tests/NetNewsWire-iOSTests/MultilineUILabelSizerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84719F4D2EE01A1100EEF332 /* Tests/NetNewsWire-iOSTests/MultilineUILabelSizerTests.swift */; };
+		84719F502EE01A1100EEF332 /* Tests/NetNewsWire-iOSTests/AppDefaultsMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84719F4F2EE01A1100EEF332 /* Tests/NetNewsWire-iOSTests/AppDefaultsMigrationTests.swift */; };
 		848E84CD2DB749440023F3BA /* RSCore in Frameworks */ = {isa = PBXBuildFile; productRef = 848E84CC2DB749440023F3BA /* RSCore */; };
 		848E84CE2DB749440023F3BA /* RSCore in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 848E84CC2DB749440023F3BA /* RSCore */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		848E84D02DB749440023F3BA /* RSCoreResources in Frameworks */ = {isa = PBXBuildFile; productRef = 848E84CF2DB749440023F3BA /* RSCoreResources */; };
@@ -77,6 +78,10 @@
 		849182DD2FD32B1B005C3035 /* Sepia.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 849182BB2FD32B1B005C3015 /* Sepia.nnwtheme */; };
 		849182DD2FD32B1B005C3036 /* Tiqoe Dark.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 849182BB2FD32B1B005C3016 /* Tiqoe Dark.nnwtheme */; };
 		849182DD2FD32B1B005C3037 /* Verdana Revival.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 849182BB2FD32B1B005C3017 /* Verdana Revival.nnwtheme */; };
+		84CCB45330A40989004B73CC /* Plum.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 84CCB45230A40989004B73CC /* Plum.nnwtheme */; };
+		84CCB45430A40989004B73CC /* Gray.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 84CCB45130A40989004B73CC /* Gray.nnwtheme */; };
+		84CCB45530A40989004B73CC /* Plum.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 84CCB45230A40989004B73CC /* Plum.nnwtheme */; };
+		84CCB45630A40989004B73CC /* Gray.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 84CCB45130A40989004B73CC /* Gray.nnwtheme */; };
 		84EE3F122DB8A088009D3A8D /* RSTree in Frameworks */ = {isa = PBXBuildFile; productRef = 84EE3F112DB8A088009D3A8D /* RSTree */; };
 		84EE3F132DB8A088009D3A8D /* RSTree in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 84EE3F112DB8A088009D3A8D /* RSTree */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		84EE3F152DB8A0A0009D3A8D /* RSTree in Frameworks */ = {isa = PBXBuildFile; productRef = 84EE3F142DB8A0A0009D3A8D /* RSTree */; };
@@ -287,6 +292,7 @@
 		845B14A51FC2299E0013CF92 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		84719F4B2EE01A1100EEF332 /* Tests/NetNewsWire-iOSTests/ActivityItemSourceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Tests/NetNewsWire-iOSTests/ActivityItemSourceTests.swift"; sourceTree = SOURCE_ROOT; };
 		84719F4D2EE01A1100EEF332 /* Tests/NetNewsWire-iOSTests/MultilineUILabelSizerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Tests/NetNewsWire-iOSTests/MultilineUILabelSizerTests.swift"; sourceTree = SOURCE_ROOT; };
+		84719F4F2EE01A1100EEF332 /* Tests/NetNewsWire-iOSTests/AppDefaultsMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Tests/NetNewsWire-iOSTests/AppDefaultsMigrationTests.swift"; sourceTree = SOURCE_ROOT; };
 		848CEF1E2DB74B56002B35B5 /* NetNewsWire-iOS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "NetNewsWire-iOS.xctestplan"; sourceTree = "<group>"; };
 		848E84C92DB743FF0023F3BA /* NetNewsWire-CI.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "NetNewsWire-CI.xctestplan"; sourceTree = "<group>"; };
 		848E84CA2DB743FF0023F3BA /* NetNewsWire.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = NetNewsWire.xctestplan; sourceTree = "<group>"; };
@@ -300,6 +306,8 @@
 		849182BB2FD32B1B005C3017 /* Verdana Revival.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Verdana Revival.nnwtheme"; sourceTree = "<group>"; };
 		849C64601ED37A5D003D8FC0 /* NetNewsWire.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetNewsWire.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		849C64711ED37A5D003D8FC0 /* NetNewsWireTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NetNewsWireTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		84CCB45130A40989004B73CC /* Gray.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Gray.nnwtheme; sourceTree = "<group>"; };
+		84CCB45230A40989004B73CC /* Plum.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Plum.nnwtheme; sourceTree = "<group>"; };
 		84D2200922B0BC4B0019E085 /* CONTRIBUTING.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CONTRIBUTING.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -331,7 +339,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				/Localized/ShareExtension/ShareViewController.xib,
-				AppDefaults.swift,
 				ShareExtension/icon.icns,
 				ShareExtension/ShareViewController.swift,
 			);
@@ -348,6 +355,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				"NetNewsWire-iOSTests/ActivityItemSourceTests.swift",
+				"NetNewsWire-iOSTests/AppDefaultsMigrationTests.swift",
 				"NetNewsWire-iOSTests/MultilineUILabelSizerTests.swift",
 			);
 			target = 849C64701ED37A5D003D8FC0 /* NetNewsWireTests */;
@@ -375,7 +383,6 @@
 		84A6D0402D1B4EC500F23315 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				AppDefaults.swift,
 				Resources/Assets.xcassets,
 				ShareExtension/ShareFolderPickerAccountCell.xib,
 				ShareExtension/ShareFolderPickerCell.swift,
@@ -413,7 +420,6 @@
 		84D35E0C2DB9F32D004AA60E /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				ArticleSpecifier.swift,
 				Assets.swift,
 				"Extensions/Node+Extensions.swift",
 				ShareExtension/ExtensionContainers.swift,
@@ -422,7 +428,6 @@
 				ShareExtension/ExtensionFeedAddRequestFile.swift,
 				ShareExtension/SafariExt.js,
 				ShareExtension/ShareDefaultContainer.swift,
-				UserInfoKey.swift,
 			);
 			target = 513C5CE5232571C2003D4054 /* NetNewsWire iOS Share Extension */;
 		};
@@ -439,14 +444,12 @@
 		84D35E0F2DB9F32D004AA60E /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"Article Rendering/ArticleTextSize.swift",
 				ShareExtension/ExtensionContainers.swift,
 				ShareExtension/ExtensionContainersFile.swift,
 				ShareExtension/ExtensionFeedAddRequest.swift,
 				ShareExtension/ExtensionFeedAddRequestFile.swift,
 				ShareExtension/SafariExt.js,
 				ShareExtension/ShareDefaultContainer.swift,
-				Timer/RefreshInterval.swift,
 			);
 			target = 510C415B24E5CDE3008226FD /* NetNewsWire Share Extension */;
 		};
@@ -571,6 +574,7 @@
 			children = (
 				84719F4B2EE01A1100EEF332 /* Tests/NetNewsWire-iOSTests/ActivityItemSourceTests.swift */,
 				84719F4D2EE01A1100EEF332 /* Tests/NetNewsWire-iOSTests/MultilineUILabelSizerTests.swift */,
+				84719F4F2EE01A1100EEF332 /* Tests/NetNewsWire-iOSTests/AppDefaultsMigrationTests.swift */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -580,8 +584,10 @@
 			children = (
 				849182BB2FD32B1B005C3010 /* Appanoose.nnwtheme */,
 				849182BB2FD32B1B005C3011 /* Biblioteca.nnwtheme */,
+				84CCB45130A40989004B73CC /* Gray.nnwtheme */,
 				849182BB2FD32B1B005C3012 /* Hyperlegible.nnwtheme */,
 				849182BB2FD32B1B005C3013 /* NewsFax.nnwtheme */,
+				84CCB45230A40989004B73CC /* Plum.nnwtheme */,
 				849182BB2FD32B1B005C3014 /* Promenade.nnwtheme */,
 				849182BB2FD32B1B005C3015 /* Sepia.nnwtheme */,
 				849182BB2FD32B1B005C3016 /* Tiqoe Dark.nnwtheme */,
@@ -866,7 +872,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1240;
-				LastUpgradeCheck = 2710;
+				LastUpgradeCheck = 2720;
 				ORGANIZATIONNAME = "Ranchero Software";
 				TargetAttributes = {
 					176813F22564BB2C00D98635 = {
@@ -996,6 +1002,8 @@
 				849182DD2FD32B1B005C3032 /* Hyperlegible.nnwtheme in Resources */,
 				849182DD2FD32B1B005C3033 /* NewsFax.nnwtheme in Resources */,
 				849182DD2FD32B1B005C3034 /* Promenade.nnwtheme in Resources */,
+				84CCB45330A40989004B73CC /* Plum.nnwtheme in Resources */,
+				84CCB45430A40989004B73CC /* Gray.nnwtheme in Resources */,
 				849182DD2FD32B1B005C3035 /* Sepia.nnwtheme in Resources */,
 				849182DD2FD32B1B005C3036 /* Tiqoe Dark.nnwtheme in Resources */,
 				849182DD2FD32B1B005C3037 /* Verdana Revival.nnwtheme in Resources */,
@@ -1014,6 +1022,8 @@
 				849182CC2FD32B1B005C3025 /* Sepia.nnwtheme in Resources */,
 				849182CC2FD32B1B005C3026 /* Tiqoe Dark.nnwtheme in Resources */,
 				849182CC2FD32B1B005C3027 /* Verdana Revival.nnwtheme in Resources */,
+				84CCB45530A40989004B73CC /* Plum.nnwtheme in Resources */,
+				84CCB45630A40989004B73CC /* Gray.nnwtheme in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1167,6 +1177,7 @@
 			files = (
 				84719F4C2EE01A1100EEF332 /* Tests/NetNewsWire-iOSTests/ActivityItemSourceTests.swift in Sources */,
 				84719F4E2EE01A1100EEF332 /* Tests/NetNewsWire-iOSTests/MultilineUILabelSizerTests.swift in Sources */,
+				84719F502EE01A1100EEF332 /* Tests/NetNewsWire-iOSTests/AppDefaultsMigrationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

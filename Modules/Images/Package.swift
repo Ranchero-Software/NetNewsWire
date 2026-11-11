@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
 	name: "Images",
-	platforms: [.macOS(.v15), .iOS(.v17)],
+	platforms: [.macOS(.v15), .iOS(.v18)],
 	products: [
 		.library(
 			name: "Images",
@@ -13,6 +13,7 @@ let package = Package(
 	dependencies: [
 		.package(path: "../RSCore"),
 		.package(path: "../RSDatabase"),
+		.package(path: "../RSParser"),
 		.package(path: "../RSWeb"),
 		.package(path: "../Account"),
 		.package(path: "../Articles"),
@@ -25,6 +26,7 @@ let package = Package(
 			dependencies: [
 				"RSCore",
 				"RSDatabase",
+				"RSParser",
 				"RSWeb",
 				"Account",
 				"Articles",
@@ -35,6 +37,14 @@ let package = Package(
 				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
 				.enableUpcomingFeature("InferIsolatedConformances"),
 				.unsafeFlags(["-warnings-as-errors"])
+			]
+		),
+		.testTarget(
+			name: "ImagesTests",
+			dependencies: ["Images"],
+			swiftSettings: [
+				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+				.enableUpcomingFeature("InferIsolatedConformances")
 			]
 		)
 	]

@@ -5,7 +5,7 @@
 //  Created by Brent Simmons on 4/20/26.
 //
 
-// A single `<a>` element harvested from an HTML document.
+// A single `<a>` element parsed from an HTML document.
 // Any field may be nil because HTML can be malformed.
 
 public struct HTMLLink: Sendable {

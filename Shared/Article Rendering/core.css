@@ -63,6 +63,49 @@ img.twemoji, img.emoji {
 	width: auto;
 }
 
+/* Primary media: the article’s main video, audio, or image, from the feed */
+
+.nnw-primary-media {
+	margin: 1em 0;
+}
+
+.nnw-primary-image {
+	margin: 1em 0;
+}
+
+.nnw-primary-image img {
+	height: auto;
+}
+
+.nnw-primary-image-caption {
+	margin: 0.5em 0 0;
+	font-size: 0.9em;
+}
+
+/* Enclosures: audio and video players and images after the article body */
+
+.nnw-enclosures {
+	margin-top: 1.5em;
+}
+
+.nnw-enclosure {
+	margin: 1em 0;
+}
+
+.nnw-enclosure audio {
+	width: 100%;
+}
+
+.nnw-enclosure video,
+.nnw-enclosure img {
+	height: auto;
+}
+
+.nnw-enclosure-caption {
+	margin: 0.5em 0 0;
+	font-size: 0.9em;
+}
+
 /* Hide the external link at the bottom of Daring Fireball posts */
 
 .x-netnewswire-hide {
@@ -128,16 +171,11 @@ img[src*="/img/social/"] {
 	position: absolute;
 	display: block;
 	padding: 0em 1em;
-	margin: 1em auto;
+	margin: 1em 0;
 	top: 0.75em;
 	max-width: 44em;
 	border-radius: 0.3em;
 	box-sizing: border-box;
-}
-
-.newsfoot-footnote-popover {
-	left: calc(-1 * (50vw - 1em));
-	right: calc(-1 * (50vw - 1em));
 }
 
 .newsfoot-footnote-popover-arrow {
@@ -146,7 +184,6 @@ img[src*="/img/social/"] {
 	width: 1em;
 	position: absolute;
 	top: -0.5em;
-	left: calc(50% - 0.5em);
 	height: 1em !important;
 	transform: rotate(45deg);
 	z-index:0;

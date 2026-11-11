@@ -114,6 +114,6 @@ private extension TodayQueriesTests {
 	}
 
 	func parsedItem(uniqueID: String, feedID: String, datePublished: Date?) -> ParsedItem {
-		ParsedItem(syncServiceID: nil, uniqueID: uniqueID, feedURL: feedID, url: "https://example.com/\(uniqueID)", externalURL: nil, title: "Article \(uniqueID)", language: nil, contentHTML: "<p>Test</p>", contentText: nil, markdown: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: datePublished, dateModified: nil, authors: nil, tags: nil, attachments: nil)
+		ParsedItem(syncServiceID: nil, uniqueID: uniqueID, feedURL: feedID, url: "https://example.com/\(uniqueID)", externalURL: nil, title: "Article \(uniqueID)", language: nil, contentHTML: "<p>Test</p>", contentText: nil, markdown: nil, summary: nil, imageURL: nil, thumbnailURL: nil, bannerImageURL: nil, datePublished: datePublished, dateModified: nil, authors: nil, tags: nil, attachments: nil)
 	}
 }

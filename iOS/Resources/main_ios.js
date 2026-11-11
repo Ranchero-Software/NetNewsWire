@@ -37,7 +37,7 @@ class ImageViewer {
 		const rect = this.img.getBoundingClientRect();
 		
 		// Instead of trying to convert to canvas (which fails with CORS),
-		// send the original image src URL
+		// send the image's src URL. Swift checks a routed timeline image's signature.
 		const message = {
 			x: rect.x,
 			y: rect.y,

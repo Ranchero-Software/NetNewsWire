@@ -25,10 +25,11 @@ final class ArticleIconSchemeHandler: NSObject, WKURLSchemeHandler {
 		}
 
 		guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+			urlSchemeTask.didFailWithError(URLError(.badURL))
 			return
 		}
 		let articleID = components.path
-		guard let iconImage = coordinator.articleFor(articleID)?.iconImage() else {
+		guard let iconImage = coordinator.articleFor(articleID)?.articleViewIconImage() else {
 			urlSchemeTask.didFailWithError(URLError(.fileDoesNotExist))
 			return
 		}
@@ -43,14 +44,16 @@ final class ArticleIconSchemeHandler: NSObject, WKURLSchemeHandler {
 		}
 
 		let headerFields = ["Cache-Control": "no-cache"]
-		if let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: headerFields) {
-			urlSchemeTask.didReceive(response)
-			urlSchemeTask.didReceive(data)
-			urlSchemeTask.didFinish()
+		guard let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: headerFields) else {
+			urlSchemeTask.didFailWithError(URLError(.unknown))
+			return
 		}
+		urlSchemeTask.didReceive(response)
+		urlSchemeTask.didReceive(data)
+		urlSchemeTask.didFinish()
 	}
 
+	/// Every task finishes in `start`, and WebKit raises an exception for any call on a stopped task.
 	func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
-		urlSchemeTask.didFailWithError(URLError(.unknown))
 	}
 }

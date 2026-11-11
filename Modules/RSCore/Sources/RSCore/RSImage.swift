@@ -132,44 +132,84 @@ public extension RSImage {
 		}
 	}
 
-	/// Scales image data down to maxPixelSize and returns the result as PNG Data.
+	/// Makes an image whose pixels are already decoded, so the first draw doesn’t decode it.
+	/// Call it off the main thread.
+	static func decodedImage(data: Data) -> RSImage? {
+#if os(macOS)
+		guard let image = NSImage(data: data) else {
+			return nil
+		}
+		guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil), let largestFrame = largestFrame(in: imageSource) else {
+			return image
+		}
+		let options: [CFString: Any] = [
+			kCGImageSourceCreateThumbnailWithTransform: true,
+			kCGImageSourceCreateThumbnailFromImageAlways: true,
+			kCGImageSourceThumbnailMaxPixelSize: max(largestFrame.width, largestFrame.height),
+			kCGImageSourceShouldCacheImmediately: true
+		]
+		// Thumbnail rather than CreateImageAtIndex, which mishandles indexed-color ICO files.
+		guard let cgImage = CGImageSourceCreateThumbnailAtIndex(imageSource, largestFrame.index, options as CFDictionary) else {
+			return image
+		}
+		// Same size in points as NSImage(data:), which reads it from the image’s resolution.
+		return NSImage(cgImage: cgImage, size: image.size)
+#else
+		guard let image = UIImage(data: data) else {
+			return nil
+		}
+		return image.preparingForDisplay() ?? image
+#endif
+	}
+
+	/// Pixel dimensions of the largest frame, read from the image header without decoding.
+	/// Returns nil if the data can't be read as an image.
+	static func largestFramePixelSize(_ data: Data) -> (width: Int, height: Int)? {
+		guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil), let largestFrame = largestFrame(in: imageSource) else {
+			return nil
+		}
+		return (width: largestFrame.width, height: largestFrame.height)
+	}
+
+	/// Index and pixel dimensions of the largest frame, read from the image header without decoding.
+	static func largestFrame(in imageSource: CGImageSource) -> (index: Int, width: Int, height: Int)? {
+		var largest: (index: Int, width: Int, height: Int)?
+
+		for i in 0..<CGImageSourceGetCount(imageSource) {
+			guard let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, i, nil) as NSDictionary?,
+				  let width = properties[kCGImagePropertyPixelWidth] as? Int,
+				  let height = properties[kCGImagePropertyPixelHeight] as? Int,
+				  width > 0, height > 0 else {
+				continue
+			}
+			if let largest, max(largest.width, largest.height) >= max(width, height) {
+				continue
+			}
+			largest = (index: i, width: width, height: height)
+		}
+
+		return largest
+	}
+
+	/// Scales image data down to maxPixelSize and returns the result encoded as PNG.
 	/// If the image is a single frame already at or below maxPixelSize, returns
 	/// the original data unchanged. For multi-image sources (like ICO), extracts
-	/// the largest frame. Returns nil if the data can't be decoded as an image.
+	/// the largest frame. On the Mac, an image ImageIO can’t read, such as SVG, is rasterized
+	/// so its longer side is maxPixelSize. Returns nil if the data can't be decoded as an image.
 	static func scaledImageData(_ data: Data, maxPixelSize: Int) -> Data? {
-		guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil) else {
+		guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil), let largestFrame = largestFrame(in: imageSource) else {
+#if os(macOS)
+			return rasterizedVectorImageData(data, maxPixelSize: maxPixelSize)
+#else
 			return nil
+#endif
 		}
 
 		let count = CGImageSourceGetCount(imageSource)
-		guard count > 0 else {
-			return nil
-		}
-
-		// Find the largest frame in the image source.
-		var largestIndex = 0
-		var largestWidth = 0
-		var largestHeight = 0
-		var largestMaxDimension = 0
-
-		for i in 0..<count {
-			guard let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, i, nil) as NSDictionary?,
-				  let width = properties[kCGImagePropertyPixelWidth] as? Int,
-				  let height = properties[kCGImagePropertyPixelHeight] as? Int else {
-				continue
-			}
-			let maxDimension = max(width, height)
-			if maxDimension > largestMaxDimension {
-				largestIndex = i
-				largestWidth = width
-				largestHeight = height
-				largestMaxDimension = maxDimension
-			}
-		}
-
-		guard largestMaxDimension > 0 else {
-			return nil
-		}
+		let largestIndex = largestFrame.index
+		let largestWidth = largestFrame.width
+		let largestHeight = largestFrame.height
+		let largestMaxDimension = max(largestWidth, largestHeight)
 
 		let needsResize = largestMaxDimension > maxPixelSize
 		let isMultiImage = count > 1
@@ -180,28 +220,20 @@ public extension RSImage {
 			return data
 		}
 
-		// Either too large or multi-image — extract/resize to a single PNG.
+		// Either too large or multi-image — extract/resize to a single image.
 		// Always use CreateThumbnailAtIndex rather than CreateImageAtIndex,
 		// because the latter mishandles indexed-color ICO files (produces
 		// grayscale with a nil color space instead of correct RGB).
+		// FromImageAlways, since a JPEG’s embedded EXIF thumbnail is small and low quality.
 		let thumbnailSize = needsResize ? maxPixelSize : largestMaxDimension
 		let options: [CFString: Any] = [
 			kCGImageSourceCreateThumbnailWithTransform: true,
-			kCGImageSourceCreateThumbnailFromImageIfAbsent: true,
+			kCGImageSourceCreateThumbnailFromImageAlways: true,
 			kCGImageSourceThumbnailMaxPixelSize: thumbnailSize
 		]
 		let cgImage = CGImageSourceCreateThumbnailAtIndex(imageSource, largestIndex, options as CFDictionary)
 
-		guard let cgImage else {
-			return nil
-		}
-
-		guard let mutableData = CFDataCreateMutable(nil, 0),
-			  let destination = CGImageDestinationCreateWithData(mutableData, UTType.png.identifier as CFString, 1, nil) else {
-			return nil
-		}
-		CGImageDestinationAddImage(destination, cgImage, nil)
-		guard CGImageDestinationFinalize(destination) else {
+		guard let cgImage, let scaledData = pngData(cgImage) else {
 			return nil
 		}
 
@@ -211,6 +243,48 @@ public extension RSImage {
 			RSImageLogger.info("Extracted largest frame (\(largestWidth, privacy: .public)x\(largestHeight, privacy: .public)) from multi-image source (\(count, privacy: .public) frames)")
 		}
 
+		return scaledData
+	}
+}
+
+private extension RSImage {
+
+	static func pngData(_ cgImage: CGImage) -> Data? {
+		guard let mutableData = CFDataCreateMutable(nil, 0), let destination = CGImageDestinationCreateWithData(mutableData, UTType.png.identifier as CFString, 1, nil) else {
+			return nil
+		}
+		CGImageDestinationAddImage(destination, cgImage, nil)
+		guard CGImageDestinationFinalize(destination) else {
+			return nil
+		}
 		return mutableData as Data
 	}
+
+#if os(macOS)
+	static let rasterizedBitsPerComponent = 8
+
+	/// Draws a vector image, such as SVG, into a bitmap, so views don’t rasterize it on the main thread each time they draw.
+	static func rasterizedVectorImageData(_ data: Data, maxPixelSize: Int) -> Data? {
+		guard let image = NSImage(data: data), image.size.width > 0, image.size.height > 0 else {
+			return nil
+		}
+		let scale = CGFloat(maxPixelSize) / max(image.size.width, image.size.height)
+		let width = max(1, Int((image.size.width * scale).rounded()))
+		let height = max(1, Int((image.size.height * scale).rounded()))
+
+		guard let colorSpace = CGColorSpace(name: CGColorSpace.sRGB), let context = CGContext(data: nil, width: width, height: height, bitsPerComponent: rasterizedBitsPerComponent, bytesPerRow: 0, space: colorSpace, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else {
+			return nil
+		}
+		NSGraphicsContext.saveGraphicsState()
+		NSGraphicsContext.current = NSGraphicsContext(cgContext: context, flipped: false)
+		image.draw(in: NSRect(x: 0, y: 0, width: width, height: height))
+		NSGraphicsContext.restoreGraphicsState()
+
+		guard let cgImage = context.makeImage(), let rasterizedData = pngData(cgImage) else {
+			return nil
+		}
+		RSImageLogger.info("Rasterized vector image at \(width, privacy: .public)x\(height, privacy: .public)")
+		return rasterizedData
+	}
+#endif
 }

@@ -22,12 +22,13 @@ public struct ParsedItem: Hashable, Sendable {
 	public let markdown: String?
 	public let summary: String?
 	public let imageURL: String?
+	public let thumbnailURL: String?
 	public let bannerImageURL: String?
 	public let datePublished: Date?
 	public let dateModified: Date?
 	public let authors: Set<ParsedAuthor>?
 	public let tags: Set<String>?
-	public let attachments: Set<ParsedAttachment>?
+	public let attachments: [ParsedAttachment]?
 
 	public init(syncServiceID: String?,
 	            uniqueID: String,
@@ -41,12 +42,13 @@ public struct ParsedItem: Hashable, Sendable {
 	            markdown: String?,
 	            summary: String?,
 	            imageURL: String?,
+	            thumbnailURL: String?,
 	            bannerImageURL: String?,
 	            datePublished: Date?,
 	            dateModified: Date?,
 	            authors: Set<ParsedAuthor>?,
 	            tags: Set<String>?,
-	            attachments: Set<ParsedAttachment>?) {
+	            attachments: [ParsedAttachment]?) {
 		self.syncServiceID = syncServiceID
 		self.uniqueID = uniqueID
 		self.feedURL = feedURL
@@ -58,6 +60,7 @@ public struct ParsedItem: Hashable, Sendable {
 		self.markdown = markdown
 		self.summary = summary
 		self.imageURL = imageURL
+		self.thumbnailURL = thumbnailURL
 		self.bannerImageURL = bannerImageURL
 		self.datePublished = datePublished
 		self.dateModified = dateModified

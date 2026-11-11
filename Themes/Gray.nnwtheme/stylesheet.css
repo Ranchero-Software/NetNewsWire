@@ -1,0 +1,545 @@
+/* Gray is inspired by, but not a literal copy of, newsprint. */
+
+body {
+	margin: 0 0 20px;
+	padding: 0;
+	word-wrap: break-word;
+}
+
+a {
+	text-decoration: none;
+	text-underline-offset: 3px;
+}
+
+.systemMessage {
+	position: absolute;
+	top: 45%;
+	left: 50%;
+	transform: translateX(-55%) translateY(-50%);
+	-webkit-user-select: none;
+	cursor: default;
+}
+
+:root {
+	color-scheme: light dark;
+
+	--body-font: Georgia, 'Times New Roman', serif;
+	--heading-font: 'Helvetica Neue', Helvetica, sans-serif;
+	--mono-font: "SF Mono", Menlo, "Courier New", Courier, monospace;
+
+	--background-color: #f4f4f4;
+	--text-color: #2a2a2a;
+	--link-color: #1a1a1a;
+	--visited-link-color: #7a7a7a;
+	--article-title-color: #2a2a2a;
+	--attribution-color: #6e6e6e;
+	--separator-color: #d8d8d8;
+	--table-cell-border-color: #d8d8d8;
+	--blockquote-border-color: #a8a8a8;
+	--blockquote-text-color: #5c5c5c;
+	--body-code-color: #4a4a4a;
+	--body-code-background: rgba(0, 0, 0, 0.05);
+	--pre-background: rgba(0, 0, 0, 0.04);
+	--system-message-color: #b0b0b0;
+	--footer-color: #6e6e6e;
+	--header-background: #2e2e2e;
+	--header-title-color: #fff;
+	--nav-background: #555555;
+	--byline-color: #f5f5f5;
+	--footnote-popover-border: #d8d8d8;
+	--footnote-popover-background: #fbfbfb;
+	--footnote-color: #8a8a8a;
+}
+
+@media(prefers-color-scheme: dark) {
+	:root {
+		--background-color: #1a1a1a;
+		--text-color: #dadada;
+		--link-color: #f2f2f2;
+		--visited-link-color: #888888;
+		--article-title-color: #ececec;
+		--attribution-color: #9a9a9a;
+		--separator-color: #2e2e2e;
+		--table-cell-border-color: #383838;
+		--blockquote-border-color: #6a6a6a;
+		--blockquote-text-color: #a0a0a0;
+		--body-code-color: #b4b4b4;
+		--body-code-background: rgba(255, 255, 255, 0.07);
+		--pre-background: rgba(255, 255, 255, 0.05);
+		--system-message-color: #5c5c5c;
+		--footer-color: #9a9a9a;
+		--header-background: #363636;
+		--nav-background: #2a2a2a;
+		--byline-color: #eeeeee;
+		--footnote-popover-border: #383838;
+		--footnote-popover-background: #242424;
+		--footnote-color: #6e6e6e;
+	}
+}
+
+body {
+	background-color: var(--background-color);
+	color: var(--text-color);
+}
+
+body a, body a * {
+	color: var(--link-color);
+}
+
+body a:visited {
+	color: var(--visited-link-color);
+}
+
+body > .systemMessage {
+	color: var(--system-message-color);
+	font-family: var(--heading-font);
+}
+
+/* Header bar — dark gray, with favicon and site name */
+
+.headerBar {
+	background-color: var(--header-background);
+	padding: 14px 0;
+	font-family: var(--heading-font);
+	font-size: 1.2em;
+	font-weight: bold;
+	line-height: 1.2;
+	color: var(--header-title-color);
+}
+
+.headerBarInner {
+	display: flex;
+	align-items: center;
+}
+
+.avatar {
+	flex-shrink: 0;
+	width: 1.5em;
+	height: 1.5em !important;
+	margin: 0 0.5em 0 0;
+	border-radius: 3px;
+}
+
+.headerBar a, .headerBar a:visited {
+	color: var(--header-title-color);
+}
+
+.headerBar a:hover {
+	text-decoration: underline;
+}
+
+/* Nav bar — medium gray, with date at the left and byline at the right */
+
+.navBar {
+	background-color: var(--nav-background);
+	padding: 6px 0;
+	font-family: var(--heading-font);
+	font-size: 0.85em;
+	font-weight: bold;
+	line-height: 1.4;
+	color: var(--byline-color);
+}
+
+.navBarInner {
+	display: flex;
+	align-items: baseline;
+	gap: 1em;
+}
+
+.navBar .dateline {
+	font-size: 0.9em;
+	font-weight: 500;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	opacity: 0.9;
+}
+
+.byline {
+	margin-left: auto;
+	text-align: right;
+}
+
+/* Zero-width space: an empty byline still has a baseline, so the date doesn’t shift */
+.byline::after {
+	content: "\200B";
+}
+
+.navBar a, .navBar a:visited {
+	color: var(--byline-color);
+}
+
+.navBar a:hover {
+	text-decoration: underline;
+}
+
+/* Content containers */
+
+.barContent, .articleContent {
+	max-width: 40rem;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.articleContent {
+	margin-top: 1.5em;
+}
+
+/* Article title */
+
+.articleTitle {
+	font-family: var(--heading-font);
+	font-size: 1.4em;
+	font-weight: bold;
+	line-height: 1.2;
+	margin-bottom: 20px;
+	color: var(--article-title-color);
+}
+
+.articleTitle a:link, .articleTitle a:visited, .articleTitle a {
+	color: var(--article-title-color);
+}
+
+.articleTitle a:hover {
+	text-decoration: underline;
+}
+
+/* Article body */
+
+.articleBody {
+	line-height: 1.7em;
+}
+
+.articleBody a, .footer a {
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+}
+
+.articleBody a:hover, .footer a:hover {
+	text-decoration-color: currentColor;
+}
+
+.articleBody p {
+	margin-bottom: 1em;
+}
+
+/* Footer */
+
+.footer {
+	margin-top: 28px;
+	margin-bottom: 2em;
+	font-family: var(--heading-font);
+	color: var(--footer-color);
+	font-size: 0.8em;
+}
+
+.footer a, .footer a:visited {
+	color: var(--text-color);
+}
+
+/* Room below the line, so .singleLine’s overflow: hidden doesn’t clip the link underline */
+.externalLink {
+	width: 100%;
+	padding-bottom: 4px;
+}
+
+.singleLine {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* Headings */
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: var(--heading-font);
+	line-height: 1.2em;
+	font-weight: bold;
+}
+
+h1 {
+	margin-bottom: 8px;
+}
+
+h2 {
+	line-height: 1.25em;
+	margin-bottom: 6px;
+}
+
+h3 {
+	margin-bottom: 4px;
+}
+
+/* Code */
+
+code, pre {
+	font-family: var(--mono-font);
+	font-size: 0.85em;
+	-webkit-hyphens: none;
+}
+
+body code, body pre {
+	color: var(--body-code-color);
+}
+
+p code {
+	background: var(--body-code-background);
+	padding: 0.15em 0.35em;
+	border-radius: 3px;
+}
+
+pre {
+	max-width: 100%;
+	margin: 0;
+	overflow: auto;
+	overflow-y: hidden;
+	word-wrap: normal;
+	word-break: normal;
+	line-height: 1.5em;
+	background: var(--pre-background);
+	padding: 8px 12px;
+	border-radius: 4px;
+}
+
+pre code {
+	letter-spacing: -.027em;
+	font-size: 0.9375em;
+	background: none;
+	padding: 0;
+}
+
+/* Blockquotes */
+
+blockquote {
+	margin-inline-start: 0;
+	margin-inline-end: 0;
+	padding-left: 18px;
+	border-inline-start: 3px solid var(--blockquote-border-color);
+	color: var(--blockquote-text-color);
+}
+
+blockquote > *:first-child {
+	margin-block-start: 0;
+}
+
+blockquote > *:last-child {
+	margin-block-end: 0;
+}
+
+blockquote > blockquote {
+	padding-left: 1em;
+	font-style: italic;
+}
+
+/* Tables */
+
+.nnw-overflow {
+	overflow-x: auto;
+}
+
+.nnw-overflow table {
+	margin-bottom: 1px;
+	border-spacing: 0;
+	border: 1px solid var(--table-cell-border-color);
+	font-size: inherit;
+}
+
+.nnw-overflow table table {
+	margin-bottom: 0;
+	border: none;
+}
+
+.nnw-overflow td, .nnw-overflow th {
+	-webkit-hyphens: none;
+	word-break: normal;
+	border: 1px solid var(--table-cell-border-color);
+	border-top: none;
+	border-left: none;
+	padding: 5px;
+}
+
+.nnw-overflow th {
+	font-family: var(--heading-font);
+}
+
+.nnw-overflow tr :is(td, th):last-child {
+	border-right: none;
+}
+
+.nnw-overflow :is(thead, tbody, tfoot):last-child > tr:last-child :is(td, th) {
+	border-bottom: none;
+}
+
+.nnw-overflow td pre {
+	border: none;
+	padding: 0;
+}
+
+.nnw-overflow table[border="0"] {
+	border-width: 0;
+}
+
+/* Media elements */
+
+img, figure, video, div, object {
+	max-width: 100%;
+	height: auto !important;
+	margin: 0 auto;
+}
+
+iframe {
+	max-width: 100%;
+	margin: 0 auto;
+}
+
+iframe.nnw-constrained {
+	max-height: 50vw;
+}
+
+figure {
+	margin-bottom: 1em;
+	margin-top: 1em;
+}
+
+figcaption {
+	font-family: var(--heading-font);
+	font-size: 0.8em;
+	line-height: 1.3em;
+	color: var(--attribution-color);
+}
+
+sup {
+	vertical-align: top;
+	position: relative;
+	bottom: 0.2rem;
+}
+
+sub {
+	vertical-align: bottom;
+	position: relative;
+	top: 0.2rem;
+}
+
+hr {
+	border: none;
+	background-color: var(--separator-color);
+	height: 1px;
+	margin-top: 1.5em;
+	margin-bottom: 1.5em;
+}
+
+.iframeWrap {
+	position: relative;
+	display: block;
+	padding-top: 56.25%;
+}
+
+.iframeWrap iframe {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100% !important;
+	width: 100% !important;
+}
+
+/* Feed specific */
+
+.feedbin--article-wrap {
+	border-top: 1px solid var(--separator-color);
+}
+
+/* Newsfoot footnote popovers */
+
+.newsfoot-footnote-popover {
+	background: var(--footnote-popover-border);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 3px 6px rgba(0, 0, 0, 0.15);
+	color: var(--text-color);
+	padding: 1px;
+}
+
+.newsfoot-footnote-popover-arrow {
+	background: var(--footnote-popover-background);
+	border: 1px solid var(--footnote-popover-border);
+}
+
+.newsfoot-footnote-popover-inner {
+	background: var(--footnote-popover-background);
+}
+
+body a.footnote,
+body a.footnote:visited,
+.newsfoot-footnote-popover + a.footnote:hover {
+	background: var(--footnote-color);
+	color: white;
+	transition: background-color 200ms ease-out;
+}
+
+/* Overrides the .articleBody a underline */
+.articleBody a.footnote {
+	text-decoration: none;
+}
+
+a.footnote:hover,
+.newsfoot-footnote-popover + a.footnote {
+	background: var(--header-background);
+	transition: background-color 200ms ease-out;
+}
+
+/* iOS Specific */
+@supports (-webkit-touch-callout: none) {
+
+	body {
+		word-break: break-word;
+		-webkit-hyphens: auto;
+		-webkit-text-size-adjust: none;
+	}
+
+	:root {
+		font-family: var(--body-font);
+		/* The font-size is replaced at runtime by the dynamic type size */
+		font-size: [[font-size]]px;
+	}
+
+	.fontSize {
+		font-family: var(--body-font);
+		font-size: [[font-size]]px;
+	}
+
+	.articleContent, .barContent {
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+}
+
+/* macOS Specific */
+@supports not (-webkit-touch-callout: none) {
+
+	body {
+		font-family: var(--body-font);
+	}
+
+	.articleContent, .barContent {
+		padding-left: 48px;
+		padding-right: 48px;
+	}
+
+	.smallText {
+		font-size: 15px;
+	}
+
+	.mediumText {
+		font-size: 17px;
+	}
+
+	.largeText {
+		font-size: 19px;
+	}
+
+	.xlargeText {
+		font-size: 21px;
+	}
+
+	.xxlargeText {
+		font-size: 23px;
+	}
+}
