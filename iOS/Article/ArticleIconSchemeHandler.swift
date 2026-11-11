@@ -29,7 +29,7 @@ final class ArticleIconSchemeHandler: NSObject, WKURLSchemeHandler {
 			return
 		}
 		let articleID = components.path
-		guard let iconImage = coordinator.articleFor(articleID)?.iconImage() else {
+		guard let iconImage = coordinator.articleFor(articleID)?.articleViewIconImage() else {
 			urlSchemeTask.didFailWithError(URLError(.fileDoesNotExist))
 			return
 		}

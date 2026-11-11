@@ -19,7 +19,13 @@ The `Info.plist` requires the following keys/types:
 |`CreatorName`|`String`||
 |`Version`|`Integer`||
 
-These keys are optional. They fill in the theme's Get Info window in the Finder, and NetNewsWire ignores them:
+This key is optional:
+
+|Key|Type|Notes|
+|---|---|---|
+|`grayscaleIcon`|`Boolean`|When `true`, the feed icon or author avatar in the article view is grayscale.|
+
+These keys are optional too. They fill in the theme's Get Info window in the Finder, and NetNewsWire ignores them:
 
 |Key|Type|Notes|
 |---|---|---|
@@ -35,7 +41,7 @@ The page loads with the article's link as its base URL, else the feed's home pag
 NetNewsWire 7.3 and later use this file instead of `template.html` when a theme includes it, and older versions ignore it. Put `[[primary_media]]` and `[[enclosures]]` here, since older versions would show them as literal text. [Verdana Revival](../Themes/Verdana%20Revival.nnwtheme/template7.3.html) is an example.
 
 ### stylesheet.css
-This provides a starting point for editing the style of the page. 
+This provides a starting point for editing the style of the page.
 
 ## Article Media
 

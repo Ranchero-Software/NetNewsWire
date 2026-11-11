@@ -16,7 +16,7 @@ final class DetailIconSchemeHandler: NSObject, WKURLSchemeHandler {
 
 	func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
 
-		guard let responseURL = urlSchemeTask.request.url, let iconImage = self.currentArticle?.iconImage() else {
+		guard let responseURL = urlSchemeTask.request.url, let iconImage = self.currentArticle?.articleViewIconImage() else {
 			urlSchemeTask.didFailWithError(URLError(.fileDoesNotExist))
 			return
 		}
