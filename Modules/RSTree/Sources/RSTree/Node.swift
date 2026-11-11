@@ -124,33 +124,6 @@ import Foundation
 		}
 	}
 
-	public static func nodesOrganizedByParent(_ nodes: [Node]) -> [Node: [Node]] {
-		let nodesWithParents = nodes.filter { $0.parent != nil }
-		return Dictionary(grouping: nodesWithParents, by: { $0.parent! })
-	}
-
-	public static func indexSetsGroupedByParent(_ nodes: [Node]) -> [Node: IndexSet] {
-		let d = nodesOrganizedByParent(nodes)
-		let indexSetDictionary = d.mapValues { (nodes) -> IndexSet in
-
-			var indexSet = IndexSet()
-			if nodes.isEmpty {
-				return indexSet
-			}
-
-			let parent = nodes.first!.parent!
-			for node in nodes {
-				if let index = parent.indexOfChild(node) {
-					indexSet.insert(index)
-				}
-			}
-
-			return indexSet
-		}
-
-		return indexSetDictionary
-	}
-
 	// MARK: - Hashable
 
 	nonisolated public func hash(into hasher: inout Hasher) {
