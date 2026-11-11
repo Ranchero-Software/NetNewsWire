@@ -535,7 +535,8 @@ div:has([href*="macworld.com/newsletters/signup"]) :is(figcaption, button.lightb
 }
 
 /* 7.3 */
-.nnw-primary-image img {
+.nnw-primary-image img,
+.nnw-enclosure-image img {
 	max-height: 66.6667vh;
 	width: auto;
 }
