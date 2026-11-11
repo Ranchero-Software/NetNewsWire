@@ -40,7 +40,9 @@ final class DetailWebViewController: NSViewController {
 	}
 
 	var windowState: DetailWindowState {
-		DetailWindowState(isShowingExtractedArticle: isShowingExtractedArticle, windowScrollY: windowScrollY ?? 0)
+		// Without an article there’s no scroll position worth saving.
+		let scrollY = article == nil ? 0 : (windowScrollY ?? 0)
+		return DetailWindowState(isShowingExtractedArticle: isShowingExtractedArticle, windowScrollY: scrollY)
 	}
 
 	var article: Article? {
