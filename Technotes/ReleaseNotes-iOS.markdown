@@ -1,6 +1,6 @@
 # iOS Release Notes
 
-### 7.3 build 7235 11 Nov 2026 - branch: main tag: iOS-7.3-7235
+### 7.3 build 7236 12 Nov 2026 - branch: main tag: iOS-7.3-7236
 
 Added Gray theme — inspired by newsprint design but not meant to be a literal copy
 Added Plum theme — uses the same layout as the Gray theme but with color
