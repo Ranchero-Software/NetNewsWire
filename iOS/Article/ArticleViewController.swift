@@ -120,6 +120,9 @@ final class ArticleViewController: UIViewController {
 	override var keyCommands: [UIKeyCommand]? {
 		return keyboardManager.keyCommands
 	}
+	override var canBecomeFirstResponder: Bool {
+		true
+	}
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -402,10 +405,19 @@ final class ArticleViewController: UIViewController {
 		coordinator.navigateToTimeline()
 	}
 
+	@objc func scrollLineDown(_ sender: Any?) {
+		currentWebViewController?.scrollLineDown()
+	}
+
+	@objc func scrollLineUp(_ sender: Any?) {
+		currentWebViewController?.scrollLineUp()
+	}
+
 	// MARK: API
 
+	// Focus this view controller rather than the web view, since the web view is replaced on each article change.
 	func focus() {
-		currentWebViewController?.focus()
+		becomeFirstResponder()
 	}
 
 	func canScrollDown() -> Bool {
