@@ -1,5 +1,13 @@
 # iOS Release Notes
 
+### 7.3 build 7236 12 Nov 2026 - branch: main tag: iOS-7.3-7236
+
+Added Gray theme — inspired by newsprint design but not meant to be a literal copy
+Added Plum theme — uses the same layout as the Gray theme but with color
+Added an optional grayscaleIcon key to theme Info.plist files — when true, the feed icon or author avatar in the article view is grayscale. The Gray theme uses this new feature
+Fixed bug where folder icons weren’t grayscale when Grayscale Feed Icons is on
+Added an entry to the Errors Log when a tap in the timeline is ignored
+
 ### 7.3 build 7233 9 Nov 2026 - branch: main tag: iOS-7.3-7233
 
 Added Show Today, Show All Unread, and Show Starred settings, to hide smart feeds
