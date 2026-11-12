@@ -471,6 +471,7 @@ a.footnote:hover,
 		pre {
 			font-size: 16px;
 		}
+		
 	}
 
 	.xxlargeText {
@@ -541,6 +542,18 @@ div:has([href*="macworld.com/newsletters/signup"]) :is(figcaption, button.lightb
 	width: auto;
 }
 
+.nnw-enclosure-audio {
+	display: flex;
+	flex-direction: column;
+	margin-block: 0 1em;
+	row-gap: 1em;
+}
+
 .nnw-enclosure-caption {
-	display: none;
+	order: -1;
+}
+
+.nnw-primary-media:has(.nnw-enclosure-audio), 
+.nnw-primary-image {
+	margin: 0;
 }
