@@ -13,6 +13,9 @@ final class RootSplitViewController: UISplitViewController {
 
 	var coordinator: SceneCoordinator!
 
+	/// True during rotation, window resizes, and background snapshots, when UIKit changes the display mode on its own.
+	private(set) var isTransitioningSize = false
+
 	override var prefersStatusBarHidden: Bool {
 		return coordinator.prefersStatusBarHidden
 	}
@@ -24,6 +27,14 @@ final class RootSplitViewController: UISplitViewController {
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		coordinator.resetFocus()
+	}
+
+	override func viewWillTransition(to size: CGSize, with transitionCoordinator: UIViewControllerTransitionCoordinator) {
+		isTransitioningSize = true
+		super.viewWillTransition(to: size, with: transitionCoordinator)
+		transitionCoordinator.animate(alongsideTransition: nil) { [weak self] _ in
+			self?.isTransitioningSize = false
+		}
 	}
 
 	/// Show a column for programmatic navigation.

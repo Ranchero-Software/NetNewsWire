@@ -1843,7 +1843,13 @@ extension SceneCoordinator: UISplitViewControllerDelegate {
 	}
 
 	func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
-		AppDefaults.splitViewPreferredDisplayMode = displayMode.rawValue
+		// Save only user-initiated changes. UIKit also changes the display mode during
+		// rotation, window resizes, and background snapshots, and those must not be saved.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5524>
+		let isSceneActive = svc.view.window?.windowScene?.activationState == .foregroundActive
+		if isSceneActive && !svc.isCollapsed && !rootSplitViewController.isTransitioningSize {
+			AppDefaults.splitViewPreferredDisplayMode = displayMode.rawValue
+		}
 		mainTimelineViewController?.updateToolbarProgressView(for: displayMode)
 	}
 
