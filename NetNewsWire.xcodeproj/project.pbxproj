@@ -78,6 +78,10 @@
 		849182DD2FD32B1B005C3035 /* Sepia.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 849182BB2FD32B1B005C3015 /* Sepia.nnwtheme */; };
 		849182DD2FD32B1B005C3036 /* Tiqoe Dark.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 849182BB2FD32B1B005C3016 /* Tiqoe Dark.nnwtheme */; };
 		849182DD2FD32B1B005C3037 /* Verdana Revival.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 849182BB2FD32B1B005C3017 /* Verdana Revival.nnwtheme */; };
+		84CCB45330A40989004B73CC /* Plum.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 84CCB45230A40989004B73CC /* Plum.nnwtheme */; };
+		84CCB45430A40989004B73CC /* Gray.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 84CCB45130A40989004B73CC /* Gray.nnwtheme */; };
+		84CCB45530A40989004B73CC /* Plum.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 84CCB45230A40989004B73CC /* Plum.nnwtheme */; };
+		84CCB45630A40989004B73CC /* Gray.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 84CCB45130A40989004B73CC /* Gray.nnwtheme */; };
 		84EE3F122DB8A088009D3A8D /* RSTree in Frameworks */ = {isa = PBXBuildFile; productRef = 84EE3F112DB8A088009D3A8D /* RSTree */; };
 		84EE3F132DB8A088009D3A8D /* RSTree in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 84EE3F112DB8A088009D3A8D /* RSTree */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		84EE3F152DB8A0A0009D3A8D /* RSTree in Frameworks */ = {isa = PBXBuildFile; productRef = 84EE3F142DB8A0A0009D3A8D /* RSTree */; };
@@ -302,6 +306,8 @@
 		849182BB2FD32B1B005C3017 /* Verdana Revival.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Verdana Revival.nnwtheme"; sourceTree = "<group>"; };
 		849C64601ED37A5D003D8FC0 /* NetNewsWire.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetNewsWire.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		849C64711ED37A5D003D8FC0 /* NetNewsWireTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NetNewsWireTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		84CCB45130A40989004B73CC /* Gray.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Gray.nnwtheme; sourceTree = "<group>"; };
+		84CCB45230A40989004B73CC /* Plum.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Plum.nnwtheme; sourceTree = "<group>"; };
 		84D2200922B0BC4B0019E085 /* CONTRIBUTING.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CONTRIBUTING.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -578,8 +584,10 @@
 			children = (
 				849182BB2FD32B1B005C3010 /* Appanoose.nnwtheme */,
 				849182BB2FD32B1B005C3011 /* Biblioteca.nnwtheme */,
+				84CCB45130A40989004B73CC /* Gray.nnwtheme */,
 				849182BB2FD32B1B005C3012 /* Hyperlegible.nnwtheme */,
 				849182BB2FD32B1B005C3013 /* NewsFax.nnwtheme */,
+				84CCB45230A40989004B73CC /* Plum.nnwtheme */,
 				849182BB2FD32B1B005C3014 /* Promenade.nnwtheme */,
 				849182BB2FD32B1B005C3015 /* Sepia.nnwtheme */,
 				849182BB2FD32B1B005C3016 /* Tiqoe Dark.nnwtheme */,
@@ -994,6 +1002,8 @@
 				849182DD2FD32B1B005C3032 /* Hyperlegible.nnwtheme in Resources */,
 				849182DD2FD32B1B005C3033 /* NewsFax.nnwtheme in Resources */,
 				849182DD2FD32B1B005C3034 /* Promenade.nnwtheme in Resources */,
+				84CCB45330A40989004B73CC /* Plum.nnwtheme in Resources */,
+				84CCB45430A40989004B73CC /* Gray.nnwtheme in Resources */,
 				849182DD2FD32B1B005C3035 /* Sepia.nnwtheme in Resources */,
 				849182DD2FD32B1B005C3036 /* Tiqoe Dark.nnwtheme in Resources */,
 				849182DD2FD32B1B005C3037 /* Verdana Revival.nnwtheme in Resources */,
@@ -1012,6 +1022,8 @@
 				849182CC2FD32B1B005C3025 /* Sepia.nnwtheme in Resources */,
 				849182CC2FD32B1B005C3026 /* Tiqoe Dark.nnwtheme in Resources */,
 				849182CC2FD32B1B005C3027 /* Verdana Revival.nnwtheme in Resources */,
+				84CCB45530A40989004B73CC /* Plum.nnwtheme in Resources */,
+				84CCB45630A40989004B73CC /* Gray.nnwtheme in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

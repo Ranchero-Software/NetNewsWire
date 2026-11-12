@@ -43,11 +43,15 @@ struct ArticleTheme: Equatable, Sendable {
 		return String(describing: info?.version ?? 0)
 	}
 
+	var usesGrayscaleIcon: Bool {
+		info?.grayscaleIcon ?? false
+	}
+
 	private let info: ArticleThemePlist?
 
 	init() {
 		self.url = nil
-		self.info = ArticleThemePlist(name: "Article Theme", themeIdentifier: "com.ranchero.netnewswire.theme.article", creatorHomePage: "https://netnewswire.com/", creatorName: "Ranchero Software", version: 1)
+		self.info = ArticleThemePlist(name: "Article Theme", themeIdentifier: "com.ranchero.netnewswire.theme.article", creatorHomePage: "https://netnewswire.com/", creatorName: "Ranchero Software", version: 1, grayscaleIcon: nil)
 
 		let corePath = Bundle.main.path(forResource: "core", ofType: "css")!
 		let stylesheetPath = Bundle.main.path(forResource: "stylesheet", ofType: "css")!

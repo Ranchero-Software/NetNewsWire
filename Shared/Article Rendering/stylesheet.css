@@ -5,7 +5,7 @@ body {
 	margin-right: auto;
 	
 	word-wrap: break-word;
-	max-width: 44em;
+	max-width: calc(var(--line-length) * 1em);
 }
 
 a {
@@ -18,6 +18,10 @@ a:hover {
 
 .feedlink {
 	font-weight: bold;
+}
+
+.articleTitle h1 {
+	text-wrap: pretty;
 }
 
 .headerTable {
@@ -35,13 +39,14 @@ a:hover {
 }
 
 :root {
+	/* About 75 characters per line, in units of the article text size */
+	--line-length: 36;
 	--header-table-border-color: rgba(0, 0, 0, 0.1);
 	--header-color: rgba(0, 0, 0, 0.66);
 	--body-code-color: #111;
 	--code-background-color: #eee;
 	--system-message-color: #cbcbcb;
-	--feedlink-color: rgba(255, 0, 0, 0.6);
-	--article-title-color: #333;
+	--article-title-color: CanvasText;
 	--article-date-color: rgba(0, 0, 0, 0.5);
 	--table-cell-border-color: lightgray;
 	--sup-link-color: rgba(255, 255, 255, 0.9);
@@ -52,8 +57,6 @@ a:hover {
 		--header-color: rgba(94, 158, 244, 1);
 		--body-code-color: #dcdcdc;
 		--system-message-color: #5f5f5f;
-		--feedlink-color: rgba(94, 158, 244, 1);
-		--article-title-color: #e0e0e0;
 		--article-date-color: rgba(255, 255, 255, 0.5);
 		--table-cell-border-color: dimgray;
 		--code-background-color: #333;
@@ -81,16 +84,12 @@ body > .systemMessage {
 	color: var(--system-message-color);
 }
 
-.feedlink a:link, .feedlink a:visited {
-	color: var(--feedlink-color);
-}
-
 .avatar img {
-	border-radius: 4px;
+	border-radius: 10px;
 }
 
 .feedIcon {
-	border-radius: 4px;
+	border-radius: 10px;
 }
 
 .rightAlign {
@@ -107,7 +106,6 @@ body > .systemMessage {
 
 .articleTitle a:link, .articleTitle a:visited {
 	color: var(--article-title-color);
-	margin-top: 26px;
 }
 
 .articleDateline {
@@ -148,7 +146,7 @@ body > .systemMessage {
 }
 
 .externalLink a {
-	font-family: "SF Mono", Menlo, Courier, monospace;
+	font-family: ui-monospace, Menlo, Courier, monospace;
 	font-size: 0.85em;
 	font-variant-caps: normal;
 	letter-spacing: 0em;
@@ -189,7 +187,7 @@ pre {
 }
 
 code, pre {
-	font-family: "SF Mono Regular", Menlo, Courier, monospace;
+	font-family: ui-monospace, Menlo, Courier, monospace;
 	font-size: 1em;
 	-webkit-hyphens: none;
 	background: var(--code-background-color);
@@ -276,8 +274,9 @@ figure {
 
 figcaption {
 	margin-top: 0.5em;
-	font-size: 14px;
+	font-size: 0.85em;
 	line-height: 1.3em;
+	color: var(--article-date-color);
 }
 
 sup {
@@ -293,7 +292,8 @@ sub {
 }
 
 hr {
-	border: 1.5px solid var(--table-cell-border-color);
+	border: none;
+	border-top: 1px solid var(--table-cell-border-color);
 }
 
 .iframeWrap {
@@ -511,34 +511,44 @@ a.footnote:hover,
 		padding-left: 48px;
 		padding-right: 48px;
 		font-family: -apple-system;
+		max-width: calc(var(--line-length) * var(--article-text-size));
 	}
 
-	.smallText {
-		font-size: 14px;
+	/* The text size class is on .articleBody, so set the size on :root to make the line length follow it */
+	:root {
+		--article-text-size: 16px;
 	}
 
-	.mediumText {
-		font-size: 16px;
+	:root:has(.articleBody.smallText) {
+		--article-text-size: 14px;
 	}
 
-	.largeText {
-		font-size: 18px;
+	:root:has(.articleBody.mediumText) {
+		--article-text-size: 16px;
 	}
 
-	.xlargeText {
-		font-size: 20px;
+	:root:has(.articleBody.largeText) {
+		--article-text-size: 18px;
 	}
 
-	.xxlargeText {
-		font-size: 22px;
+	:root:has(.articleBody.xlargeText) {
+		--article-text-size: 20px;
+	}
+
+	:root:has(.articleBody.xxlargeText) {
+		--article-text-size: 22px;
+	}
+
+	.articleBody {
+		font-size: var(--article-text-size);
 	}
 
 	:root {
 		color-scheme: light dark;
 		--accent-color: rgba( 8, 106, 238, 1);
+		--link-underline-color: color-mix(in srgb, var(--accent-color) 40%, transparent);
 		--block-quote-border-color: rgba( 0,   0,   0, 0.25);
-		--hover-gradient-color-start: rgba(60, 146, 251, 1);
-		--hover-gradient-color-end: rgba(67, 149, 251, 1);
+		--hover-background-color: rgba(60, 146, 251, 1);
 	}
 
 	@media(prefers-color-scheme: dark) {
@@ -546,8 +556,7 @@ a.footnote:hover,
 			--accent-color: rgba( 94, 158, 244, 1);
 			--block-quote-border-color: rgba( 94, 158, 244, 0.50);
 			--header-table-border-color: rgba(255, 255, 255, 0.1);
-			--hover-gradient-color-start: rgba( 41, 121, 213, 1);
-			--hover-gradient-color-end: rgba( 42, 120, 212, 1);
+			--hover-background-color: rgba( 41, 121, 213, 1);
 		}
 	}
 
@@ -568,13 +577,16 @@ a.footnote:hover,
 	}
 
 	.articleBody a:link, .articleBody a:visited {
-		border-bottom: 1px solid var(--accent-color);
+		text-decoration: underline;
+		text-decoration-color: var(--link-underline-color);
+		text-decoration-thickness: 1px;
+		text-underline-offset: 3px;
 	}
-	
+
 	.articleBody a:has(img),
 	.articleBody a:has(img):link,
 	.articleBody a:has(img):visited {
-		border-bottom: none;
+		text-decoration: none;
 	}
 
 	.articleBody a.footnote:link,
@@ -591,15 +603,13 @@ a.footnote:hover,
 	
 	.articleBody a:hover {
 		border-radius: 2px;
-		background: linear-gradient(0deg, var(--hover-gradient-color-start) 0%, var(--hover-gradient-color-end) 100%);
-		border-bottom: 1px solid var(--hover-gradient-color-end);
+		background: var(--hover-background-color);
 		color: white;
 		text-decoration: none;
 	}
-	
+
 	.articleBody a:has(img):hover {
 		background: none;
-		border-bottom: none;
 		color: inherit;
 		border-radius: 0;
 	}

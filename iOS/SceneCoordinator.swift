@@ -11,6 +11,7 @@ import os
 import UserNotifications
 import Account
 import Articles
+import ErrorLog
 import RSCore
 import RSTree
 import SafariServices
@@ -94,6 +95,7 @@ struct SidebarItemNode: Hashable, Sendable {
 
 	var isTimelineViewControllerPending = false
 	var isArticleViewControllerPending = false
+	private var hasReportedIgnoredTap = false
 
 	/// `Bool` to track whether a refresh is scheduled.
 	private var isNavigationBarSubtitleRefreshScheduled: Bool = false
@@ -1205,6 +1207,7 @@ struct SidebarItemNode: Hashable, Sendable {
 
 	func selectArticle(_ article: Article?, animations: Animations = [], isShowingExtractedArticle: Bool? = nil, articleWindowScrollY: Int? = nil) {
 		guard article != currentArticle else {
+			reportIgnoredSelection(of: article)
 			return
 		}
 
@@ -1236,6 +1239,32 @@ struct SidebarItemNode: Hashable, Sendable {
 		if let isShowingExtractedArticle = isShowingExtractedArticle, let articleWindowScrollY = articleWindowScrollY {
 			articleViewController?.restoreScrollPosition = (isShowingExtractedArticle, articleWindowScrollY)
 		}
+	}
+
+	/// Selecting the current article while the article view isn’t showing does nothing, which is never expected.
+	/// Log it once per launch to the Errors log.
+	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/5516>
+	private func reportIgnoredSelection(of article: Article?) {
+		guard let article, !hasReportedIgnoredTap, isRootSplitCollapsed, !isArticleViewControllerShowing else {
+			return
+		}
+		hasReportedIgnoredTap = true
+
+		let selectedItemCount = mainTimelineViewController?.collectionView?.indexPathsForSelectedItems?.count ?? 0
+		let navigationStackDepth = mainTimelineViewController?.navigationController?.viewControllers.count ?? 0
+		let message = """
+		Selection ignored because the article is already the current article.
+		Article: \(article.title ?? "(no title)") [\(article.articleID)]
+		Feed: \(article.feed?.nameForDisplay ?? "(unknown)")
+		Timeline: \(timelineFeed?.nameForDisplay ?? "(none)")
+		isArticleViewControllerPending: \(isArticleViewControllerPending)
+		isRestoringState: \(isRestoringState)
+		isNavigationDisabled: \(isNavigationDisabled)
+		Navigation stack depth: \(navigationStackDepth)
+		Selected item count: \(selectedItemCount)
+		"""
+		let userInfo = ErrorLogUserInfoKey.userInfo(sourceName: "Timeline", sourceID: 102, operation: "Selecting article", errorMessage: message)
+		NotificationCenter.default.post(name: .appDidEncounterError, object: nil, userInfo: userInfo)
 	}
 
 	func beginSearching() {

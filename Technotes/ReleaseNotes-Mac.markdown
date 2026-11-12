@@ -1,5 +1,9 @@
 # Mac Release Notes
 
+### 7.3b7 7234 9 Nov 2026 - branch: main tag: mac-7.3b7
+
+Make image cache eviction less aggressive, which should fix a loop where images get evicted, re-cached, evicted, re-cached, etc. (See this Discourse forum post <https://discourse.netnewswire.com/t/favicons-disappear-in-7-3b3/481>.)
+
 ### 7.3b6 7233 9 Nov 2026 - branch: main tag: mac-7.3b6
 
 Added a Grayscale icons setting to Settings > Appearance — for feed icons and author avatars (article thumbnails stay in color)
