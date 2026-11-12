@@ -15,6 +15,18 @@ function wrapFrames() {
 	});
 }
 
+// Optimole lazy-loading leaves src as about:blank, with the real URL in data-opt-src.
+// <https://github.com/Ranchero-Software/NetNewsWire/issues/5545>
+function loadLazyIframes() {
+	document.querySelectorAll("iframe[data-opt-src]").forEach(element => {
+		const src = element.getAttribute("src");
+		const lazySrc = element.getAttribute("data-opt-src");
+		if ((!src || src === "about:blank") && /^https?:\/\//i.test(lazySrc)) {
+			element.src = lazySrc;
+		}
+	});
+}
+
 // The stylesheet clamps iframes to the article width with max-width: 100%,
 // which leaves an attribute-sized iframe with its full height — distorted,
 // and a huge blank box when the embed fails to load. Let the height follow
@@ -43,7 +55,11 @@ function stripStyles() {
 	document.getElementsByTagName("body")[0].querySelectorAll("style, link[rel=stylesheet]").forEach(element => element.remove());
 	// Removing "background" and "font" will also remove properties that would be reflected in them, e.g., "background-color" and "font-family"
 	// The stylesheet forces images to height: auto, so an author aspect-ratio box can't be filled by its image — content after the box overlaps the overflowing image.
-	document.getElementsByTagName("body")[0].querySelectorAll("[style]").forEach(element => stripStylesFromElement(element, ["color", "background", "font", "max-width", "max-height", "position", "aspect-ratio"]));
+	// Iframes keep their aspect-ratio: without it an iframe with no pixel height collapses to the default 150px.
+	document.getElementsByTagName("body")[0].querySelectorAll("[style]").forEach(element => {
+		const isIframe = element.tagName === "IFRAME";
+		stripStylesFromElement(element, isIframe ? ["color", "background", "font", "max-width", "max-height", "position"] : ["color", "background", "font", "max-width", "max-height", "position", "aspect-ratio"]);
+	});
 }
 
 // Constrain the height of iframes whose heights are defined relative to the document body to be at most
@@ -65,12 +81,23 @@ function constrainBodyRelativeIframes() {
 	}
 }
 
+// An image served from the timeline’s copy falls back to its original URL when the copy can’t be loaded.
+// Registered at document start, and capturing, since error events don’t bubble.
+document.addEventListener("error", event => {
+	const element = event.target;
+	if (element instanceof HTMLImageElement && element.hasAttribute("data-nnw-src")) {
+		const originalSrc = element.getAttribute("data-nnw-src");
+		element.removeAttribute("data-nnw-src");
+		element.src = originalSrc;
+	}
+}, true);
+
 // Convert all Feedbin proxy images to be used as src, otherwise change image locations to be absolute if not already
 function convertImgSrc() {
 	document.querySelectorAll("img").forEach(element => {
 		if (element.hasAttribute("data-canonical-src")) {
 			element.src = element.getAttribute("data-canonical-src")
-		} else if (!/^[a-z]+\:\/\//i.test(element.src)) {
+		} else if (!element.hasAttribute("data-nnw-src") && !/^[a-z]+\:\/\//i.test(element.src)) {
 			element.src = new URL(element.src, document.baseURI).href;
 		}
 	});
@@ -165,17 +192,80 @@ function stopMediaPlayback() {
 	});
 }
 
+// The element at the top of the viewport, how far through it the viewport top is,
+// and any remaining distance. A scroll offset alone means nothing once the article
+// reflows at a different width.
+let scrollAnchorElement = null;
+let scrollAnchorFraction = 0;
+let scrollAnchorOffset = 0;
+
+const scrollAnchorSampleSpacing = 16;
+
+// False for a container hit in the gap between blocks: it has element children
+// and only whitespace text of its own.
+function isScrollAnchorCandidate(element) {
+	if (element.children.length === 0) {
+		return true;
+	}
+	for (const node of element.childNodes) {
+		if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== "") {
+			return true;
+		}
+	}
+	return false;
+}
+
+function findScrollAnchorElement() {
+	const x = window.innerWidth / 2;
+	const maximumSampleDepth = window.innerHeight / 4;
+	let firstHit = null;
+	for (let y = 1; y <= maximumSampleDepth; y += scrollAnchorSampleSpacing) {
+		const element = document.elementFromPoint(x, y);
+		if (!element) {
+			continue;
+		}
+		if (isScrollAnchorCandidate(element)) {
+			return element;
+		}
+		if (!firstHit) {
+			firstHit = element;
+		}
+	}
+	return firstHit;
+}
+
+function recordScrollAnchor() {
+	scrollAnchorElement = findScrollAnchorElement();
+	if (!scrollAnchorElement) {
+		return;
+	}
+	const rect = scrollAnchorElement.getBoundingClientRect();
+	scrollAnchorFraction = rect.height > 0 ? Math.min(Math.max(-rect.top / rect.height, 0), 1) : 0;
+	scrollAnchorOffset = -(rect.top + scrollAnchorFraction * rect.height);
+}
+
+// Scrolls back to the same place in the recorded element after a reflow.
+function restoreScrollAnchor() {
+	if (!scrollAnchorElement || !scrollAnchorElement.isConnected) {
+		return;
+	}
+	const rect = scrollAnchorElement.getBoundingClientRect();
+	window.scrollTo(0, window.scrollY + rect.top + scrollAnchorFraction * rect.height + scrollAnchorOffset);
+}
+
 function error() {
 	document.body.innerHTML = "error";
 }
 
 // Takes into account absoluting of URLs.
 function isLocalFootnote(target) {
-	return target.hash.startsWith("#fn") && target.href.indexOf(document.baseURI) === 0;
+	return (target.hash.startsWith("#fn") || target.hash.startsWith("#footnote")) && target.href.indexOf(document.baseURI) === 0;
 }
 
 function styleLocalFootnotes() {
-	for (elem of document.querySelectorAll("sup > a[href*='#fn'], sup > div > a[href*='#fn']")) {
+	// Multimarkdown-style: <sup><a href="#fn…">. Substack-style: a bare
+	// <a id="footnote-anchor-N" href="#footnote-N"> with no <sup> wrapper.
+	for (elem of document.querySelectorAll("sup > a[href*='#fn'], sup > div > a[href*='#fn'], a[id^='footnote-anchor-']")) {
 		if (isLocalFootnote(elem)) {
 			elem.classList.add("footnote");
 		}
@@ -214,6 +304,7 @@ function removeInstapaperIgnoreElements() {
 function processPage() {
 	// stripStyles must run first — wrapFrames sets aspect-ratio on fixed-size iframes, which stripStyles would remove.
 	stripStyles();
+	loadLazyIframes();
 	wrapFrames();
 	wrapTables();
 	inlineVideos();

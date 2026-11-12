@@ -94,6 +94,8 @@ struct ActivityDisplayText {
 			return ActivityDisplayText(title: NSLocalizedString("Downloading avatar", comment: "Downloading avatar"), detail: avatarURL)
 		case .downloadHTMLMetadata(let urlString):
 			return ActivityDisplayText(title: NSLocalizedString("Downloading metadata", comment: "Downloading metadata"), detail: urlString)
+		case .downloadThumbnail(let imageURL):
+			return ActivityDisplayText(title: NSLocalizedString("Downloading thumbnail", comment: "Downloading thumbnail"), detail: imageURL)
 		default:
 			return ActivityDisplayText(title: activity.kind.simpleDisplayName ?? "", detail: activity.detail)
 		}

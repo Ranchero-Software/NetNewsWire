@@ -126,7 +126,7 @@ private extension HidingReadArticlesState {
 			d[accountID] = d[accountID]?.filter { account.existingFolder(withDisplayName: $0) != nil }
 		}
 
-		AppDefaults.shared.foldersShowingReadArticles = d
+		AppDefaults.foldersShowingReadArticles = d
 	}
 
 	func saveFeedsHidingReadArticles() {
@@ -141,10 +141,10 @@ private extension HidingReadArticlesState {
 			d[accountID] = d[accountID]?.filter { account.existingFeed(withFeedID: $0) != nil }
 		}
 
-		AppDefaults.shared.feedsHidingReadArticles = d
+		AppDefaults.feedsHidingReadArticles = d
 	}
 
 	func saveSmartFeedsHidingReadArticles() {
-		AppDefaults.shared.smartFeedsHidingReadArticles = smartFeedsHidingReadArticles
+		AppDefaults.smartFeedsHidingReadArticles = smartFeedsHidingReadArticles
 	}
 }

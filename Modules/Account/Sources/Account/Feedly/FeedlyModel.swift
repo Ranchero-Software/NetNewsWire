@@ -186,10 +186,20 @@ struct FeedlyEntry: Decodable, Sendable {
 
 	/// A list of media links (videos, images, sound etc) provided by the feed. Some entries do not have a summary or content, only a collection of media links.
 	let enclosure: [FeedlyLink]?
+
+	/// The image Feedly associates with the article.
+	let visual: FeedlyVisual?
+}
+
+struct FeedlyVisual: Decodable, Sendable {
+	/// Sometimes the literal `none`.
+	let url: String?
 }
 
 struct FeedlyEntryParser {
 	let entry: FeedlyEntry
+
+	private static let noVisualURL = "none"
 
 	private let rightToLeftTextSantizer = FeedlyRTLTextSanitizer()
 
@@ -240,7 +250,8 @@ struct FeedlyEntryParser {
 		// archive “now.” Publisher dates aren’t always reliable (per Feedly), so a
 		// future-dated article falls back to crawled rather than pinning itself to
 		// the top of a date-sorted timeline.
-		if let published = entry.published, published <= entry.crawled {
+		// Not <=, which is back-deployed and crashes on iOS 27.2 betas.
+		if let published = entry.published, published < entry.crawled {
 			return published
 		}
 		return entry.crawled
@@ -265,12 +276,19 @@ struct FeedlyEntryParser {
 		return Set(labels)
 	}
 
-	var attachments: Set<ParsedAttachment>? {
+	var attachments: [ParsedAttachment]? {
 		guard let enclosure = entry.enclosure, !enclosure.isEmpty else {
 			return nil
 		}
-		let attachments = enclosure.compactMap { ParsedAttachment(url: $0.href, mimeType: $0.type, title: nil, sizeInBytes: nil, durationInSeconds: nil) }
-		return attachments.isEmpty ? nil : Set(attachments)
+		let attachments = enclosure.compactMap { ParsedAttachment(url: $0.href, mimeType: $0.type, title: nil, sizeInBytes: nil, durationInSeconds: nil, width: nil, height: nil, medium: nil) }
+		return attachments.isEmpty ? nil : attachments
+	}
+
+	var imageURL: String? {
+		guard let url = entry.visual?.url, !url.isEmpty, url != Self.noVisualURL else {
+			return nil
+		}
+		return url
 	}
 
 	var parsedItemRepresentation: ParsedItem? {
@@ -289,7 +307,8 @@ struct FeedlyEntryParser {
 						  contentText: contentText,
 						  markdown: nil,
 						  summary: summary,
-						  imageURL: nil,
+						  imageURL: imageURL,
+						  thumbnailURL: nil,
 						  bannerImageURL: nil,
 						  datePublished: datePublished,
 						  dateModified: dateModified,

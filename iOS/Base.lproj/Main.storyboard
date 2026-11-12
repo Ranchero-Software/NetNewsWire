@@ -245,7 +245,9 @@
                                 <size key="customSize" width="398" height="60"/>
                                 <connections>
                                     <outlet property="faviconView" destination="Ea0-VT-Gvl" id="OMb-Ty-3cf"/>
+                                    <outlet property="faviconWidthConstraint" destination="WjF-Bc-GuF" id="kkW-Bz-xKK"/>
                                     <outlet property="feedTitle" destination="fHH-rW-0hD" id="4Cu-Jc-mlE"/>
+                                    <outlet property="feedTitleLeadingConstraint" destination="EbG-Wk-EDk" id="npF-tx-4xc"/>
                                     <outlet property="unreadCountLabel" destination="oRt-Cv-vvU" id="GZ1-nb-Tvo"/>
                                 </connections>
                             </collectionViewCell>
@@ -315,7 +317,9 @@
                                 <connections>
                                     <outlet property="disclosureButton" destination="noV-fz-88z" id="aBd-vX-4DN"/>
                                     <outlet property="faviconView" destination="AAi-mv-o14" id="6Zo-OH-fwi"/>
+                                    <outlet property="faviconWidthConstraint" destination="ygW-tD-t1U" id="wtt-Cs-LwE"/>
                                     <outlet property="folderTitle" destination="qoe-rn-pwE" id="TKY-hS-wku"/>
+                                    <outlet property="folderTitleLeadingConstraint" destination="9Wl-bG-a7f" id="qb7-A7-mPL"/>
                                     <outlet property="unreadCountLabel" destination="LVW-Zu-z90" id="NMO-Jg-F2J"/>
                                 </connections>
                             </collectionViewCell>
@@ -436,7 +440,6 @@
                         <color key="backgroundColor" name="fullScreenBackgroundColor"/>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="msG-pz-EKk" secondAttribute="bottom" id="AtA-bA-jDr"/>
-                            <constraint firstItem="eMj-1g-3xm" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="mbY-02-GFL" secondAttribute="trailing" id="E7e-Lv-6ZA"/>
                             <constraint firstItem="eMj-1g-3xm" firstAttribute="centerX" secondItem="w6Q-vH-063" secondAttribute="centerX" id="H2b-IA-6hz"/>
                             <constraint firstItem="bHh-pW-oTS" firstAttribute="bottom" secondItem="eMj-1g-3xm" secondAttribute="bottom" constant="4" id="P3m-i2-3pJ"/>
                             <constraint firstAttribute="trailing" secondItem="msG-pz-EKk" secondAttribute="trailing" id="R49-qV-8nm"/>
@@ -454,7 +457,6 @@
                         <outlet property="titleBackground" destination="bHh-pW-oTS" id="o2K-cY-90c"/>
                         <outlet property="titleLabel" destination="eMj-1g-3xm" id="6wF-IZ-fNw"/>
                         <outlet property="titleLeading" destination="Xni-Dn-I3Z" id="8Ik-la-Qkw"/>
-                        <outlet property="titleTrailing" destination="E7e-Lv-6ZA" id="lGu-iv-C9W"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ZPN-tH-JAG" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

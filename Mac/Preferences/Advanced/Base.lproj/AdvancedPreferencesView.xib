@@ -67,10 +67,11 @@
                                 <action selector="updateTypeButtonClicked:" target="-2" id="3Jh-Vu-GlY"/>
                             </connections>
                         </button>
-                        <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="MzL-QQ-2oL">
+                        <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="1" translatesAutoresizingMaskIntoConstraints="NO" id="MzL-QQ-2oL">
                             <rect key="frame" x="-2" y="113" width="334" height="48"/>
                             <constraints>
-                                <constraint firstAttribute="width" constant="330" id="jf8-5e-Eij"/>
+                                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="330" id="jf8-5e-Eij"/>
+                                <constraint firstAttribute="width" priority="249" constant="330" id="aDv-wP-g03"/>
                             </constraints>
                             <textFieldCell key="cell" selectable="YES" title="If you’re not sure, choose Release builds. Test builds may have bugs, which may include crashing bugs and data loss." id="fOZ-zv-QTc">
                                 <font key="font" metaFont="system"/>
@@ -166,6 +167,8 @@
                 <constraint firstItem="uJD-OF-YVY" firstAttribute="top" secondItem="Hij-7D-6Pw" secondAttribute="top" constant="20" symbolic="YES" id="T6k-KK-0gC"/>
                 <constraint firstAttribute="bottom" secondItem="uJD-OF-YVY" secondAttribute="bottom" constant="20" symbolic="YES" id="ftc-7Q-cpC"/>
                 <constraint firstItem="uJD-OF-YVY" firstAttribute="centerX" secondItem="Hij-7D-6Pw" secondAttribute="centerX" id="njb-lt-xOA"/>
+                <constraint firstItem="uJD-OF-YVY" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Hij-7D-6Pw" secondAttribute="leading" constant="20" id="aDv-lM-g01"/>
+                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="uJD-OF-YVY" secondAttribute="trailing" constant="20" id="aDv-tM-g02"/>
             </constraints>
         </view>
         <userDefaultsController id="Y8q-yi-F5Z"/>

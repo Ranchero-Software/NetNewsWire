@@ -26,7 +26,7 @@ final class ImportOPMLWindowController: NSWindowController {
 		accountPopUpButton.menu = menu
 
 		let accounts: [Account] = AccountManager.shared.sortedActiveAccounts
-		let savedAccountID: String? = AppDefaults.shared.importOPMLAccountID
+		let savedAccountID: String? = AppDefaults.importOPMLAccountID
 
 		for oneAccount in accounts {
 			if oneAccount.behaviors.contains(.disallowOPMLImports) {
@@ -77,7 +77,7 @@ final class ImportOPMLWindowController: NSWindowController {
 		}
 
 		let account = menuItem.representedObject as! Account
-		AppDefaults.shared.importOPMLAccountID = account.accountID
+		AppDefaults.importOPMLAccountID = account.accountID
 		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.OK)
 		importOPML(account: account)
 

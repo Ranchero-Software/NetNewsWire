@@ -63,8 +63,7 @@ final class DinosaursWindowController: NSWindowController {
 
 		updateActionBarEnabledState()
 
-		NotificationCenter.default.addObserver(self, selector: #selector(handleFaviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(handleFeedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleFeedIconImageDidChange(_:)), name: .feedIconImageDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 	}
 
@@ -160,11 +159,7 @@ final class DinosaursWindowController: NSWindowController {
 		}
 	}
 
-	@objc func handleFaviconDidBecomeAvailable(_ notification: Notification) {
-		reloadFeedColumn()
-	}
-
-	@objc func handleFeedIconDidBecomeAvailable(_ notification: Notification) {
+	@objc func handleFeedIconImageDidChange(_ notification: Notification) {
 		guard let feed = notification.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}

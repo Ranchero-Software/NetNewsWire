@@ -33,7 +33,6 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 
 	// MARK: Inspector
 
-	let isFallbackInspector = false
 	var objects: [Any]? {
 		didSet {
 			renameFeedIfNecessary()
@@ -54,7 +53,7 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 
 	override func viewDidLoad() {
 		updateUI()
-		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .imageDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleFeedIconImageDidChange(_:)), name: .feedIconImageDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(updateUI), name: .DidUpdateFeedPreferencesFromContextMenu, object: nil)
 	}
 
@@ -115,7 +114,7 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 
 	// MARK: Notifications
 
-	@objc func imageDidBecomeAvailable(_ note: Notification) {
+	@objc func handleFeedIconImageDidChange(_ notification: Notification) {
 		updateImage()
 	}
 }

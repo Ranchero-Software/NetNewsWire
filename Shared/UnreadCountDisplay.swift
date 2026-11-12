@@ -35,4 +35,20 @@ enum UnreadCountDisplay: Int, CaseIterable, Codable {
 	func showsDot(for unreadCount: Int) -> Bool {
 		self == .dot && unreadCount > 0
 	}
+
+	/// Unread status for VoiceOver to read after a name — “12 unread” or, with a dot, just “unread.” Nil when nothing should be read.
+	func accessibilityText(for unreadCount: Int) -> String? {
+		guard unreadCount > 0 else {
+			return nil
+		}
+		let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessibility")
+		switch self {
+		case .count:
+			return "\(unreadCount) \(unreadLabel)"
+		case .dot:
+			return unreadLabel
+		case .hidden:
+			return nil
+		}
+	}
 }

@@ -88,7 +88,54 @@ import Testing
 		let html = paragraph1 + "\n \n" + paragraph2 + "\n \n" + paragraph3 + shareLinks + "\n\n\n\n" + readMore
 		let expected = paragraph1 + "<p>" + paragraph2 + "<p>" + paragraph3 + shareLinks + "<p>" + readMore
 
-		let result = ArticleRenderingSpecialCases.insertParagraphTagsIfNeeded(html, feedURLString: feedURLString)
+		let result = ArticleRenderingSpecialCases.insertParagraphTagsIfNeeded(html, feedURL: feedURLString, homePageURL: nil)
+		#expect(result == expected)
+	}
+
+	@Test func slashdotHomePageURLGetsParagraphTagsForProxiedFeed() {
+		let html = "First paragraph.\n\nSecond paragraph."
+		let result = ArticleRenderingSpecialCases.insertParagraphTagsIfNeeded(html, feedURL: "https://feeds.feedburner.com/Slashdot/slashdot", homePageURL: "https://slashdot.org/")
+		#expect(result == "First paragraph.<p>Second paragraph.")
+	}
+
+	@Test func otherFeedsDontGetParagraphTags() {
+		let html = "First paragraph.\n\nSecond paragraph."
+		let result = ArticleRenderingSpecialCases.insertParagraphTagsIfNeeded(html, feedURL: "https://example.com/feed.xml", homePageURL: "https://example.com/")
+		#expect(result == html)
+	}
+
+	// MARK: - MacRumors stray line breaks
+
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/5498>
+
+	// From the MacRumors feed on 2026-10-19, cut to one list item.
+	@Test func macRumorsListLosesStrayLineBreaks() {
+		let html = "GM said the rollout will occur as follows.\n<br/>\n\n<br/>\n<p><h2>September–October 2026</h2></p>\n<br/>\n<ul>\n<br/>\n  <li>Cadillac Vistiq (2027)</li>\n<br/>\n</ul>GM said customers will see a notification."
+		let expected = "GM said the rollout will occur as follows.\n<br/>\n\n<br/>\n<p><h2>September–October 2026</h2></p>\n<br/>\n<ul>\n  <li>Cadillac Vistiq (2027)</li>\n</ul>GM said customers will see a notification."
+		let result = ArticleRenderingSpecialCases.removeStrayLineBreaksIfNeeded(html, feedURL: "https://feeds.macrumors.com/MacRumors-All", homePageURL: nil)
+		#expect(result == expected)
+	}
+
+	@Test func macRumorsTableLosesStrayLineBreaksButKeepsCellLineBreaks() {
+		let html = "<table class=\"specs\">\n<br/>\n<tr>\n<br/>\n<th>Height</th>\n<br/>\n<td>5.91 inches</td>\n<br/>\n<td>closed<br/>open</td>\n<br/>\n</tr>\n<br/>\n</table>\n<br/>\nAfter."
+		let expected = "<table class=\"specs\">\n<tr>\n<th>Height</th>\n<td>5.91 inches</td>\n<td>closed<br/>open</td>\n</tr>\n</table>\n<br/>\nAfter."
+		let result = ArticleRenderingSpecialCases.removeStrayLineBreaksIfNeeded(html, feedURL: nil, homePageURL: "https://www.macrumors.com/")
+		#expect(result == expected)
+	}
+
+	@Test func otherFeedsKeepLineBreaksInListsAndTables() {
+		let html = "<ul>\n<br/>\n<li>Item</li>\n<br/>\n</ul><table>\n<br/>\n<tr><td>Cell</td></tr></table>"
+		let result = ArticleRenderingSpecialCases.removeStrayLineBreaksIfNeeded(html, feedURL: "https://example.com/feed.xml", homePageURL: "https://example.com/")
+		#expect(result == html)
+	}
+
+	// MARK: - Flickr small body images
+
+	// From Flickr’s public photos feed on 2026-11-08.
+	@Test func flickrBodyImageGetsLargeCopy() {
+		let html = #"<p><a href="https://www.flickr.com/photos/28072695@N03/55640727267/" title="312/365"><img src="https://live.staticflickr.com/65535/55640727267_a94c9ae7e7_m.jpg" width="180" height="240" alt="312/365" /></a></p>"#
+		let expected = #"<p><a href="https://www.flickr.com/photos/28072695@N03/55640727267/" title="312/365"><img src="https://live.staticflickr.com/65535/55640727267_a94c9ae7e7_b.jpg" alt="312/365" /></a></p>"#
+		let result = ArticleRenderingSpecialCases.enlargeFlickrImagesIfNeeded(html, feedURL: "https://www.flickr.com/services/feeds/photos_public.gne?format=rss2", attachmentURLs: ["https://live.staticflickr.com/65535/55640727267_a94c9ae7e7_b.jpg"])
 		#expect(result == expected)
 	}
 
@@ -101,5 +148,37 @@ import Testing
 
 		let hackadayLink = try #require(URL(string: "https://hackaday.com/2025/12/01/necroprinting-isnt-as-bad-as-it-sounds/"))
 		#expect(ArticleRenderingSpecialCases.baseURLForRendering(hackadayLink) == hackadayLink)
+	}
+
+	// MARK: De-sanizite FreshRSS content
+	@Test(
+		"The sanitization happening in FreshRSS breaks inline footnotes, so we de-sanitize id and class attributes",
+		.bug("https://github.com/Ranchero-Software/NetNewsWire/issues/5472")
+	)
+	func freshRSSContent_desanitizedIDAndClass() {
+		let sanitized = """
+<div data-sanitized-class="footnotes">
+	<li data-sanitized-id="footnote-1">
+		<p>
+			This is the footnote content, about `data-sanitized-class`.
+			<a href="#footnote-1-ref" data-sanitized-class="footnoteBackLink">Go back to content</a>
+		</p>
+	</li>
+	<li data-sanitized-id="footnote-2"><p>Another footnote, about `data-sanitized-id`.<a href="#footnote-2-ref" data-sanitized-class="footnoteBackLink">Go back to content</a></p></li>
+</div>
+"""
+		let expected = """
+<div class="footnotes">
+	<li id="footnote-1">
+		<p>
+			This is the footnote content, about `data-sanitized-class`.
+			<a href="#footnote-1-ref" class="footnoteBackLink">Go back to content</a>
+		</p>
+	</li>
+	<li id="footnote-2"><p>Another footnote, about `data-sanitized-id`.<a href="#footnote-2-ref" class="footnoteBackLink">Go back to content</a></p></li>
+</div>
+"""
+
+		#expect(ArticleRenderingSpecialCases.desanitizeFreshRSSContent(sanitized) == expected)
 	}
 }

@@ -17,6 +17,17 @@ struct URLPreparedForOpeningTests {
 		#expect(try url("mailto:me@example.com").preparedForOpeningInBrowser() != nil)
 	}
 
+#if os(macOS)
+	@Test func allowsMagnetScheme() throws {
+		#expect(try url("magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88a&dn=example").preparedForOpeningInBrowser() != nil)
+		#expect(try url("Magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88a").preparedForOpeningInBrowser() != nil)
+	}
+#else
+	@Test func blocksMagnetScheme() throws {
+		#expect(try url("magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335aa7c1367a88a&dn=example").preparedForOpeningInBrowser() == nil)
+	}
+#endif
+
 	@Test func blocksOtherSchemes() throws {
 		#expect(try url("smb://server/share").preparedForOpeningInBrowser() == nil)
 		#expect(try url("file:///etc/passwd").preparedForOpeningInBrowser() == nil)

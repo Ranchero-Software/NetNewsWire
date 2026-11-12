@@ -10,173 +10,68 @@ import Foundation
 import Account
 import RSCore
 import RSWeb
-import HTMLMetadata
 import ActivityLog
 
 extension Notification.Name {
-
-	public static let feedIconDidBecomeAvailable = Notification.Name("FeedIconDidBecomeAvailable") // userInfo key: "feed"
+	/// Posted when a feed’s icon loads or fails, or its icon URL changes.
+	/// userInfo key: `FeedIconDownloader.feedsKey` (`Set<Feed>`).
+	public static let feedIconDidChange = Notification.Name("FeedIconDidChange")
 }
 
+/// Gets the icon a feed specifies in the feed itself.
 @MainActor public final class FeedIconDownloader {
 
 	public static let shared = FeedIconDownloader()
+	public static let feedsKey = "feeds"
 
-	private let imageDownloader = ImageDownloader.shared
-	private var homePagesWithNoIconURL = Set<String>()
-	private var cache = [Feed: IconImage]()
-	private var waitingForFeedURLs = [String: Set<Feed>]()
-	private var feedsWaitingForHTMLMetadata = Set<Feed>()
+	private var feedsByIconURL = [String: Set<Feed>]() // icon URL: feeds that looked it up
 
-	init() {
-		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .imageDidBecomeAvailable, object: imageDownloader)
+	private init() {
+		NotificationCenter.default.addObserver(self, selector: #selector(handleIconImageDidBecomeAvailable(_:)), name: .iconImageDidBecomeAvailable, object: IconImageDownloader.shared)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleIconImageDownloadDidFail(_:)), name: .iconImageDownloadDidFail, object: IconImageDownloader.shared)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleFeedSettingDidChange(_:)), name: .feedSettingDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(handleHTMLMetadataAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)
 	}
 
-	@objc func handleLowMemory(_ notification: Notification) {
-		cache.removeAll()
+	/// Unavailable when the feed specifies no icon, or its icon isn’t used.
+	public func feedIcon(for feed: Feed) -> IconLookup {
+		guard let iconURL = Self.iconURL(for: feed) else {
+			return .unavailable
+		}
+		feedsByIconURL[iconURL, default: Set<Feed>()].insert(feed)
+		return IconImageDownloader.shared.iconImage(for: iconURL, activityOwner: .feedImageDownloader, activityKind: .downloadFeedImage(feedURL: iconURL), activityDetail: feed.nameForDisplay)
 	}
 
-	@objc func handleAppDidGoToBackground(_ notification: Notification) {
-		cache.removeAll()
+	// MARK: - Notifications
+
+	@objc func handleIconImageDidBecomeAvailable(_ notification: Notification) {
+		postFeedIconDidChange(iconURL: notification.userInfo?[IconImageDownloader.urlKey] as? String)
 	}
 
-	public func icon(for feed: Feed) -> IconImage? {
-
-		if let cachedImage = cache[feed] {
-			return cachedImage
-		}
-
-		if Self.shouldSkipDownloadingFeedIcon(feed: feed) {
-			return nil
-		}
-
-		@MainActor func checkHomePageURL() {
-			guard let homePageURL = feed.homePageURL else {
-				return
-			}
-			if homePagesWithNoIconURL.contains(homePageURL) {
-				return
-			}
-			icon(forHomePageURL: homePageURL, feed: feed) { image, iconURL in
-				if self.cache[feed] != nil {
-					return // already cached
-				}
-				if let image, let iconURL {
-					self.cache[feed] = IconImage(image)
-					self.cacheIconURLForFeedURL(iconURL: iconURL, feedURL: feed.url)
-					self.postFeedIconDidBecomeAvailableNotification(feed)
-				}
-			}
-		}
-
-		@MainActor func checkFeedIconURL() {
-			if let iconURL = feed.iconURL, !Self.shouldIgnoreFeedIconURL(feed) {
-				icon(forURL: iconURL, feed: feed) { (image, isDefinitive) in
-					Task { @MainActor in
-						if self.cache[feed] != nil {
-							return // already cached
-						}
-						if let image = image {
-							self.cache[feed] = IconImage(image)
-							self.cacheIconURLForFeedURL(iconURL: iconURL, feedURL: feed.url)
-							self.postFeedIconDidBecomeAvailableNotification(feed)
-						} else if isDefinitive {
-							// The declared icon failed or isn’t an image. A still-downloading
-							// icon is no reason to fall back to the home page’s icon.
-							// <https://github.com/Ranchero-Software/NetNewsWire/issues/5376>
-							checkHomePageURL()
-						}
-					}
-				}
-			} else {
-				checkHomePageURL()
-			}
-		}
-
-		// The stored icon URL remembers an icon discovered via the home page. A feed
-		// that declares its own icon supersedes it.
-		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5376>
-		let feedDeclaresIconURL = feed.iconURL != nil && !Self.shouldIgnoreFeedIconURL(feed)
-
-		if !feedDeclaresIconURL, let previouslyFoundIconURL = ImageMetadataDatabase.shared.iconURL(forFeedURL: feed.url) {
-			icon(forURL: previouslyFoundIconURL, feed: feed) { image, _ in
-				if self.cache[feed] != nil {
-					return // already cached
-				}
-				if let image {
-					self.cache[feed] = IconImage(image)
-					self.postFeedIconDidBecomeAvailableNotification(feed)
-				}
-			}
-
-			return nil
-		}
-
-		checkFeedIconURL()
-
-		return nil
+	@objc func handleIconImageDownloadDidFail(_ notification: Notification) {
+		postFeedIconDidChange(iconURL: notification.userInfo?[IconImageDownloader.urlKey] as? String)
 	}
 
-	@objc func imageDidBecomeAvailable(_ note: Notification) {
-		guard let url = note.userInfo?["url"] as? String, let feeds = waitingForFeedURLs[url] else {
+	@objc func handleFeedSettingDidChange(_ notification: Notification) {
+		guard let feed = notification.object as? Feed, let key = notification.userInfo?[Feed.SettingUserInfoKey] as? Feed.SettingKey, key == .iconURL else {
 			return
 		}
-		// A single image URL may be shared by multiple feeds.
-		waitingForFeedURLs[url] = nil
-		for feed in feeds {
-			_ = icon(for: feed)
-		}
-	}
-
-	@objc func handleFeedSettingDidChange(_ note: Notification) {
-		guard let feed = note.object as? Feed, let key = note.userInfo?[Feed.SettingUserInfoKey] as? Feed.SettingKey else {
-			return
-		}
-		if key == .iconURL || key == .homePageURL {
-			_ = icon(for: feed)
-		}
-	}
-
-	@objc func handleHTMLMetadataAvailable(_ note: Notification) {
-		guard let url = note.userInfo?[HTMLMetadataUserInfoKey.url] as? String else {
-			return
-		}
-		// A homepage URL may be shared by multiple feeds.
-		let feeds = feedsWaitingForHTMLMetadata.filter { $0.homePageURL == url }
-		feedsWaitingForHTMLMetadata.subtract(feeds)
-		for feed in feeds {
-			_ = icon(for: feed)
-		}
-	}
-
-	/// Returns the in-memory icon for `feed` without triggering a download.
-	public func cachedIcon(for feed: Feed) -> IconImage? {
-		cache[feed]
+		postFeedIconDidChange(Set([feed]))
 	}
 }
 
 private extension FeedIconDownloader {
 
-	static let specialCasesToSkip = ["macsparky.com", "xkcd.com", SpecialCase.rachelByTheBayHostName, SpecialCase.openRSSOrgHostName]
-
-	// Substrings matched (case-insensitive) anywhere in the feed URL. A match makes us ignore the
-	// feed-specified icon URL and fall back to the homepage icon lookup instead.
+	// Substrings matched (case-insensitive) anywhere in the feed URL. A match means the feed-specified icon isn’t used.
 	static let feedURLSubstringsToIgnoreFeedIconURL: [String] = ["propublica.org", "clubic.com", "comptoir-hardware.com", "cowcotland", "404media.co", "awfulannouncing.com", "michalzelazny.com"]
 
-	static func shouldIgnoreFeedIconURL(_ feed: Feed) -> Bool {
-		SpecialCase.urlStringContainSpecialCase(feed.url, feedURLSubstringsToIgnoreFeedIconURL)
-	}
-
-	static func shouldSkipDownloadingFeedIcon(feed: Feed) -> Bool {
-		shouldSkipDownloadingFeedIcon(feed.url)
-	}
-
-	static func shouldSkipDownloadingFeedIcon(_ urlString: String) -> Bool {
-		SpecialCase.urlStringContainSpecialCase(urlString, specialCasesToSkip)
+	static func iconURL(for feed: Feed) -> String? {
+		guard let iconURL = feed.iconURL else {
+			return nil
+		}
+		if SpecialCase.urlStringContainSpecialCase(feed.url, SpecialCase.hostNamesWithoutFeedOrHomePageIcons) || SpecialCase.urlStringContainSpecialCase(feed.url, feedURLSubstringsToIgnoreFeedIconURL) {
+			return nil
+		}
+		return sanitizedIconURL(iconURL)
 	}
 
 	static func sanitizedIconURL(_ url: String) -> String {
@@ -193,70 +88,14 @@ private extension FeedIconDownloader {
 		return components.string ?? url
 	}
 
-	func icon(forHomePageURL homePageURL: String, feed: Feed, _ resultBlock: @escaping @MainActor (RSImage?, String?) -> Void) {
-		if Self.shouldSkipDownloadingFeedIcon(homePageURL) {
-			resultBlock(nil, nil)
+	func postFeedIconDidChange(iconURL: String?) {
+		guard let iconURL, let feeds = feedsByIconURL[iconURL] else {
 			return
 		}
-
-		if homePagesWithNoIconURL.contains(homePageURL) {
-			resultBlock(nil, nil)
-			return
-		}
-
-		guard let metadata = HTMLMetadataDownloader.shared.cachedMetadata(for: homePageURL) else {
-			feedsWaitingForHTMLMetadata.insert(feed)
-			resultBlock(nil, nil)
-			return
-		}
-
-		if let url = metadata.bestWebsiteIconURL() {
-			homePagesWithNoIconURL.remove(homePageURL)
-			icon(forURL: url, feed: feed) { image, _ in
-				Task { @MainActor in
-					resultBlock(image, url)
-				}
-			}
-			return
-		}
-
-		homePagesWithNoIconURL.insert(homePageURL)
-		resultBlock(nil, nil)
+		postFeedIconDidChange(feeds)
 	}
 
-	/// `isDefinitive` is false when the image is still downloading — imageDidBecomeAvailable
-	/// re-runs icon(for:) when it arrives.
-	func icon(forURL url: String, feed: Feed, _ imageResultBlock: @escaping @MainActor (RSImage?, _ isDefinitive: Bool) -> Void) {
-
-		let url = Self.sanitizedIconURL(url)
-
-		let kind = ActivityKind.downloadFeedImage(feedURL: url)
-		if let imageData = imageDownloader.image(for: url, activityOwner: .feedImageDownloader, activityKind: kind, activityDetail: feed.nameForDisplay) {
-			RSImage.image(with: imageData) { image in
-				imageResultBlock(image, true)
-			}
-			return
-		}
-
-		let urlIsUnfetchable = !url.hasPrefix("http://") && !url.hasPrefix("https://")
-		if urlIsUnfetchable || ImageMetadataDatabase.shared.recentlyFailed(url: url) {
-			imageResultBlock(nil, true)
-			return
-		}
-
-		waitingForFeedURLs[url, default: Set<Feed>()].insert(feed)
-		imageResultBlock(nil, false)
-	}
-
-	func postFeedIconDidBecomeAvailableNotification(_ feed: Feed) {
-
-		DispatchQueue.main.async {
-			let userInfo: [AnyHashable: Any] = ["feed": feed]
-			NotificationCenter.default.post(name: .feedIconDidBecomeAvailable, object: self, userInfo: userInfo)
-		}
-	}
-
-	func cacheIconURLForFeedURL(iconURL: String, feedURL: String) {
-		ImageMetadataDatabase.shared.saveFeedIconURL(feedURL: feedURL, iconURL: iconURL)
+	func postFeedIconDidChange(_ feeds: Set<Feed>) {
+		NotificationCenter.default.post(name: .feedIconDidChange, object: self, userInfo: [Self.feedsKey: feeds])
 	}
 }

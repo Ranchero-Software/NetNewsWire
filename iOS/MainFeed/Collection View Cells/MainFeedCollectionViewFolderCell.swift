@@ -19,6 +19,23 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 	@IBOutlet var faviconView: IconView!
 	@IBOutlet var unreadCountLabel: UILabel!
 	@IBOutlet var disclosureButton: UIButton!
+	@IBOutlet var faviconWidthConstraint: NSLayoutConstraint?
+	@IBOutlet var folderTitleLeadingConstraint: NSLayoutConstraint?
+
+	private static let faviconWidth: CGFloat = 24
+	private static let folderTitleSpacing: CGFloat = 8
+
+	/// Without the icon, the title starts where the icon would be.
+	var showsIcon = true {
+		didSet {
+			guard showsIcon != oldValue else {
+				return
+			}
+			faviconView.isHidden = !showsIcon
+			faviconWidthConstraint?.constant = showsIcon ? Self.faviconWidth : 0
+			folderTitleLeadingConstraint?.constant = showsIcon ? Self.folderTitleSpacing : 0
+		}
+	}
 
 	var delegate: MainFeedCollectionViewFolderCellDelegate?
 
@@ -40,13 +57,18 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 	}
 
 	private var unreadCountText: String? {
-		AppDefaults.shared.unreadCountDisplay.text(for: unreadCount)
+		AppDefaults.unreadCountDisplay.text(for: unreadCount)
+	}
+
+	/// Gray when grayscale icons are on.
+	private var iconTintColor: UIColor {
+		iconImage?.preferredColor ?? Assets.Colors.primaryAccent
 	}
 
 	var iconImage: IconImage? {
 		didSet {
 			faviconView.iconImage = iconImage
-			faviconView.tintColor = iconImage?.preferredColor ?? Assets.Colors.secondaryAccent
+			faviconView.tintColor = iconTintColor
 		}
 	}
 
@@ -105,12 +127,10 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 	override var accessibilityLabel: String? {
 		get {
 			let name = folderTitle.text ?? ""
-			if unreadCount > 0 && AppDefaults.shared.unreadCountDisplay == .count {
-				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessibility")
-				return "\(name) \(unreadCount) \(unreadLabel) \(expandedStateMessage)"
-			} else {
+			guard let unreadText = AppDefaults.unreadCountDisplay.accessibilityText(for: unreadCount) else {
 				return "\(name) \(expandedStateMessage)"
 			}
+			return "\(name) \(unreadText) \(expandedStateMessage)"
 		}
 		set {}
 	}
@@ -140,14 +160,7 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 	}
 
 	override func updateConfiguration(using state: UICellConfigurationState) {
-		var backgroundConfig: UIBackgroundConfiguration
-		if #available(iOS 18, *) {
-			backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
-		} else if traitCollection.userInterfaceIdiom == .pad {
-			backgroundConfig = UIBackgroundConfiguration.listSidebarCell().updated(for: state)
-		} else {
-			backgroundConfig = UIBackgroundConfiguration.listGroupedCell().updated(for: state)
-		}
+		var backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
 
 		// Matches the timeline: accent background and white text when the feeds list is first responder,
 		// and no highlight while a row is pressed, so the row goes straight to the selected style.
@@ -173,11 +186,11 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 			folderTitle.font = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .semibold)
 			unreadCountLabel.textColor = Assets.Colors.primaryAccent
 			unreadCountLabel.font = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .semibold)
-			faviconView.tintColor = Assets.Colors.primaryAccent
+			faviconView.tintColor = iconTintColor
 			disclosureButton.configuration?.baseForegroundColor = .label
 		default:
 			folderTitle.textColor = .label
-			faviconView.tintColor = Assets.Colors.primaryAccent
+			faviconView.tintColor = iconTintColor
 			folderTitle.font = UIFont.preferredFont(forTextStyle: .body)
 			unreadCountLabel.textColor = .secondaryLabel
 			unreadCountLabel.font = UIFont.preferredFont(forTextStyle: .body)

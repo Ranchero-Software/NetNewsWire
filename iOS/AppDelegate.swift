@@ -59,15 +59,16 @@ import Images
 	}
 
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+		AppDefaults.registerDefaults()
+
 		FaviconGenerator.templateImage = Assets.Images.faviconTemplate
 
 		WebViewConfiguration.resolveBrowserUserAgent()
 		Task {
 			await WebViewConfiguration.compileContentBlockingRules()
 		}
-		AppDefaults.registerDefaults()
 
-		let isFirstRun = AppDefaults.shared.isFirstRun
+		let isFirstRun = AppDefaults.isFirstRun
 		if isFirstRun {
 			Self.logger.info("Is first run.")
 		}
@@ -79,7 +80,6 @@ import Images
 
 		registerBackgroundTasks()
 		CacheCleaner.purgeIfNecessary()
-		initializeDownloaders()
 		initializeHomeScreenQuickActions()
 
 		DispatchQueue.main.async {
@@ -135,7 +135,7 @@ import Images
 
 	private func updateBadge() {
 		assert(unreadCount == AccountManager.shared.unreadCount)
-		let badgeCount = AppDefaults.shared.unreadCountDisplay == .count ? unreadCount : 0
+		let badgeCount = AppDefaults.unreadCountDisplay == .count ? unreadCount : 0
 		UNUserNotificationCenter.current().setBadgeCount(badgeCount)
 	}
 
@@ -148,7 +148,7 @@ import Images
 	}
 
 	@objc func accountRefreshDidFinish(_ note: Notification) {
-		AppDefaults.shared.lastRefresh = Date()
+		AppDefaults.lastRefresh = Date()
 	}
 
 	@objc func handleUnreadCountDisplaySettingDidChange(_ notification: Notification) {
@@ -195,7 +195,7 @@ import Images
 #endif
 		ArticleStatusSyncTimer.shared.update()
 
-		if let lastRefresh = AppDefaults.shared.lastRefresh {
+		if let lastRefresh = AppDefaults.lastRefresh {
 			if Date() > lastRefresh.addingTimeInterval(15 * 60) {
 				AccountManager.shared.refreshAllWithoutWaiting(errorHandler: ErrorHandler.log)
 			} else {
@@ -249,12 +249,6 @@ import Images
 // MARK: App Initialization
 
 private extension AppDelegate {
-
-	private func initializeDownloaders() {
-		let tempDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
-		let imagesFolderURL = tempDir.appendingPathComponent("Images")
-		try! FileManager.default.createDirectory(at: imagesFolderURL, withIntermediateDirectories: true, attributes: nil)
-	}
 
 	private func initializeHomeScreenQuickActions() {
 		let unreadTitle = NSLocalizedString("First Unread", comment: "First Unread")
@@ -465,6 +459,10 @@ private extension AppDelegate {
 			if AccountManager.shared.isSuspended {
 				AccountManager.shared.resumeAll()
 			}
+			// After a launch in the background nothing has asked for icons yet, so widgets and
+			// new-article notifications would get generated placeholders. Their files load during the refresh.
+			let feeds = AccountManager.shared.activeAccounts.flatMap { $0.flattenedFeeds() }
+			IconImageCache.shared.prefetchImagesForFeeds(feeds)
 			let didRefresh = await AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
 			if !Task.isCancelled {
 				await WidgetDataEncoder.shared?.encodeAndWait()

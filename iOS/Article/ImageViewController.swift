@@ -13,9 +13,12 @@ final class ImageViewController: UIViewController {
 	@IBOutlet var titleLabel: UILabel!
 	@IBOutlet var titleBackground: UIVisualEffectView!
 	@IBOutlet var titleLeading: NSLayoutConstraint!
-	@IBOutlet var titleTrailing: NSLayoutConstraint!
 
 	private var shareButtonItem: UIBarButtonItem?
+
+	// Title margins as a fraction of the view width.
+	private static let regularWidthTitleMarginMultiplier: CGFloat = 0.1
+	private static let compactWidthTitleMarginMultiplier: CGFloat = 0.04
 
 	var image: UIImage!
 	var imageTitle: String?
@@ -59,7 +62,6 @@ final class ImageViewController: UIViewController {
 		imageScrollView.display(image: image)
 
 		titleLabel.text = imageTitle ?? ""
-		layoutTitleLabel()
 
 		guard imageTitle != "" else {
 			titleBackground.removeFromSuperview()
@@ -68,11 +70,9 @@ final class ImageViewController: UIViewController {
 		titleBackground.layer.cornerRadius = 6
     }
 
-	override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-		super.viewWillTransition(to: size, with: coordinator)
-		coordinator.animate(alongsideTransition: { [weak self] _ in
-			self?.imageScrollView.resize()
-		})
+	override func viewWillLayoutSubviews() {
+		super.viewWillLayoutSubviews()
+		layoutTitleLabel()
 	}
 
 	@IBAction func share(_ sender: Any) {
@@ -89,11 +89,8 @@ final class ImageViewController: UIViewController {
 	}
 
 	private func layoutTitleLabel() {
-		let width = view.frame.width
-		let multiplier = traitCollection.userInterfaceIdiom == .pad ? CGFloat(0.1) : CGFloat(0.04)
-		titleLeading.constant += width * multiplier
-		titleTrailing.constant -= width * multiplier
-		titleLabel.layoutIfNeeded()
+		let multiplier = traitCollection.horizontalSizeClass == .regular ? Self.regularWidthTitleMarginMultiplier : Self.compactWidthTitleMarginMultiplier
+		titleLeading.constant = view.bounds.width * multiplier
 	}
 }
 

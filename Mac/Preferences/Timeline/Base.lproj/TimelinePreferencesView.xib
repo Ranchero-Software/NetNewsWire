@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="24765" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24765"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="TimelinePreferencesViewController" customModule="NetNewsWire" customModuleProvider="target">
+            <connections>
+                <outlet property="timelineIconSizePopup" destination="tlP-fS-0p1" id="tlO-fS-0o1"/>
+                <outlet property="timelineIconsPopup" destination="tlP-fD-0p1" id="tlO-fD-0o1"/>
+                <outlet property="timelineFadeReadArticlesButton" destination="tlB-fR-0b1" id="tlO-fR-0o1"/>
+                <outlet property="timelineFeedNameAndDateAboveTitleButton" destination="tlB-fA-0b1" id="tlO-fA-0o1"/>
+                <outlet property="timelineFullTitlesButton" destination="tlR-fT-0b1" id="tlO-fT-0o1"/>
+                <outlet property="timelineNumberOfLinesPopup" destination="tlP-nL-0p1" id="tlO-nL-0o1"/>
+                <outlet property="timelineShowSeparatorsButton" destination="tlB-sP-0b1" id="tlO-sP-0o1"/>
+                <outlet property="timelineTitleAndSummaryButton" destination="tlR-tP-0b1" id="tlO-tP-0o1"/>
+                <outlet property="timelineTextSizePopup" destination="tlP-tX-0p1" id="tlO-tX-0o1"/>
+                <outlet property="timelineThumbnailsPopup" destination="tlP-tS-0p1" id="tlO-tS-0o1"/>
+                <outlet property="view" destination="tlV-iw-0v1" id="tlO-vw-0o1"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <view id="tlV-iw-0v1">
+            <rect key="frame" x="0.0" y="0.0" width="515" height="422"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <subviews>
+                <customView translatesAutoresizingMaskIntoConstraints="NO" id="tlC-nT-0c1">
+                    <rect key="frame" x="85" y="20" width="346" height="382"/>
+                    <subviews>
+                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlL-fI-0l1">
+                            <rect key="frame" x="-2" y="362" width="97" height="16"/>
+                            <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="right" title="Feed Icons:" id="tlL-fI-0c1">
+                                <font key="font" metaFont="system"/>
+                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                        <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlP-fD-0p1">
+                            <rect key="frame" x="101" y="358" width="244" height="24"/>
+                            <popUpButtonCell key="cell" type="push" title="Automatic" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="tlM-fD-0m0" id="tlP-fD-0c1">
+                                <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="message"/>
+                                <menu key="menu" id="tlM-fD-0n1">
+                                    <items>
+                                        <menuItem title="Automatic" state="on" id="tlM-fD-0m0"/>
+                                        <menuItem title="Always" tag="1" id="tlM-fD-0m1"/>
+                                        <menuItem title="Never" tag="2" id="tlM-fD-0m2"/>
+                                    </items>
+                                </menu>
+                            </popUpButtonCell>
+                            <connections>
+                                <action selector="timelineFeedIconsPopUpDidChange:" target="-2" id="tlA-fD-0a1"/>
+                            </connections>
+                        </popUpButton>
+                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="tlN-fD-0l1">
+                            <rect key="frame" x="99" y="318" width="249" height="32"/>
+                            <textFieldCell key="cell" controlSize="small" title="Automatic shows icons for folders, smart feeds, and authors with avatars." id="tlN-fD-0c1">
+                                <font key="font" usesAppearanceFont="YES"/>
+                                <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlL-fS-0l1">
+                            <rect key="frame" x="-2" y="286" width="97" height="16"/>
+                            <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="right" title="Feed Icon Size:" id="tlL-fS-0c1">
+                                <font key="font" metaFont="system"/>
+                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                        <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlP-fS-0p1">
+                            <rect key="frame" x="101" y="282" width="244" height="24"/>
+                            <popUpButtonCell key="cell" type="push" title="Medium" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="2" imageScaling="proportionallyDown" inset="2" selectedItem="tlM-fS-0m2" id="tlP-fS-0c1">
+                                <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="message"/>
+                                <menu key="menu" id="tlM-fS-0n1">
+                                    <items>
+                                        <menuItem title="Small" tag="1" id="tlM-fS-0m1"/>
+                                        <menuItem title="Medium" state="on" tag="2" id="tlM-fS-0m2"/>
+                                        <menuItem title="Large" tag="3" id="tlM-fS-0m3"/>
+                                    </items>
+                                </menu>
+                            </popUpButtonCell>
+                            <connections>
+                                <action selector="timelineIconSizePopUpDidChange:" target="-2" id="tlA-fS-0a1"/>
+                            </connections>
+                        </popUpButton>
+                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlL-tH-0l1">
+                            <rect key="frame" x="-2" y="250" width="97" height="16"/>
+                            <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="right" title="Thumbnails:" id="tlL-tH-0c1">
+                                <font key="font" metaFont="system"/>
+                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                        <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlP-tS-0p1">
+                            <rect key="frame" x="101" y="246" width="244" height="24"/>
+                            <popUpButtonCell key="cell" type="push" title="None" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="tlM-tS-0m0" id="tlP-tS-0c1">
+                                <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="message"/>
+                                <menu key="menu" id="tlM-tS-0n1">
+                                    <items>
+                                        <menuItem title="None" state="on" id="tlM-tS-0m0"/>
+                                        <menuItem isSeparatorItem="YES" id="tlM-tS-0s1"/>
+                                        <menuItem title="Small" tag="1" id="tlM-tS-0m1"/>
+                                        <menuItem title="Large" tag="2" id="tlM-tS-0m2"/>
+                                    </items>
+                                </menu>
+                            </popUpButtonCell>
+                            <connections>
+                                <action selector="timelineThumbnailsPopUpDidChange:" target="-2" id="tlA-tS-0a1"/>
+                            </connections>
+                        </popUpButton>
+                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlL-tX-0l1">
+                            <rect key="frame" x="-2" y="214" width="97" height="16"/>
+                            <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="right" title="Text Size:" id="tlL-tX-0c1">
+                                <font key="font" metaFont="system"/>
+                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                        <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlP-tX-0p1">
+                            <rect key="frame" x="101" y="210" width="244" height="24"/>
+                            <popUpButtonCell key="cell" type="push" title="Medium" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="2" imageScaling="proportionallyDown" inset="2" selectedItem="tlM-tX-0m2" id="tlP-tX-0c1">
+                                <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="message"/>
+                                <menu key="menu" id="tlM-tX-0n1">
+                                    <items>
+                                        <menuItem title="Small" tag="1" id="tlM-tX-0m1"/>
+                                        <menuItem title="Medium" state="on" tag="2" id="tlM-tX-0m2"/>
+                                        <menuItem title="Large" tag="3" id="tlM-tX-0m3"/>
+                                        <menuItem title="Extra Large" tag="4" id="tlM-tX-0m4"/>
+                                        <menuItem title="Extra Extra Large" tag="5" id="tlM-tX-0m5"/>
+                                    </items>
+                                </menu>
+                            </popUpButtonCell>
+                            <constraints>
+                                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="tlK-00-0k1"/>
+                            </constraints>
+                            <connections>
+                                <action selector="timelineTextSizePopUpDidChange:" target="-2" id="tlA-tX-0a1"/>
+                            </connections>
+                        </popUpButton>
+                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlL-nL-0l1">
+                            <rect key="frame" x="-2" y="178" width="97" height="16"/>
+                            <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="right" title="Rows:" id="tlL-nL-0c1">
+                                <font key="font" metaFont="system"/>
+                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                        <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlP-nL-0p1">
+                            <rect key="frame" x="252" y="174" width="57" height="24"/>
+                            <popUpButtonCell key="cell" type="push" title="2" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="2" imageScaling="proportionallyDown" inset="2" selectedItem="tlM-nL-0m2" id="tlP-nL-0c1">
+                                <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="message"/>
+                                <menu key="menu" id="tlM-nL-0n1">
+                                    <items>
+                                        <menuItem title="1" tag="1" id="tlM-nL-0m1"/>
+                                        <menuItem title="2" state="on" tag="2" id="tlM-nL-0m2"/>
+                                        <menuItem title="3" tag="3" id="tlM-nL-0m3"/>
+                                        <menuItem title="4" tag="4" id="tlM-nL-0m4"/>
+                                        <menuItem title="5" tag="5" id="tlM-nL-0m5"/>
+                                        <menuItem title="6" tag="6" id="tlM-nL-0m6"/>
+                                    </items>
+                                </menu>
+                            </popUpButtonCell>
+                            <connections>
+                                <action selector="timelineNumberOfLinesPopUpDidChange:" target="-2" id="tlA-nL-0a1"/>
+                            </connections>
+                        </popUpButton>
+                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlR-tP-0b1">
+                            <rect key="frame" x="101" y="178" width="143" height="16"/>
+                            <buttonCell key="cell" type="radio" title="Title and preview, in" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="tlR-tP-0c1">
+                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="timelineRowsRadioButtonDidChange:" target="-2" id="tlA-tP-0a1"/>
+                            </connections>
+                        </button>
+                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlL-ln-0l1">
+                            <rect key="frame" x="315" y="178" width="32" height="16"/>
+                            <textFieldCell key="cell" lineBreakMode="clipping" title="lines" id="tlL-ln-0c1">
+                                <font key="font" metaFont="system"/>
+                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlR-fT-0b1">
+                            <rect key="frame" x="101" y="150" width="144" height="16"/>
+                            <buttonCell key="cell" type="radio" title="Full title, no preview" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="tlR-fT-0c1">
+                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="timelineRowsRadioButtonDidChange:" target="-2" id="tlA-fT-0a1"/>
+                            </connections>
+                        </button>
+                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="tlN-fT-0l1">
+                            <rect key="frame" x="119" y="128" width="229" height="16"/>
+                            <textFieldCell key="cell" controlSize="small" title="Shows the whole title, up to 12 lines." id="tlN-fT-0c1">
+                                <font key="font" usesAppearanceFont="YES"/>
+                                <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlB-sP-0b1">
+                            <rect key="frame" x="101" y="100" width="245" height="16"/>
+                            <buttonCell key="cell" type="check" title="Show separators" bezelStyle="regularSquare" imagePosition="left" inset="2" id="tlB-sP-0c1">
+                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="timelineShowSeparatorsDidChange:" target="-2" id="tlA-sP-0a1"/>
+                            </connections>
+                        </button>
+                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlB-fR-0b1">
+                            <rect key="frame" x="101" y="78" width="245" height="16"/>
+                            <buttonCell key="cell" type="check" title="Fade read articles" bezelStyle="regularSquare" imagePosition="left" inset="2" id="tlB-fR-0c1">
+                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="timelineFadeReadArticlesDidChange:" target="-2" id="tlA-fR-0a1"/>
+                            </connections>
+                        </button>
+                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tlB-fA-0b1">
+                            <rect key="frame" x="101" y="56" width="245" height="16"/>
+                            <buttonCell key="cell" type="check" title="Feed name and date above title" bezelStyle="regularSquare" imagePosition="left" inset="2" id="tlB-fA-0c1">
+                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="timelineFeedNameAndDateAboveTitleDidChange:" target="-2" id="tlA-fA-0a1"/>
+                            </connections>
+                        </button>
+                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="tlN-cL-0l1">
+                            <rect key="frame" x="99" y="0.0" width="249" height="48"/>
+                            <textFieldCell key="cell" controlSize="small" title="Feed icon size, thumbnails, rows, and separators apply only to the standard layout." id="tlN-cL-0c1">
+                                <font key="font" usesAppearanceFont="YES"/>
+                                <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                    </subviews>
+                    <constraints>
+                        <constraint firstItem="tlP-fD-0p1" firstAttribute="top" secondItem="tlC-nT-0c1" secondAttribute="top" id="c36-Ly-Out"/>
+                        <constraint firstItem="tlP-fD-0p1" firstAttribute="leading" secondItem="tlL-fI-0l1" secondAttribute="trailing" constant="8" symbolic="YES" id="c40-Ly-Out"/>
+                        <constraint firstItem="tlL-fI-0l1" firstAttribute="leading" secondItem="tlC-nT-0c1" secondAttribute="leading" id="c37-Ly-Out"/>
+                        <constraint firstItem="tlL-fI-0l1" firstAttribute="firstBaseline" secondItem="tlP-fD-0p1" secondAttribute="firstBaseline" id="c38-Ly-Out"/>
+                        <constraint firstAttribute="trailing" secondItem="tlP-fD-0p1" secondAttribute="trailing" constant="1" id="c41-Ly-Out"/>
+                        <constraint firstItem="tlN-fD-0l1" firstAttribute="top" secondItem="tlP-fD-0p1" secondAttribute="bottom" constant="8" id="c42-Ly-Out"/>
+                        <constraint firstItem="tlN-fD-0l1" firstAttribute="leading" secondItem="tlP-fD-0p1" secondAttribute="leading" id="c43-Ly-Out"/>
+                        <constraint firstAttribute="trailing" secondItem="tlN-fD-0l1" secondAttribute="trailing" id="c44-Ly-Out"/>
+                        <constraint firstItem="tlP-fS-0p1" firstAttribute="top" secondItem="tlN-fD-0l1" secondAttribute="bottom" constant="12" id="c45-Ly-Out"/>
+                        <constraint firstItem="tlL-fS-0l1" firstAttribute="leading" secondItem="tlC-nT-0c1" secondAttribute="leading" id="c46-Ly-Out"/>
+                        <constraint firstItem="tlL-fS-0l1" firstAttribute="firstBaseline" secondItem="tlP-fS-0p1" secondAttribute="firstBaseline" id="c47-Ly-Out"/>
+                        <constraint firstItem="tlL-fS-0l1" firstAttribute="trailing" secondItem="tlL-fI-0l1" secondAttribute="trailing" id="c48-Ly-Out"/>
+                        <constraint firstItem="tlP-fS-0p1" firstAttribute="leading" secondItem="tlP-fD-0p1" secondAttribute="leading" id="c49-Ly-Out"/>
+                        <constraint firstAttribute="trailing" secondItem="tlP-fS-0p1" secondAttribute="trailing" constant="1" id="c50-Ly-Out"/>
+                        <constraint firstItem="tlP-tS-0p1" firstAttribute="top" secondItem="tlP-fS-0p1" secondAttribute="bottom" constant="12" id="c51-Ly-Out"/>
+                        <constraint firstItem="tlL-tH-0l1" firstAttribute="leading" secondItem="tlC-nT-0c1" secondAttribute="leading" id="c52-Ly-Out"/>
+                        <constraint firstItem="tlL-tH-0l1" firstAttribute="firstBaseline" secondItem="tlP-tS-0p1" secondAttribute="firstBaseline" id="c53-Ly-Out"/>
+                        <constraint firstItem="tlL-tH-0l1" firstAttribute="trailing" secondItem="tlL-fI-0l1" secondAttribute="trailing" id="c54-Ly-Out"/>
+                        <constraint firstItem="tlP-tS-0p1" firstAttribute="leading" secondItem="tlP-fD-0p1" secondAttribute="leading" id="c55-Ly-Out"/>
+                        <constraint firstAttribute="trailing" secondItem="tlP-tS-0p1" secondAttribute="trailing" constant="1" id="c56-Ly-Out"/>
+                        <constraint firstItem="tlP-tX-0p1" firstAttribute="top" secondItem="tlP-tS-0p1" secondAttribute="bottom" constant="12" id="c57-Ly-Out"/>
+                        <constraint firstItem="tlL-tX-0l1" firstAttribute="leading" secondItem="tlC-nT-0c1" secondAttribute="leading" id="c58-Ly-Out"/>
+                        <constraint firstItem="tlL-tX-0l1" firstAttribute="firstBaseline" secondItem="tlP-tX-0p1" secondAttribute="firstBaseline" id="c59-Ly-Out"/>
+                        <constraint firstItem="tlL-tX-0l1" firstAttribute="trailing" secondItem="tlL-fI-0l1" secondAttribute="trailing" id="c60-Ly-Out"/>
+                        <constraint firstItem="tlP-tX-0p1" firstAttribute="leading" secondItem="tlP-fD-0p1" secondAttribute="leading" id="c61-Ly-Out"/>
+                        <constraint firstAttribute="trailing" secondItem="tlP-tX-0p1" secondAttribute="trailing" constant="1" id="c62-Ly-Out"/>
+                        <constraint firstItem="tlP-nL-0p1" firstAttribute="top" secondItem="tlP-tX-0p1" secondAttribute="bottom" constant="12" id="c63-Ly-Out"/>
+                        <constraint firstItem="tlL-nL-0l1" firstAttribute="leading" secondItem="tlC-nT-0c1" secondAttribute="leading" id="c64-Ly-Out"/>
+                        <constraint firstItem="tlL-nL-0l1" firstAttribute="firstBaseline" secondItem="tlP-nL-0p1" secondAttribute="firstBaseline" id="c65-Ly-Out"/>
+                        <constraint firstItem="tlL-nL-0l1" firstAttribute="trailing" secondItem="tlL-fI-0l1" secondAttribute="trailing" id="c66-Ly-Out"/>
+                        <constraint firstItem="tlR-tP-0b1" firstAttribute="leading" secondItem="tlP-fD-0p1" secondAttribute="leading" id="cR1-Ly-Out"/>
+                        <constraint firstItem="tlR-tP-0b1" firstAttribute="firstBaseline" secondItem="tlP-nL-0p1" secondAttribute="firstBaseline" id="cR2-Ly-Out"/>
+                        <constraint firstItem="tlP-nL-0p1" firstAttribute="leading" secondItem="tlR-tP-0b1" secondAttribute="trailing" constant="8" symbolic="YES" id="c67-Ly-Out"/>
+                        <constraint firstItem="tlL-ln-0l1" firstAttribute="leading" secondItem="tlP-nL-0p1" secondAttribute="trailing" constant="8" symbolic="YES" id="cR3-Ly-Out"/>
+                        <constraint firstItem="tlL-ln-0l1" firstAttribute="firstBaseline" secondItem="tlP-nL-0p1" secondAttribute="firstBaseline" id="cR4-Ly-Out"/>
+                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="tlL-ln-0l1" secondAttribute="trailing" constant="1" id="c68-Ly-Out"/>
+                        <constraint firstItem="tlR-fT-0b1" firstAttribute="top" secondItem="tlP-nL-0p1" secondAttribute="bottom" constant="8" id="cR5-Ly-Out"/>
+                        <constraint firstItem="tlR-fT-0b1" firstAttribute="leading" secondItem="tlP-fD-0p1" secondAttribute="leading" id="cR6-Ly-Out"/>
+                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="tlR-fT-0b1" secondAttribute="trailing" id="cR7-Ly-Out"/>
+                        <constraint firstItem="tlN-fT-0l1" firstAttribute="top" secondItem="tlR-fT-0b1" secondAttribute="bottom" constant="6" id="cR8-Ly-Out"/>
+                        <constraint firstItem="tlN-fT-0l1" firstAttribute="leading" secondItem="tlR-fT-0b1" secondAttribute="leading" constant="20" id="cR9-Ly-Out"/>
+                        <constraint firstAttribute="trailing" secondItem="tlN-fT-0l1" secondAttribute="trailing" id="cRA-Ly-Out"/>
+                        <constraint firstItem="tlB-sP-0b1" firstAttribute="top" secondItem="tlN-fT-0l1" secondAttribute="bottom" constant="12" id="c69-Ly-Out"/>
+                        <constraint firstItem="tlB-sP-0b1" firstAttribute="leading" secondItem="tlP-fD-0p1" secondAttribute="leading" id="c70-Ly-Out"/>
+                        <constraint firstAttribute="trailing" secondItem="tlB-sP-0b1" secondAttribute="trailing" id="c71-Ly-Out"/>
+                        <constraint firstItem="tlB-fR-0b1" firstAttribute="top" secondItem="tlB-sP-0b1" secondAttribute="bottom" constant="6" id="cF1-Ly-Out"/>
+                        <constraint firstItem="tlB-fR-0b1" firstAttribute="leading" secondItem="tlP-fD-0p1" secondAttribute="leading" id="cF2-Ly-Out"/>
+                        <constraint firstAttribute="trailing" secondItem="tlB-fR-0b1" secondAttribute="trailing" id="cF3-Ly-Out"/>
+                        <constraint firstItem="tlB-fA-0b1" firstAttribute="top" secondItem="tlB-fR-0b1" secondAttribute="bottom" constant="6" id="cA1-Ly-Out"/>
+                        <constraint firstItem="tlB-fA-0b1" firstAttribute="leading" secondItem="tlP-fD-0p1" secondAttribute="leading" id="cA2-Ly-Out"/>
+                        <constraint firstAttribute="trailing" secondItem="tlB-fA-0b1" secondAttribute="trailing" id="cA3-Ly-Out"/>
+                        <constraint firstItem="tlN-cL-0l1" firstAttribute="top" secondItem="tlB-fA-0b1" secondAttribute="bottom" constant="8" id="cN1-Ly-Out"/>
+                        <constraint firstItem="tlN-cL-0l1" firstAttribute="leading" secondItem="tlP-fD-0p1" secondAttribute="leading" id="cN2-Ly-Out"/>
+                        <constraint firstAttribute="trailing" secondItem="tlN-cL-0l1" secondAttribute="trailing" id="cN3-Ly-Out"/>
+                        <constraint firstAttribute="bottom" secondItem="tlN-cL-0l1" secondAttribute="bottom" id="c72-Ly-Out"/>
+                    </constraints>
+                </customView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="tlC-nT-0c1" firstAttribute="top" secondItem="tlV-iw-0v1" secondAttribute="top" constant="20" id="t01-Ly-Out"/>
+                <constraint firstItem="tlC-nT-0c1" firstAttribute="centerX" secondItem="tlV-iw-0v1" secondAttribute="centerX" id="t02-Ly-Out"/>
+                <constraint firstItem="tlC-nT-0c1" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="tlV-iw-0v1" secondAttribute="leading" constant="20" id="t03-Ly-Out"/>
+                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="tlC-nT-0c1" secondAttribute="trailing" constant="20" id="t04-Ly-Out"/>
+                <constraint firstAttribute="bottom" secondItem="tlC-nT-0c1" secondAttribute="bottom" constant="20" id="t05-Ly-Out"/>
+            </constraints>
+            <point key="canvasLocation" x="141.5" y="193"/>
+        </view>
+    </objects>
+</document>

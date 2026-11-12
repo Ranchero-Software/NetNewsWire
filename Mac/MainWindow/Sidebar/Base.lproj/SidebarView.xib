@@ -8,6 +8,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="SidebarViewController" customModule="NetNewsWire" customModuleProvider="target">
             <connections>
                 <outlet property="outlineView" destination="cnV-kg-Dn2" id="FVf-OT-E3h"/>
+                <outlet property="progressView" destination="HZs-Zf-G8s" id="sSb-Vw-oT1"/>
                 <outlet property="view" destination="bJZ-bH-vgc" id="aQe-8r-Wm3"/>
             </connections>
         </customObject>
@@ -88,7 +89,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
                 </scrollView>
-                <customView translatesAutoresizingMaskIntoConstraints="NO" id="HZs-Zf-G8s" customClass="SidebarStatusBarView" customModule="NetNewsWire" customModuleProvider="target">
+                <customView translatesAutoresizingMaskIntoConstraints="NO" id="HZs-Zf-G8s" customClass="SidebarProgressView" customModule="NetNewsWire" customModuleProvider="target">
                     <rect key="frame" x="0.0" y="-28" width="240" height="28"/>
                     <subviews>
                         <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="agw-l1-HkL">

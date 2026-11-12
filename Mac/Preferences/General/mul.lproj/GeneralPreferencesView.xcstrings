@@ -1,24 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "4Pi-2Y-XmV.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Extra Extra Large\"; ObjectID = \"4Pi-2Y-XmV\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Extra Extra Large"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Extra extra grande"
-          }
-        }
-      }
-    },
     "7e2-TV-hth.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Every 4 hours\"; ObjectID = \"7e2-TV-hth\";",
       "extractionState" : "extracted_with_value",
@@ -87,24 +69,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Navegador:"
-          }
-        }
-      }
-    },
-    "ckZ-0Q-rNz.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Large\"; ObjectID = \"ckZ-0Q-rNz\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Large"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Grande"
           }
         }
       }
@@ -217,42 +181,6 @@
         }
       }
     },
-    "jMV-2o-5Oh.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Medium\"; ObjectID = \"jMV-2o-5Oh\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Medium"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mediano"
-          }
-        }
-      }
-    },
-    "MQe-Za-N8J.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Article Theme:\"; ObjectID = \"MQe-Za-N8J\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Article Theme:"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tema del artículo:"
-          }
-        }
-      }
-    },
     "o1h-xo-elW.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Every 2 hours\"; ObjectID = \"o1h-xo-elW\";",
       "extractionState" : "extracted_with_value",
@@ -283,18 +211,6 @@
         }
       }
     },
-    "Pkl-EA-Goa.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Default\"; ObjectID = \"Pkl-EA-Goa\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Default"
-          }
-        }
-      }
-    },
     "Qjt-qr-WER.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Every hour\"; ObjectID = \"Qjt-qr-WER\";",
       "extractionState" : "extracted_with_value",
@@ -309,42 +225,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cada hora"
-          }
-        }
-      }
-    },
-    "qMe-6g-Vme.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Extra Large\"; ObjectID = \"qMe-6g-Vme\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Extra Large"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Extra grande"
-          }
-        }
-      }
-    },
-    "roB-Mu-Ht7.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Small\"; ObjectID = \"roB-Mu-Ht7\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Small"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pequeño"
           }
         }
       }
@@ -380,7 +260,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abrir fuentes en el lector de noticias predeterminado"
+            "value" : "Abrir fuentes en el lector predeterminado"
           }
         }
       }
@@ -398,7 +278,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abrir páginas web en segundo plano en el navegador"
+            "value" : "Abrir páginas web en segundo plano"
           }
         }
       }
@@ -412,6 +292,12 @@
             "state" : "new",
             "value" : "Show"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar"
+          }
         }
       }
     },
@@ -424,6 +310,12 @@
             "state" : "new",
             "value" : "Show dot"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar punto"
+          }
         }
       }
     },
@@ -435,6 +327,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Hide"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ocultar"
           }
         }
       }
@@ -466,41 +364,11 @@
             "state" : "new",
             "value" : "Unread Counts:"
           }
-        }
-      }
-    },
-    "xQu-QV-91i.title" : {
-      "comment" : "Class = \"NSTextFieldCell\"; title = \"Article Text Size:\"; ObjectID = \"xQu-QV-91i\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Article Text Size:"
-          }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tamaño del texto del artículo:"
-          }
-        }
-      }
-    },
-    "ySX-5i-SP1.title" : {
-      "comment" : "Class = \"NSButtonCell\"; title = \"Open Themes Folder\"; ObjectID = \"ySX-5i-SP1\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Open Themes Folder"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abrir carpeta de temas"
+            "value" : "Contadores de no leídos:"
           }
         }
       }

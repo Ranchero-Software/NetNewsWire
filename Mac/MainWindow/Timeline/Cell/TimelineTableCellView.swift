@@ -19,6 +19,7 @@ final class TimelineTableCellView: NSTableCellView {
 	private let feedNameView = TimelineTableCellView.singleLineTextField()
 
 	private lazy var iconView = IconView()
+	private let thumbnailView = ThumbnailView()
 
 	private var starView = TimelineTableCellView.imageView(with: Assets.Images.timelineStar, scaling: .scaleNone)
 
@@ -31,6 +32,7 @@ final class TimelineTableCellView: NSTableCellView {
 			if cellAppearance != oldValue {
 				updateTextFieldFonts()
 				iconView.layer?.cornerRadius = cellAppearance.iconCornerRadius
+				thumbnailView.cornerRadius = cellAppearance.thumbnailCornerRadius
 				needsLayout = true
 			}
 		}
@@ -39,6 +41,16 @@ final class TimelineTableCellView: NSTableCellView {
 	var cellData: TimelineCellData! {
 		didSet {
 			updateSubviews()
+		}
+	}
+
+	/// The image shown now, which can be newer than `cellData.thumbnail`. Setting this leaves the rest of the cell as it is.
+	var thumbnail: NSImage? {
+		get {
+			thumbnailView.image
+		}
+		set {
+			setThumbnailImage(newValue)
 		}
 	}
 
@@ -106,6 +118,8 @@ final class TimelineTableCellView: NSTableCellView {
 		unreadIndicatorView.setFrameIfNotEqual(layoutRects.unreadIndicatorRect)
 		feedNameView.setFrameIfNotEqual(layoutRects.feedNameRect)
 		iconView.setFrameIfNotEqual(layoutRects.iconImageRect)
+		// Sized to the image, so the corner radius rounds the image itself. All of the rect until the image arrives.
+		thumbnailView.setFrameIfNotEqual(layoutRects.thumbnailRect.aspectFitRect(for: thumbnailView.image?.size ?? .zero))
 		starView.setFrameIfNotEqual(layoutRects.starRect)
 	}
 }
@@ -187,6 +201,7 @@ private extension TimelineTableCellView {
 		addSubviewAtInit(dateView, hidden: false)
 		addSubviewAtInit(feedNameView, hidden: true)
 		addSubviewAtInit(iconView, hidden: true)
+		addSubviewAtInit(thumbnailView, hidden: true)
 		addSubviewAtInit(starView, hidden: true)
 
 		makeTextFieldColorsNormal()
@@ -194,7 +209,7 @@ private extension TimelineTableCellView {
 
 	func updatedLayoutRects() -> TimelineCellLayout {
 
-		return TimelineCellLayout(width: bounds.width, height: bounds.height, cellData: cellData, appearance: cellAppearance, hasIcon: iconView.iconImage != nil)
+		return TimelineCellLayout(width: bounds.width, height: bounds.height, cellData: cellData, appearance: cellAppearance)
 	}
 
 	func updateTitleView() {
@@ -282,6 +297,35 @@ private extension TimelineTableCellView {
 		hideView(iconView)
 	}
 
+	func updateThumbnail() {
+		guard cellData.showThumbnail else {
+			makeThumbnailEmpty()
+			return
+		}
+
+		if thumbnailView.isHidden {
+			showView(thumbnailView)
+			needsLayout = true
+		}
+		setThumbnailImage(cellData.thumbnail)
+	}
+
+	func makeThumbnailEmpty() {
+		if !thumbnailView.isHidden {
+			hideView(thumbnailView)
+			needsLayout = true
+		}
+		setThumbnailImage(nil)
+	}
+
+	/// Lays out again, since the thumbnail view is sized to the image.
+	func setThumbnailImage(_ image: NSImage?) {
+		if thumbnailView.image !== image {
+			thumbnailView.image = image
+			needsLayout = true
+		}
+	}
+
 	func hideView(_ view: NSView) {
 		if !view.isHidden {
 			view.isHidden = true
@@ -311,5 +355,6 @@ private extension TimelineTableCellView {
 		updateUnreadIndicator()
 		updateStarView()
 		updateIcon()
+		updateThumbnail()
 	}
 }

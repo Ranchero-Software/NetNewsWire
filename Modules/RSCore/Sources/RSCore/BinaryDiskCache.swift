@@ -7,57 +7,46 @@
 //
 
 import Foundation
-import os
 
+/// Each key is its own file. Writes are atomic.
 nonisolated public final class BinaryDiskCache: Sendable {
 	public let folder: String
-	private let mutex = OSAllocatedUnfairLock(initialState: ())
 
 	public init(folder: String) {
 		self.folder = folder
 	}
 
 	public func data(forKey key: String) throws -> Data? {
-		try mutex.withLock { _ in
-			try _data(forKey: key)
-		}
+		try _data(forKey: key)
 	}
 
 	public func setData(_ data: Data, forKey key: String) throws {
-		try mutex.withLock { _ in
-			try _setData(data, forKey: key)
-		}
+		try _setData(data, forKey: key)
 	}
 
 	public func deleteData(forKey key: String) throws {
-		try mutex.withLock { _ in
-			try _deleteData(forKey: key)
-		}
+		try _deleteData(forKey: key)
 	}
 
 	// Subscript doesn’t throw. Use when you can ignore errors.
 
 	public subscript(_ key: String) -> Data? {
 		get {
-			mutex.withLock { _ in
-				do {
-					return try _data(forKey: key)
-				} catch {}
-				return nil
-			}
+			do {
+				return try _data(forKey: key)
+			} catch {}
+			return nil
 		}
 
 		set {
-			mutex.withLock { _ in
-				if let data = newValue {
-					do {
-						try _setData(data, forKey: key)
-					} catch {}
-				} else {
-					do {
-						try _deleteData(forKey: key)
-					} catch {}
-				}
+			if let data = newValue {
+				do {
+					try _setData(data, forKey: key)
+				} catch {}
+			} else {
+				do {
+					try _deleteData(forKey: key)
+				} catch {}
 			}
 		}
 	}
@@ -67,12 +56,13 @@ nonisolated private extension BinaryDiskCache {
 
 	func _data(forKey key: String) throws -> Data? {
 		let url = urlForKey(key)
-		return try Data(contentsOf: url)
+		// Mapped, so the bytes are file-backed pages the system can reclaim, not heap memory.
+		return try Data(contentsOf: url, options: .mappedIfSafe)
 	}
 
 	func _setData(_ data: Data, forKey key: String) throws {
 		let url = urlForKey(key)
-		try data.write(to: url)
+		try data.write(to: url, options: .atomic)
 	}
 
 	func _deleteData(forKey key: String) throws {

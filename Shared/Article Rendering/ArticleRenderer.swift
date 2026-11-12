@@ -11,8 +11,10 @@ import Foundation
 import UIKit
 #endif
 import RSCore
+import RSParser
 import Articles
 import Account
+import Images
 
 @MainActor struct ArticleRenderer {
 
@@ -31,6 +33,8 @@ import Account
 	}
 
 	static var imageIconScheme = "nnwImageIcon"
+	/// Serves an image from the timeline’s copy. The percent-encoded original URL follows the scheme.
+	static let articleImageScheme = "nnwArticleImage"
 
 	static var blank = Page(name: "blank")
 	static var page = Page(name: "page")
@@ -40,7 +44,13 @@ import Account
 	private let articleTheme: ArticleTheme
 	private let title: String
 	private let body: String
-	private let baseURL: String?
+	private let baseURL: URL?
+	private let routesThumbnailImages: Bool
+
+	private static let primaryMediaKey = "primary_media"
+	private static let primaryMediaMacro = "[[primary_media]]"
+	private static let enclosuresKey = "enclosures"
+	private static let enclosuresMacro = "[[enclosures]]"
 
 	private static let longDateTimeFormatter: DateFormatter = {
 		let formatter = DateFormatter()
@@ -105,55 +115,98 @@ import Account
 		return formatter
 	}()
 
-	private init(article: Article?, extractedArticle: ExtractedArticle?, theme: ArticleTheme) {
+	private init(article: Article?, extractedArticle: ExtractedArticle?, theme: ArticleTheme, routesThumbnailImages: Bool = false) {
 		self.article = article
 		self.extractedArticle = extractedArticle
 		self.articleTheme = theme
+		self.routesThumbnailImages = routesThumbnailImages
 		self.title = ArticleStringFormatter.sanitizedTitle(article?.title, forHTML: true) ?? ""
-		// Some feeds embed a full HTML document as the article content —
-		// render just the body fragment.
-		// <https://github.com/Ranchero-Software/NetNewsWire/issues/3008>
+
+		var articleBody: String
+		var baseURL: URL?
 		if let content = extractedArticle?.content {
-			self.body = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(content)
-			self.baseURL = extractedArticle?.url
+			articleBody = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(content)
+			if let extractedArticleURL = extractedArticle?.url {
+				baseURL = URL(string: extractedArticleURL)
+			}
 		} else {
-			let articleBody = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(article?.body ?? "")
-			self.body = ArticleRenderingSpecialCases.insertParagraphTagsIfNeeded(articleBody, feedURLString: article?.feed?.url)
-			self.baseURL = article?.baseURL?.absoluteString
+			let feedURL = article?.feed?.url
+			let homePageURL = article?.feed?.homePageURL
+
+			articleBody = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(Self.bodyHTML(article))
+			articleBody = ArticleRenderingSpecialCases.insertParagraphTagsIfNeeded(articleBody, feedURL: feedURL, homePageURL: homePageURL)
+			articleBody = ArticleRenderingSpecialCases.removeStrayLineBreaksIfNeeded(articleBody, feedURL: feedURL, homePageURL: homePageURL)
+			articleBody = ArticleRenderingSpecialCases.enlargeFlickrImagesIfNeeded(articleBody, feedURL: feedURL, attachmentURLs: article?.attachments?.map { $0.url } ?? [])
+			if article?.account?.type == .freshRSS {
+				articleBody = ArticleRenderingSpecialCases.desanitizeFreshRSSContent(articleBody)
+			}
+
+			if let articleBaseURL = article?.baseURL {
+				baseURL = ArticleRenderingSpecialCases.baseURLForRendering(articleBaseURL)
+			}
 		}
+
+		self.body = articleBody
+		self.baseURL = baseURL
 	}
 
 	// MARK: - API
 
-	static func articleHTML(article: Article, extractedArticle: ExtractedArticle? = nil, theme: ArticleTheme) -> Rendering {
-		let renderer = ArticleRenderer(article: article, extractedArticle: extractedArticle, theme: theme)
-		return (renderer.articleCSS, renderer.articleHTML, renderer.title, renderer.baseURL ?? "")
+	/// `routesThumbnailImages` points the thumbnail’s `<img>`s at `articleImageScheme`, which only a web view with `ArticleImageSchemeHandler` can load.
+	static func articleHTML(article: Article, extractedArticle: ExtractedArticle? = nil, theme: ArticleTheme, routesThumbnailImages: Bool = false) -> Rendering {
+		let renderer = ArticleRenderer(article: article, extractedArticle: extractedArticle, theme: theme, routesThumbnailImages: routesThumbnailImages)
+		return (renderer.articleCSS, renderer.articleHTML, renderer.title, renderer.baseURL?.absoluteString ?? "")
 	}
 
 	static func multipleSelectionHTML(theme: ArticleTheme) -> Rendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, theme: theme)
-		return (renderer.articleCSS, renderer.multipleSelectionHTML, renderer.title, renderer.baseURL ?? "")
+		return (renderer.articleCSS, renderer.multipleSelectionHTML, renderer.title, renderer.baseURL?.absoluteString ?? "")
 	}
 
 	static func loadingHTML(theme: ArticleTheme) -> Rendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, theme: theme)
-		return (renderer.articleCSS, renderer.loadingHTML, renderer.title, renderer.baseURL ?? "")
+		return (renderer.articleCSS, renderer.loadingHTML, renderer.title, renderer.baseURL?.absoluteString ?? "")
 	}
 
 	static func noSelectionHTML(theme: ArticleTheme) -> Rendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, theme: theme)
-		return (renderer.articleCSS, renderer.noSelectionHTML, renderer.title, renderer.baseURL ?? "")
+		return (renderer.articleCSS, renderer.noSelectionHTML, renderer.title, renderer.baseURL?.absoluteString ?? "")
 	}
 
 	static func noContentHTML(theme: ArticleTheme) -> Rendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, theme: theme)
-		return (renderer.articleCSS, renderer.noContentHTML, renderer.title, renderer.baseURL ?? "")
+		return (renderer.articleCSS, renderer.noContentHTML, renderer.title, renderer.baseURL?.absoluteString ?? "")
+	}
+
+	/// Full page HTML for a rendering, ready to load into a web view.
+	static func pageHTML(_ rendering: Rendering, windowScrollY: Int) -> String {
+		let substitutions = [
+			"title": rendering.title,
+			"baseURL": rendering.baseURL,
+			"style": rendering.style,
+			"body": rendering.html,
+			"windowScrollY": String(windowScrollY)
+		]
+
+		let html = try! MacroProcessor.renderedText(withTemplate: page.html, substitutions: substitutions)
+		return ArticleRenderingSpecialCases.filterHTMLIfNeeded(baseURL: rendering.baseURL, html: html)
 	}
 }
 
 // MARK: - Private
 
 private extension ArticleRenderer {
+
+	/// The article’s body as HTML. Plain text (`contentText`, used when there’s no `contentHTML`) gets converted.
+	static func bodyHTML(_ article: Article?) -> String {
+		guard let article else {
+			return ""
+		}
+		if article.contentHTML == nil, let contentText = article.contentText {
+			return contentText.convertingPlainTextToHTML
+		}
+		return article.body ?? ""
+	}
 
 	private var articleHTML: String {
 		return try! MacroProcessor.renderedText(withTemplate: template(), substitutions: articleSubstitutions())
@@ -223,10 +276,45 @@ private extension ArticleRenderer {
 			d["external_link"] = ""
 		}
 
-		d["body"] = body
+		// Templates without [[primary_media]], and short untitled posts, get the article image in the enclosures.
+		// The thumbnail is used only for [[primary_media]].
+		let bodyImageIdentities = Self.bodyImageIdentities(body, baseURL: baseURL)
+		var attachments = article.attachments ?? []
+		var primaryMediaHTML = ""
+		var primaryMediaURLs = Set<String>()
+		let hasPrimaryMedia = template().contains(Self.primaryMediaMacro)
+		let showsPrimaryImage = hasPrimaryMedia && !Self.isShortUntitledPost(title: article.title, body: body)
+		if hasPrimaryMedia, let primaryMedia = Self.primaryMedia(imageLink: article.imageLink, thumbnailLink: article.thumbnailLink, attachments: attachments, articleTitle: article.title, body: body, bodyImageIdentities: bodyImageIdentities, includesImage: showsPrimaryImage) {
+			primaryMediaHTML = primaryMedia.html
+			primaryMediaURLs = primaryMedia.attachmentURLs
+			attachments.removeAll { primaryMediaURLs.contains($0.url) }
+		}
+		if !showsPrimaryImage, let primaryImage = Self.primaryImage(imageLink: article.imageLink, thumbnailLink: nil, attachments: attachments, body: body, bodyImageIdentities: bodyImageIdentities), !primaryMediaURLs.contains(primaryImage.url), !attachments.contains(primaryImage) {
+			attachments.insert(primaryImage, at: 0)
+		}
+
+		// Templates without [[enclosures]] get them at the end of the body.
+		var enclosures = Self.enclosuresHTML(attachments: attachments, body: body, bodyImageIdentities: bodyImageIdentities, posterURL: article.imageLink ?? article.thumbnailLink)
+		var body = body
+		if routesThumbnailImages, let thumbnailMode = AppDefaults.timelineThumbnailsDisplay.thumbnailMode, let thumbnailURL = ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) {
+			body = Self.routingThumbnailImages(body, thumbnailURL: thumbnailURL, baseURL: baseURL)
+			enclosures = Self.routingThumbnailImages(enclosures, thumbnailURL: thumbnailURL, baseURL: baseURL)
+			primaryMediaHTML = Self.routingThumbnailImages(primaryMediaHTML, thumbnailURL: thumbnailURL, baseURL: baseURL)
+		}
+		d[Self.primaryMediaKey] = primaryMediaHTML
+		if template().contains(Self.enclosuresMacro) {
+			d["body"] = body
+			d[Self.enclosuresKey] = enclosures
+		} else if enclosures.isEmpty {
+			d["body"] = body
+		} else {
+			// The wrapper div closes anything the body leaves open, such as an unclosed
+			// <audio> (Micro.blog posts have them), so the enclosures can’t end up inside it.
+			d["body"] = "<div>" + body + "</div>" + enclosures
+		}
 
 		#if os(macOS)
-		d["text_size_class"] = AppDefaults.shared.articleTextSize.cssClass
+		d["text_size_class"] = AppDefaults.articleTextSize.cssClass
 		#endif
 
 		var components = URLComponents()
@@ -261,6 +349,17 @@ private extension ArticleRenderer {
 		d["time_short"] = Self.shortTimeFormatter.string(from: datePublished)
 
 		return d
+	}
+
+	/// Points the `<img>`s that show the article’s timeline thumbnail at `articleImageScheme`,
+	/// so the article view uses the timeline’s copy instead of downloading the image again.
+	/// `data-nnw-src` keeps the original URL, which main.js falls back to when the copy can’t be loaded.
+	static func routingThumbnailImages(_ html: String, thumbnailURL: String, baseURL: URL?) -> String {
+		guard let routedURLString = ArticleImageSchemeHandler.routedURLString(thumbnailURL) else {
+			return html
+		}
+		let attributes = " src=\"\(routedURLString)\" data-nnw-src=\"\(thumbnailURL.escapingSpecialXMLCharacters)\""
+		return HTMLImageAttributeInserter.insertingAttributes(attributes, intoImagesWithSource: thumbnailURL, html: html, baseURL: baseURL)
 	}
 
 	func byline() -> String {
@@ -322,34 +421,4 @@ private extension ArticleRenderer {
 	}
 	#endif
 
-}
-
-// MARK: - Article extension
-
-@MainActor private extension Article {
-
-	var baseURL: URL? {
-		var s = link
-		if s == nil {
-			s = feed?.homePageURL
-		}
-		if s == nil {
-			s = feed?.url
-		}
-
-		guard let urlString = s else {
-			return nil
-		}
-		var urlComponents = URLComponents(string: urlString)
-		if urlComponents == nil {
-			return nil
-		}
-
-		// Can’t use url-with-fragment as base URL. The webview won’t load. See scripting.com/rss.xml for example.
-		urlComponents!.fragment = nil
-		guard let url = urlComponents!.url, url.scheme == "http" || url.scheme == "https" else {
-			return nil
-		}
-		return ArticleRenderingSpecialCases.baseURLForRendering(url)
-	}
 }

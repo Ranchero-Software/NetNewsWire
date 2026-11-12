@@ -14,6 +14,7 @@ public struct ArticleThemePlist: Codable, Equatable, Sendable {
 	public let creatorHomePage: String
 	public let creatorName: String
 	public let version: Int
+	public let grayscaleIcon: Bool?
 
 	enum CodingKeys: String, CodingKey {
 		case name = "Name"
@@ -21,5 +22,6 @@ public struct ArticleThemePlist: Codable, Equatable, Sendable {
 		case creatorHomePage = "CreatorHomePage"
 		case creatorName = "CreatorName"
 		case version = "Version"
+		case grayscaleIcon = "grayscaleIcon"
 	}
 }

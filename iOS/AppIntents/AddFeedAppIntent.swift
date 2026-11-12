@@ -18,13 +18,13 @@ struct AddFeedAppIntent: AppIntent {
 	// app group; the main app turns it into an actual feed the next time it processes the queue.
 	static let openAppWhenRun = false
 
-	@Parameter(title: "URL")
+	@Parameter(title: LocalizedStringResource("URL", comment: "Label for a feed URL"))
 	var url: URL
 
 	@Parameter(title: "Account", optionsProvider: AccountNameOptionsProvider())
 	var accountName: String?
 
-	@Parameter(title: "Folder", optionsProvider: FolderNameOptionsProvider())
+	@Parameter(title: LocalizedStringResource("Folder", comment: "Label for choosing the folder a feed is added to"), optionsProvider: FolderNameOptionsProvider())
 	var folderName: String?
 
 	static var parameterSummary: some ParameterSummary {

@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import os
+import Synchronization
 import RSCore
 
 public extension Notification.Name {
@@ -52,11 +52,11 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Sendable {
 
 	var currentThemeName: String {
 		get {
-			AppDefaults.shared.currentThemeName ?? AppDefaults.defaultThemeName
+			AppDefaults.currentThemeName ?? AppDefaults.defaultThemeName
 		}
 		set {
 			if newValue != currentThemeName {
-				AppDefaults.shared.currentThemeName = newValue
+				AppDefaults.currentThemeName = newValue
 				updateThemeNames()
 				updateCurrentTheme()
 			}
@@ -87,7 +87,7 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Sendable {
 		var currentTheme = ArticleTheme.defaultTheme
 		var themeNames = [AppDefaults.defaultThemeName]
 	}
-	private let state = OSAllocatedUnfairLock(initialState: State())
+	private let state = Mutex(State())
 
 	@MainActor private var didStart = false
 

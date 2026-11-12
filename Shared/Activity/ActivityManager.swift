@@ -51,7 +51,7 @@ import Images
 	#endif
 
 	init() {
-		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleFeedIconImageDidChange(_:)), name: .feedIconImageDidChange, object: nil)
 	}
 
 	func invalidateCurrentActivities() {
@@ -171,8 +171,8 @@ import Images
 	}
 	#endif
 
-	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
-		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed, let activityFeedId = selectingActivity?.userInfo?[ArticlePathKey.feedID] as? String else {
+	@objc func handleFeedIconImageDidChange(_ notification: Notification) {
+		guard let feed = notification.userInfo?[UserInfoKey.feed] as? Feed, let activityFeedId = selectingActivity?.userInfo?[ArticlePathKey.feedID] as? String else {
 			return
 		}
 

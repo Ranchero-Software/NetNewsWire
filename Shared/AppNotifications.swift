@@ -13,4 +13,12 @@ extension Notification.Name {
 	static let InspectableObjectsDidChange = Notification.Name("TimelineSelectionDidChangeNotification")
 	static let UserDidAddFeed = Notification.Name("UserDidAddFeedNotification")
 	static let WebInspectorEnabledDidChange = Notification.Name("WebInspectorEnabledDidChange")
+	static let sidebarShowsIconsDidChange = Notification.Name("SidebarShowsIconsDidChangeNotification")
+	static let grayscaleIconsDidChange = Notification.Name("GrayscaleIconsDidChangeNotification")
+	static let sidebarSmartFeedsVisibilityDidChange = Notification.Name("SidebarSmartFeedsVisibilityDidChangeNotification")
+	static let timelineIconSizeDidChange = Notification.Name("TimelineIconSizeDidChangeNotification")
+	static let timelineNumberOfLinesDidChange = Notification.Name("TimelineNumberOfLinesDidChangeNotification")
+	static let timelineShowFullTitlesDidChange = Notification.Name("TimelineShowFullTitlesDidChangeNotification")
+	static let timelineFadeReadArticlesDidChange = Notification.Name("TimelineFadeReadArticlesDidChangeNotification")
+	static let timelineFeedNameAndDateAboveTitleDidChange = Notification.Name("TimelineFeedNameAndDateAboveTitleDidChangeNotification")
 }

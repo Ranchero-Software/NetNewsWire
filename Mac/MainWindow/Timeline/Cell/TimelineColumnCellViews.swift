@@ -125,6 +125,21 @@ final class TimelineTextColumnCellView: NSTableCellView {
 /// Feed icon plus feed name.
 final class TimelineFeedColumnCellView: NSTableCellView {
 
+	/// When false, the icon is hidden and the name starts at the leading edge.
+	var showsIcon = true {
+		didSet {
+			guard showsIcon != oldValue else {
+				return
+			}
+			imageView?.isHidden = !showsIcon
+			labelLeadingAfterIconConstraint?.isActive = showsIcon
+			labelLeadingWithoutIconConstraint?.isActive = !showsIcon
+		}
+	}
+
+	private var labelLeadingAfterIconConstraint: NSLayoutConstraint?
+	private var labelLeadingWithoutIconConstraint: NSLayoutConstraint?
+
 	override init(frame frameRect: NSRect) {
 		super.init(frame: frameRect)
 		let iconView = NSImageView()
@@ -140,12 +155,16 @@ final class TimelineFeedColumnCellView: NSTableCellView {
 		addSubview(label)
 		textField = label
 
+		let labelLeadingAfterIconConstraint = label.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: feedIconMarginRight)
+		self.labelLeadingAfterIconConstraint = labelLeadingAfterIconConstraint
+		self.labelLeadingWithoutIconConstraint = label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: columnCellHorizontalPadding)
+
 		NSLayoutConstraint.activate([
 			iconView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: columnCellHorizontalPadding),
 			iconView.widthAnchor.constraint(equalToConstant: feedIconDimension),
 			iconView.heightAnchor.constraint(equalToConstant: feedIconDimension),
 			iconView.centerYAnchor.constraint(equalTo: centerYAnchor),
-			label.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: feedIconMarginRight),
+			labelLeadingAfterIconConstraint,
 			label.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -columnCellHorizontalPadding),
 			label.centerYAnchor.constraint(equalTo: centerYAnchor)
 		])

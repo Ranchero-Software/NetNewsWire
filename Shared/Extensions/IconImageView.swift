@@ -65,8 +65,7 @@ struct IconImageView: View {
 
 	private var backgroundColor: Color {
 		#if os(macOS)
-		let nsColor = isDarkMode ? Assets.Colors.iconDarkBackground : Assets.Colors.iconLightBackground
-		return Color(nsColor: nsColor)
+		return Color(nsColor: Assets.Colors.iconBackground)
 		#else
 		return Color(Assets.Colors.iconBackground)
 		#endif

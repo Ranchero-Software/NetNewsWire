@@ -12,7 +12,7 @@ extension UILabel {
 	/// Shows `unreadCount` per the Unread Counts setting: the number, a dot, or nothing.
 	/// The dot is drawn in the label’s text color.
 	func setUnreadCount(_ unreadCount: Int) {
-		let unreadCountDisplay = AppDefaults.shared.unreadCountDisplay
+		let unreadCountDisplay = AppDefaults.unreadCountDisplay
 		if unreadCountDisplay.showsDot(for: unreadCount) {
 			attributedText = NSAttributedString(attachment: unreadDotAttachment())
 		} else {

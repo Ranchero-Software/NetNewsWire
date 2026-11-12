@@ -14,7 +14,8 @@ public typealias DownloadCallback = @MainActor (DownloadResponse, Error?) -> Swi
 
 /// Simple downloader, for a one-shot download like an image
 /// or a web page. For a download-feeds session, see DownloadSession.
-/// Caches response for a short time for GET requests. May return cached response.
+/// Caches response for a short time for GET requests, unless `cachesResponse` is false. May return cached response.
+/// A conditional GET isn’t cached or coalesced with other requests, since its 304 response has no body.
 @MainActor public final class Downloader {
 	public static let shared = Downloader()
 	private let urlSession: URLSession
@@ -42,13 +43,13 @@ public typealias DownloadCallback = @MainActor (DownloadResponse, Error?) -> Swi
 		urlSession.invalidateAndCancel()
 	}
 
-	public func download(_ url: URL, userAgentStyle: UserAgentStyle = .feed) async throws -> DownloadResponse {
-		try await download(URLRequest(url: url), userAgentStyle: userAgentStyle)
+	public func download(_ url: URL, userAgentStyle: UserAgentStyle = .feed, cachesResponse: Bool = true) async throws -> DownloadResponse {
+		try await download(URLRequest(url: url), userAgentStyle: userAgentStyle, cachesResponse: cachesResponse)
 	}
 
-	public func download(_ urlRequest: URLRequest, userAgentStyle: UserAgentStyle = .feed) async throws -> DownloadResponse {
+	public func download(_ urlRequest: URLRequest, userAgentStyle: UserAgentStyle = .feed, cachesResponse: Bool = true) async throws -> DownloadResponse {
 		try await withCheckedThrowingContinuation { continuation in
-			download(urlRequest, userAgentStyle: userAgentStyle) { downloadResponse, error in
+			download(urlRequest, userAgentStyle: userAgentStyle, cachesResponse: cachesResponse) { downloadResponse, error in
 				if let error {
 					continuation.resume(throwing: error)
 				} else {
@@ -63,7 +64,7 @@ public typealias DownloadCallback = @MainActor (DownloadResponse, Error?) -> Swi
 		download(URLRequest(url: url), userAgentStyle: userAgentStyle, callback)
 	}
 
-	public func download(_ urlRequest: URLRequest, userAgentStyle: UserAgentStyle = .feed, _ callback: @escaping DownloadCallback) {
+	public func download(_ urlRequest: URLRequest, userAgentStyle: UserAgentStyle = .feed, cachesResponse: Bool = true, _ callback: @escaping DownloadCallback) {
 		assert(Thread.isMainThread)
 
 		guard let url = urlRequest.url else {
@@ -77,7 +78,8 @@ public typealias DownloadCallback = @MainActor (DownloadResponse, Error?) -> Swi
 			return
 		}
 
-		let isCacheableRequest = urlRequest.httpMethod == HTTPMethod.get
+		let isConditionalRequest = urlRequest.value(forHTTPHeaderField: HTTPRequestHeader.ifNoneMatch) != nil || urlRequest.value(forHTTPHeaderField: HTTPRequestHeader.ifModifiedSince) != nil
+		let isCacheableRequest = urlRequest.httpMethod == HTTPMethod.get && !isConditionalRequest
 
 		// Return cached record if available.
 		if isCacheableRequest {
@@ -89,7 +91,9 @@ public typealias DownloadCallback = @MainActor (DownloadResponse, Error?) -> Swi
 		}
 
 		// Add callback. If there is already a download in progress for this URL, return early.
-		if callbacks[url] == nil {
+		if isConditionalRequest {
+			Self.logger.debug("Downloader: downloading \(url) with conditional GET")
+		} else if callbacks[url] == nil {
 			Self.logger.debug("Downloader: downloading \(url)")
 			callbacks[url] = [(callback, false)]
 		} else {
@@ -115,13 +119,17 @@ public typealias DownloadCallback = @MainActor (DownloadResponse, Error?) -> Swi
 		let task = urlSession.dataTask(with: urlRequestToUse) { (data, response, error) in
 
 			// Don’t cache errors — a retry should hit the network.
-			if isCacheableRequest && error == nil {
+			if isCacheableRequest && cachesResponse && error == nil {
 				Self.logger.debug("Downloader: caching response for \(url)")
 				self.cache.add(url.absoluteString, data: data, response: response)
 			}
 
 			Task { @MainActor in
-				self.callAndReleaseCallbacks(url, data, response, error)
+				if isConditionalRequest {
+					callback(DownloadResponse(data: data, response: response, returnedFromCache: false), error)
+				} else {
+					self.callAndReleaseCallbacks(url, data, response, error)
+				}
 			}
 		}
 		task.resume()

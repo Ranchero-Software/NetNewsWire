@@ -7,6 +7,283 @@
     <language>en</language>
 
 <item>
+	<title>NetNewsWire 7.3b7</title>
+	<description><![CDATA[
+<ul>
+<li>Made image cache eviction less aggressive, which should fix a loop where images get evicted, re-cached, evicted, re-cached, etc. (See this <a href=https://discourse.netnewswire.com/t/favicons-disappear-in-7-3b3/481>Discourse forum post</a>.)
+</ul>
+	]]></description>
+	<pubDate>Mon, 09 Nov 2026 21:35:00 -0800</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.3b7/NetNewsWire7.3b7.zip" sparkle:version="7234" sparkle:shortVersionString="7.3b7" length="10451567" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
+	<title>NetNewsWire 7.3b6</title>
+	<description><![CDATA[
+<ul>
+<li>Added a Grayscale icons setting to Settings > Appearance — for feed icons and author avatars (article thumbnails stay in color)
+<li>Made Feed Name and Date Above Title the default in the timeline
+<li>Put the date above the thumbnail when small thumbnails and Feed Name and Date Above Title are both on
+<li>Made timeline rows always show the author or feed name, instead of leaving that spot empty
+<li>Limited articles with no title to four lines when rows show the full title with no preview
+<li>Added [[primary_media]] and [[enclosures]] tags for themes — primary_media is the article’s main image, video, or audio from the feed, when the article’s HTML doesn’t already include it
+<li>Allowed themes to include a template7.3.html file, which is used in 7.3 and later instead of template.html
+<li>Updated the built-in themes to use [[primary_media]] and [[enclosures]]
+<li>Skipped enclosure images that are the same as the feed image (as with Letters from an American), so they don’t become redundant thumbnails or primary images
+<li>Skipped primary images for microblog-style (Mastodon, etc.) posts — their images appear with the enclosures at the bottom
+<li>Used media:thumbnail as a fallback when an article has no other images (as with Wired)
+<li>Picked the widest image when Guardian image enclosures differ only by width
+<li>Fixed duplicate images in Engadget articles
+<li>Fixed embedded YouTube videos (and other iframes) not loading on sites that use Optimole lazy loading
+<li>Fixed blog.rust-lang.org articles — JavaScript is turned off for them, and their noscript content is shown
+<li>Used an item’s only Gravatar as its author’s avatar, even when the author name is a username
+</ul>
+	]]></description>
+	<pubDate>Mon, 09 Nov 2026 10:45:00 -0800</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.3b6/NetNewsWire7.3b6.zip" sparkle:version="7233" sparkle:shortVersionString="7.3b6" length="10454415" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
+	<title>NetNewsWire 7.3b5</title>
+	<description><![CDATA[
+<ul>
+<li>Added an Appearance settings pane — appearance (system, light, or dark), sidebar text size, sidebar icons, which smart feeds to show (Today, All Unread, Starred), and the article theme and text size (moved from General)
+<li>Added a Timeline settings pane — text size, feed icons (automatic, always, or never), feed icon size, thumbnails, rows (full title with no preview, or title and preview in 1 to 6 lines), separators, fading read articles, and showing the feed name and date above the title
+<li>Moved the Thumbnails setting from the View menu to Settings > Timeline
+<li>Made rows fit their content (variable row heights) in timeline
+<li>Made separators a regular setting (it was a hidden preference) — your existing choice carries over
+<li>Gave the status bar a crisper top edge, a deeper gradient, and an etched, higher-contrast divider grip
+<li>Made the main window’s split view dividers a little darker in light mode
+</ul>
+	]]></description>
+	<pubDate>Sun, 07 Nov 2026 17:00:00 -0800</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.3b5/NetNewsWire7.3b5.zip" sparkle:version="7232" sparkle:shortVersionString="7.3b5" length="10419440" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
+	<title>NetNewsWire 7.3b4</title>
+	<description><![CDATA[
+<ul>
+<li>Made small thumbnails fill the space (aspect fill) — images are cropped from the sides and bottom, never the top, so faces and other important parts are more likely to stay in view
+<li>Gave large thumbnails rounded corners, to match small thumbnails and feed icons
+<li>Removed the background color behind thumbnails, and added a faint placeholder color that shows until a thumbnail loads
+<li>Fixed footnote popover positioning near the edge of the article view and after resizing the window on Duo
+<li>Fixed bug where the last article in the timeline had a separator below it (when separators are turned on via the hidden preference)
+</ul>
+	]]></description>
+	<pubDate>Fri, 06 Nov 2026 08:40:00 -0800</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.3b4/NetNewsWire7.3b4.zip" sparkle:version="7229" sparkle:shortVersionString="7.3b4" length="10350632" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
+	<title>NetNewsWire 7.3b3</title>
+	<description><![CDATA[
+<ul>
+<li>Added support for enclosures and Media RSS
+<li>Added enclosures to the article view (at the bottom) — you can see images from Mastodon feeds, play an MP3, etc.
+<li>Made YouTube enclosures play in the privacy-enhanced YouTube player (youtube-nocookie.com)
+<li>Made the article view show plain text or media:description when an article has no HTML content
+<li>Made image downloading kinder to servers — honors Retry-After, waits after errors, and limits downloads to two at a time per host
+<li>Reorganized the View menu into sections — sidebar, timeline, status bar, and toolbar
+<li>Added article thumbnails to the timeline — choose View > Thumbnails to pick large or small. Default is none. (Works in standard layout but not column layout)
+</ul>
+	]]></description>
+	<pubDate>Tue, 03 Nov 2026 17:00:00 -0800</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.3b3/NetNewsWire7.3b3.zip" sparkle:version="7227" sparkle:shortVersionString="7.3b3" length="10342300" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
+	<title>NetNewsWire 7.3b2</title>
+	<description><![CDATA[
+<ul>
+<li>Fixed a crash at midnight when the status bar is showing
+<li>Added the last-refresh time to the status bar, and made it the default
+<li>Changed the status bar to use a shorter date format
+<li>Added Refresh and Show/Hide Sidebar commands to the status bar gear menu
+<li>Made clicking the progress indicator in the status bar open the Current Activity window (as in NetNewsWire of Yore)
+<li>Fixed bug where the status bar divider might drift from the split view divider
+<li>Fixed inline footnotes in FreshRSS articles
+<li>Added netnewswire, feed, feeds, and x-netnewswire-feed as allowed link schemes in the article view — so clicking a link to install a theme (for instance) works
+</ul>
+	]]></description>
+	<pubDate>Thu, 22 Oct 2026 11:20:00 -0700</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.3b2/NetNewsWire7.3b2.zip" sparkle:version="7226" sparkle:shortVersionString="7.3b2" length="10028435" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
+	<title>NetNewsWire 7.3b1</title>
+	<description><![CDATA[
+<ul>
+<li>Restored the status bar from NetNewsWire of Yore (NetNewsWire 1-3). Show and hide it via the View menu
+</ul>
+	]]></description>
+	<pubDate>Tue, 20 Oct 2026 11:35:00 -0700</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.3b1/NetNewsWire7.3b1.zip" sparkle:version="7225" sparkle:shortVersionString="7.3b1" length="10048664" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
+	<title>NetNewsWire 7.2.1</title>
+	<description><![CDATA[
+Changes since 7.2:
+<ul>
+<li>Fixed bug where navigated-to row, in column layout, might appear under column headers
+<li>Fixed bug where scroller hiding/showing could mess up sidebar layout
+<li>Added magnet as an allowed link scheme
+</ul>
+	]]></description>
+	<pubDate>Tue, 20 Oct 2026 10:00:00 -0700</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.2.1/NetNewsWire7.2.1.zip" sparkle:version="7224" sparkle:shortVersionString="7.2.1" length="10002485" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
+	<title>NetNewsWire 7.2.1b1</title>
+	<description><![CDATA[
+<ul>
+<li>Fixed bug where navigated-to row, in column layout, might appear under column headers
+<li>Fixed bug where scroller hiding/showing could mess up sidebar layout
+<li>Added magnet as an allowed link scheme
+</ul>
+	]]></description>
+	<pubDate>Sun, 18 Oct 2026 11:40:00 -0700</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.2.1b1/NetNewsWire7.2.1b1.zip" sparkle:version="7223" sparkle:shortVersionString="7.2.1b1" length="10002414" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
+	<title>NetNewsWire 7.2</title>
+	<description><![CDATA[
+In case you missed 7.2b1 — note the new <code>View > Use Column Layout</code> menu item. Also note the new setting for unread counts at the top of the General (first) settings tab.
+<p>
+Changes since 7.2b4:
+<ul>
+<li>Fixed column view bug where next-unread could scroll to a row that’s hidden under the column headers
+</ul>
+Changes since 7.1.5:
+<ul>
+<li>Added unread count display setting — show the count, show a dot, or hide it — which applies to the Dock icon badge, window title, and sidebar
+<li>Added column layout for the timeline — choose View > Use Column Layout
+<li>Expanded View > Sort Articles By with more options (works with standard and column layouts)
+<li>Made timeline sorting per window instead of one setting for the whole app
+<li>Made the Add Feed sheet start with the folder or account selected in the sidebar
+<li>Changed the message for adding a feed that’s already added to include the name of the folder (or folders)
+<li>Fixed bug where YouTube embeds in articles showed an error instead of playing
+<li>Fixed bug where embedded videos with no set height — such as Inoreader’s YouTube player — collapsed to a short strip
+<li>Fixed extra whitespace at the end of Slashdot articles and paragraphs running together
+<li>Fixed parsing of RSS feed titles when a feed contains a textinput section (Slashdot, for instance)
+<li>Added support for the instapaper_ignore class — elements marked with it are now removed from articles
+<li>Changed tabs in pre and code elements in articles to display as four spaces
+<li>Improved finding feeds in a page by skipping links to PDFs, movies, and other files that can’t be feeds
+<li>Changed finding a feed to use the redirected-to URL
+<li>Sped up Today and unread count queries
+<li>Added up to 500 characters of the HTTP error response body to Error Log entries
+<li>Fixed bug where the sidebar could reopen with no width when it had been collapsed in 7.1.x
+<li>Fixed a memory leak when closing a main window
+<li>Fixed a possible crash when the sidebar or timeline had no visible rows
+<li>Changed sorting by title and by feed to sort numbers by value — “Episode 2” comes before “Episode 10”
+<li>Added support for Substack-style footnotes
+<li>Improved CJK text rendering in the article view by adding text-autospace
+<li>Fixed horizontal overflow of WordPress Math blocks and SVGs in the Tiqoe Dark theme
+<li>Improved font sizing and fixed superscript orphans in table cells in the Tiqoe Dark theme`
+</ul>
+	]]></description>
+	<pubDate>Wed, 14 Oct 2026 08:20:00 -0700</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.2/NetNewsWire7.2.zip" sparkle:version="7222" sparkle:shortVersionString="7.2" length="10000415" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
+	<title>NetNewsWire 7.2b4</title>
+	<description><![CDATA[
+In case you missed 7.2b1 — note the new <code>View > Use Column Layout</code> menu item. Also note the new setting for unread counts at the top of the General (first) settings tab.
+<p>
+Changes since 7.2b3:
+<ul>
+<li>Fixed bug where embedded videos with no set height — such as Inoreader’s YouTube player — collapsed to a short strip
+</ul>
+	]]></description>
+	<pubDate>Sun, 11 Oct 2026 11:10:00 -0700</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.2b4/NetNewsWire7.2b4.zip" sparkle:version="7221" sparkle:shortVersionString="7.2b4" length="9999900" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
+	<title>NetNewsWire 7.2b3</title>
+	<description><![CDATA[
+In case you missed 7.2b1 — note the new <code>View > Use Column Layout</code> menu item. Also note the new setting for unread counts at the top of the General (first) settings tab.
+<p>
+Changes since 7.2b2:
+<ul>
+<li>Fixed the Settings layout on macOS 15
+<li>Added Spanish translations for Settings and the Sort Articles By menu
+<li>Made each Settings pane size itself to fit, for languages that need more room
+<li>Fixed bug where the sidebar could reopen with no width when it had been collapsed in 7.1.x
+<li>Fixed a memory leak when closing a main window
+<li>Fixed a possible crash when the sidebar or timeline had no visible rows
+<li>Changed sorting by title and by feed to sort numbers by value — “Episode 2” comes before “Episode 10”
+<li>Improved finding feeds in a page by skipping links to X, Twitter, Facebook, and Instagram, and links to files with uppercase extensions or URL queries (such as .PDF or .jpg?w=600)
+<li>Fixed bug where some sites with “youtube” in their names were treated as YouTube
+<li>Fixed Slashdot feed detection (for Slashdot special cases) when the feed comes through a proxy such as FeedBurner
+<li>Changed VoiceOver to say “unread” for sidebar unread counts shown as dots
+</ul>
+	]]></description>
+	<pubDate>Sat, 10 Oct 2026 09:05:00 -0700</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.2b3/NetNewsWire7.2b3.zip" sparkle:version="7220" sparkle:shortVersionString="7.2b3" length="9999861" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
+	<title>NetNewsWire 7.2b2</title>
+	<description><![CDATA[
+In case you missed 7.2b1 — note the new <code>View > Use Column Layout</code> menu item. Also note the new setting for unread counts at the top of the General (first) settings tab.
+<p>
+Changes since 7.2b1:
+<ul>
+<li>Added support for Substack-style footnotes
+<li>Improved CJK text rendering in the article view by adding text-autospace
+<li>Fixed horizontal overflow of WordPress Math blocks and SVGs in the Tiqoe Dark theme
+</ul>
+	]]></description>
+	<pubDate>Wed, 7 Oct 2026 10:20:00 -0700</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.2b2/NetNewsWire7.2b2.zip" sparkle:version="7219" sparkle:shortVersionString="7.2b2" length="9891509" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
+	<title>NetNewsWire 7.2b1</title>
+	<description><![CDATA[
+<ul>
+<li>Added unread count display setting — show the count, show a dot, or hide it — which applies to the Dock icon badge, window title, and sidebar
+<li>Added column layout for the timeline — choose View > Use Column Layout
+<li>Expanded View > Sort Articles By with more options (works with standard and column layouts)
+<li>Made timeline sorting per window instead of one setting for the whole app
+<li>Made the Add Feed sheet start with the folder or account selected in the sidebar
+<li>Changed the message for adding a feed that’s already added to include the name of the folder (or folders)
+<li>Fixed bug where YouTube embeds in articles showed an error instead of playing
+<li>Fixed extra whitespace at the end of Slashdot articles and paragraphs running together
+<li>Fixed parsing of RSS feed titles when a feed contains a textinput section (Slashdot, for instance)
+<li>Added support for the instapaper_ignore class — elements marked with it are now removed from articles
+<li>Changed tabs in pre and code elements in articles to display as four spaces
+<li>Improved finding feeds in a page by skipping links to PDFs, movies, and other files that can’t be feeds
+<li>Changed finding a feed to use the redirected-to URL
+<li>Improved font sizing and fixed superscript orphans in table cells in the Tiqoe Dark theme
+<li>Sped up Today and unread count queries
+<li>Added up to 500 characters of the HTTP error response body to Error Log entries
+</ul>
+	]]></description>
+	<pubDate>Tue, 6 Oct 2026 21:15:00 -0700</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.2b1/NetNewsWire7.2b1.zip" sparkle:version="7217" sparkle:shortVersionString="7.2b1" length="9890992" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
 	<title>NetNewsWire 7.1.5</title>
 	<description><![CDATA[
 <p><b>Changes since 7.1.4:</b>

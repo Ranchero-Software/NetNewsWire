@@ -73,9 +73,10 @@ final class AccountsPreferencesViewController: NSViewController {
 
 		let alert = NSAlert()
 		alert.alertStyle = .warning
-		let deletePrompt = NSLocalizedString("Delete", comment: "Delete button")
-		alert.messageText = "\(deletePrompt) “\(accountName)”?"
-		alert.informativeText = NSLocalizedString("Are you sure you want to delete the account “\(accountName)”? This cannot be undone.", comment: "Delete text")
+		let messageFormat = NSLocalizedString("Delete “%@”?", comment: "Delete account alert title")
+		alert.messageText = String(format: messageFormat, accountName)
+		let informativeFormat = NSLocalizedString("Are you sure you want to delete the account “%@”? This cannot be undone.", comment: "Delete account alert message")
+		alert.informativeText = String(format: informativeFormat, accountName)
 
 		alert.addButton(withTitle: NSLocalizedString("Delete", comment: "Delete button"))
 		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel button"))

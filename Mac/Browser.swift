@@ -15,7 +15,7 @@ import RSWeb
 	/// The user-assigned default browser, or `nil` if none was assigned
 	/// (i.e., the system default should be used).
 	static var defaultBrowser: MacWebBrowser? {
-		guard let browserID = AppDefaults.shared.defaultBrowserID else {
+		guard let browserID = AppDefaults.defaultBrowserID else {
 			return nil
 		}
 		// Older versions stored a bundle ID rather than a path.
@@ -33,7 +33,7 @@ import RSWeb
 	///   - invert: Whether to invert the "open in background in browser" preference
 	static func open(_ urlString: String, invertPreference invert: Bool = false) {
 		// Opens according to prefs.
-		open(urlString, inBackground: invert ? !AppDefaults.shared.openInBrowserInBackground : AppDefaults.shared.openInBrowserInBackground)
+		open(urlString, inBackground: invert ? !AppDefaults.openInBrowserInBackground : AppDefaults.openInBrowserInBackground)
 	}
 
 	/// Opens a URL in the default browser.
@@ -45,6 +45,12 @@ import RSWeb
 	///   to open in the background.
 	static func open(_ urlString: String, inBackground: Bool) {
 		guard let url = URL(string: urlString), let preparedURL = url.preparedForOpeningInBrowser() else { return }
+
+		// Non-web links (mailto, magnet) go to the system handler, not a browser.
+		guard preparedURL.isHTTPOrHTTPSURL() else {
+			NSWorkspace.shared.open(preparedURL)
+			return
+		}
 
 		let configuration = NSWorkspace.OpenConfiguration()
 		configuration.requiresUniversalLinks = true
@@ -71,7 +77,7 @@ import RSWeb
 extension Browser {
 
 	static var titleForOpenInBrowserInverted: String {
-		let openInBackgroundPref = AppDefaults.shared.openInBrowserInBackground
+		let openInBackgroundPref = AppDefaults.openInBrowserInBackground
 
 		return openInBackgroundPref ?
 			NSLocalizedString("Open in Browser in Foreground", comment: "Open in Browser in Foreground menu item title") :

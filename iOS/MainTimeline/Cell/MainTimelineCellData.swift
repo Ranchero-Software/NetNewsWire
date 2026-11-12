@@ -13,6 +13,8 @@ import Images
 @MainActor struct MainTimelineCellData {
 
 	private static let noText = NSLocalizedString("(No Text)", comment: "No Text")
+	static let fullTitleMaximumNumberOfLines = 12
+	static let fullTitleSummaryOnlyMaximumNumberOfLines = 4
 
 	let accountID: String
 	let articleID: String
@@ -27,10 +29,18 @@ import Images
 	let showIcon: Bool // Make space even when icon is nil
 	let read: Bool
 	let starred: Bool
-	let numberOfLines: Int
+	let numberOfLines: Int // Shared by the title and summary, or the title alone with showsFullTitles
 	let iconSize: IconSize
+	let thumbnail: UIImage?
+	let showThumbnail: Bool // Make space even when thumbnail is nil
+	let thumbnailsDisplay: TimelineThumbnailsDisplay
+	let fadesReadArticles: Bool
+	let feedNameAndDateAboveTitle: Bool
+	let showsFullTitles: Bool
 
-	init(article: Article, showFeedName: ShowFeedName, feedName: String?, byline: String?, iconImage: IconImage?, showIcon: Bool, numberOfLines: Int, iconSize: IconSize) {
+	/// With `showsFullTitles`, the title gets up to `fullTitleMaximumNumberOfLines` lines and there’s no summary.
+	/// An article with no title gets up to `fullTitleSummaryOnlyMaximumNumberOfLines` lines of summary instead.
+	init(article: Article, showFeedName: ShowFeedName, feedName: String?, byline: String?, iconImage: IconImage?, showIcon: Bool, numberOfLines: Int, iconSize: IconSize, thumbnail: UIImage?, showThumbnail: Bool, thumbnailsDisplay: TimelineThumbnailsDisplay, fadesReadArticles: Bool, feedNameAndDateAboveTitle: Bool, showsFullTitles: Bool) {
 
 		self.accountID = article.accountID
 		self.articleID = article.articleID
@@ -52,10 +62,11 @@ import Images
 			self.feedName = ""
 		}
 
-		if let byline = byline {
+		// Falls back to the feed name so the line is never empty.
+		if let byline, !byline.isEmpty {
 			self.byline = byline
 		} else {
-			self.byline = ""
+			self.byline = self.feedName
 		}
 
 		self.showFeedName = showFeedName
@@ -65,9 +76,14 @@ import Images
 
 		self.read = article.status.read
 		self.starred = article.status.starred
-		self.numberOfLines = numberOfLines
+		self.numberOfLines = showsFullTitles ? Self.fullTitleMaximumNumberOfLines : numberOfLines
 		self.iconSize = iconSize
-
+		self.thumbnail = thumbnail
+		self.showThumbnail = showThumbnail
+		self.thumbnailsDisplay = thumbnailsDisplay
+		self.fadesReadArticles = fadesReadArticles
+		self.feedNameAndDateAboveTitle = feedNameAndDateAboveTitle
+		self.showsFullTitles = showsFullTitles
 	}
 
 	init() { // Empty
@@ -86,6 +102,12 @@ import Images
 		self.starred = false
 		self.numberOfLines = 0
 		self.iconSize = .medium
+		self.thumbnail = nil
+		self.showThumbnail = false
+		self.thumbnailsDisplay = .none
+		self.fadesReadArticles = false
+		self.feedNameAndDateAboveTitle = false
+		self.showsFullTitles = false
 	}
 
 }

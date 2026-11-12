@@ -19,10 +19,17 @@ import UIKit
 	var searchField: UISearchTextField!
 	var nextButton: UIButton!
 	var prevButton: UIButton!
-	var background: UIView!
 	var shouldBeginEditing: Bool = true
 
 	weak private var resultsLabel: UILabel!
+
+	private static let margins = UIEdgeInsets(top: 6, left: 8, bottom: 6, right: 8)
+	private static let controlHeight: CGFloat = 44
+	private static let controlSpacing: CGFloat = 8
+	private static let minimumHeight = controlHeight + margins.top + margins.bottom
+	private static let capsuleCornerRadius = controlHeight / 2
+	private static let searchFieldInset: CGFloat = 8
+	private static let previousNextWidth: CGFloat = 96
 
 	var resultsCount: UInt = 0 {
 		didSet {
@@ -41,6 +48,11 @@ import UIKit
 		return [UIKeyCommand(title: "Exit Find", action: #selector(donePressed(_:)), input: UIKeyCommand.inputEscape)]
 	}
 
+	override var intrinsicContentSize: CGSize {
+		let contentSize = super.intrinsicContentSize
+		return CGSize(width: contentSize.width, height: max(Self.minimumHeight, contentSize.height))
+	}
+
 	override init(frame: CGRect) {
 		super.init(frame: frame)
 		commonInit()
@@ -53,9 +65,14 @@ import UIKit
 
 	override func didMoveToSuperview() {
 		super.didMoveToSuperview()
-		layer.backgroundColor = UIColor(named: "barBackgroundColor")?.cgColor ?? UIColor.white.cgColor
-		isOpaque = true
+		layer.backgroundColor = UIColor.clear.cgColor
+		isOpaque = false
 		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: searchField)
+	}
+
+	override func layoutSubviews() {
+		super.layoutSubviews()
+		updateMarginsForReservedRegions()
 	}
 
 	private func updateUI() {
@@ -88,25 +105,57 @@ import UIKit
 }
 
 private extension ArticleSearchBar {
+	func updateMarginsForReservedRegions() {
+		// The fold is a physical feature, so these are left and right, not leading and trailing.
+		var margins = Self.margins
+
+		#if compiler(>=6.4)
+		// reservedRegions is new in iOS 27.1.
+		if #available(iOS 27.1, *),
+		   let division = reservedRegions(kind: .division).first(where: { region in
+			   region.frame.intersects(bounds) && region.frame.height > region.frame.width
+		   }) {
+			let leftWidth = division.frame.minX - bounds.minX
+			let rightWidth = bounds.maxX - division.frame.maxX
+			if leftWidth >= rightWidth {
+				margins.right = bounds.maxX - division.frame.minX + Self.controlSpacing
+			} else {
+				margins.left = division.frame.maxX - bounds.minX + Self.controlSpacing
+			}
+		}
+		#endif
+
+		if layoutMargins != margins {
+			layoutMargins = margins
+		}
+	}
+
 	func commonInit() {
 		isLayoutMarginsRelativeArrangement = true
 		alignment = .center
-		spacing = 8
-		layoutMargins.left = 8
-		layoutMargins.right = 8
+		spacing = Self.controlSpacing
+		layoutMargins = Self.margins
 
-		background = UIView(frame: bounds)
-		background.backgroundColor = .systemGray5
-		background.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-		addSubview(background)
-
-		let doneButton = UIButton()
-		doneButton.setTitle(NSLocalizedString("Done", comment: "Done"), for: .normal)
-		doneButton.setTitleColor(UIColor.label, for: .normal)
-		doneButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+		var doneConfiguration: UIButton.Configuration
+		#if compiler(>=6.4)
+		if #available(iOS 27, *) {
+			doneConfiguration = .glass()
+		} else {
+			doneConfiguration = .tinted()
+		}
+		#else
+		doneConfiguration = .tinted()
+		#endif
+		doneConfiguration.image = UIImage(systemName: "xmark")
+		doneConfiguration.buttonSize = .medium
+		doneConfiguration.cornerStyle = .capsule
+		let doneButton = UIButton(configuration: doneConfiguration)
+		doneButton.accessibilityLabel = NSLocalizedString("Done", comment: "Done")
 		doneButton.isAccessibilityElement = true
 		doneButton.addTarget(self, action: #selector(donePressed), for: .touchUpInside)
 		doneButton.isEnabled = true
+		doneButton.heightAnchor.constraint(equalToConstant: Self.controlHeight).isActive = true
+		doneButton.widthAnchor.constraint(equalTo: doneButton.heightAnchor).isActive = true
 		addArrangedSubview(doneButton)
 
 		let resultsLabel = UILabel()
@@ -115,6 +164,9 @@ private extension ArticleSearchBar {
 		searchField.autocorrectionType = .no
 		searchField.returnKeyType = .search
 		searchField.delegate = self
+		searchField.placeholder = NSLocalizedString("Find in Article", comment: "Find in Article")
+		searchField.backgroundColor = .clear
+		searchField.borderStyle = .none
 
 		resultsLabel.font = .systemFont(ofSize: UIFont.smallSystemFontSize)
 		resultsLabel.textColor = .secondaryLabel
@@ -125,21 +177,48 @@ private extension ArticleSearchBar {
 		searchField.rightViewMode = .always
 
 		self.resultsLabel = resultsLabel
-		addArrangedSubview(searchField)
+		addCapsule(containing: searchField, horizontalInset: Self.searchFieldInset)
 
-		prevButton = UIButton(type: .system)
-		prevButton.setImage(UIImage(systemName: "chevron.up"), for: .normal)
+		var previousConfiguration = UIButton.Configuration.plain()
+		previousConfiguration.image = UIImage(systemName: "chevron.up")
+		previousConfiguration.buttonSize = .medium
+		prevButton = UIButton(configuration: previousConfiguration)
 		prevButton.accessibilityLabel = "Previous Result"
 		prevButton.isAccessibilityElement = true
 		prevButton.addTarget(self, action: #selector(previousPressed), for: .touchUpInside)
-		addArrangedSubview(prevButton)
 
-		nextButton = UIButton(type: .system)
-		nextButton.setImage(UIImage(systemName: "chevron.down"), for: .normal)
+		var nextConfiguration = UIButton.Configuration.plain()
+		nextConfiguration.image = UIImage(systemName: "chevron.down")
+		nextConfiguration.buttonSize = .medium
+		nextButton = UIButton(configuration: nextConfiguration)
 		nextButton.accessibilityLabel = "Next Result"
 		nextButton.isAccessibilityElement = true
 		nextButton.addTarget(self, action: #selector(nextPressed), for: .touchUpInside)
-		addArrangedSubview(nextButton)
+
+		let navigationStack = UIStackView(arrangedSubviews: [prevButton, nextButton])
+		navigationStack.axis = .horizontal
+		navigationStack.distribution = .fillEqually
+		let navigationCapsule = addCapsule(containing: navigationStack, horizontalInset: 0)
+		navigationCapsule.widthAnchor.constraint(equalToConstant: Self.previousNextWidth).isActive = true
+	}
+
+	/// Adds a blurred, capsule-shaped background holding `content` as an arranged subview.
+	@discardableResult func addCapsule(containing content: UIView, horizontalInset: CGFloat) -> UIVisualEffectView {
+		let capsule = UIVisualEffectView(effect: UIBlurEffect(style: .systemChromeMaterial))
+		capsule.clipsToBounds = true
+		capsule.layer.cornerCurve = .continuous
+		capsule.layer.cornerRadius = Self.capsuleCornerRadius
+		content.translatesAutoresizingMaskIntoConstraints = false
+		capsule.contentView.addSubview(content)
+		addArrangedSubview(capsule)
+		NSLayoutConstraint.activate([
+			capsule.heightAnchor.constraint(equalToConstant: Self.controlHeight),
+			content.leadingAnchor.constraint(equalTo: capsule.contentView.leadingAnchor, constant: horizontalInset),
+			content.trailingAnchor.constraint(equalTo: capsule.contentView.trailingAnchor, constant: -horizontalInset),
+			content.topAnchor.constraint(equalTo: capsule.contentView.topAnchor),
+			content.bottomAnchor.constraint(equalTo: capsule.contentView.bottomAnchor)
+		])
+		return capsule
 	}
 }
 

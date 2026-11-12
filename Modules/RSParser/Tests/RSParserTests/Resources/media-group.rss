@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">
+<channel>
+<title>Media Group Test Feed</title>
+<link>https://example.com</link>
+<item>
+<title>Real Article Title</title>
+<link>https://example.com/videos/1</link>
+<guid>https://example.com/videos/1</guid>
+<media:group>
+<media:title>Media Title</media:title>
+<media:content url="https://example.com/videos/1-low.mp4" type="video/mp4" medium="video" width="640" height="360" duration="125">
+<title>Unprefixed Title Inside media:content</title>
+</media:content>
+<media:content url="https://example.com/videos/1-high.mp4" type="video/mp4" medium="Video" width="1920" height="1080" duration="125" isDefault="true"/>
+<media:thumbnail url="https://example.com/videos/1.jpg" width="1280" height="720"/>
+</media:group>
+</item>
+</channel>
+</rss>

@@ -21,6 +21,11 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 	// MARK: Private Variables
 	private var numberOfTextLines = 0
 	private var iconSize = IconSize.medium
+	private var thumbnailsDisplay = TimelineThumbnailsDisplay.none
+	private var fadesReadArticles = false
+	private var feedNameAndDateAboveTitle = false
+	private var showsFullTitles = false
+	private var articleIDsToReload = Set<String>()
 	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
 	private lazy var filterButton = UIBarButtonItem(image: Assets.Images.filter, style: .plain, target: self, action: #selector(toggleFilter(_:)))
 	private lazy var nextUnreadButton = UIBarButtonItem(image: Assets.Images.nextUnread, style: .plain, target: self, action: #selector(nextUnread(_:)))
@@ -40,18 +45,14 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 		return coordinator?.showIcons ?? false
 	}
 
+	/// Nil when the timeline doesn’t show thumbnails.
+	private var thumbnailMode: ThumbnailMode? {
+		thumbnailsDisplay.thumbnailMode
+	}
+
 	private var currentArticle: Article? {
 		assert(coordinator != nil)
 		return coordinator?.currentArticle
-	}
-
-	private var timelineMiddleIndexPath: IndexPath? {
-		get {
-			coordinator?.timelineMiddleIndexPath
-		}
-		set {
-			coordinator?.timelineMiddleIndexPath = newValue
-		}
 	}
 
 	private var isTimelineViewControllerPending: Bool {
@@ -164,9 +165,10 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 	private let searchController = UISearchController(searchResultsController: nil)
 	private let keyboardManager = KeyboardManager(type: .timeline)
 	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "MainTimelineViewController")
+	/// Cells queued within this interval, such as for several thumbnail downloads that failed, are reloaded together.
+	private static let cellReloadDelay: TimeInterval = 0.1
 
 	// MARK: Constants
-	private let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
 	private let updateQueue = CoalescingQueue(name: "Timeline Update Queue", interval: 0.5, maxInterval: 1.0)
 
 	// MARK: - IBOutlets
@@ -187,8 +189,12 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 		configureSearchController()
 		definesPresentationContext = true
 
-		numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
-		iconSize = AppDefaults.shared.timelineIconSize
+		numberOfTextLines = AppDefaults.timelineNumberOfLines
+		iconSize = AppDefaults.timelineIconSize
+		thumbnailsDisplay = AppDefaults.timelineThumbnailsDisplay
+		fadesReadArticles = AppDefaults.timelineFadeReadArticles
+		feedNameAndDateAboveTitle = AppDefaults.timelineFeedNameAndDateAboveTitle
+		showsFullTitles = AppDefaults.timelineShowFullTitles
 
 		assert(collectionView?.refreshControl != nil)
 		collectionView?.refreshControl = UIRefreshControl()
@@ -197,12 +203,7 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 		configureToolbar()
 		resetUI(resetScroll: true)
 
-		// Load the table and then scroll to the saved position if available
-		applyChanges(animated: false) {
-			if let restoreIndexPath = self.timelineMiddleIndexPath {
-				self.collectionView?.scrollToItem(at: restoreIndexPath, at: .centeredVertically, animated: false)
-			}
-		}
+		applyChanges(animated: false)
 
 		// Disable swipe back on iPad Mice
 		guard let gesture = self.navigationController?.interactivePopGestureRecognizer as? UIPanGestureRecognizer else {
@@ -403,6 +404,14 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 		updateQueue.add(self, #selector(reloadVisibleCells))
 	}
 
+	/// Icons arrive in bursts, so the reload is still coalesced.
+	private func queueReloadIfVisibleArticleMightShowIcon(in notification: Notification) {
+		guard isViewLoaded, showIcons, visibleArticles().contains(where: { $0.mightShowIcon(in: notification) }) else {
+			return
+		}
+		queueReloadAvailableCells()
+	}
+
 	@objc private func reloadVisibleCells() {
 		Self.logger.debug("MainTimelineViewController: reloadVisibleCells")
 		guard isViewLoaded, let collectionView, let dataSource else {
@@ -414,23 +423,49 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 		reloadCells(visibleArticles)
 	}
 
+	/// Measures every row again, including rows that aren’t visible.
+	func reloadAllCells() {
+		guard let dataSource else {
+			return
+		}
+		dataSource.applySnapshotUsingReloadData(dataSource.snapshot()) { [weak self] in
+			self?.restoreSelectionIfNecessary(adjustScroll: true)
+		}
+	}
+
+	/// Reloads after `cellReloadDelay`, together with any other cells queued by then.
 	private func reloadCells(_ articles: [Article]) {
-		Self.logger.debug("MainTimelineViewController: reloadCells")
-		guard !articles.isEmpty, let dataSource else {
+		guard !articles.isEmpty else {
+			return
+		}
+		let isReloadScheduled = !articleIDsToReload.isEmpty
+		articleIDsToReload.formUnion(articles.map(\.articleID))
+		guard !isReloadScheduled else {
+			return
+		}
+		DispatchQueue.main.asyncAfter(deadline: .now() + Self.cellReloadDelay) {
+			self.reloadQueuedCells()
+		}
+	}
+
+	/// Uses the current snapshot, so articles that changed or left the timeline since being queued are handled.
+	private func reloadQueuedCells() {
+		Self.logger.debug("MainTimelineViewController: reloadQueuedCells")
+		let articleIDs = articleIDsToReload
+		articleIDsToReload.removeAll()
+		guard let dataSource else {
 			return
 		}
 
 		var snapshot = dataSource.snapshot()
-		snapshot.reloadItems(articles)
-		DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.0, execute: {
-			guard let dataSource = self.dataSource else {
-				return
-			}
-			dataSource.apply(snapshot, animatingDifferences: false) { [weak self = self] in
-				self?.restoreSelectionIfNecessary(adjustScroll: false)
-			}
-		})
-
+		let articlesToReload = snapshot.itemIdentifiers.filter { articleIDs.contains($0.articleID) }
+		guard !articlesToReload.isEmpty else {
+			return
+		}
+		snapshot.reconfigureItems(articlesToReload)
+		dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
+			self?.restoreSelectionIfNecessary(adjustScroll: false)
+		}
 	}
 
 	@objc func refreshAccounts(_ sender: Any) {
@@ -544,10 +579,38 @@ extension MainTimelineViewController: UICollectionViewDelegate {
 		}
 	}
 
+	/// Cells are configured before they’re displayed, and thumbnail notifications update only visible cells.
+	func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+		guard let thumbnailMode, let cell = cell as? MainTimelineCell, let cellData = cell.cellData, let article = dataSource?.itemIdentifier(for: indexPath) else {
+			return
+		}
+		let thumbnailURL = ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode)
+		if (thumbnailURL != nil) != cellData.showThumbnail {
+			// The row’s height changes too.
+			reloadCells([article])
+			return
+		}
+		guard let thumbnailURL, let thumbnail = ThumbnailDownloader.shared.thumbnail(url: thumbnailURL, mode: thumbnailMode, articleTitle: article.title), thumbnail !== cell.thumbnail else {
+			return
+		}
+		cell.thumbnail = thumbnail
+	}
+
 	func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
 		guard let firstIndex = indexPaths.first, let dataSource, let article = dataSource.itemIdentifier(for: firstIndex) else { return nil }
 
-		return UIContextMenuConfiguration(identifier: firstIndex.row as NSCopying, previewProvider: nil, actionProvider: { [weak self] _ in
+		// The preview is off by default, since it can cover part of the menu.
+		var previewProvider: UIContextMenuContentPreviewProvider?
+		if AppDefaults.showPreviewInTimelineContextMenu {
+			previewProvider = { [weak self] in
+				guard let coordinator = self?.coordinator else {
+					return nil
+				}
+				return ArticlePreviewViewController(article: article, coordinator: coordinator)
+			}
+		}
+
+		return UIContextMenuConfiguration(identifier: firstIndex.row as NSCopying, previewProvider: previewProvider, actionProvider: { [weak self] _ in
 
 			guard let self = self else { return nil }
 
@@ -599,6 +662,17 @@ extension MainTimelineViewController: UICollectionViewDelegate {
 			return UIMenu(title: "", children: menuElements)
 
 		})
+	}
+
+	func collectionView(_ collectionView: UICollectionView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: any UIContextMenuInteractionCommitAnimating) {
+		// The timeline may have changed since the menu opened, so use the previewed article, not the row.
+		guard let articlePreviewViewController = animator.previewViewController as? ArticlePreviewViewController else {
+			return
+		}
+		let article = articlePreviewViewController.article
+		animator.addCompletion { [weak self] in
+			self?.coordinator?.selectArticle(article, animations: [.scroll, .select, .navigation])
+		}
 	}
 
 	func collectionView(_ collectionView: UICollectionView, contextMenuConfiguration configuration: UIContextMenuConfiguration, highlightPreviewForItemAt indexPath: IndexPath) -> UITargetedPreview? {
@@ -688,18 +762,18 @@ private extension MainTimelineViewController {
 	func addNotificationObservers() {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
-
-		// TODO: fix this temporary hack, which will probably require refactoring image handling.
-		// We want to know when to possibly reconfigure our cells with a new image, and we don’t
-		// always know when an image is available — but watching the .htmlMetadataAvailable Notification
-		// lets us know that it’s time to request an image.
-		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
-
+		NotificationCenter.default.addObserver(self, selector: #selector(handleFeedIconImageDidChange(_:)), name: .feedIconImageDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleGrayscaleIconsDidChange(_:)), name: .grayscaleIconsDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleAuthorAvatarImageDidChange(_:)), name: .authorAvatarImageDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(timelineIconSizeDidChange(_:)), name: .timelineIconSizeDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(timelineNumberOfLinesDidChange(_:)), name: .timelineNumberOfLinesDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineThumbnailsDisplayDidChange(_:)), name: .timelineThumbnailsDisplayDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFadeReadArticlesDidChange(_:)), name: .timelineFadeReadArticlesDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFeedNameAndDateAboveTitleDidChange(_:)), name: .timelineFeedNameAndDateAboveTitleDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineShowFullTitlesDidChange(_:)), name: .timelineShowFullTitlesDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleThumbnailDidBecomeAvailable(_:)), name: .thumbnailDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThumbnailDownloadDidFail(_:)), name: .articleThumbnailDownloadDidFail, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleNetworkStatusDidChange(_:)), name: .networkStatusDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
@@ -733,8 +807,16 @@ private extension MainTimelineViewController {
 
 	private func configureCollectionView(_ dataSource: UICollectionViewDiffableDataSource<Int, Article>) {
 		var config = UICollectionLayoutListConfiguration(appearance: .plain)
-		config.showsSeparators = false
 		config.headerMode = .none
+		// System separators between rows, none above the first row or below the last. Each cell lines its separator up with its text.
+		config.itemSeparatorHandler = { [weak self] indexPath, sectionSeparatorConfiguration in
+			var separatorConfiguration = sectionSeparatorConfiguration
+			separatorConfiguration.topSeparatorVisibility = .hidden
+			if let collectionView = self?.collectionView, indexPath.item == collectionView.numberOfItems(inSection: indexPath.section) - 1 {
+				separatorConfiguration.bottomSeparatorVisibility = .hidden
+			}
+			return separatorConfiguration
+		}
 		config.trailingSwipeActionsConfigurationProvider = { [weak self] indexPath in
 			guard let self else {
 				return nil
@@ -917,7 +999,13 @@ private extension MainTimelineViewController {
 		let iconImage = iconImageFor(article)
 		let showFeedNames = coordinator?.showFeedNames ?? ShowFeedName.none
 		let showIcon = showIcons && iconImage != nil
-		let cellData = MainTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, numberOfLines: numberOfTextLines, iconSize: iconSize)
+		var thumbnail: UIImage?
+		var showThumbnail = false
+		if let thumbnailMode, let thumbnailURL = ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) {
+			showThumbnail = true
+			thumbnail = ThumbnailDownloader.shared.thumbnail(url: thumbnailURL, mode: thumbnailMode, articleTitle: article.title)
+		}
+		let cellData = MainTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, numberOfLines: numberOfTextLines, iconSize: iconSize, thumbnail: thumbnail, showThumbnail: showThumbnail, thumbnailsDisplay: thumbnailsDisplay, fadesReadArticles: fadesReadArticles, feedNameAndDateAboveTitle: feedNameAndDateAboveTitle, showsFullTitles: showsFullTitles)
 		return cellData
 	}
 
@@ -1027,6 +1115,26 @@ private extension MainTimelineViewController {
 
 }
 
+// MARK: - Thumbnails
+
+private extension MainTimelineViewController {
+
+	/// Reloads the visible cells for those articles.
+	func thumbnailURLsDidChange(for articleIDs: Set<String>) {
+		guard !articleIDs.isEmpty else {
+			return
+		}
+		reloadCells(visibleArticles().filter { articleIDs.contains($0.articleID) })
+	}
+
+	func visibleArticles() -> [Article] {
+		guard let collectionView, let dataSource else {
+			return []
+		}
+		return collectionView.indexPathsForVisibleItems.compactMap { dataSource.itemIdentifier(for: $0) }
+	}
+}
+
 // MARK: - Notifications API
 private extension MainTimelineViewController {
 	@objc dynamic func unreadCountDidChange(_ notification: Notification) {
@@ -1053,47 +1161,102 @@ private extension MainTimelineViewController {
 		reloadCells(visibleUpdatedArticles)
 	}
 
-	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
-		Self.logger.debug("MainTimelineViewController: feedIconDidBecomeAvailable")
-
-		guard isViewLoaded else {
-			return
-		}
-		queueReloadAvailableCells()
+	@objc func handleFeedIconImageDidChange(_ notification: Notification) {
+		Self.logger.debug("MainTimelineViewController: handleFeedIconImageDidChange")
+		queueReloadIfVisibleArticleMightShowIcon(in: notification)
 	}
 
-	@objc func avatarDidBecomeAvailable(_ note: Notification) {
-		Self.logger.debug("MainTimelineViewController: avatarDidBecomeAvailable")
-
-		guard isViewLoaded else {
-			return
-		}
-		queueReloadAvailableCells()
+	@objc func handleAuthorAvatarImageDidChange(_ notification: Notification) {
+		Self.logger.debug("MainTimelineViewController: handleAuthorAvatarImageDidChange")
+		queueReloadIfVisibleArticleMightShowIcon(in: notification)
 	}
 
-	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		Self.logger.debug("MainTimelineViewController: faviconDidBecomeAvailable")
-
-		guard isViewLoaded else {
+	@objc func handleGrayscaleIconsDidChange(_ notification: Notification) {
+		Self.logger.debug("MainTimelineViewController: handleGrayscaleIconsDidChange")
+		guard showIcons else {
 			return
 		}
-		queueReloadAvailableCells()
+		reloadVisibleCells()
 	}
 
 	@objc func timelineIconSizeDidChange(_ note: Notification) {
 		Self.logger.debug("MainTimelineViewController: timelineIconSizeDidChange")
-		if iconSize != AppDefaults.shared.timelineIconSize {
-			iconSize = AppDefaults.shared.timelineIconSize
+		if iconSize != AppDefaults.timelineIconSize {
+			iconSize = AppDefaults.timelineIconSize
 			reloadVisibleCells()
 		}
 	}
 
 	@objc func timelineNumberOfLinesDidChange(_ note: Notification) {
 		Self.logger.debug("MainTimelineViewController: timelineNumberOfLinesDidChange")
-		if numberOfTextLines != AppDefaults.shared.timelineNumberOfLines {
-			numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
+		if numberOfTextLines != AppDefaults.timelineNumberOfLines {
+			numberOfTextLines = AppDefaults.timelineNumberOfLines
 			reloadVisibleCells()
 		}
+	}
+
+	@objc func handleTimelineThumbnailsDisplayDidChange(_ notification: Notification) {
+		guard thumbnailsDisplay != AppDefaults.timelineThumbnailsDisplay else {
+			return
+		}
+		thumbnailsDisplay = AppDefaults.timelineThumbnailsDisplay
+		if thumbnailMode == nil {
+			ArticleThumbnailFinder.shared.emptyHTMLThumbnailCache()
+		}
+		reloadAllCells()
+	}
+
+	@objc func handleTimelineFadeReadArticlesDidChange(_ notification: Notification) {
+		guard fadesReadArticles != AppDefaults.timelineFadeReadArticles else {
+			return
+		}
+		fadesReadArticles = AppDefaults.timelineFadeReadArticles
+		reloadVisibleCells()
+	}
+
+	@objc func handleTimelineFeedNameAndDateAboveTitleDidChange(_ notification: Notification) {
+		guard feedNameAndDateAboveTitle != AppDefaults.timelineFeedNameAndDateAboveTitle else {
+			return
+		}
+		feedNameAndDateAboveTitle = AppDefaults.timelineFeedNameAndDateAboveTitle
+		reloadAllCells()
+	}
+
+	@objc func handleTimelineShowFullTitlesDidChange(_ notification: Notification) {
+		guard showsFullTitles != AppDefaults.timelineShowFullTitles else {
+			return
+		}
+		showsFullTitles = AppDefaults.timelineShowFullTitles
+		reloadAllCells()
+	}
+
+	@objc func handleThumbnailDidBecomeAvailable(_ notification: Notification) {
+		guard let thumbnailMode, let collectionView, let dataSource, let url = notification.userInfo?[ThumbnailDownloader.urlKey] as? String else {
+			return
+		}
+		// The row’s height already allows for the thumbnail, so only the cell’s contents change.
+		for indexPath in collectionView.indexPathsForVisibleItems {
+			guard let article = dataSource.itemIdentifier(for: indexPath), ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) == url, let cell = collectionView.cellForItem(at: indexPath) as? MainTimelineCell, let thumbnail = ThumbnailDownloader.shared.thumbnail(url: url, mode: thumbnailMode, articleTitle: article.title) else {
+				continue
+			}
+			cell.thumbnail = thumbnail
+		}
+	}
+
+	@objc func handleArticleThumbnailDownloadDidFail(_ notification: Notification) {
+		guard thumbnailMode != nil, let articleIDs = notification.userInfo?[ArticleThumbnailFinder.articleIDsKey] as? Set<String> else {
+			return
+		}
+		// Articles that used the failed URL now get their next source, or none.
+		thumbnailURLsDidChange(for: articleIDs)
+	}
+
+	@objc func handleNetworkStatusDidChange(_ notification: Notification) {
+		guard thumbnailMode != nil, ThumbnailDownloader.shared.networkAllowsDownloads else {
+			return
+		}
+		// Thumbnails that couldn’t download while offline or in Low Data Mode try again.
+		reloadVisibleCells()
 	}
 
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
@@ -1122,11 +1285,6 @@ private extension MainTimelineViewController {
 	func emptyTextSizerCaches() {
 		MultilineUILabelSizer.emptyCache()
 		SingleLineUILabelSizer.emptyCache()
-	}
-
-	@objc func scrollPositionDidChange() {
-		Self.logger.debug("MainTimelineViewController: scrollPositionDidChange")
-		timelineMiddleIndexPath = collectionView?.middleVisibleRow()
 	}
 
 }

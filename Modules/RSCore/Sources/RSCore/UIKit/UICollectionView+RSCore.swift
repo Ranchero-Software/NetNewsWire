@@ -31,14 +31,7 @@ extension UICollectionView {
 		if let itemFrame = layoutAttributesForItem(at: indexPath)?.frame, unobscuredBounds.contains(itemFrame) {
 			return
 		}
-		scrollToItem(at: indexPath, at: .centeredVertically, animated: true)
-	}
-
-	public func middleVisibleRow() -> IndexPath? {
-		if indexPathsForVisibleItems.count > 2 {
-			return indexPathsForVisibleItems[indexPathsForVisibleItems.count / 2]
-		}
-		return nil
+		scrollToItem(at: indexPath, at: .centeredVertically, animated: animations.contains(.scroll))
 	}
 
 }

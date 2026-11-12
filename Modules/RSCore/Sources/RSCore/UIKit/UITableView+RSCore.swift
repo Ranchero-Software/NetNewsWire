@@ -34,13 +34,6 @@ public extension UITableView {
 		let rect = rectForRow(at: indexPath)
 		return safeAreaLayoutGuide.layoutFrame.contains(rect)
 	}
-
-	func middleVisibleRow() -> IndexPath? {
-		if let visibleIndexPaths = indexPathsForRows(in: safeAreaLayoutGuide.layoutFrame), visibleIndexPaths.count > 2 {
-			return visibleIndexPaths[visibleIndexPaths.count / 2]
-		}
-		return nil
-	}
 }
 
 #endif

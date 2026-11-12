@@ -11,6 +11,7 @@ import os
 import UserNotifications
 import Account
 import Articles
+import ErrorLog
 import RSCore
 import RSTree
 import SafariServices
@@ -94,11 +95,12 @@ struct SidebarItemNode: Hashable, Sendable {
 
 	var isTimelineViewControllerPending = false
 	var isArticleViewControllerPending = false
+	private var hasReportedIgnoredTap = false
 
 	/// `Bool` to track whether a refresh is scheduled.
 	private var isNavigationBarSubtitleRefreshScheduled: Bool = false
 
-	private(set) var sortDirection = AppDefaults.shared.timelineSortDirection {
+	private(set) var sortDirection = AppDefaults.timelineSortDirection {
 		didSet {
 			if sortDirection != oldValue {
 				sortParametersDidChange()
@@ -106,7 +108,7 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 	}
 
-	private(set) var groupByFeed = AppDefaults.shared.timelineGroupByFeed {
+	private(set) var groupByFeed = AppDefaults.timelineGroupByFeed {
 		didSet {
 			if groupByFeed != oldValue {
 				sortParametersDidChange()
@@ -170,8 +172,6 @@ struct SidebarItemNode: Hashable, Sendable {
 			updateNavigationBarSubtitles(nil)
 		}
 	}
-
-	var timelineMiddleIndexPath: IndexPath?
 
 	private(set) var showFeedNames = ShowFeedName.none
 	private(set) var showIcons = false
@@ -266,16 +266,15 @@ struct SidebarItemNode: Hashable, Sendable {
 	var currentArticle: Article? {
 		didSet {
 			if let article = currentArticle {
-				AppDefaults.shared.selectedArticle = ArticleSpecifier(article: article)
+				AppDefaults.selectedArticle = ArticleSpecifier(article: article)
 			} else {
-				AppDefaults.shared.selectedArticle = nil
+				AppDefaults.selectedArticle = nil
 			}
 		}
 	}
 
 	private(set) var articles = ArticleArray() {
 		didSet {
-			timelineMiddleIndexPath = nil
 			articleDictionaryNeedsUpdate = true
 		}
 	}
@@ -317,7 +316,7 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	private var isTimelineUnreadCountSubtitleShown: Bool {
-		timelineFeed != nil && timelineUnreadCount > 0 && AppDefaults.shared.unreadCountDisplay == .count
+		timelineFeed != nil && timelineUnreadCount > 0 && AppDefaults.unreadCountDisplay == .count
 	}
 
 	private static let minimumTimelineWidth: CGFloat = 280
@@ -353,13 +352,13 @@ struct SidebarItemNode: Hashable, Sendable {
 		self.rootSplitViewController.minimumSupplementaryColumnWidth = SceneCoordinator.minimumTimelineWidth
 		self.rootSplitViewController.maximumSupplementaryColumnWidth = SceneCoordinator.maximumTimelineWidth
 		let restoredTimelineWidth: CGFloat
-		if let savedTimelineWidth = AppDefaults.shared.timelineWidth {
+		if let savedTimelineWidth = AppDefaults.timelineWidth {
 			restoredTimelineWidth = CGFloat(savedTimelineWidth)
 		} else {
 			restoredTimelineWidth = 320
 		}
 		self.rootSplitViewController.preferredSupplementaryColumnWidth = Self.clampTimelineWidth(restoredTimelineWidth)
-		if let savedSidebarWidth = AppDefaults.shared.sidebarWidth {
+		if let savedSidebarWidth = AppDefaults.sidebarWidth {
 			self.rootSplitViewController.preferredPrimaryColumnWidth = Self.clampSidebarWidth(CGFloat(savedSidebarWidth))
 		}
 		self.rootSplitViewController.preferredSplitBehavior = .tile
@@ -400,6 +399,8 @@ struct SidebarItemNode: Hashable, Sendable {
 		NotificationCenter.default.addObserver(self, selector: #selector(themeDownloadDidFail(_:)), name: .didFailToImportThemeWithError, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(updateNavigationBarSubtitles(_:)), name: .progressInfoDidChange, object: CombinedRefreshProgress.shared)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFeedIconsDisplayDidChange(_:)), name: .timelineFeedIconsDisplayDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarSmartFeedsVisibilityDidChange(_:)), name: .sidebarSmartFeedsVisibilityDidChange, object: nil)
 
 		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
 			Task { @MainActor in
@@ -418,7 +419,7 @@ struct SidebarItemNode: Hashable, Sendable {
 
 		isRestoringState = true
 
-		if AppDefaults.shared.isFirstRun {
+		if AppDefaults.isFirstRun {
 			// Expand top-level items on first run.
 			for sectionNode in treeController.rootNode.childNodes {
 				markExpanded(sectionNode)
@@ -525,6 +526,9 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func selectFirstUnreadInAllUnread() {
+		guard SmartFeedsController.shared.isShown(SmartFeedsController.shared.unreadFeed) else {
+			return
+		}
 		markExpanded(SmartFeedsController.shared)
 		self.ensureFeedIsAvailableToSelect(SmartFeedsController.shared.unreadFeed) {
 			self.selectFeed(SmartFeedsController.shared.unreadFeed) {
@@ -660,8 +664,8 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func userDefaultsDidChange() {
-		sortDirection = AppDefaults.shared.timelineSortDirection
-		groupByFeed = AppDefaults.shared.timelineGroupByFeed
+		sortDirection = AppDefaults.timelineSortDirection
+		groupByFeed = AppDefaults.timelineGroupByFeed
 	}
 
 	@objc func accountDidDownloadArticles(_ note: Notification) {
@@ -709,6 +713,22 @@ struct SidebarItemNode: Hashable, Sendable {
 
 	@objc func handleUnreadCountDisplaySettingDidChange(_ notification: Notification) {
 		updateNavigationBarSubtitles(nil)
+	}
+
+	/// Clears the selection when the selected smart feed is hidden, the same as on Mac.
+	@objc func handleSidebarSmartFeedsVisibilityDidChange(_ notification: Notification) {
+		rebuildBackingStores(completion: {
+			guard let timelineFeed = self.timelineFeed, let sidebarItemID = timelineFeed.sidebarItemID, SmartFeedsController.shared.find(by: sidebarItemID) != nil, !SmartFeedsController.shared.isShown(timelineFeed) else {
+				return
+			}
+			self.selectSidebarItem(indexPath: nil)
+		})
+	}
+
+	@objc func handleTimelineFeedIconsDisplayDidChange(_ notification: Notification) {
+		updateShowNamesAndIcons()
+		// Showing the icon changes the text width, and so the height of every row.
+		mainTimelineViewController?.reloadAllCells()
 	}
 
 	/// Updates navigation bar subtitles in response to feed selection, unread count changes,
@@ -838,7 +858,7 @@ struct SidebarItemNode: Hashable, Sendable {
 		guard width > 0 else {
 			return
 		}
-		AppDefaults.shared.timelineWidth = Int(SceneCoordinator.clampTimelineWidth(width))
+		AppDefaults.timelineWidth = Int(SceneCoordinator.clampTimelineWidth(width))
 	}
 
 	func sidebarDidLayout() {
@@ -857,7 +877,7 @@ struct SidebarItemNode: Hashable, Sendable {
 		guard width > 0 else {
 			return
 		}
-		AppDefaults.shared.sidebarWidth = Int(SceneCoordinator.clampSidebarWidth(width))
+		AppDefaults.sidebarWidth = Int(SceneCoordinator.clampSidebarWidth(width))
 	}
 
 	func suspend() {
@@ -867,7 +887,7 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func saveExpandedContainers() {
-		AppDefaults.shared.expandedContainers = expandedContainers
+		AppDefaults.expandedContainers = expandedContainers
 	}
 
 	func cleanUp(conditional: Bool) {
@@ -875,7 +895,7 @@ struct SidebarItemNode: Hashable, Sendable {
 		if isReadFeedsFiltered {
 			rebuildBackingStores()
 		}
-		if AppDefaults.shared.refreshClearsReadArticles || !conditional {
+		if AppDefaults.refreshClearsReadArticles || !conditional {
 			removeArticlesHiddenByReadFilter()
 		}
 	}
@@ -928,7 +948,7 @@ struct SidebarItemNode: Hashable, Sendable {
 
 		let newValue = !isReadFeedsFiltered
 		treeControllerDelegate.isReadFiltered = newValue
-		AppDefaults.shared.hideReadFeeds = newValue
+		AppDefaults.hideReadFeeds = newValue
 		rebuildBackingStores()
 		mainFeedCollectionViewController?.updateUI()
 	}
@@ -1130,7 +1150,7 @@ struct SidebarItemNode: Hashable, Sendable {
 				if self.isReadFeedsFiltered {
 					self.rebuildBackingStores()
 				}
-				AppDefaults.shared.selectedSidebarItem = sidebarItem.sidebarItemID
+				AppDefaults.selectedSidebarItem = sidebarItem.sidebarItemID
 				completion?()
 			}
 
@@ -1142,7 +1162,7 @@ struct SidebarItemNode: Hashable, Sendable {
 				}
 				self.activityManager.invalidateSelecting()
 				self.rootSplitViewController.showColumn(.primary)
-				AppDefaults.shared.selectedSidebarItem = nil
+				AppDefaults.selectedSidebarItem = nil
 				completion?()
 			}
 
@@ -1163,28 +1183,31 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func selectTodayFeed(completion: (() -> Void)? = nil) {
-		markExpanded(SmartFeedsController.shared)
-		self.ensureFeedIsAvailableToSelect(SmartFeedsController.shared.todayFeed) {
-			self.selectFeed(SmartFeedsController.shared.todayFeed, animations: [.navigation, .scroll], completion: completion)
-		}
+		selectSmartFeed(SmartFeedsController.shared.todayFeed, completion: completion)
 	}
 
 	func selectAllUnreadFeed(completion: (() -> Void)? = nil) {
-		markExpanded(SmartFeedsController.shared)
-		self.ensureFeedIsAvailableToSelect(SmartFeedsController.shared.unreadFeed) {
-			self.selectFeed(SmartFeedsController.shared.unreadFeed, animations: [.navigation, .scroll], completion: completion)
-		}
+		selectSmartFeed(SmartFeedsController.shared.unreadFeed, completion: completion)
 	}
 
 	func selectStarredFeed(completion: (() -> Void)? = nil) {
+		selectSmartFeed(SmartFeedsController.shared.starredFeed, completion: completion)
+	}
+
+	/// Does nothing when the smart feed is hidden, since it isn’t in the sidebar to select.
+	private func selectSmartFeed(_ smartFeed: SidebarItem, completion: (() -> Void)?) {
+		guard SmartFeedsController.shared.isShown(smartFeed) else {
+			return
+		}
 		markExpanded(SmartFeedsController.shared)
-		self.ensureFeedIsAvailableToSelect(SmartFeedsController.shared.starredFeed) {
-			self.selectFeed(SmartFeedsController.shared.starredFeed, animations: [.navigation, .scroll], completion: completion)
+		ensureFeedIsAvailableToSelect(smartFeed) {
+			self.selectFeed(smartFeed, animations: [.navigation, .scroll], completion: completion)
 		}
 	}
 
 	func selectArticle(_ article: Article?, animations: Animations = [], isShowingExtractedArticle: Bool? = nil, articleWindowScrollY: Int? = nil) {
 		guard article != currentArticle else {
+			reportIgnoredSelection(of: article)
 			return
 		}
 
@@ -1216,6 +1239,32 @@ struct SidebarItemNode: Hashable, Sendable {
 		if let isShowingExtractedArticle = isShowingExtractedArticle, let articleWindowScrollY = articleWindowScrollY {
 			articleViewController?.restoreScrollPosition = (isShowingExtractedArticle, articleWindowScrollY)
 		}
+	}
+
+	/// Selecting the current article while the article view isn’t showing does nothing, which is never expected.
+	/// Log it once per launch to the Errors log.
+	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/5516>
+	private func reportIgnoredSelection(of article: Article?) {
+		guard let article, !hasReportedIgnoredTap, isRootSplitCollapsed, !isArticleViewControllerShowing else {
+			return
+		}
+		hasReportedIgnoredTap = true
+
+		let selectedItemCount = mainTimelineViewController?.collectionView?.indexPathsForSelectedItems?.count ?? 0
+		let navigationStackDepth = mainTimelineViewController?.navigationController?.viewControllers.count ?? 0
+		let message = """
+		Selection ignored because the article is already the current article.
+		Article: \(article.title ?? "(no title)") [\(article.articleID)]
+		Feed: \(article.feed?.nameForDisplay ?? "(unknown)")
+		Timeline: \(timelineFeed?.nameForDisplay ?? "(none)")
+		isArticleViewControllerPending: \(isArticleViewControllerPending)
+		isRestoringState: \(isRestoringState)
+		isNavigationDisabled: \(isNavigationDisabled)
+		Navigation stack depth: \(navigationStackDepth)
+		Selected item count: \(selectedItemCount)
+		"""
+		let userInfo = ErrorLogUserInfoKey.userInfo(sourceName: "Timeline", sourceID: 102, operation: "Selecting article", errorMessage: message)
+		NotificationCenter.default.post(name: .appDidEncounterError, object: nil, userInfo: userInfo)
 	}
 
 	func beginSearching() {
@@ -1585,7 +1634,7 @@ struct SidebarItemNode: Hashable, Sendable {
 			UIStoryboard.inspector.instantiateViewController(identifier: "AccountInspectorNavigationViewController") as! UINavigationController
 		let accountInspectorController = accountInspectorNavController.topViewController as! AccountInspectorViewController
 		accountInspectorNavController.modalPresentationStyle = .formSheet
-		accountInspectorNavController.preferredContentSize = AccountInspectorViewController.preferredContentSizeForFormSheetDisplay
+		accountInspectorNavController.preferredContentSize = UIViewController.formSheetSize
 		accountInspectorController.isModal = true
 		accountInspectorController.account = account
 		rootSplitViewController.present(accountInspectorNavController, animated: true)
@@ -1622,7 +1671,7 @@ struct SidebarItemNode: Hashable, Sendable {
 		let addFeedView = AddFeedView(initialFeed: initialFeed, initialFeedName: initialFeedName)
 		let hostingController = UIHostingController(rootView: addFeedView)
 		hostingController.modalPresentationStyle = .formSheet
-		hostingController.preferredContentSize = AddFeedView.preferredContentSizeForFormSheetDisplay
+		hostingController.preferredContentSize = UIViewController.formSheetSize
 
 		// Presenting over an active nav-bar-hosted search bar crashes inside UIKit.
 		guard let mainTimelineViewController else {
@@ -1637,7 +1686,7 @@ struct SidebarItemNode: Hashable, Sendable {
 	func showAddFolder() {
 		let hostingController = UIHostingController(rootView: AddFolderView())
 		hostingController.modalPresentationStyle = .formSheet
-		hostingController.preferredContentSize = AddFolderView.preferredContentSizeForFormSheetDisplay
+		hostingController.preferredContentSize = UIViewController.formSheetSize
 		mainFeedCollectionViewController.present(hostingController, animated: true)
 	}
 
@@ -1797,7 +1846,7 @@ extension SceneCoordinator: UISplitViewControllerDelegate {
 	}
 
 	func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
-		AppDefaults.shared.splitViewPreferredDisplayMode = displayMode.rawValue
+		AppDefaults.splitViewPreferredDisplayMode = displayMode.rawValue
 		mainTimelineViewController?.updateToolbarProgressView(for: displayMode)
 	}
 
@@ -2129,16 +2178,20 @@ private extension SceneCoordinator {
 	func updateShowNamesAndIcons() {
 
 		if timelineFeed is Feed {
-			showFeedNames = {
-				for article in articles {
-					if !article.byline().isEmpty {
-						return .byline
-					}
-				}
-				return .none
-			}()
+			showFeedNames = .byline
 		} else {
 			showFeedNames = .feed
+		}
+
+		switch AppDefaults.timelineFeedIconsDisplay {
+		case .always:
+			self.showIcons = true
+			return
+		case .never:
+			self.showIcons = false
+			return
+		case .automatic:
+			break
 		}
 
 		if showFeedNames == .feed {
@@ -2463,7 +2516,9 @@ private extension SceneCoordinator {
 		}
 
 		updateShowNamesAndIcons()
-		IconImageCache.shared.prefetchImagesForArticles(articles)
+		if showIcons {
+			IconImageCache.shared.prefetchImagesForArticles(articles)
+		}
 		updateUnreadCount()
 		mainTimelineViewController?.reloadArticles(animated: animated)
 	}
@@ -2548,7 +2603,7 @@ private extension SceneCoordinator {
 		cancelPendingAsyncFetches()
 
 		let fetchers = representedObjects.compactMap { $0 as? ArticleFetcher }
-		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, hidingReadArticlesState: hidingReadArticlesState, fetchers: fetchers) { [weak self] (articles, operation) in
+		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, hidingReadArticlesState: hidingReadArticlesState, fetchers: fetchers, findsThumbnailURLs: AppDefaults.timelineThumbnailsDisplay.thumbnailMode != nil) { [weak self] (articles, operation) in
 			precondition(Thread.isMainThread)
 			guard !operation.isCanceled, let strongSelf = self, operation.id == strongSelf.fetchSerialNumber else {
 				return

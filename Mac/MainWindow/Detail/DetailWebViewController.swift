@@ -40,7 +40,9 @@ final class DetailWebViewController: NSViewController {
 	}
 
 	var windowState: DetailWindowState {
-		DetailWindowState(isShowingExtractedArticle: isShowingExtractedArticle, windowScrollY: windowScrollY ?? 0)
+		// Without an article there’s no scroll position worth saving.
+		let scrollY = article == nil ? 0 : (windowScrollY ?? 0)
+		return DetailWindowState(isShowingExtractedArticle: isShowingExtractedArticle, windowScrollY: scrollY)
 	}
 
 	var article: Article? {
@@ -54,8 +56,8 @@ final class DetailWebViewController: NSViewController {
 		}
 	}
 
-	private var articleTextSize = AppDefaults.shared.articleTextSize
-	private var isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled
+	private var articleTextSize = AppDefaults.articleTextSize
+	private var isArticleContentJavascriptEnabled = AppDefaults.isArticleContentJavascriptEnabled
 
 	private var webInspectorEnabled: Bool {
 		get {
@@ -116,9 +118,9 @@ final class DetailWebViewController: NSViewController {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(webInspectorEnabledDidChange(_:)), name: .WebInspectorEnabledDidChange, object: nil)
 
-		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleFeedIconImageDidChange(_:)), name: .feedIconImageDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleGrayscaleIconsDidChange(_:)), name: .grayscaleIconsDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleAuthorAvatarImageDidChange(_:)), name: .authorAvatarImageDidChange, object: nil)
 		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
 			Task { @MainActor in
 				self?.userDefaultsDidChange()
@@ -131,25 +133,25 @@ final class DetailWebViewController: NSViewController {
 
 	// MARK: Notifications
 
-	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
-		reloadArticleImage()
+	@objc func handleFeedIconImageDidChange(_ notification: Notification) {
+		reloadArticleImageIfNeeded(notification)
 	}
 
-	@objc func avatarDidBecomeAvailable(_ note: Notification) {
-		reloadArticleImage()
+	@objc func handleAuthorAvatarImageDidChange(_ notification: Notification) {
+		reloadArticleImageIfNeeded(notification)
 	}
 
-	@objc func faviconDidBecomeAvailable(_ note: Notification) {
+	@objc func handleGrayscaleIconsDidChange(_ notification: Notification) {
 		reloadArticleImage()
 	}
 
 	func userDefaultsDidChange() {
-		if articleTextSize != AppDefaults.shared.articleTextSize {
-			articleTextSize = AppDefaults.shared.articleTextSize
+		if articleTextSize != AppDefaults.articleTextSize {
+			articleTextSize = AppDefaults.articleTextSize
 			reloadHTMLMaintainingScrollPosition()
 		}
-		if isArticleContentJavascriptEnabled != AppDefaults.shared.isArticleContentJavascriptEnabled {
-			isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled
+		if isArticleContentJavascriptEnabled != AppDefaults.isArticleContentJavascriptEnabled {
+			isArticleContentJavascriptEnabled = AppDefaults.isArticleContentJavascriptEnabled
 			reloadHTMLMaintainingScrollPosition()
 		}
 	}
@@ -305,8 +307,18 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 
 private extension DetailWebViewController {
 
+	/// Each reload draws and encodes the icon again, so icons for other feeds and authors are skipped.
+	func reloadArticleImageIfNeeded(_ notification: Notification) {
+		guard let article, article.mightShowIcon(in: notification) else {
+			return
+		}
+		reloadArticleImage()
+	}
+
 	func reloadArticleImage() {
-		guard let article = article else { return }
+		guard let article else {
+			return
+		}
 
 		var components = URLComponents()
 		components.scheme = ArticleRenderer.imageIconScheme
@@ -329,7 +341,7 @@ private extension DetailWebViewController {
 		webView.navigationDelegate = self
 		webView.keyboardDelegate = keyboardDelegate
 		webView.autoresizingMask = [.width, .height]
-		webView.configuration.preferences._developerExtrasEnabled = AppDefaults.shared.webInspectorEnabled
+		webView.configuration.preferences._developerExtrasEnabled = AppDefaults.webInspectorEnabled
 
 		return webView
 	}
@@ -369,6 +381,8 @@ private extension DetailWebViewController {
 		let theme = ArticleThemesManager.shared.currentTheme
 		let rendering: ArticleRenderer.Rendering
 
+		// Column layout shows no thumbnails, so there’s no timeline copy to share.
+		let routesThumbnailImages = AppDefaults.timelineLayout == .standard
 		switch state {
 		case .noSelection:
 			rendering = ArticleRenderer.noSelectionHTML(theme: theme)
@@ -378,10 +392,10 @@ private extension DetailWebViewController {
 			rendering = ArticleRenderer.loadingHTML(theme: theme)
 		case .article(let article, _):
 			detailIconSchemeHandler.currentArticle = article
-			rendering = ArticleRenderer.articleHTML(article: article, theme: theme)
+			rendering = ArticleRenderer.articleHTML(article: article, theme: theme, routesThumbnailImages: routesThumbnailImages)
 		case .extracted(let article, let extractedArticle, _):
 			detailIconSchemeHandler.currentArticle = article
-			rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, theme: theme)
+			rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, theme: theme, routesThumbnailImages: routesThumbnailImages)
 		}
 
 		let substitutions = [

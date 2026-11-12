@@ -54,7 +54,6 @@ public struct ArticleCounts: Sendable {
 
 	private let articlesTable: ArticlesTable
 	private let queue: DatabaseQueue
-	private let operationQueue = MainThreadOperationQueue()
 	private let retentionStyle: RetentionStyle
 	private let accountID: String
 
@@ -83,6 +82,14 @@ public struct ArticleCounts: Sendable {
 			if !self.articlesTable.containsColumn("authors", in: database) {
 				Self.logger.debug("ArticlesDatabase: adding authors column \(accountID, privacy: .public)")
 				database.executeStatements("ALTER TABLE articles add column authors TEXT;")
+			}
+			if !self.articlesTable.containsColumn("attachments", in: database) {
+				Self.logger.debug("ArticlesDatabase: adding attachments column \(accountID, privacy: .public)")
+				database.executeStatements("ALTER TABLE articles add column attachments TEXT;")
+			}
+			if !self.articlesTable.containsColumn("thumbnailURL", in: database) {
+				Self.logger.debug("ArticlesDatabase: adding thumbnailURL column \(accountID, privacy: .public)")
+				database.executeStatements("ALTER TABLE articles add column thumbnailURL TEXT;")
 			}
 			database.executeStatements("CREATE INDEX if not EXISTS articles_searchRowID on articles(searchRowID);")
 			database.executeStatements("DROP TABLE if EXISTS tags;DROP INDEX if EXISTS tags_tagName_index;DROP INDEX if EXISTS articles_feedID_index;DROP INDEX if EXISTS statuses_read_index;DROP TABLE if EXISTS attachments;DROP TABLE if EXISTS attachmentsLookup;")
@@ -251,10 +258,11 @@ public struct ArticleCounts: Sendable {
 
 	// MARK: - Unread Counts
 
-	/// Fetch all non-zero unread counts.
+	/// Fetch all non-zero unread counts. Nil if the query fails.
 	public func fetchAllUnreadCountsAsync() async -> UnreadCountDictionary? {
-		await withCheckedContinuation { continuation in
-			_fetchAllUnreadCounts { unreadCountDictionary in
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
+		return await withCheckedContinuation { continuation in
+			articlesTable.fetchAllUnreadCounts { unreadCountDictionary in
 				continuation.resume(returning: unreadCountDictionary)
 			}
 		}
@@ -432,7 +440,7 @@ public struct ArticleCounts: Sendable {
 private extension ArticlesDatabase {
 
 	static let tableCreationStatements = """
-	CREATE TABLE if not EXISTS articles (articleID TEXT NOT NULL PRIMARY KEY, feedID TEXT NOT NULL, uniqueID TEXT NOT NULL, title TEXT, contentHTML TEXT, contentText TEXT, markdown TEXT, url TEXT, externalURL TEXT, summary TEXT, imageURL TEXT, bannerImageURL TEXT, datePublished DATE, dateModified DATE, searchRowID INTEGER, authors TEXT);
+	CREATE TABLE if not EXISTS articles (articleID TEXT NOT NULL PRIMARY KEY, feedID TEXT NOT NULL, uniqueID TEXT NOT NULL, title TEXT, contentHTML TEXT, contentText TEXT, markdown TEXT, url TEXT, externalURL TEXT, summary TEXT, imageURL TEXT, bannerImageURL TEXT, datePublished DATE, dateModified DATE, searchRowID INTEGER, authors TEXT, attachments TEXT, thumbnailURL TEXT);
 
 	CREATE TABLE if not EXISTS statuses (articleID TEXT NOT NULL PRIMARY KEY, read BOOL NOT NULL DEFAULT 0, starred BOOL NOT NULL DEFAULT 0, dateArrived DATE NOT NULL DEFAULT 0);
 
@@ -449,15 +457,6 @@ private extension ArticlesDatabase {
 		// 24 hours previous. This is used by the Today smart feed, which should not actually empty out at midnight.
 		return Date(timeIntervalSinceNow: -(60 * 60 * 24)) // This does not need to be more precise.
 	}
-
-	// MARK: - Operations
-
-	func cancelOperations() {
-		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		Task { @MainActor in
-			operationQueue.cancelAll()
-		}
-	}
 }
 
 // MARK: - Articles Table (Private)
@@ -469,22 +468,6 @@ typealias ArticleSetResultBlock = @Sendable (Set<Article>) -> Void
 typealias ArticleIDsCompletionBlock = @Sendable (Set<String>) -> Void
 
 private extension ArticlesDatabase {
-
-	func _fetchAllUnreadCounts(_ completion: @escaping @Sendable (UnreadCountDictionary?) -> Void) {
-		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		Task { @MainActor in
-			let operation = FetchAllUnreadCountsOperation(databaseQueue: queue)
-			if let operationName = operation.name {
-				operationQueue.cancel(named: operationName)
-			}
-			operation.completionBlock = { operation in
-				let fetchOperation = operation as! FetchAllUnreadCountsOperation
-				// A canceled operation has no result — reporting an empty dictionary would zero every unread count.
-				completion(fetchOperation.isCanceled ? nil : fetchOperation.unreadCountDictionary)
-			}
-			operationQueue.add(operation)
-		}
-	}
 
 	func _fetchUnreadCounts(feedIDs: Set<String>, _ completion: @escaping UnreadCountDictionaryCompletionBlock) {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")

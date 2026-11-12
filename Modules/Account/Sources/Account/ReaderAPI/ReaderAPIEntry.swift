@@ -59,6 +59,16 @@ struct ReaderAPIEntry: Codable, Sendable {
 	let alternates: [ReaderAPIAlternateLocation]?
 	let categories: [String]
 	let origin: ReaderAPIEntryOrigin
+	let enclosures: [ReaderAPIEnclosure]?
+
+	var attachments: [ParsedAttachment]? {
+		let attachments = enclosures?.compactMap { $0.parsedAttachment } ?? []
+		return attachments.isEmpty ? nil : attachments
+	}
+
+	var imageURL: String? {
+		enclosures?.first { $0.isImage }?.url
+	}
 
 	enum CodingKeys: String, CodingKey {
 		case articleID = "id"
@@ -71,6 +81,7 @@ struct ReaderAPIEntry: Codable, Sendable {
 		case crawledTimestamp = "crawlTimeMsec"
 		case origin = "origin"
 		case timestampUsec = "timestampUsec"
+		case enclosures = "enclosure"
 	}
 
 	func parseDatePublished() -> Date? {
@@ -117,6 +128,67 @@ struct ReaderAPIAlternateLocation: Codable, Sendable {
 
 	enum CodingKeys: String, CodingKey {
 		case url = "href"
+	}
+}
+
+/// `type` is a MIME type, or a bare `image`, `audio`, or `video` (FreshRSS).
+struct ReaderAPIEnclosure: Codable, Sendable {
+	let url: String?
+	let type: String?
+	let length: Int?
+
+	var parsedAttachment: ParsedAttachment? {
+		guard let url else {
+			return nil
+		}
+		return ParsedAttachment(url: url, mimeType: mimeType, title: nil, sizeInBytes: sizeInBytes, durationInSeconds: nil, width: nil, height: nil, medium: medium)
+	}
+
+	var isImage: Bool {
+		medium == .image || mimeType?.lowercased().hasPrefix("image/") == true
+	}
+
+	enum CodingKeys: String, CodingKey {
+		case url = "href"
+		case type
+		case length
+	}
+
+	init(from decoder: Decoder) throws {
+		let container = try decoder.container(keyedBy: CodingKeys.self)
+		url = try? container.decodeIfPresent(String.self, forKey: .url)
+		type = try? container.decodeIfPresent(String.self, forKey: .type)
+		if let length = try? container.decodeIfPresent(Int.self, forKey: .length) {
+			self.length = length
+		} else if let lengthString = try? container.decodeIfPresent(String.self, forKey: .length) {
+			self.length = Int(lengthString)
+		} else {
+			self.length = nil
+		}
+	}
+}
+
+private extension ReaderAPIEnclosure {
+
+	var sizeInBytes: Int? {
+		guard let length, length > 0 else {
+			return nil
+		}
+		return length
+	}
+
+	var mimeType: String? {
+		guard let type, type.contains("/") else {
+			return nil
+		}
+		return type
+	}
+
+	var medium: ParsedAttachment.Medium? {
+		guard mimeType == nil else {
+			return nil
+		}
+		return ParsedAttachment.Medium(mediaRSSValue: type)
 	}
 }
 

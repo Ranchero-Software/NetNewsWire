@@ -49,7 +49,7 @@ public struct XMLNamespace: Sendable, Equatable, Hashable {
 	}
 
 	public var isMediaRSS: Bool {
-		uri == URI.mediaRSS
+		uri == URI.mediaRSS || uri == URI.mediaRSSBoard
 	}
 
 	public var isITunes: Bool {
@@ -71,6 +71,7 @@ public struct XMLNamespace: Sendable, Equatable, Hashable {
 		public static let content = "http://purl.org/rss/1.0/modules/content/"
 		public static let xhtml = "http://www.w3.org/1999/xhtml"
 		public static let mediaRSS = "http://search.yahoo.com/mrss/"
+		public static let mediaRSSBoard = "http://www.rssboard.org/media-rss"
 		public static let itunes = "http://www.itunes.com/dtds/podcast-1.0.dtd"
 		public static let source = "https://source.scripting.com/"
 	}

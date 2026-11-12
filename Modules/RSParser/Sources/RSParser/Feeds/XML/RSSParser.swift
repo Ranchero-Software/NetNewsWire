@@ -43,6 +43,8 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 	// inside of namespaced section (<s:variant>, for instance).
 	private var namespaceElementDepth = 0
 
+	private var mediaElementTracker = MediaElementTracker()
+
 	init(urlString: String) {
 		self.feedURLString = urlString
 	}
@@ -50,7 +52,7 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 	// MARK: Building output
 
 	func buildParsedFeed() -> ParsedFeed {
-		let parsedItems = Set(items.map { $0.toParsedItem(feedURL: feedURLString) })
+		let parsedItems = Set(items.map { $0.toParsedItem(feedURL: feedURLString, feedImageURL: channelImageURLString) })
 		return ParsedFeed(
 			type: .rss,
 			title: title,
@@ -86,6 +88,27 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 
 		if namespaceElementDepth > 0 {
 			namespaceElementDepth += 1
+			return
+		}
+		if parsingArticle && namespace.isMediaRSS {
+			if let currentItem, mediaElementTracker.start(localName: localName, attributes: attributes, item: currentItem, parser: parser, resolveURL: resolveURL) {
+				namespaceElementDepth = 1
+			}
+			return
+		}
+		if parsingArticle && namespace.isITunes && localName.equals("duration") {
+			parser.beginStoringCharacters()
+			return
+		}
+		if parsingArticle && namespace.isITunes && localName.equals("image") {
+			if let currentItem, currentItem.itunesImageURL == nil, let href = attributes.value(forCaseInsensitiveName: "href"), !href.isEmpty {
+				currentItem.itunesImageURL = resolveURL(href)
+			}
+			namespaceElementDepth = 1
+			return
+		}
+		if mediaElementTracker.containerDepth > 0 {
+			namespaceElementDepth = 1
 			return
 		}
 		if parsingArticle && namespace.prefix != nil
@@ -129,6 +152,7 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 		if isUnprefixed && localName.equals("item") {
 			items.append(RSSItem())
 			parsingArticle = true
+			mediaElementTracker.reset()
 
 			if isRDF, let about = currentAttributes["rdf:about"], !about.isEmpty {
 				currentItem?.guid = about
@@ -162,6 +186,13 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 
 		if namespaceElementDepth > 0 {
 			namespaceElementDepth -= 1
+			return
+		}
+
+		if parsingArticle && namespace.isMediaRSS {
+			if let currentItem {
+				mediaElementTracker.end(localName: localName, item: currentItem, parser: parser)
+			}
 			return
 		}
 
@@ -237,6 +268,10 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 				}
 				return
 			}
+			if namespace.isITunes && localName.equals("duration") {
+				article.itunesDurationInSeconds = ParsedAttachment.durationInSeconds(parser.currentStringWithTrimmedWhitespace)
+				return
+			}
 			// `source:markdown` — scripting.com's namespace, used by WordLand-generated feeds.
 			if namespace.isSource && localName.equals("markdown") {
 				article.markdown = parser.currentStringWithTrimmedWhitespace
@@ -293,8 +328,8 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 		let length = Int(currentAttributes["length"] ?? "") ?? 0
 		let mimeType = currentAttributes["type"]
 		let sizeInBytes = length > 0 ? length : nil
-		if let attachment = ParsedAttachment(url: url, mimeType: mimeType, title: nil, sizeInBytes: sizeInBytes, durationInSeconds: nil) {
-			article.attachments.insert(attachment)
+		if let attachment = ParsedAttachment(url: url, mimeType: mimeType, title: nil, sizeInBytes: sizeInBytes, durationInSeconds: nil, width: nil, height: nil, medium: nil) {
+			article.attachments.append(attachment)
 		}
 	}
 
