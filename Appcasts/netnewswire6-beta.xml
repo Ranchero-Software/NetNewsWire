@@ -7,6 +7,23 @@
     <language>en</language>
 
 <item>
+	<title>NetNewsWire 7.3b8</title>
+	<description><![CDATA[
+<ul>
+<li>Added Gray theme — inspired by newsprint design but not meant to be a literal copy
+<li>Added Plum theme — uses the same layout as the Gray theme but with color
+<li>Added an optional grayscaleIcon key to theme Info.plist files — when true, the feed icon or author avatar in the article view is grayscale. The Gray theme uses this new feature
+<li>Fixed a crash in the timeline (too many layout passes) caused by row-height measurement mixing up same articles from different accounts
+<li>Fixed bug where deleting a feed could remove the wrong row (usually the next row) from the sidebar
+<li>Fixed bug where restoring with no article selected, then clicking an article, would auto-scroll the article view
+</ul>
+	]]></description>
+	<pubDate>Wed, 11 Nov 2026 17:30:00 -0800</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.3b8/NetNewsWire7.3b8.zip" sparkle:version="7235" sparkle:shortVersionString="7.3b8" length="10472470" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
 	<title>NetNewsWire 7.3b7</title>
 	<description><![CDATA[
 <ul>
