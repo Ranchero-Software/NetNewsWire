@@ -127,6 +127,7 @@ final class ArticleViewController: UIViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleArticleSwipeNavigationEnabledDidChange(_:)), name: .articleSwipeNavigationEnabledDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 
 		let appearance = UINavigationBarAppearance()
@@ -182,7 +183,7 @@ final class ArticleViewController: UIViewController {
 
 		pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: [:])
 		pageViewController.delegate = self
-		pageViewController.dataSource = self
+		updatePageViewControllerDataSource()
 
 		// This code is to disallow paging if we scroll from the left edge.  If this code is removed
 		// PoppableGestureRecognizerDelegate will allow us to both navigate back and page back at the
@@ -345,6 +346,15 @@ final class ArticleViewController: UIViewController {
 
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
 		currentWebViewController?.fullReload()
+	}
+
+	@objc func handleArticleSwipeNavigationEnabledDidChange(_ notification: Notification) {
+		updatePageViewControllerDataSource()
+	}
+
+	/// A nil data source turns off swipe paging. `setViewControllers` still works.
+	func updatePageViewControllerDataSource() {
+		pageViewController.dataSource = AppDefaults.articleSwipeNavigationEnabled ? self : nil
 	}
 
 	@objc func willEnterForeground(_ note: Notification) {

@@ -552,6 +552,40 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" id="Sw1-pe-Cel" customClass="VibrantBasicTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
+                                        <rect key="frame" x="20" y="1004" width="374" height="51.5"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Sw1-pe-Cel" id="Sw1-pe-Cnt">
+                                            <rect key="frame" x="0.0" y="0.0" width="374" height="51.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="Enable Horizontal Swipe to Previous and Next Article" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Sw1-pe-Lbl">
+                                                    <rect key="frame" x="20" y="15" width="265" height="21.5"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Sw1-pe-Swt" userLabel="Enable Horizontal Swipe to Previous and Next Article">
+                                                    <rect key="frame" x="293" y="12" width="63" height="28"/>
+                                                    <color key="onTintColor" name="primaryAccentColor"/>
+                                                    <connections>
+                                                        <action selector="switchSwipeToNextPreviousArticle:" destination="a0p-rk-skQ" eventType="valueChanged" id="Sw1-pe-Act"/>
+                                                    </connections>
+                                                </switch>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="Sw1-pe-Swt" firstAttribute="leading" secondItem="Sw1-pe-Lbl" secondAttribute="trailing" constant="8" symbolic="YES" id="Sw1-pe-C01"/>
+                                                <constraint firstItem="Sw1-pe-Lbl" firstAttribute="top" secondItem="Sw1-pe-Cnt" secondAttribute="topMargin" id="Sw1-pe-C02"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="Sw1-pe-Lbl" secondAttribute="bottom" id="Sw1-pe-C03"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="Sw1-pe-Swt" secondAttribute="trailing" id="Sw1-pe-C04"/>
+                                                <constraint firstItem="Sw1-pe-Swt" firstAttribute="centerY" secondItem="Sw1-pe-Cnt" secondAttribute="centerY" id="Sw1-pe-C05"/>
+                                                <constraint firstItem="Sw1-pe-Lbl" firstAttribute="leading" secondItem="Sw1-pe-Cnt" secondAttribute="leadingMargin" id="Sw1-pe-C06"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="label" destination="Sw1-pe-Lbl" id="Sw1-pe-Out"/>
+                                        </connections>
+                                    </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" id="WR6-xo-ty2" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
                                         <rect key="frame" x="20" y="1004" width="374" height="92"/>
                                         <autoresizingMask key="autoresizingMask"/>
@@ -875,6 +909,7 @@
                         <outlet property="confirmMarkAllAsReadSwitch" destination="UOo-9z-IuL" id="yLZ-Kf-wDt"/>
                         <outlet property="showPreviewInTimelineContextMenuSwitch" destination="pTc-Mp-c04" id="pTc-Mp-c14"/>
                         <outlet property="enableJavaScriptSwitch" destination="Djo-HE-LWS" id="muL-I5-eDE"/>
+                        <outlet property="swipeToNextPreviousArticleSwitch" destination="Sw1-pe-Swt" id="Sw1-pe-Ot2"/>
                         <outlet property="grayscaleIconsSwitch" destination="Gry-s4-Swt" id="Gry-o1-Out"/>
                         <outlet property="groupByFeedSwitch" destination="JNi-Wz-RbU" id="TwH-Kd-o6N"/>
                         <outlet property="openLinksInNetNewsWire" destination="dhR-L2-PX3" id="z1b-pX-bwG"/>
