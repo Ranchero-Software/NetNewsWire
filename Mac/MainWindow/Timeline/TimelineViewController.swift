@@ -502,6 +502,9 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 		if let tableView = sender as? NSTableView, tableView === self.tableView, let clickedArticle = articles.articleAtRow(tableView.clickedRow) {
 			article = clickedArticle
+			if !clickedArticle.status.read {
+				markArticles(Set([clickedArticle]), statusKey: .read, flag: true)
+			}
 		} else {
 			article = oneSelectedArticle
 		}
