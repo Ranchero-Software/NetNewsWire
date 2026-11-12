@@ -1,5 +1,14 @@
 # Mac Release Notes
 
+### 7.3b8 7235 11 Nov 2026 - branch: main tag: mac-7.3b8
+
+Added Gray theme — inspired by newsprint design but not meant to be a literal copy
+Added Plum theme — uses the same layout as the Gray theme but with color
+Added an optional grayscaleIcon key to theme Info.plist files — when true, the feed icon or author avatar in the article view is grayscale. The Gray theme uses this new feature
+Fixed a crash in the timeline (too many layout passes) caused by row-height measurement mixing up same articles from different accounts
+Fixed bug where deleting a feed could remove the wrong row (usually the next row) from the sidebar
+Fixed bug where restoring with no article selected, then clicking an article, would auto-scroll the article view
+
 ### 7.3b7 7234 9 Nov 2026 - branch: main tag: mac-7.3b7
 
 Make image cache eviction less aggressive, which should fix a loop where images get evicted, re-cached, evicted, re-cached, etc. (See this Discourse forum post <https://discourse.netnewswire.com/t/favicons-disappear-in-7-3b3/481>.)
