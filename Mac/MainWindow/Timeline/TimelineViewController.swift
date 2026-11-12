@@ -842,7 +842,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		// After ArticleThumbnailFinder forgets its choices, which it does on this notification too.
 		Task { @MainActor in
 			remeasureRowsWhoseThumbnailChanged()
-			// Thumbnails that couldn’t download while offline or in Low Data Mode try again.
+			// Thumbnails that couldn’t download while offline try again.
 			if ThumbnailDownloader.shared.networkAllowsDownloads {
 				reloadVisibleCells()
 			}
