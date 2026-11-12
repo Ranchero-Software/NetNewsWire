@@ -15,3 +15,14 @@
 <div id="bodyContainer" class="articleBody [[text_size_class]]">[[body]]</div>
 [[enclosures]]
 </article>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const articleBody = document.querySelector(".articleBody");
+    const textSize = parseFloat(getComputedStyle(articleBody).fontSize);
+
+    document.querySelectorAll(".nnw-enclosure-caption").forEach(enclosureCaption => {
+        enclosureCaption.style.fontSize = `${textSize - 2}px`;
+    });
+});
+</script>
