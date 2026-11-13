@@ -15,3 +15,56 @@
 <div id="bodyContainer" class="articleBody [[text_size_class]]">[[body]]</div>
 [[enclosures]]
 </article>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const articleBody = document.querySelector(".articleBody");
+    const textSize = parseFloat(getComputedStyle(articleBody).fontSize);
+
+	document.querySelectorAll("body > header .headerTable td, body > header .headerTable th").forEach(headerText => {
+        headerText.style.fontSize = `${textSize - 4}px`;
+    });
+    
+    // iOS
+    if (CSS.supports("-webkit-touch-callout", "none")) {
+	    document.querySelectorAll(".articleTitle h1").forEach(articleTitle => {
+	        articleTitle.style.fontSize = `${textSize + 10}px`;
+	    });
+	}
+
+	// macOS
+	if (!CSS.supports("-webkit-touch-callout", "none")) {
+	    document.querySelectorAll(".articleTitle h1").forEach(articleTitle => {
+	        articleTitle.style.fontSize = `${textSize + 12}px`;
+	    });
+	}
+    
+    document.querySelectorAll(".articleDateline").forEach(articleDate => {
+        articleDate.style.fontSize = `${textSize - 2}px`;
+    });
+    
+	document.querySelectorAll(".articleDatelineTitle").forEach(dateTitle => {
+		dateTitle.style.fontSize = `${textSize - 0}px`;
+    });
+    
+    document.querySelectorAll("div.externalLink").forEach(externalLink => {
+		externalLink.style.fontSize = `${textSize - 4}px`;
+    });
+    
+    document.querySelectorAll(".nnw-enclosure-caption").forEach(enclosureCaption => {
+        enclosureCaption.style.fontSize = `${textSize - 2}px`;
+    });
+});
+</script>
+
+<script>
+// TechCrunch → Reader View 
+const feedLink = document.querySelector('.feedlink');
+
+if (feedLink.href.includes('techcrunch.com')) {
+
+	document.querySelectorAll('img[sizes^="auto"]').forEach((img) => {
+		img.sizes = img.sizes.split(',').slice(1).join(',').trim();
+	});
+}
+</script>

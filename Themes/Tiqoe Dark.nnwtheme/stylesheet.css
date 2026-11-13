@@ -169,7 +169,6 @@ body > .systemMessage {
 	text-overflow: ellipsis;
 }
 
-
 .articleBody {
 	margin-top: 20px;
 	line-height: 1.6em;
@@ -409,7 +408,6 @@ a.footnote:hover,
 	.nnw-overflow table {
 		border: 1px solid var(--secondary-accent-color);
 	}
-
 }
 
 /* macOS Specific */
@@ -471,7 +469,7 @@ a.footnote:hover,
 		code,
 		pre {
 			font-size: 16px;
-		}
+		}	
 	}
 
 	.xxlargeText {
@@ -523,4 +521,37 @@ a.footnote:hover,
 /* PBS News Hour → Reader View */
 .inline-invite.inline-invite-type__funding.inline-invite-style__default:has(> .inline-invite-funding__box):has([href*="give.newshour.org"]) {
 	display: none;
+}
+
+/* TechCrunch → Reader View */
+.affiliate-disclaimer-text:has([href*="techcrunch.com/techcrunch-affiliate-monetization-standards"]) {
+	display: none;
+}
+
+/* Macworld */
+div:has([href*="macworld.com/newsletters/signup"]) :is(figcaption, button.lightbox-trigger, p.imageCredit) {
+	display: none;
+}
+
+/* 7.3 */
+.nnw-primary-image img,
+.nnw-enclosure-image img {
+	max-height: 66.6667vh;
+	width: auto;
+}
+
+.nnw-enclosure-audio {
+	display: flex;
+	flex-direction: column;
+	margin-block: 0 1em;
+	row-gap: 1em;
+}
+
+.nnw-enclosure-caption {
+	order: -1;
+}
+
+.nnw-primary-media:has(.nnw-enclosure-audio), 
+.nnw-primary-image {
+	margin: 0;
 }
