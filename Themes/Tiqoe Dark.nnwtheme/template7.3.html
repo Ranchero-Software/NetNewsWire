@@ -43,6 +43,14 @@ document.addEventListener("DOMContentLoaded", () => {
         articleDate.style.fontSize = `${textSize - 2}px`;
     });
     
+	document.querySelectorAll(".articleDatelineTitle").forEach(dateTitle => {
+		dateTitle.style.fontSize = `${textSize - 0}px`;
+    });
+    
+    document.querySelectorAll("div.externalLink").forEach(externalLink => {
+		externalLink.style.fontSize = `${textSize - 4}px`;
+    });
+    
     document.querySelectorAll(".nnw-enclosure-caption").forEach(enclosureCaption => {
         enclosureCaption.style.fontSize = `${textSize - 2}px`;
     });
