@@ -325,19 +325,22 @@ blockquote {
 
 /* Newsfoot theme for light mode (default) */
 .newsfoot-footnote-popover {
-	background: #ccc;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 3px 6px rgba(0, 0, 0, 0.25);
-	color: black;
-	padding: 1px;
+	background: rgb(246, 246, 246);
+	border: 2px solid rgba(255, 255, 255, 0.72);
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
+	filter: drop-shadow(0 -0.5px 1.25px rgba(0, 0, 0, 0.13));
+	color: #171717;
+	padding: 0;
 }
 
 .newsfoot-footnote-popover-arrow {
-	background: #fafafa;
-	border: 1px solid #ccc;
+	background: rgb(246, 246, 246);
+	border-left: 2px solid rgba(255, 255, 255, 0.72);
+	border-top: 2px solid rgba(255, 255, 255, 0.72);
 }
 
 .newsfoot-footnote-popover-inner {
-	background: #fafafa;
+	background: rgb(246, 246, 246);
 }
 
 body a.footnote,
@@ -357,17 +360,21 @@ a.footnote:hover,
 /* Newsfoot theme for dark mode */
 @media screen and (prefers-color-scheme: dark) {
 	.newsfoot-footnote-popover {
-		background: #444;
-		color: rgb(224, 224, 224);
+		background: rgb(38, 38, 40);
+		border-color: rgba(255, 255, 255, 0.16);
+		box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
+		filter: none;
+		color: rgb(242, 242, 247);
 	}
 
 	.newsfoot-footnote-popover-arrow {
-		background: #242424;
-		border: 1px solid #444;
+		background: rgb(38, 38, 40);
+		border-left-color: rgba(255, 255, 255, 0.16);
+		border-top-color: rgba(255, 255, 255, 0.16);
 	}
 
 	.newsfoot-footnote-popover-inner {
-		background: #242424;
+		background: rgb(38, 38, 40);
 	}
 
 	body a.footnote,
@@ -384,6 +391,28 @@ a.footnote:hover,
 		transition: background-color 200ms ease-out;
 	}
 
+}
+
+@media (prefers-contrast: more) {
+	.newsfoot-footnote-popover {
+		border-color: rgba(0, 0, 0, 0.28);
+	}
+
+	.newsfoot-footnote-popover-arrow {
+		border-left-color: rgba(0, 0, 0, 0.28);
+		border-top-color: rgba(0, 0, 0, 0.28);
+	}
+}
+
+@media (prefers-color-scheme: dark) and (prefers-contrast: more) {
+	.newsfoot-footnote-popover {
+		border-color: rgba(255, 255, 255, 0.38);
+	}
+
+	.newsfoot-footnote-popover-arrow {
+		border-left-color: rgba(255, 255, 255, 0.38);
+		border-top-color: rgba(255, 255, 255, 0.38);
+	}
 }
 
 /* iOS Specific */
@@ -560,6 +589,18 @@ a.footnote:hover,
 		text-decoration: none;
 	}
 
+	.articleBody a.footnote:link,
+	.articleBody a.footnote:visited,
+	.articleBody a.footnote:hover {
+		border-bottom: none;
+		border-radius: 1em;
+	}
+
+	.articleBody a.footnote:hover {
+		background: #666;
+		color: white;
+	}
+	
 	.articleBody a:hover {
 		border-radius: 2px;
 		background: var(--hover-background-color);
