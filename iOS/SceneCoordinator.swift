@@ -95,7 +95,6 @@ struct SidebarItemNode: Hashable, Sendable {
 
 	var isTimelineViewControllerPending = false
 	var isArticleViewControllerPending = false
-	private var hasReportedIgnoredTap = false
 
 	/// `Bool` to track whether a refresh is scheduled.
 	private var isNavigationBarSubtitleRefreshScheduled: Bool = false
@@ -1242,13 +1241,11 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	/// Selecting the current article while the article view isn’t showing does nothing, which is never expected.
-	/// Log it once per launch to the Errors log.
 	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/5516>
 	private func reportIgnoredSelection(of article: Article?) {
-		guard let article, !hasReportedIgnoredTap, isRootSplitCollapsed, !isArticleViewControllerShowing else {
+		guard let article, isRootSplitCollapsed, !isArticleViewControllerShowing else {
 			return
 		}
-		hasReportedIgnoredTap = true
 
 		let selectedItemCount = mainTimelineViewController?.collectionView?.indexPathsForSelectedItems?.count ?? 0
 		let navigationStackDepth = mainTimelineViewController?.navigationController?.viewControllers.count ?? 0
@@ -1846,7 +1843,13 @@ extension SceneCoordinator: UISplitViewControllerDelegate {
 	}
 
 	func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
-		AppDefaults.splitViewPreferredDisplayMode = displayMode.rawValue
+		// Save only user-initiated changes. UIKit also changes the display mode during
+		// rotation, window resizes, and background snapshots, and those must not be saved.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5524>
+		let isSceneActive = svc.view.window?.windowScene?.activationState == .foregroundActive
+		if isSceneActive && !svc.isCollapsed && !rootSplitViewController.isTransitioningSize {
+			AppDefaults.splitViewPreferredDisplayMode = displayMode.rawValue
+		}
 		mainTimelineViewController?.updateToolbarProgressView(for: displayMode)
 	}
 

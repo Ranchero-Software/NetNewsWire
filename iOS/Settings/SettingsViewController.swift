@@ -56,7 +56,8 @@ final class SettingsViewController: UITableViewController {
 		case theme = 0
 		case openLinksInNetNewsWire = 1
 		case enableJavaScript = 2
-		case enableFullScreenArticles = 3
+		case swipeToNextPreviousArticle = 3
+		case enableFullScreenArticles = 4
 	}
 
 	private enum HelpRow: Int {
@@ -80,6 +81,7 @@ final class SettingsViewController: UITableViewController {
 	@IBOutlet var unreadCountDisplayCell: UITableViewCell?
 	@IBOutlet var openLinksInNetNewsWire: UISwitch!
 	@IBOutlet var enableJavaScriptSwitch: UISwitch!
+	@IBOutlet var swipeToNextPreviousArticleSwitch: UISwitch?
 	@IBOutlet var sidebarShowsIconsSwitch: UISwitch?
 	@IBOutlet var grayscaleIconsSwitch: UISwitch?
 	@IBOutlet var showTodayFeedSwitch: UISwitch?
@@ -151,6 +153,7 @@ final class SettingsViewController: UITableViewController {
 		}
 
 		showPreviewInTimelineContextMenuSwitch?.isOn = AppDefaults.showPreviewInTimelineContextMenu
+		swipeToNextPreviousArticleSwitch?.isOn = AppDefaults.articleSwipeNavigationEnabled
 
 		if AppDefaults.articleFullscreenAvailable {
 			showFullscreenArticlesSwitch.isOn = true
@@ -446,6 +449,10 @@ final class SettingsViewController: UITableViewController {
 		} else {
 			AppDefaults.useSystemBrowser = true
 		}
+	}
+
+	@IBAction func switchSwipeToNextPreviousArticle(_ sender: UISwitch) {
+		AppDefaults.articleSwipeNavigationEnabled = sender.isOn
 	}
 
 	@IBAction func switchJavaScriptPreference(_ sender: Any) {

@@ -498,7 +498,15 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	// MARK: - Actions
 
 	@objc func openArticleInBrowser(_ sender: Any?) {
-		if let link = oneSelectedArticle?.preferredLink {
+		let article: Article?
+
+		if let tableView = sender as? NSTableView, tableView === self.tableView, let clickedArticle = articles.articleAtRow(tableView.clickedRow) {
+			article = clickedArticle
+		} else {
+			article = oneSelectedArticle
+		}
+
+		if let link = article?.preferredLink {
 			Browser.open(link, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
 		}
 	}
@@ -834,7 +842,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		// After ArticleThumbnailFinder forgets its choices, which it does on this notification too.
 		Task { @MainActor in
 			remeasureRowsWhoseThumbnailChanged()
-			// Thumbnails that couldn’t download while offline or in Low Data Mode try again.
+			// Thumbnails that couldn’t download while offline try again.
 			if ThumbnailDownloader.shared.networkAllowsDownloads {
 				reloadVisibleCells()
 			}

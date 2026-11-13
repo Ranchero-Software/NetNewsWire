@@ -1157,6 +1157,12 @@
     "Scanning iCloud storage" : {
       "comment" : "Scan status text while fetching"
     },
+    "Scroll Down" : {
+      "comment" : "Scroll Down"
+    },
+    "Scroll Up" : {
+      "comment" : "Scroll Up"
+    },
     "Search" : {
       "comment" : "Search"
     },

@@ -29,8 +29,11 @@ enum KeyboardType: String, Sendable {
 		switch type {
 		case .sidebar:
 			_keyCommands.append(contentsOf: KeyboardManager.hardcodeFeedKeyCommands())
-		case .timeline, .detail:
+		case .timeline:
 			_keyCommands.append(contentsOf: KeyboardManager.hardcodeArticleKeyCommands())
+		case .detail:
+			_keyCommands.append(contentsOf: KeyboardManager.hardcodeArticleKeyCommands())
+			_keyCommands.append(contentsOf: KeyboardManager.hardcodeDetailKeyCommands())
 		default:
 			break
 		}
@@ -211,6 +214,18 @@ private extension KeyboardManager {
 
 		let toggleSidebar = NSLocalizedString("Toggle Sidebar", comment: "Toggle Sidebar")
 		keys.append(KeyboardManager.createKeyCommand(title: toggleSidebar, action: "toggleSidebar:", input: "s", modifiers: [.command, .control]))
+
+		return keys
+	}
+
+	static func hardcodeDetailKeyCommands() -> [UIKeyCommand] {
+		var keys = [UIKeyCommand]()
+
+		let scrollDownTitle = NSLocalizedString("Scroll Down", comment: "Scroll Down")
+		keys.append(KeyboardManager.createKeyCommand(title: scrollDownTitle, action: "scrollLineDown:", input: UIKeyCommand.inputDownArrow, modifiers: []))
+
+		let scrollUpTitle = NSLocalizedString("Scroll Up", comment: "Scroll Up")
+		keys.append(KeyboardManager.createKeyCommand(title: scrollUpTitle, action: "scrollLineUp:", input: UIKeyCommand.inputUpArrow, modifiers: []))
 
 		return keys
 	}

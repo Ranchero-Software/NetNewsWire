@@ -1255,7 +1255,7 @@ private extension MainTimelineViewController {
 		guard thumbnailMode != nil, ThumbnailDownloader.shared.networkAllowsDownloads else {
 			return
 		}
-		// Thumbnails that couldn’t download while offline or in Low Data Mode try again.
+		// Thumbnails that couldn’t download while offline try again.
 		reloadVisibleCells()
 	}
 

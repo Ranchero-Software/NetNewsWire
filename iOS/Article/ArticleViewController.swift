@@ -120,6 +120,9 @@ final class ArticleViewController: UIViewController {
 	override var keyCommands: [UIKeyCommand]? {
 		return keyboardManager.keyCommands
 	}
+	override var canBecomeFirstResponder: Bool {
+		true
+	}
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -127,6 +130,7 @@ final class ArticleViewController: UIViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleArticleSwipeNavigationEnabledDidChange(_:)), name: .articleSwipeNavigationEnabledDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 
 		let appearance = UINavigationBarAppearance()
@@ -182,7 +186,7 @@ final class ArticleViewController: UIViewController {
 
 		pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: [:])
 		pageViewController.delegate = self
-		pageViewController.dataSource = self
+		updatePageViewControllerDataSource()
 
 		// This code is to disallow paging if we scroll from the left edge.  If this code is removed
 		// PoppableGestureRecognizerDelegate will allow us to both navigate back and page back at the
@@ -347,6 +351,15 @@ final class ArticleViewController: UIViewController {
 		currentWebViewController?.fullReload()
 	}
 
+	@objc func handleArticleSwipeNavigationEnabledDidChange(_ notification: Notification) {
+		updatePageViewControllerDataSource()
+	}
+
+	/// A nil data source turns off swipe paging. `setViewControllers` still works.
+	func updatePageViewControllerDataSource() {
+		pageViewController.dataSource = AppDefaults.articleSwipeNavigationEnabled ? self : nil
+	}
+
 	@objc func willEnterForeground(_ note: Notification) {
 		// The toolbar will come back on you if you don't hide it again
 		if AppDefaults.logicalArticleFullscreenEnabled {
@@ -402,10 +415,19 @@ final class ArticleViewController: UIViewController {
 		coordinator.navigateToTimeline()
 	}
 
+	@objc func scrollLineDown(_ sender: Any?) {
+		currentWebViewController?.scrollLineDown()
+	}
+
+	@objc func scrollLineUp(_ sender: Any?) {
+		currentWebViewController?.scrollLineUp()
+	}
+
 	// MARK: API
 
+	// Focus this view controller rather than the web view, since the web view is replaced on each article change.
 	func focus() {
-		currentWebViewController?.focus()
+		becomeFirstResponder()
 	}
 
 	func canScrollDown() -> Bool {
