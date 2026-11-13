@@ -26,3 +26,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 </script>
+
+<script>
+// TechCrunch → Reader View 
+const feedLink = document.querySelector('.feedlink');
+
+if (feedLink.href.includes('techcrunch.com')) {
+
+	document.querySelectorAll('img[sizes^="auto"]').forEach((img) => {
+		img.sizes = img.sizes.split(',').slice(1).join(',').trim();
+	});
+}
+</script>
