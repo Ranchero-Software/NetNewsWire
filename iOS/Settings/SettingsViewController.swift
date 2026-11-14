@@ -26,6 +26,10 @@ final class SettingsViewController: UITableViewController {
 		case help = 5
 	}
 
+	private enum NotificationsRow: Int {
+		case systemSettings = 0
+	}
+
 	private enum MoreScreensRow: Int {
 		case appearance = 0
 		case sidebar = 1
@@ -70,7 +74,6 @@ final class SettingsViewController: UITableViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidDeleteAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 
-		tableView.register(UINib(nibName: "SettingsComboTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsComboTableViewCell")
 		tableView.register(UINib(nibName: "SettingsTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsTableViewCell")
 
 		tableView.rowHeight = UITableView.automaticDimension
@@ -131,21 +134,17 @@ final class SettingsViewController: UITableViewController {
 		switch Section(rawValue: indexPath.section) {
 		case .accounts:
 
+			cell = tableView.dequeueReusableCell(withIdentifier: "SettingsTableViewCell", for: indexPath)
 			let sortedAccounts = AccountManager.shared.sortedAccounts
 			if indexPath.row == sortedAccounts.count {
-				cell = tableView.dequeueReusableCell(withIdentifier: "SettingsTableViewCell", for: indexPath)
 				cell.textLabel?.text = NSLocalizedString("Add Account", comment: "Add Account")
 			} else {
-				let acctCell = tableView.dequeueReusableCell(withIdentifier: "SettingsComboTableViewCell", for: indexPath) as! SettingsComboTableViewCell
-				acctCell.applyThemeProperties()
-				let account = sortedAccounts[indexPath.row]
-				acctCell.comboImage?.image = Assets.accountImage(account.type)
-				acctCell.comboNameLabel?.text = account.nameForDisplay
-				cell = acctCell
+				cell.textLabel?.text = sortedAccounts[indexPath.row].nameForDisplay
 			}
+			cell.imageView?.image = iconImage(for: indexPath)
 		default:
 			cell = super.tableView(tableView, cellForRowAt: indexPath)
-
+			cell.imageView?.image = iconImage(for: indexPath)
 		}
 
 		return cell
@@ -296,10 +295,6 @@ final class SettingsViewController: UITableViewController {
 		tableView.reloadData()
 	}
 
-	@objc func browserPreferenceDidChange() {
-		tableView.reloadData()
-	}
-
 }
 
 // MARK: - OPML Document Picker
@@ -326,6 +321,80 @@ extension SettingsViewController: UIDocumentPickerDelegate {
 // MARK: - Private
 
 private extension SettingsViewController {
+
+	func iconImage(for indexPath: IndexPath) -> UIImage? {
+		switch Section(rawValue: indexPath.section) {
+		case .notifications:
+			switch NotificationsRow(rawValue: indexPath.row) {
+			case .systemSettings:
+				return Assets.Images.settingsSystemSettings
+			case nil:
+				return nil
+			}
+		case .accounts:
+			let sortedAccounts = AccountManager.shared.sortedAccounts
+			if indexPath.row == sortedAccounts.count {
+				return Assets.Images.plus
+			}
+			return Assets.Images.settingsAccountImage(sortedAccounts[indexPath.row].type)
+		case .feeds:
+			switch FeedsRow(rawValue: indexPath.row) {
+			case .importSubscriptions:
+				return Assets.Images.settingsImportSubscriptions
+			case .exportSubscriptions:
+				return Assets.Images.settingsExportSubscriptions
+			case .addNetNewsWireNewsFeed:
+				return Assets.Images.settingsNetNewsWireNewsFeed
+			case nil:
+				return nil
+			}
+		case .moreScreens:
+			switch MoreScreensRow(rawValue: indexPath.row) {
+			case .appearance:
+				return Assets.Images.preferencesToolbarAppearance
+			case .sidebar:
+				return Assets.Images.settingsSidebar
+			case .timeline:
+				return Assets.Images.settingsTimeline
+			case .articles:
+				return Assets.Images.settingsArticles
+			case nil:
+				return nil
+			}
+		case .troubleshooting:
+			switch TroubleshootingRow(rawValue: indexPath.row) {
+			case .errorLog:
+				return Assets.Images.settingsErrorLog
+			case .activityLog:
+				return Assets.Images.settingsActivityLog
+			case .accountStats:
+				return Assets.Images.settingsAccountStats
+			case .dinosaurs:
+				return Assets.Images.settingsDinosaurs
+			case .cloudKitZoneStats:
+				return Assets.Images.settingsCloudKitStats
+			case nil:
+				return nil
+			}
+		case .help:
+			switch HelpRow(rawValue: indexPath.row) {
+			case .help:
+				return Assets.Images.settingsHelp
+			case .forum:
+				return Assets.Images.settingsForum
+			case .releaseNotes:
+				return Assets.Images.settingsReleaseNotes
+			case .bugTracker:
+				return Assets.Images.settingsBugTracker
+			case .about:
+				return Assets.Images.info
+			case nil:
+				return nil
+			}
+		case nil:
+			return nil
+		}
+	}
 
 	func addFeed() {
 		self.dismiss(animated: true)
