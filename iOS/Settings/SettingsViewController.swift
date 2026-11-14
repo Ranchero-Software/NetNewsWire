@@ -20,31 +20,22 @@ final class SettingsViewController: UITableViewController {
 		case notifications = 0
 		case accounts = 1
 		case feeds = 2
-		case timeline = 3
-		case articles = 4
-		case moreScreens = 5
+		case articles = 3
+		case moreScreens = 4
 	}
 
 	private enum MoreScreensRow: Int {
 		case sidebar = 0
-		case appearance = 1
-		case troubleshooting = 2
-		case help = 3
+		case timeline = 1
+		case appearance = 2
+		case troubleshooting = 3
+		case help = 4
 	}
 
 	private enum FeedsRow: Int {
 		case importSubscriptions = 0
 		case exportSubscriptions = 1
 		case addNetNewsWireNewsFeed = 2
-	}
-
-	private enum TimelineRow: Int {
-		case sortOrder = 0
-		case groupByFeed = 1
-		case refreshClearsReadArticles = 2
-		case confirmMarkAllAsRead = 3
-		case showPreviewInTimelineContextMenu = 4
-		case timelineLayout = 5
 	}
 
 	private enum ArticlesRow: Int, CaseIterable {
@@ -57,12 +48,7 @@ final class SettingsViewController: UITableViewController {
 
 	private weak var opmlAccount: Account?
 
-	@IBOutlet var timelineSortOrderSwitch: UISwitch!
-	@IBOutlet var groupByFeedSwitch: UISwitch!
-	@IBOutlet var refreshClearsReadArticlesSwitch: UISwitch!
 	@IBOutlet var articleThemeDetailLabel: UILabel!
-	@IBOutlet var confirmMarkAllAsReadSwitch: UISwitch!
-	@IBOutlet var showPreviewInTimelineContextMenuSwitch: UISwitch?
 	@IBOutlet var showFullscreenArticlesSwitch: UISwitch!
 	@IBOutlet var openLinksInNetNewsWire: UISwitch!
 	@IBOutlet var enableJavaScriptSwitch: UISwitch!
@@ -90,33 +76,8 @@ final class SettingsViewController: UITableViewController {
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 
-		if AppDefaults.timelineSortDirection == .orderedAscending {
-			timelineSortOrderSwitch.isOn = true
-		} else {
-			timelineSortOrderSwitch.isOn = false
-		}
-
-		if AppDefaults.timelineGroupByFeed {
-			groupByFeedSwitch.isOn = true
-		} else {
-			groupByFeedSwitch.isOn = false
-		}
-
-		if AppDefaults.refreshClearsReadArticles {
-			refreshClearsReadArticlesSwitch.isOn = true
-		} else {
-			refreshClearsReadArticlesSwitch.isOn = false
-		}
-
 		articleThemeDetailLabel.text = ArticleThemesManager.shared.currentTheme.name
 
-		if AppDefaults.confirmMarkAllAsRead {
-			confirmMarkAllAsReadSwitch.isOn = true
-		} else {
-			confirmMarkAllAsReadSwitch.isOn = false
-		}
-
-		showPreviewInTimelineContextMenuSwitch?.isOn = AppDefaults.showPreviewInTimelineContextMenu
 		swipeToNextPreviousArticleSwitch?.isOn = AppDefaults.articleSwipeNavigationEnabled
 
 		if AppDefaults.articleFullscreenAvailable {
@@ -241,14 +202,6 @@ final class SettingsViewController: UITableViewController {
 			default:
 				break
 			}
-		case .timeline:
-			switch TimelineRow(rawValue: indexPath.row) {
-			case .timelineLayout:
-				let timeline = UIStoryboard.settings.instantiateController(ofType: TimelineCustomizerCollectionViewController.self)
-				self.navigationController?.pushViewController(timeline, animated: true)
-			default:
-				break
-			}
 		case .articles:
 			switch ArticlesRow(rawValue: indexPath.row) {
 			case .theme:
@@ -261,6 +214,8 @@ final class SettingsViewController: UITableViewController {
 			switch MoreScreensRow(rawValue: indexPath.row) {
 			case .sidebar:
 				self.navigationController?.pushViewController(SidebarSettingsViewController(), animated: true)
+			case .timeline:
+				self.navigationController?.pushViewController(TimelineSettingsViewController(), animated: true)
 			case .appearance:
 				self.navigationController?.pushViewController(AppearanceSettingsViewController(), animated: true)
 			case .troubleshooting:
@@ -301,42 +256,6 @@ final class SettingsViewController: UITableViewController {
 
 	@IBAction func done(_ sender: Any) {
 		dismiss(animated: true)
-	}
-
-	@IBAction func switchTimelineOrder(_ sender: Any) {
-		if timelineSortOrderSwitch.isOn {
-			AppDefaults.timelineSortDirection = .orderedAscending
-		} else {
-			AppDefaults.timelineSortDirection = .orderedDescending
-		}
-	}
-
-	@IBAction func switchGroupByFeed(_ sender: Any) {
-		if groupByFeedSwitch.isOn {
-			AppDefaults.timelineGroupByFeed = true
-		} else {
-			AppDefaults.timelineGroupByFeed = false
-		}
-	}
-
-	@IBAction func switchClearsReadArticles(_ sender: Any) {
-		if refreshClearsReadArticlesSwitch.isOn {
-			AppDefaults.refreshClearsReadArticles = true
-		} else {
-			AppDefaults.refreshClearsReadArticles = false
-		}
-	}
-
-	@IBAction func switchConfirmMarkAllAsRead(_ sender: Any) {
-		if confirmMarkAllAsReadSwitch.isOn {
-			AppDefaults.confirmMarkAllAsRead = true
-		} else {
-			AppDefaults.confirmMarkAllAsRead = false
-		}
-	}
-
-	@IBAction func switchShowPreviewInTimelineContextMenu(_ sender: UISwitch) {
-		AppDefaults.showPreviewInTimelineContextMenu = sender.isOn
 	}
 
 	@IBAction func switchFullscreenArticles(_ sender: Any) {
