@@ -1,5 +1,5 @@
 //
-//  AppearanceSettingsViewController.swift
+//  GeneralSettingsViewController.swift
 //  NetNewsWire-iOS
 //
 //  Created by Brent Simmons on 11/14/26.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-final class AppearanceSettingsViewController: UITableViewController {
+final class GeneralSettingsViewController: UITableViewController {
 
 	private enum Row: Int, CaseIterable {
 		case colorPalette
@@ -34,7 +34,7 @@ final class AppearanceSettingsViewController: UITableViewController {
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		title = NSLocalizedString("Appearance", comment: "Preferences")
+		title = NSLocalizedString("General", comment: "Preferences")
 
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUserInterfaceColorPaletteDidUpdate(_:)), name: .userInterfaceColorPaletteDidUpdate, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
@@ -96,7 +96,7 @@ final class AppearanceSettingsViewController: UITableViewController {
 
 // MARK: - Private
 
-private extension AppearanceSettingsViewController {
+private extension GeneralSettingsViewController {
 
 	static func makePopUpButton() -> UIButton {
 		var configuration = UIButton.Configuration.plain()

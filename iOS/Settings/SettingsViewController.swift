@@ -198,7 +198,7 @@ final class SettingsViewController: UITableViewController {
 			case .articles:
 				self.navigationController?.pushViewController(ArticlesSettingsViewController(), animated: true)
 			case .appearance:
-				self.navigationController?.pushViewController(AppearanceSettingsViewController(), animated: true)
+				self.navigationController?.pushViewController(GeneralSettingsViewController(), animated: true)
 			default:
 				break
 			}
