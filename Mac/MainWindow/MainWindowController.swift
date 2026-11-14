@@ -888,6 +888,10 @@ extension MainWindowController: ScriptingMainWindowController {
 
 extension MainWindowController: DetailViewControllerDelegate {
 
+	func detailViewController(_ controller: DetailViewController, didOpenBrowserFor article: Article) {
+		currentTimelineViewController?.animateBrowserOpen(for: article)
+	}
+
 	func detailViewController(_ detailViewController: DetailViewController, mouseoverLinkDidChange link: String?) {
 		mouseoverLink = link
 	}
