@@ -8,7 +8,6 @@
 
 import UIKit
 import CoreServices
-import SafariServices
 import SwiftUI
 import UniformTypeIdentifiers
 import RSCore
@@ -25,16 +24,12 @@ final class SettingsViewController: UITableViewController {
 		case timeline = 4
 		case articles = 5
 		case appearance = 6
-		case troubleshooting = 7
-		case help = 8
+		case moreScreens = 7
 	}
 
-	private enum TroubleshootingRow: Int {
-		case errorLog = 0
-		case activityLog = 1
-		case accountStats = 2
-		case dinosaurs = 3
-		case cloudKitZoneStats = 4
+	private enum MoreScreensRow: Int {
+		case troubleshooting = 0
+		case help = 1
 	}
 
 	private enum FeedsRow: Int {
@@ -58,14 +53,6 @@ final class SettingsViewController: UITableViewController {
 		case enableJavaScript = 2
 		case swipeToNextPreviousArticle = 3
 		case enableFullScreenArticles = 4
-	}
-
-	private enum HelpRow: Int {
-		case help = 0
-		case forum = 1
-		case releaseNotes = 2
-		case bugTracker = 3
-		case about = 4
 	}
 
 	private weak var opmlAccount: Account?
@@ -208,12 +195,6 @@ final class SettingsViewController: UITableViewController {
 		case .articles:
 			// The Full Screen Articles row is iPhone-only.
 			return traitCollection.userInterfaceIdiom == .phone ? ArticlesRow.allCases.count : ArticlesRow.allCases.count - 1
-		case .troubleshooting:
-			let defaultNumberOfRows = super.tableView(tableView, numberOfRowsInSection: section)
-			if !AccountManager.shared.hasiCloudAccount {
-				return defaultNumberOfRows - 1
-			}
-			return defaultNumberOfRows
 		default:
 			return super.tableView(tableView, numberOfRowsInSection: section)
 		}
@@ -299,52 +280,14 @@ final class SettingsViewController: UITableViewController {
 			default:
 				break
 			}
-		case .troubleshooting:
-			let viewController: UIViewController? = {
-				switch TroubleshootingRow(rawValue: indexPath.row) {
-				case .errorLog:
-					return UIHostingController(rootView: ErrorLogView())
-				case .accountStats:
-					return UIHostingController(rootView: AccountStatsView())
-				case .cloudKitZoneStats:
-					return UIHostingController(rootView: CloudKitStatsView())
-				case .activityLog:
-					return UIHostingController(rootView: ActivityLogView())
-				case .dinosaurs:
-					return UIHostingController(rootView: DinosaursView(dismissAndPresent: { [weak self] dinosaur in
-						guard let self else {
-							return
-						}
-						self.dismiss(animated: true) {
-							if let rootSplit = self.presentingParentController as? RootSplitViewController {
-								rootSplit.coordinator.discloseFeed(dinosaur.feed, animations: [.scroll, .navigation])
-							}
-						}
-					}))
-				default:
-					return nil
-				}
-			}()
-			if let viewController {
-				self.navigationController?.pushViewController(viewController, animated: true)
-			}
-		case .help:
-			switch HelpRow(rawValue: indexPath.row) {
+		case .moreScreens:
+			switch MoreScreensRow(rawValue: indexPath.row) {
+			case .troubleshooting:
+				let troubleshooting = TroubleshootingSettingsViewController()
+				troubleshooting.presentingParentController = presentingParentController
+				self.navigationController?.pushViewController(troubleshooting, animated: true)
 			case .help:
-				openURL(HelpURL.helpHome.rawValue)
-				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			case .forum:
-				openURL(HelpURL.discourse.rawValue)
-				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			case .releaseNotes:
-				openURL(HelpURL.releaseNotes.rawValue)
-				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			case .bugTracker:
-				openURL(HelpURL.bugTracker.rawValue)
-				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			case .about:
-				let hosting = UIHostingController(rootView: AboutView())
-				self.navigationController?.pushViewController(hosting, animated: true)
+				self.navigationController?.pushViewController(HelpSettingsViewController(), animated: true)
 			default:
 				break
 			}
@@ -705,29 +648,5 @@ private extension SettingsViewController {
 		let docPicker = UIDocumentPickerViewController(forExporting: [tempFile])
 		docPicker.modalPresentationStyle = .formSheet
 		self.present(docPicker, animated: true)
-	}
-
-	func openURL(_ urlString: String) {
-		guard let url = URL(string: urlString) else {
-			return
-		}
-
-		// Open GitHub links in the GitHub app when installed.
-		if let host = url.host, host == "github.com" || host.hasSuffix(".github.com") {
-			UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] openedInApp in
-				if !openedInApp {
-					self?.presentSafariViewController(for: url)
-				}
-			}
-			return
-		}
-
-		presentSafariViewController(for: url)
-	}
-
-	private func presentSafariViewController(for url: URL) {
-		let vc = SFSafariViewController(url: url)
-		vc.modalPresentationStyle = .pageSheet
-		present(vc, animated: true)
 	}
 }
