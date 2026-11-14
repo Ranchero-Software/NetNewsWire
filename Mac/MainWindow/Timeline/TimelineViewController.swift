@@ -1337,10 +1337,6 @@ extension TimelineViewController: NSTableViewDelegate {
 	private static let rowViewIdentifier = NSUserInterfaceItemIdentifier(rawValue: "timelineRow")
 
 	func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
-		if layout == .column {
-			// The standard row view suits column layout. TimelineTableRowView only knows the standard cell.
-			return nil
-		}
 		let rowView: TimelineTableRowView
 		if let reusedRowView = tableView.makeView(withIdentifier: TimelineViewController.rowViewIdentifier, owner: nil) as? TimelineTableRowView {
 			rowView = reusedRowView
@@ -1349,8 +1345,13 @@ extension TimelineViewController: NSTableViewDelegate {
 			rowView.identifier = TimelineViewController.rowViewIdentifier
 		}
 		// Rows change only by reloading, which asks for every row view again, so a former last row doesn’t keep this.
+		rowView.clearBrowserOpenAnimation()
 		rowView.isLastRow = row == tableView.numberOfRows - 1
 		return rowView
+	}
+
+	func tableView(_ tableView: NSTableView, didRemove rowView: NSTableRowView, forRow row: Int) {
+		(rowView as? TimelineTableRowView)?.clearBrowserOpenAnimation()
 	}
 
 	private static let timelineCellIdentifier = NSUserInterfaceItemIdentifier(rawValue: "timelineCell")
