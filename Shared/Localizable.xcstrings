@@ -1263,11 +1263,17 @@
     "Show" : {
       "comment" : "Show"
     },
+    "Show All Unread" : {
+      "comment" : "Show All Unread"
+    },
     "Show dot" : {
       "comment" : "Unread Counts setting: show a dot instead of the number of unread articles"
     },
     "Show Feed Article" : {
       "comment" : "Show Feed Article"
+    },
+    "Show Feed Icons" : {
+      "comment" : "Show Feed Icons"
     },
     "Show feeds that haven’t updated in…" : {
       "comment" : "Show stale feeds text"
@@ -1287,11 +1293,17 @@
     "Show Sidebar" : {
       "comment" : "Command"
     },
+    "Show Starred" : {
+      "comment" : "Show Starred"
+    },
     "Show Status Bar" : {
       "comment" : "Command"
     },
     "Show Theme Menu in Status Bar" : {
       "comment" : "Command"
+    },
+    "Show Today" : {
+      "comment" : "Show Today"
     },
     "Show Website" : {
       "comment" : "Show Website"
@@ -1301,6 +1313,9 @@
     },
     "Shows the whole title, up to %d lines." : {
       "comment" : "Timeline Layout: explains the Full Title, No Preview choice"
+    },
+    "Sidebar" : {
+      "comment" : "Sidebar"
     },
     "Sign in to your BazQux account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a BazQux account?" : {
       "comment" : "BazQux"

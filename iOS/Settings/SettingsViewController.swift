@@ -20,16 +20,16 @@ final class SettingsViewController: UITableViewController {
 		case notifications = 0
 		case accounts = 1
 		case feeds = 2
-		case sidebar = 3
-		case timeline = 4
-		case articles = 5
-		case moreScreens = 6
+		case timeline = 3
+		case articles = 4
+		case moreScreens = 5
 	}
 
 	private enum MoreScreensRow: Int {
-		case appearance = 0
-		case troubleshooting = 1
-		case help = 2
+		case sidebar = 0
+		case appearance = 1
+		case troubleshooting = 2
+		case help = 3
 	}
 
 	private enum FeedsRow: Int {
@@ -67,10 +67,6 @@ final class SettingsViewController: UITableViewController {
 	@IBOutlet var openLinksInNetNewsWire: UISwitch!
 	@IBOutlet var enableJavaScriptSwitch: UISwitch!
 	@IBOutlet var swipeToNextPreviousArticleSwitch: UISwitch?
-	@IBOutlet var sidebarShowsIconsSwitch: UISwitch?
-	@IBOutlet var showTodayFeedSwitch: UISwitch?
-	@IBOutlet var showUnreadFeedSwitch: UISwitch?
-	@IBOutlet var showStarredFeedSwitch: UISwitch?
 
 	var scrollToArticlesSection = false
 	weak var presentingParentController: UIViewController?
@@ -83,17 +79,12 @@ final class SettingsViewController: UITableViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidAddAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidDeleteAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarShowsIconsDidChange(_:)), name: .sidebarShowsIconsDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarSmartFeedsVisibilityDidChange(_:)), name: .sidebarSmartFeedsVisibilityDidChange, object: nil)
 
 		tableView.register(UINib(nibName: "SettingsComboTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsComboTableViewCell")
 		tableView.register(UINib(nibName: "SettingsTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsTableViewCell")
 
 		tableView.rowHeight = UITableView.automaticDimension
 		tableView.estimatedRowHeight = 44
-
-		updateSidebarShowsIconsSwitch()
-		updateSmartFeedsSwitches()
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
@@ -268,6 +259,8 @@ final class SettingsViewController: UITableViewController {
 			}
 		case .moreScreens:
 			switch MoreScreensRow(rawValue: indexPath.row) {
+			case .sidebar:
+				self.navigationController?.pushViewController(SidebarSettingsViewController(), animated: true)
 			case .appearance:
 				self.navigationController?.pushViewController(AppearanceSettingsViewController(), animated: true)
 			case .troubleshooting:
@@ -308,22 +301,6 @@ final class SettingsViewController: UITableViewController {
 
 	@IBAction func done(_ sender: Any) {
 		dismiss(animated: true)
-	}
-
-	@IBAction func switchSidebarShowsIcons(_ sender: UISwitch) {
-		AppDefaults.sidebarShowsIcons = sender.isOn
-	}
-
-	@IBAction func switchShowTodayFeed(_ sender: UISwitch) {
-		AppDefaults.showTodayFeed = sender.isOn
-	}
-
-	@IBAction func switchShowUnreadFeed(_ sender: UISwitch) {
-		AppDefaults.showUnreadFeed = sender.isOn
-	}
-
-	@IBAction func switchShowStarredFeed(_ sender: UISwitch) {
-		AppDefaults.showStarredFeed = sender.isOn
 	}
 
 	@IBAction func switchTimelineOrder(_ sender: Any) {
@@ -404,14 +381,6 @@ final class SettingsViewController: UITableViewController {
 		tableView.reloadData()
 	}
 
-	@objc func handleSidebarShowsIconsDidChange(_ notification: Notification) {
-		updateSidebarShowsIconsSwitch()
-	}
-
-	@objc func handleSidebarSmartFeedsVisibilityDidChange(_ notification: Notification) {
-		updateSmartFeedsSwitches()
-	}
-
 }
 
 // MARK: - OPML Document Picker
@@ -438,16 +407,6 @@ extension SettingsViewController: UIDocumentPickerDelegate {
 // MARK: - Private
 
 private extension SettingsViewController {
-
-	func updateSidebarShowsIconsSwitch() {
-		sidebarShowsIconsSwitch?.isOn = AppDefaults.sidebarShowsIcons
-	}
-
-	func updateSmartFeedsSwitches() {
-		showTodayFeedSwitch?.isOn = AppDefaults.showTodayFeed
-		showUnreadFeedSwitch?.isOn = AppDefaults.showUnreadFeed
-		showStarredFeedSwitch?.isOn = AppDefaults.showStarredFeed
-	}
 
 	func addFeed() {
 		self.dismiss(animated: true)
