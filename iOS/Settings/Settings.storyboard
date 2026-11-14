@@ -401,45 +401,6 @@
             </objects>
             <point key="canvasLocation" x="-454" y="152"/>
         </scene>
-        <!--Theme-->
-        <scene sceneID="1mT-fg-ezs">
-            <objects>
-                <tableViewController storyboardIdentifier="ArticleThemesTableViewController" title="Theme" id="fO4-og-e41" customClass="ArticleThemesTableViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="I8p-P9-C8h">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="746"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" systemColor="groupTableViewBackgroundColor"/>
-                        <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" textLabel="6tf-Xb-7b8" style="IBUITableViewCellStyleDefault" id="BIC-Zk-QMD" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="20" y="55.5" width="374" height="51"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="BIC-Zk-QMD" id="7xj-8Y-ejz">
-                                    <rect key="frame" x="0.0" y="0.0" width="374" height="51"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" id="6tf-Xb-7b8">
-                                            <rect key="frame" x="20" y="0.0" width="334" height="51"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                    </subviews>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                        </prototypes>
-                        <sections/>
-                        <connections>
-                            <outlet property="dataSource" destination="fO4-og-e41" id="155-KJ-Ps6"/>
-                            <outlet property="delegate" destination="fO4-og-e41" id="zBh-hF-yaJ"/>
-                        </connections>
-                    </tableView>
-                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="ODK-C8-FL4" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="3743" y="151"/>
-        </scene>
     </scenes>
     <resources>
         <namedColor name="primaryAccentColor">

@@ -20,8 +20,8 @@ final class GeneralSettingsViewController: UITableViewController {
 	private let unreadCountDisplayCell = VibrantTableViewCell(style: .default, reuseIdentifier: nil)
 	private let grayscaleIconsCell = VibrantTableViewCell(style: .default, reuseIdentifier: nil)
 
-	private lazy var colorPalettePopUpButton = Self.makePopUpButton()
-	private lazy var unreadCountDisplayPopUpButton = Self.makePopUpButton()
+	private let colorPalettePopUpButton = UIButton.makeSettingsPopUpButton()
+	private let unreadCountDisplayPopUpButton = UIButton.makeSettingsPopUpButton()
 	private let grayscaleIconsSwitch = UISwitch()
 
 	init() {
@@ -44,8 +44,8 @@ final class GeneralSettingsViewController: UITableViewController {
 		configureLabeledCell(unreadCountDisplayCell, title: NSLocalizedString("Unread Counts", comment: "Unread Counts"))
 		configureLabeledCell(grayscaleIconsCell, title: NSLocalizedString("Grayscale Feed Icons", comment: "Grayscale Feed Icons"))
 
-		addPopUpButton(colorPalettePopUpButton, to: colorPaletteCell, accessibilityLabel: NSLocalizedString("Color Palette", comment: "Color Palette"))
-		addPopUpButton(unreadCountDisplayPopUpButton, to: unreadCountDisplayCell, accessibilityLabel: NSLocalizedString("Unread Counts", comment: "Unread Counts"))
+		colorPaletteCell.addSettingsPopUpButton(colorPalettePopUpButton, accessibilityLabel: NSLocalizedString("Color Palette", comment: "Color Palette"))
+		unreadCountDisplayCell.addSettingsPopUpButton(unreadCountDisplayPopUpButton, accessibilityLabel: NSLocalizedString("Unread Counts", comment: "Unread Counts"))
 
 		grayscaleIconsSwitch.onTintColor = Assets.Colors.primaryAccent
 		grayscaleIconsSwitch.addTarget(self, action: #selector(switchGrayscaleIcons(_:)), for: .valueChanged)
@@ -98,33 +98,11 @@ final class GeneralSettingsViewController: UITableViewController {
 
 private extension GeneralSettingsViewController {
 
-	static func makePopUpButton() -> UIButton {
-		var configuration = UIButton.Configuration.plain()
-		configuration.baseForegroundColor = .secondaryLabel
-		let button = UIButton(configuration: configuration)
-		button.showsMenuAsPrimaryAction = true
-		button.changesSelectionAsPrimaryAction = true
-		return button
-	}
-
 	func configureLabeledCell(_ cell: UITableViewCell, title: String) {
 		cell.selectionStyle = .none
 		cell.textLabel?.text = title
 		cell.textLabel?.numberOfLines = 0
 		cell.textLabel?.adjustsFontForContentSizeCategory = true
-	}
-
-	/// Auto Layout lets the button resize itself when choosing an item changes its title.
-	/// The accessibility label names the setting, since the button’s title is only the current choice.
-	func addPopUpButton(_ button: UIButton, to cell: UITableViewCell, accessibilityLabel: String) {
-		button.accessibilityLabel = accessibilityLabel
-		button.translatesAutoresizingMaskIntoConstraints = false
-		button.setContentCompressionResistancePriority(.required, for: .horizontal)
-		cell.contentView.addSubview(button)
-		NSLayoutConstraint.activate([
-			button.trailingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.trailingAnchor),
-			button.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor)
-		])
 	}
 
 	func updateColorPalettePopUpButton() {

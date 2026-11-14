@@ -221,7 +221,7 @@
     "Are you sure you want to delete the feed ”%@”?" : {
       "comment" : "Delete feed confirmation text."
     },
-    "Are you sure you want to delete the theme “%@”?." : {
+    "Are you sure you want to delete the theme “%@”?" : {
       "comment" : "Delete Theme Message"
     },
     "Are you sure you want to remove this account? NetNewsWire will no longer be able to access articles and feeds unless the account is added again." : {
@@ -264,6 +264,9 @@
     },
     "Automatic" : {
       "comment" : "Automatic"
+    },
+    "Behavior" : {
+      "comment" : "Behavior"
     },
     "Can’t add a feed because no feed was found." : {
       "comment" : "Feed finder"
@@ -483,6 +486,9 @@
     },
     "Delete Theme?" : {
       "comment" : "Delete Theme"
+    },
+    "Delete Theme…" : {
+      "comment" : "Delete Theme…"
     },
     "Deleting read content records…" : {
       "comment" : "Cleanup phase text"
@@ -783,8 +789,8 @@
     "Import Failed" : {
       "comment" : "Import Failed"
     },
-    "Import Theme" : {
-      "comment" : "Import Theme"
+    "Import Theme…" : {
+      "comment" : "Import Theme…"
     },
     "Inspector" : {
       "comment" : "Inspector window title"
@@ -1465,6 +1471,9 @@
     },
     "Theme installed" : {
       "comment" : "Theme installed"
+    },
+    "Themes" : {
+      "comment" : "Themes"
     },
     "There are no accounts to add the feed to." : {
       "comment" : "Error message when the user has no accounts to add a feed to.",

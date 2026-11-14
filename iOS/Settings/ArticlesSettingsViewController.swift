@@ -7,11 +7,19 @@
 //
 
 import UIKit
+import UniformTypeIdentifiers
 
 final class ArticlesSettingsViewController: UITableViewController {
 
-	private enum Row: Int, CaseIterable {
+	private enum Section: Int, CaseIterable {
+		case themes
+		case behavior
+	}
+
+	fileprivate enum Row {
 		case theme
+		case importTheme
+		case deleteTheme
 		case openLinksInNetNewsWire
 		case enableJavaScript
 		case swipeToNextPreviousArticle
@@ -23,9 +31,12 @@ final class ArticlesSettingsViewController: UITableViewController {
 	private let swipeToNextPreviousArticleSwitch = UISwitch()
 	private let enableFullScreenArticlesSwitch = UISwitch()
 
-	private let themeCell = VibrantTableViewCell(style: .value1, reuseIdentifier: nil)
+	private let themeCell = VibrantTableViewCell(style: .default, reuseIdentifier: nil)
+	private let themePopUpButton = UIButton.makeSettingsPopUpButton()
+	private let importThemeCell = UITableViewCell(style: .default, reuseIdentifier: nil)
+	private let deleteThemeCell = UITableViewCell(style: .default, reuseIdentifier: nil)
 
-	private var rows = [Row]()
+	private var rows = [Section: [Row]]()
 	private var cells = [Row: UITableViewCell]()
 
 	init() {
@@ -40,15 +51,29 @@ final class ArticlesSettingsViewController: UITableViewController {
 		super.viewDidLoad()
 		title = NSLocalizedString("Articles", comment: "Articles")
 
+		rows[.themes] = [.theme, .importTheme, .deleteTheme]
 		// The Full Screen Articles row is iPhone-only.
-		rows = Row.allCases.filter { $0 != .enableFullScreenArticles || traitCollection.userInterfaceIdiom == .phone }
+		rows[.behavior] = [.openLinksInNetNewsWire, .enableJavaScript, .swipeToNextPreviousArticle, .enableFullScreenArticles].filter { $0 != .enableFullScreenArticles || traitCollection.userInterfaceIdiom == .phone }
 
+		NotificationCenter.default.addObserver(self, selector: #selector(handleCurrentArticleThemeDidChange(_:)), name: .CurrentArticleThemeDidChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThemeNamesDidChange(_:)), name: .ArticleThemeNamesDidChangeNotification, object: nil)
+
+		themeCell.selectionStyle = .none
 		themeCell.textLabel?.text = NSLocalizedString("Theme", comment: "Theme")
+		themeCell.textLabel?.numberOfLines = 0
 		themeCell.textLabel?.adjustsFontForContentSizeCategory = true
-		themeCell.detailTextLabel?.adjustsFontForContentSizeCategory = true
-		themeCell.accessoryType = .disclosureIndicator
+		themeCell.addSettingsPopUpButton(themePopUpButton, accessibilityLabel: NSLocalizedString("Theme", comment: "Theme"))
+		updateThemePopUpButton()
+
+		configureButtonCell(importThemeCell, title: NSLocalizedString("Import Theme…", comment: "Import Theme…"))
+		importThemeCell.textLabel?.textColor = Assets.Colors.primaryAccent
+
+		configureButtonCell(deleteThemeCell, title: NSLocalizedString("Delete Theme…", comment: "Delete Theme…"))
+		updateDeleteThemeCell()
 
 		cells[.theme] = themeCell
+		cells[.importTheme] = importThemeCell
+		cells[.deleteTheme] = deleteThemeCell
 		cells[.openLinksInNetNewsWire] = makeCell(switch: openLinksInNetNewsWireSwitch,
 												  title: NSLocalizedString("Open Links in NetNewsWire", comment: "Open Links in NetNewsWire"),
 												  footnote: nil,
@@ -69,7 +94,6 @@ final class ArticlesSettingsViewController: UITableViewController {
 
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
-		themeCell.detailTextLabel?.text = ArticleThemesManager.shared.currentTheme.name
 		openLinksInNetNewsWireSwitch.isOn = !AppDefaults.useSystemBrowser
 		enableJavaScriptSwitch.isOn = AppDefaults.isArticleContentJavascriptEnabled
 		swipeToNextPreviousArticleSwitch.isOn = AppDefaults.articleSwipeNavigationEnabled
@@ -83,23 +107,41 @@ final class ArticlesSettingsViewController: UITableViewController {
 
 	// MARK: - UITableViewDataSource
 
+	override func numberOfSections(in tableView: UITableView) -> Int {
+		Section.allCases.count
+	}
+
+	override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+		switch Section(rawValue: section) {
+		case .themes:
+			NSLocalizedString("Themes", comment: "Themes")
+		case .behavior:
+			NSLocalizedString("Behavior", comment: "Behavior")
+		case nil:
+			nil
+		}
+	}
+
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return rows.count
+		rowsInSection(section).count
 	}
 
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		return cells[rows[indexPath.row]] ?? UITableViewCell()
+		cells[rowsInSection(indexPath.section)[indexPath.row]] ?? UITableViewCell()
 	}
 
 	// MARK: - UITableViewDelegate
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		switch rows[indexPath.row] {
-		case .theme:
-			let articleThemes = UIStoryboard.settings.instantiateController(ofType: ArticleThemesTableViewController.self)
-			navigationController?.pushViewController(articleThemes, animated: true)
+		tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
+
+		switch rowsInSection(indexPath.section)[indexPath.row] {
+		case .importTheme:
+			presentImportThemePicker()
+		case .deleteTheme:
+			presentDeleteThemeChoices()
 		default:
-			tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
+			break
 		}
 	}
 
@@ -120,11 +162,138 @@ final class ArticlesSettingsViewController: UITableViewController {
 	@objc func switchEnableFullScreenArticles(_ sender: UISwitch) {
 		AppDefaults.articleFullscreenAvailable = sender.isOn
 	}
+
+	// MARK: - Notifications
+
+	@objc func handleCurrentArticleThemeDidChange(_ notification: Notification) {
+		updateThemePopUpButton()
+	}
+
+	@objc func handleArticleThemeNamesDidChange(_ notification: Notification) {
+		updateThemePopUpButton()
+		updateDeleteThemeCell()
+	}
+}
+
+// MARK: - UIDocumentPickerDelegate
+
+extension ArticlesSettingsViewController: UIDocumentPickerDelegate {
+
+	func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+		guard let url = urls.first else {
+			return
+		}
+		guard url.startAccessingSecurityScopedResource() else {
+			return
+		}
+		defer {
+			url.stopAccessingSecurityScopedResource()
+		}
+
+		do {
+			try ArticleThemeImporter.importTheme(controller: self, url: url)
+		} catch {
+			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
+		}
+	}
 }
 
 // MARK: - Private
 
 private extension ArticlesSettingsViewController {
+
+	func rowsInSection(_ section: Int) -> [Row] {
+		guard let section = Section(rawValue: section) else {
+			return []
+		}
+		return rows[section] ?? []
+	}
+
+	func updateThemePopUpButton() {
+		let defaultThemeName = ArticleTheme.defaultTheme.name
+		let installedThemeNames = ArticleThemesManager.shared.themeNames.filter { $0 != defaultThemeName }
+		var currentThemeName = ArticleThemesManager.shared.currentThemeName
+		if !installedThemeNames.contains(currentThemeName) {
+			currentThemeName = defaultThemeName
+		}
+
+		func themeAction(_ themeName: String) -> UIAction {
+			UIAction(title: themeName, state: themeName == currentThemeName ? .on : .off) { _ in
+				ArticleThemesManager.shared.currentThemeName = themeName
+			}
+		}
+
+		let defaultThemeMenu = UIMenu(options: .displayInline, children: [themeAction(defaultThemeName)])
+		let installedThemesMenu = UIMenu(options: .displayInline, children: installedThemeNames.map { themeAction($0) })
+		themePopUpButton.menu = UIMenu(children: [defaultThemeMenu, installedThemesMenu])
+		themePopUpButton.accessibilityValue = currentThemeName
+	}
+
+	/// Themes that came with the app can’t be deleted.
+	var deletableThemeNames: [String] {
+		ArticleThemesManager.shared.themeNames.filter { themeName in
+			guard let theme = ArticleThemesManager.shared.articleThemeWithThemeName(themeName) else {
+				return false
+			}
+			return !theme.isAppTheme
+		}
+	}
+
+	func updateDeleteThemeCell() {
+		let isEnabled = !deletableThemeNames.isEmpty
+		deleteThemeCell.isUserInteractionEnabled = isEnabled
+		deleteThemeCell.textLabel?.isEnabled = isEnabled
+		deleteThemeCell.textLabel?.textColor = isEnabled ? .systemRed : .tertiaryLabel
+		deleteThemeCell.accessibilityTraits = isEnabled ? .button : [.button, .notEnabled]
+	}
+
+	func presentImportThemePicker() {
+		let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: [.netNewsWireTheme])
+		documentPicker.delegate = self
+		documentPicker.modalPresentationStyle = .formSheet
+		present(documentPicker, animated: true)
+	}
+
+	func presentDeleteThemeChoices() {
+		let themeNames = deletableThemeNames
+		guard !themeNames.isEmpty else {
+			return
+		}
+
+		let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+		for themeName in themeNames {
+			alertController.addAction(UIAlertAction(title: themeName, style: .destructive) { [weak self] _ in
+				self?.confirmDeleteTheme(themeName)
+			})
+		}
+		alertController.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel button"), style: .cancel))
+
+		if let popoverController = alertController.popoverPresentationController {
+			popoverController.sourceView = deleteThemeCell
+			popoverController.sourceRect = deleteThemeCell.bounds
+		}
+		present(alertController, animated: true)
+	}
+
+	func confirmDeleteTheme(_ themeName: String) {
+		let title = NSLocalizedString("Delete Theme?", comment: "Delete Theme")
+		let localizedMessageText = NSLocalizedString("Are you sure you want to delete the theme “%@”?", comment: "Delete Theme Message")
+		let message = NSString.localizedStringWithFormat(localizedMessageText as NSString, themeName) as String
+
+		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+		alertController.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel button"), style: .cancel))
+		alertController.addAction(UIAlertAction(title: NSLocalizedString("Delete", comment: "Delete button"), style: .destructive) { _ in
+			ArticleThemesManager.shared.deleteTheme(themeName: themeName)
+		})
+		present(alertController, animated: true)
+	}
+
+	func configureButtonCell(_ cell: UITableViewCell, title: String) {
+		cell.textLabel?.text = title
+		cell.textLabel?.numberOfLines = 0
+		cell.textLabel?.adjustsFontForContentSizeCategory = true
+		cell.accessibilityTraits = .button
+	}
 
 	/// A plain cell, rather than a vibrant one, so the footnote keeps its secondary color.
 	func makeCell(switch toggle: UISwitch, title: String, footnote: String?, action: Selector) -> UITableViewCell {

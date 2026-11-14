@@ -10,11 +10,9 @@ import UIKit
 
 final class SidebarSettingsViewController: UITableViewController {
 
-	private enum Row: Int, CaseIterable {
-		case showFeedIcons
-		case showToday
-		case showAllUnread
-		case showStarred
+	private enum Section: Int, CaseIterable {
+		case feedIcons
+		case smartFeeds
 	}
 
 	private let showFeedIconsSwitch = UISwitch()
@@ -22,7 +20,7 @@ final class SidebarSettingsViewController: UITableViewController {
 	private let showAllUnreadSwitch = UISwitch()
 	private let showStarredSwitch = UISwitch()
 
-	private var cells = [UITableViewCell]()
+	private var cells = [Section: [UITableViewCell]]()
 
 	init() {
 		super.init(style: .insetGrouped)
@@ -39,13 +37,14 @@ final class SidebarSettingsViewController: UITableViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarShowsIconsDidChange(_:)), name: .sidebarShowsIconsDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarSmartFeedsVisibilityDidChange(_:)), name: .sidebarSmartFeedsVisibilityDidChange, object: nil)
 
-		let switchesAndTitles: [(UISwitch, String, Selector)] = [
-			(showFeedIconsSwitch, NSLocalizedString("Show Feed Icons", comment: "Show Feed Icons"), #selector(switchShowFeedIcons(_:))),
-			(showTodaySwitch, NSLocalizedString("Show Today", comment: "Show Today"), #selector(switchShowToday(_:))),
-			(showAllUnreadSwitch, NSLocalizedString("Show All Unread", comment: "Show All Unread"), #selector(switchShowAllUnread(_:))),
-			(showStarredSwitch, NSLocalizedString("Show Starred", comment: "Show Starred"), #selector(switchShowStarred(_:)))
+		cells[.feedIcons] = [
+			makeCell(switch: showFeedIconsSwitch, title: NSLocalizedString("Show Feed Icons", comment: "Show Feed Icons"), action: #selector(switchShowFeedIcons(_:)))
 		]
-		cells = switchesAndTitles.map { makeCell(switch: $0.0, title: $0.1, action: $0.2) }
+		cells[.smartFeeds] = [
+			makeCell(switch: showTodaySwitch, title: NSLocalizedString("Show Today", comment: "Show Today"), action: #selector(switchShowToday(_:))),
+			makeCell(switch: showAllUnreadSwitch, title: NSLocalizedString("Show All Unread", comment: "Show All Unread"), action: #selector(switchShowAllUnread(_:))),
+			makeCell(switch: showStarredSwitch, title: NSLocalizedString("Show Starred", comment: "Show Starred"), action: #selector(switchShowStarred(_:)))
+		]
 
 		updateShowFeedIconsSwitch()
 		updateSmartFeedsSwitches()
@@ -53,12 +52,25 @@ final class SidebarSettingsViewController: UITableViewController {
 
 	// MARK: - UITableViewDataSource
 
+	override func numberOfSections(in tableView: UITableView) -> Int {
+		Section.allCases.count
+	}
+
+	override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+		switch Section(rawValue: section) {
+		case .smartFeeds:
+			NSLocalizedString("Smart Feeds", comment: "Smart Feeds group title")
+		case .feedIcons, nil:
+			nil
+		}
+	}
+
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return cells.count
+		cellsInSection(section).count
 	}
 
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		return cells[indexPath.row]
+		cellsInSection(indexPath.section)[indexPath.row]
 	}
 
 	// MARK: - Actions
@@ -93,6 +105,13 @@ final class SidebarSettingsViewController: UITableViewController {
 // MARK: - Private
 
 private extension SidebarSettingsViewController {
+
+	func cellsInSection(_ section: Int) -> [UITableViewCell] {
+		guard let section = Section(rawValue: section) else {
+			return []
+		}
+		return cells[section] ?? []
+	}
 
 	func makeCell(switch toggle: UISwitch, title: String, action: Selector) -> UITableViewCell {
 		let cell = VibrantTableViewCell(style: .default, reuseIdentifier: nil)
