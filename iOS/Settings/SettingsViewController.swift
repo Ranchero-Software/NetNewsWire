@@ -21,12 +21,16 @@ final class SettingsViewController: UITableViewController {
 		case notifications = 0
 		case accounts = 1
 		case feeds = 2
-		case sidebar = 3
-		case timeline = 4
-		case articles = 5
-		case appearance = 6
-		case troubleshooting = 7
-		case help = 8
+		case moreScreens = 3
+		case troubleshooting = 4
+		case help = 5
+	}
+
+	private enum MoreScreensRow: Int {
+		case appearance = 0
+		case sidebar = 1
+		case timeline = 2
+		case articles = 3
 	}
 
 	private enum TroubleshootingRow: Int {
@@ -37,29 +41,6 @@ final class SettingsViewController: UITableViewController {
 		case cloudKitZoneStats = 4
 	}
 
-	private enum FeedsRow: Int {
-		case importSubscriptions = 0
-		case exportSubscriptions = 1
-		case addNetNewsWireNewsFeed = 2
-	}
-
-	private enum TimelineRow: Int {
-		case sortOrder = 0
-		case groupByFeed = 1
-		case refreshClearsReadArticles = 2
-		case confirmMarkAllAsRead = 3
-		case showPreviewInTimelineContextMenu = 4
-		case timelineLayout = 5
-	}
-
-	private enum ArticlesRow: Int, CaseIterable {
-		case theme = 0
-		case openLinksInNetNewsWire = 1
-		case enableJavaScript = 2
-		case swipeToNextPreviousArticle = 3
-		case enableFullScreenArticles = 4
-	}
-
 	private enum HelpRow: Int {
 		case help = 0
 		case forum = 1
@@ -68,31 +49,17 @@ final class SettingsViewController: UITableViewController {
 		case about = 4
 	}
 
+	private enum FeedsRow: Int {
+		case importSubscriptions = 0
+		case exportSubscriptions = 1
+		case addNetNewsWireNewsFeed = 2
+	}
+
 	private weak var opmlAccount: Account?
 
-	@IBOutlet var timelineSortOrderSwitch: UISwitch!
-	@IBOutlet var groupByFeedSwitch: UISwitch!
-	@IBOutlet var refreshClearsReadArticlesSwitch: UISwitch!
-	@IBOutlet var articleThemeDetailLabel: UILabel!
-	@IBOutlet var confirmMarkAllAsReadSwitch: UISwitch!
-	@IBOutlet var showPreviewInTimelineContextMenuSwitch: UISwitch?
-	@IBOutlet var showFullscreenArticlesSwitch: UISwitch!
-	@IBOutlet var colorPaletteCell: UITableViewCell?
-	@IBOutlet var unreadCountDisplayCell: UITableViewCell?
-	@IBOutlet var openLinksInNetNewsWire: UISwitch!
-	@IBOutlet var enableJavaScriptSwitch: UISwitch!
-	@IBOutlet var swipeToNextPreviousArticleSwitch: UISwitch?
-	@IBOutlet var sidebarShowsIconsSwitch: UISwitch?
-	@IBOutlet var grayscaleIconsSwitch: UISwitch?
-	@IBOutlet var showTodayFeedSwitch: UISwitch?
-	@IBOutlet var showUnreadFeedSwitch: UISwitch?
-	@IBOutlet var showStarredFeedSwitch: UISwitch?
-
-	var scrollToArticlesSection = false
+	/// Pushes the Timeline screen on appearing, so a user can turn off the Mark All as Read confirmation.
+	var showTimelineSettings = false
 	weak var presentingParentController: UIViewController?
-
-	private lazy var colorPalettePopUpButton = Self.makePopUpButton()
-	private lazy var unreadCountDisplayPopUpButton = Self.makePopUpButton()
 
 	override func viewDidLoad() {
 		// This hack mostly works around a bug in static tables with dynamic type.  See: https://spin.atomicobject.com/2018/10/15/dynamic-type-static-uitableview/
@@ -102,72 +69,16 @@ final class SettingsViewController: UITableViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidAddAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidDeleteAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(handleUserInterfaceColorPaletteDidUpdate(_:)), name: .userInterfaceColorPaletteDidUpdate, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarShowsIconsDidChange(_:)), name: .sidebarShowsIconsDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(handleGrayscaleIconsDidChange(_:)), name: .grayscaleIconsDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarSmartFeedsVisibilityDidChange(_:)), name: .sidebarSmartFeedsVisibilityDidChange, object: nil)
 
 		tableView.register(UINib(nibName: "SettingsComboTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsComboTableViewCell")
 		tableView.register(UINib(nibName: "SettingsTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsTableViewCell")
 
 		tableView.rowHeight = UITableView.automaticDimension
 		tableView.estimatedRowHeight = 44
-
-		addPopUpButton(colorPalettePopUpButton, to: colorPaletteCell, accessibilityLabel: NSLocalizedString("Color Palette", comment: "Color Palette"))
-		addPopUpButton(unreadCountDisplayPopUpButton, to: unreadCountDisplayCell, accessibilityLabel: NSLocalizedString("Unread Counts", comment: "Unread Counts"))
-		updateColorPalettePopUpButton()
-		updateUnreadCountDisplayPopUpButton()
-		updateSidebarShowsIconsSwitch()
-		updateSmartFeedsSwitches()
-		updateGrayscaleIconsSwitch()
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
-
-		if AppDefaults.timelineSortDirection == .orderedAscending {
-			timelineSortOrderSwitch.isOn = true
-		} else {
-			timelineSortOrderSwitch.isOn = false
-		}
-
-		if AppDefaults.timelineGroupByFeed {
-			groupByFeedSwitch.isOn = true
-		} else {
-			groupByFeedSwitch.isOn = false
-		}
-
-		if AppDefaults.refreshClearsReadArticles {
-			refreshClearsReadArticlesSwitch.isOn = true
-		} else {
-			refreshClearsReadArticlesSwitch.isOn = false
-		}
-
-		articleThemeDetailLabel.text = ArticleThemesManager.shared.currentTheme.name
-
-		if AppDefaults.confirmMarkAllAsRead {
-			confirmMarkAllAsReadSwitch.isOn = true
-		} else {
-			confirmMarkAllAsReadSwitch.isOn = false
-		}
-
-		showPreviewInTimelineContextMenuSwitch?.isOn = AppDefaults.showPreviewInTimelineContextMenu
-		swipeToNextPreviousArticleSwitch?.isOn = AppDefaults.articleSwipeNavigationEnabled
-
-		if AppDefaults.articleFullscreenAvailable {
-			showFullscreenArticlesSwitch.isOn = true
-		} else {
-			showFullscreenArticlesSwitch.isOn = false
-		}
-
-		if AppDefaults.isArticleContentJavascriptEnabled {
-			enableJavaScriptSwitch.isOn = true
-		} else {
-			enableJavaScriptSwitch.isOn = false
-		}
-
-		openLinksInNetNewsWire.isOn = !AppDefaults.useSystemBrowser
 
 		let buildLabel = CopyableLabel(frame: CGRect(x: 32.0, y: 0.0, width: 0.0, height: 0.0))
 		buildLabel.font = UIFont.systemFont(ofSize: 11.0)
@@ -178,18 +89,16 @@ final class SettingsViewController: UITableViewController {
 		let wrapperView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.bounds.width, height: buildLabel.frame.height + 10.0))
 		wrapperView.addSubview(buildLabel)
 		tableView.tableFooterView = wrapperView
-
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		self.tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 
-		if scrollToArticlesSection {
-			tableView.scrollToRow(at: IndexPath(row: 0, section: Section.articles.rawValue), at: .top, animated: true)
-			scrollToArticlesSection = false
+		if showTimelineSettings {
+			showTimelineSettings = false
+			navigationController?.pushViewController(TimelineSettingsViewController(), animated: true)
 		}
-
 	}
 
 	// MARK: UITableView
@@ -205,9 +114,6 @@ final class SettingsViewController: UITableViewController {
 				return defaultNumberOfRows - 1
 			}
 			return defaultNumberOfRows
-		case .articles:
-			// The Full Screen Articles row is iPhone-only.
-			return traitCollection.userInterfaceIdiom == .phone ? ArticlesRow.allCases.count : ArticlesRow.allCases.count - 1
 		case .troubleshooting:
 			let defaultNumberOfRows = super.tableView(tableView, numberOfRowsInSection: section)
 			if !AccountManager.shared.hasiCloudAccount {
@@ -283,19 +189,16 @@ final class SettingsViewController: UITableViewController {
 			default:
 				break
 			}
-		case .timeline:
-			switch TimelineRow(rawValue: indexPath.row) {
-			case .timelineLayout:
-				let timeline = UIStoryboard.settings.instantiateController(ofType: TimelineCustomizerCollectionViewController.self)
-				self.navigationController?.pushViewController(timeline, animated: true)
-			default:
-				break
-			}
-		case .articles:
-			switch ArticlesRow(rawValue: indexPath.row) {
-			case .theme:
-				let articleThemes = UIStoryboard.settings.instantiateController(ofType: ArticleThemesTableViewController.self)
-				self.navigationController?.pushViewController(articleThemes, animated: true)
+		case .moreScreens:
+			switch MoreScreensRow(rawValue: indexPath.row) {
+			case .sidebar:
+				self.navigationController?.pushViewController(SidebarSettingsViewController(), animated: true)
+			case .timeline:
+				self.navigationController?.pushViewController(TimelineSettingsViewController(), animated: true)
+			case .articles:
+				self.navigationController?.pushViewController(ArticlesSettingsViewController(), animated: true)
+			case .appearance:
+				self.navigationController?.pushViewController(GeneralSettingsViewController(), animated: true)
 			default:
 				break
 			}
@@ -379,86 +282,6 @@ final class SettingsViewController: UITableViewController {
 		dismiss(animated: true)
 	}
 
-	@IBAction func switchSidebarShowsIcons(_ sender: UISwitch) {
-		AppDefaults.sidebarShowsIcons = sender.isOn
-	}
-
-	@IBAction func switchGrayscaleIcons(_ sender: UISwitch) {
-		AppDefaults.grayscaleIcons = sender.isOn
-	}
-
-	@IBAction func switchShowTodayFeed(_ sender: UISwitch) {
-		AppDefaults.showTodayFeed = sender.isOn
-	}
-
-	@IBAction func switchShowUnreadFeed(_ sender: UISwitch) {
-		AppDefaults.showUnreadFeed = sender.isOn
-	}
-
-	@IBAction func switchShowStarredFeed(_ sender: UISwitch) {
-		AppDefaults.showStarredFeed = sender.isOn
-	}
-
-	@IBAction func switchTimelineOrder(_ sender: Any) {
-		if timelineSortOrderSwitch.isOn {
-			AppDefaults.timelineSortDirection = .orderedAscending
-		} else {
-			AppDefaults.timelineSortDirection = .orderedDescending
-		}
-	}
-
-	@IBAction func switchGroupByFeed(_ sender: Any) {
-		if groupByFeedSwitch.isOn {
-			AppDefaults.timelineGroupByFeed = true
-		} else {
-			AppDefaults.timelineGroupByFeed = false
-		}
-	}
-
-	@IBAction func switchClearsReadArticles(_ sender: Any) {
-		if refreshClearsReadArticlesSwitch.isOn {
-			AppDefaults.refreshClearsReadArticles = true
-		} else {
-			AppDefaults.refreshClearsReadArticles = false
-		}
-	}
-
-	@IBAction func switchConfirmMarkAllAsRead(_ sender: Any) {
-		if confirmMarkAllAsReadSwitch.isOn {
-			AppDefaults.confirmMarkAllAsRead = true
-		} else {
-			AppDefaults.confirmMarkAllAsRead = false
-		}
-	}
-
-	@IBAction func switchShowPreviewInTimelineContextMenu(_ sender: UISwitch) {
-		AppDefaults.showPreviewInTimelineContextMenu = sender.isOn
-	}
-
-	@IBAction func switchFullscreenArticles(_ sender: Any) {
-		if showFullscreenArticlesSwitch.isOn {
-			AppDefaults.articleFullscreenAvailable = true
-		} else {
-			AppDefaults.articleFullscreenAvailable = false
-		}
-	}
-
-	@IBAction func switchBrowserPreference(_ sender: Any) {
-		if openLinksInNetNewsWire.isOn {
-			AppDefaults.useSystemBrowser = false
-		} else {
-			AppDefaults.useSystemBrowser = true
-		}
-	}
-
-	@IBAction func switchSwipeToNextPreviousArticle(_ sender: UISwitch) {
-		AppDefaults.articleSwipeNavigationEnabled = sender.isOn
-	}
-
-	@IBAction func switchJavaScriptPreference(_ sender: Any) {
-		AppDefaults.isArticleContentJavascriptEnabled = enableJavaScriptSwitch.isOn
- 	}
-
 	// MARK: - Notifications
 
 	@objc func contentSizeCategoryDidChange() {
@@ -475,26 +298,6 @@ final class SettingsViewController: UITableViewController {
 
 	@objc func browserPreferenceDidChange() {
 		tableView.reloadData()
-	}
-
-	@objc func handleUserInterfaceColorPaletteDidUpdate(_ notification: Notification) {
-		updateColorPalettePopUpButton()
-	}
-
-	@objc func handleUnreadCountDisplaySettingDidChange(_ notification: Notification) {
-		updateUnreadCountDisplayPopUpButton()
-	}
-
-	@objc func handleSidebarShowsIconsDidChange(_ notification: Notification) {
-		updateSidebarShowsIconsSwitch()
-	}
-
-	@objc func handleSidebarSmartFeedsVisibilityDidChange(_ notification: Notification) {
-		updateSmartFeedsSwitches()
-	}
-
-	@objc func handleGrayscaleIconsDidChange(_ notification: Notification) {
-		updateGrayscaleIconsSwitch()
 	}
 
 }
@@ -523,67 +326,6 @@ extension SettingsViewController: UIDocumentPickerDelegate {
 // MARK: - Private
 
 private extension SettingsViewController {
-
-	static func makePopUpButton() -> UIButton {
-		var configuration = UIButton.Configuration.plain()
-		configuration.baseForegroundColor = .secondaryLabel
-		let button = UIButton(configuration: configuration)
-		button.showsMenuAsPrimaryAction = true
-		button.changesSelectionAsPrimaryAction = true
-		return button
-	}
-
-	/// Auto Layout lets the button resize itself when choosing an item changes its title.
-	/// The accessibility label names the setting, since the button’s title is only the current choice.
-	func addPopUpButton(_ button: UIButton, to cell: UITableViewCell?, accessibilityLabel: String) {
-		guard let cell else {
-			return
-		}
-		button.accessibilityLabel = accessibilityLabel
-		button.translatesAutoresizingMaskIntoConstraints = false
-		button.setContentCompressionResistancePriority(.required, for: .horizontal)
-		cell.contentView.addSubview(button)
-		NSLayoutConstraint.activate([
-			button.trailingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.trailingAnchor),
-			button.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor)
-		])
-	}
-
-	func updateColorPalettePopUpButton() {
-		let currentColorPalette = AppDefaults.userInterfaceColorPalette
-		let actions = UserInterfaceColorPalette.allCases.map { colorPalette in
-			UIAction(title: String(describing: colorPalette), state: colorPalette == currentColorPalette ? .on : .off) { _ in
-				AppDefaults.userInterfaceColorPalette = colorPalette
-			}
-		}
-		colorPalettePopUpButton.menu = UIMenu(children: actions)
-		colorPalettePopUpButton.accessibilityValue = String(describing: currentColorPalette)
-	}
-
-	func updateUnreadCountDisplayPopUpButton() {
-		let currentUnreadCountDisplay = AppDefaults.unreadCountDisplay
-		let actions = UnreadCountDisplay.allCases.map { unreadCountDisplay in
-			UIAction(title: String(describing: unreadCountDisplay), state: unreadCountDisplay == currentUnreadCountDisplay ? .on : .off) { _ in
-				AppDefaults.unreadCountDisplay = unreadCountDisplay
-			}
-		}
-		unreadCountDisplayPopUpButton.menu = UIMenu(children: actions)
-		unreadCountDisplayPopUpButton.accessibilityValue = String(describing: currentUnreadCountDisplay)
-	}
-
-	func updateSidebarShowsIconsSwitch() {
-		sidebarShowsIconsSwitch?.isOn = AppDefaults.sidebarShowsIcons
-	}
-
-	func updateGrayscaleIconsSwitch() {
-		grayscaleIconsSwitch?.isOn = AppDefaults.grayscaleIcons
-	}
-
-	func updateSmartFeedsSwitches() {
-		showTodayFeedSwitch?.isOn = AppDefaults.showTodayFeed
-		showUnreadFeedSwitch?.isOn = AppDefaults.showUnreadFeed
-		showStarredFeedSwitch?.isOn = AppDefaults.showStarredFeed
-	}
 
 	func addFeed() {
 		self.dismiss(animated: true)
