@@ -71,6 +71,7 @@ import Images
 		let isFirstRun = AppDefaults.isFirstRun
 		if isFirstRun {
 			Self.logger.info("Is first run.")
+			AppDefaults.articleSwipeNavigationEnabled = false
 		}
 
 		if isFirstRun && !AccountManager.shared.anyAccountHasAtLeastOneFeed() {

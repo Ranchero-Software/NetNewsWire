@@ -19,6 +19,7 @@ extension AppDefaults.Key {
 	static let articleFullscreenEnabled = "articleFullscreenEnabled"
 	static let confirmMarkAllAsRead = "confirmMarkAllAsRead"
 	static let showPreviewInTimelineContextMenu = "showPreviewInTimelineContextMenu"
+	static let articleSwipeNavigationEnabled = "articleSwipeNavigationEnabled"
 	static let lastRefresh = "lastRefresh"
 	static let useSystemBrowser = "useSystemBrowser"
 	static let hideReadFeeds = "hideReadFeeds"
@@ -117,6 +118,16 @@ extension AppDefaults {
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.showPreviewInTimelineContextMenu)
+		}
+	}
+
+	static var articleSwipeNavigationEnabled: Bool {
+		get {
+			UserDefaults.standard.bool(forKey: Key.articleSwipeNavigationEnabled)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.articleSwipeNavigationEnabled)
+			NotificationCenter.default.post(name: .articleSwipeNavigationEnabledDidChange, object: nil)
 		}
 	}
 
@@ -298,6 +309,7 @@ extension AppDefaults {
 			Key.articleFullscreenEnabled: false,
 			Key.confirmMarkAllAsRead: true,
 			Key.showPreviewInTimelineContextMenu: false,
+			Key.articleSwipeNavigationEnabled: true,
 			Key.splitViewPreferredDisplayMode: UISplitViewController.DisplayMode.oneBesideSecondary.rawValue
 		]
 
