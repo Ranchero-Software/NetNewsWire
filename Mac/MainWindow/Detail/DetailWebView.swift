@@ -32,6 +32,7 @@ final class DetailWebView: WKWebView {
 
 	override init(frame: CGRect, configuration: WKWebViewConfiguration) {
 		super.init(frame: frame, configuration: configuration)
+		isInspectable = true
 		updateObscuredContentInsets()
 	}
 
