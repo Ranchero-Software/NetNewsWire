@@ -75,7 +75,7 @@ final class TimelineTableRowView: NSTableRowView {
 		addSubview(browserOpenAnimation, positioned: .below, relativeTo: nil)
 
 		let estimatedSelectionBounds = self.bounds.insetBy(dx: 10, dy: 0)
-		browserOpenAnimation.play(in: estimatedSelectionBounds)
+		browserOpenAnimation.play(in: estimatedSelectionBounds, cornerRadius: 10)
 	}
 
 	func clearBrowserOpenAnimation() {

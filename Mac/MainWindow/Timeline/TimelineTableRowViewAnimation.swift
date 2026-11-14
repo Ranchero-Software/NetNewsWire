@@ -3,14 +3,18 @@ import QuartzCore
 
 final class TimelineTableRowViewAnimation: NSView {
 
-	func play(in highlight: NSRect) {
+	func play(in highlight: NSRect, cornerRadius: CGFloat) {
 		self.frame = highlight
 
-		let clippedLayer = CALayer()
-		clippedLayer.masksToBounds = true
-
-		self.layer = clippedLayer
+		let rootLayer = CALayer()
+		self.layer = rootLayer
 		self.wantsLayer = true
+
+		let clippedLayer = CALayer()
+		clippedLayer.frame = CGRect(origin: .zero, size: highlight.size)
+		clippedLayer.cornerRadius = cornerRadius
+		clippedLayer.masksToBounds = true
+		rootLayer.addSublayer(clippedLayer)
 
 		let color = NSColor.labelColor.withAlphaComponent(0.24)
 		let animation: CABasicAnimation
@@ -58,14 +62,14 @@ final class TimelineTableRowViewAnimation: NSView {
 			animatedLayer = sweep
 		}
 
-		animation.duration = 10.4
+		animation.duration = 0.4
 		animation.timingFunction = CAMediaTimingFunction(name: .easeOut)
 
 		CATransaction.begin()
-		CATransaction.setCompletionBlock { [weak self, weak clippedLayer] in
+		CATransaction.setCompletionBlock { [weak self, weak rootLayer] in
 			guard let self,
-					let clippedLayer,
-					self.layer === clippedLayer else {
+					let rootLayer,
+					self.layer === rootLayer else {
 				return
 			}
 
