@@ -174,8 +174,26 @@ img[src*="/img/social/"] {
 	margin: 1em 0;
 	top: 0.75em;
 	max-width: 44em;
-	border-radius: 0.3em;
+	border-radius: 1em;
 	box-sizing: border-box;
+	opacity: 1;
+	transition: opacity 180ms ease-out;
+	will-change: opacity;
+}
+
+@starting-style {
+	.newsfoot-footnote-popover {
+		opacity: 0;
+	}
+
+	.newsfoot-footnote-popover-inner {
+		transform: translateY(-0.35em) scale(0.98);
+	}
+}
+
+.newsfoot-footnote-popover.is-closing {
+	opacity: 0;
+	pointer-events: none;
 }
 
 .newsfoot-footnote-popover-arrow {
@@ -190,10 +208,17 @@ img[src*="/img/social/"] {
 }
 
 .newsfoot-footnote-popover-inner {
-	border-radius: calc(0.3em - 1px);
+	border-radius: calc(1em - 1px);
 	padding: 1em;
 	position: relative;
 	z-index: 1;
+	transform: translateY(0) scale(1);
+	transform-origin: top center;
+	transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.newsfoot-footnote-popover.is-closing .newsfoot-footnote-popover-inner {
+	transform: translateY(-0.2em) scale(0.985);
 }
 
 .newsfoot-footnote-popover-inner :first-child {
@@ -224,4 +249,11 @@ a.footnote {
 	line-height: 1em;
 	position:relative;
 	top: -0.1em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.newsfoot-footnote-popover,
+	.newsfoot-footnote-popover-inner {
+		transition-duration: 0.01ms;
+	}
 }

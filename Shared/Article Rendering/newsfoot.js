@@ -20,6 +20,8 @@
 	const POPOVER_CLS = `${clsPrefix}popover`;
     const POPOVER_INNER_CLS = `${clsPrefix}popover-inner`;
     const POPOVER_ARROW_CLS = `${clsPrefix}popover-arrow`;
+	// Slightly longer than the closing fade in core.css.
+	const CLOSE_FALLBACK_MS = 300;
 
 	/**
 	 * @param {string} content
@@ -70,13 +72,26 @@
 		}
   
 		cleanup() {
-			this.fnref.closest(`.${CONTAINER_CLS}`).style.zIndex = 0;
-			remove(this.popover);
 			document.removeEventListener("click", this.clickoutHandler, {capture: true});
 			window.removeEventListener("resize", this.resizeHandler);
-			delete this.popover;
-			delete this.clickoutHandler;
-			delete this.resizeHandler;
+
+			const popover = this.popover;
+			const container = this.fnref.closest(`.${CONTAINER_CLS}`);
+			let finished = false;
+			const finish = () => {
+				if (finished) return;
+				finished = true;
+				remove(popover);
+				if (!container.querySelector(`.${POPOVER_CLS}`)) container.style.zIndex = 0;
+			};
+
+			popover.classList.add("is-closing");
+			popover.addEventListener("transitionend", (ev) => {
+				if (ev.target !== popover || ev.propertyName !== "opacity") return;
+				finish();
+			});
+			// Naughty themes can disable or change the fade, which stops transitioned
+			setTimeout(finish, CLOSE_FALLBACK_MS);
 		}
   
 		reposition() {
@@ -99,13 +114,13 @@
 			this.popover.style.left = `${popoverLeft - containerRect.left}px`;
 			this.popover.style.width = `${popoverWidth}px`;
 
-			const arrowWidth = this.arrow.clientWidth;
+			const arrowWidth = this.arrow.getBoundingClientRect().width / Math.SQRT2;
 			const arrowCenter = refCenter - popoverLeft;
 			const insetArrowCenter = Math.min(
 				Math.max(arrowCenter, arrowWidth),
 				popoverWidth - arrowWidth
 			);
-			this.arrow.style.left = `${insetArrowCenter - (arrowWidth / 2)}px`;
+			this.arrow.style.left = `${insetArrowCenter - (arrowWidth / 2) - this.popover.clientLeft}px`;
 		}
 	}
 
