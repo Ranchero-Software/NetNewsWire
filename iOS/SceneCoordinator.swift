@@ -1608,10 +1608,10 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 	}
 
-	func showSettings(scrollToArticlesSection: Bool = false) {
+	func showSettings(showTimelineSettings: Bool = false) {
 		let settingsNavController = UIStoryboard.settings.instantiateInitialViewController() as! UINavigationController
 		let settingsViewController = settingsNavController.topViewController as! SettingsViewController
-		settingsViewController.scrollToArticlesSection = scrollToArticlesSection
+		settingsViewController.showTimelineSettings = showTimelineSettings
 		settingsNavController.modalPresentationStyle = .formSheet
 		settingsViewController.presentingParentController = rootSplitViewController
 		rootSplitViewController.present(settingsNavController, animated: true)

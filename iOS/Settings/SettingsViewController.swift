@@ -20,16 +20,16 @@ final class SettingsViewController: UITableViewController {
 		case notifications = 0
 		case accounts = 1
 		case feeds = 2
-		case articles = 3
-		case moreScreens = 4
+		case moreScreens = 3
 	}
 
 	private enum MoreScreensRow: Int {
 		case sidebar = 0
 		case timeline = 1
-		case appearance = 2
-		case troubleshooting = 3
-		case help = 4
+		case articles = 2
+		case appearance = 3
+		case troubleshooting = 4
+		case help = 5
 	}
 
 	private enum FeedsRow: Int {
@@ -38,23 +38,10 @@ final class SettingsViewController: UITableViewController {
 		case addNetNewsWireNewsFeed = 2
 	}
 
-	private enum ArticlesRow: Int, CaseIterable {
-		case theme = 0
-		case openLinksInNetNewsWire = 1
-		case enableJavaScript = 2
-		case swipeToNextPreviousArticle = 3
-		case enableFullScreenArticles = 4
-	}
-
 	private weak var opmlAccount: Account?
 
-	@IBOutlet var articleThemeDetailLabel: UILabel!
-	@IBOutlet var showFullscreenArticlesSwitch: UISwitch!
-	@IBOutlet var openLinksInNetNewsWire: UISwitch!
-	@IBOutlet var enableJavaScriptSwitch: UISwitch!
-	@IBOutlet var swipeToNextPreviousArticleSwitch: UISwitch?
-
-	var scrollToArticlesSection = false
+	/// Pushes the Timeline screen on appearing, so a user can turn off the Mark All as Read confirmation.
+	var showTimelineSettings = false
 	weak var presentingParentController: UIViewController?
 
 	override func viewDidLoad() {
@@ -76,24 +63,6 @@ final class SettingsViewController: UITableViewController {
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 
-		articleThemeDetailLabel.text = ArticleThemesManager.shared.currentTheme.name
-
-		swipeToNextPreviousArticleSwitch?.isOn = AppDefaults.articleSwipeNavigationEnabled
-
-		if AppDefaults.articleFullscreenAvailable {
-			showFullscreenArticlesSwitch.isOn = true
-		} else {
-			showFullscreenArticlesSwitch.isOn = false
-		}
-
-		if AppDefaults.isArticleContentJavascriptEnabled {
-			enableJavaScriptSwitch.isOn = true
-		} else {
-			enableJavaScriptSwitch.isOn = false
-		}
-
-		openLinksInNetNewsWire.isOn = !AppDefaults.useSystemBrowser
-
 		let buildLabel = CopyableLabel(frame: CGRect(x: 32.0, y: 0.0, width: 0.0, height: 0.0))
 		buildLabel.font = UIFont.systemFont(ofSize: 11.0)
 		buildLabel.textColor = UIColor.gray
@@ -103,18 +72,16 @@ final class SettingsViewController: UITableViewController {
 		let wrapperView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.bounds.width, height: buildLabel.frame.height + 10.0))
 		wrapperView.addSubview(buildLabel)
 		tableView.tableFooterView = wrapperView
-
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		self.tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 
-		if scrollToArticlesSection {
-			tableView.scrollToRow(at: IndexPath(row: 0, section: Section.articles.rawValue), at: .top, animated: true)
-			scrollToArticlesSection = false
+		if showTimelineSettings {
+			showTimelineSettings = false
+			navigationController?.pushViewController(TimelineSettingsViewController(), animated: true)
 		}
-
 	}
 
 	// MARK: UITableView
@@ -130,9 +97,6 @@ final class SettingsViewController: UITableViewController {
 				return defaultNumberOfRows - 1
 			}
 			return defaultNumberOfRows
-		case .articles:
-			// The Full Screen Articles row is iPhone-only.
-			return traitCollection.userInterfaceIdiom == .phone ? ArticlesRow.allCases.count : ArticlesRow.allCases.count - 1
 		default:
 			return super.tableView(tableView, numberOfRowsInSection: section)
 		}
@@ -202,20 +166,14 @@ final class SettingsViewController: UITableViewController {
 			default:
 				break
 			}
-		case .articles:
-			switch ArticlesRow(rawValue: indexPath.row) {
-			case .theme:
-				let articleThemes = UIStoryboard.settings.instantiateController(ofType: ArticleThemesTableViewController.self)
-				self.navigationController?.pushViewController(articleThemes, animated: true)
-			default:
-				break
-			}
 		case .moreScreens:
 			switch MoreScreensRow(rawValue: indexPath.row) {
 			case .sidebar:
 				self.navigationController?.pushViewController(SidebarSettingsViewController(), animated: true)
 			case .timeline:
 				self.navigationController?.pushViewController(TimelineSettingsViewController(), animated: true)
+			case .articles:
+				self.navigationController?.pushViewController(ArticlesSettingsViewController(), animated: true)
 			case .appearance:
 				self.navigationController?.pushViewController(AppearanceSettingsViewController(), animated: true)
 			case .troubleshooting:
@@ -257,30 +215,6 @@ final class SettingsViewController: UITableViewController {
 	@IBAction func done(_ sender: Any) {
 		dismiss(animated: true)
 	}
-
-	@IBAction func switchFullscreenArticles(_ sender: Any) {
-		if showFullscreenArticlesSwitch.isOn {
-			AppDefaults.articleFullscreenAvailable = true
-		} else {
-			AppDefaults.articleFullscreenAvailable = false
-		}
-	}
-
-	@IBAction func switchBrowserPreference(_ sender: Any) {
-		if openLinksInNetNewsWire.isOn {
-			AppDefaults.useSystemBrowser = false
-		} else {
-			AppDefaults.useSystemBrowser = true
-		}
-	}
-
-	@IBAction func switchSwipeToNextPreviousArticle(_ sender: UISwitch) {
-		AppDefaults.articleSwipeNavigationEnabled = sender.isOn
-	}
-
-	@IBAction func switchJavaScriptPreference(_ sender: Any) {
-		AppDefaults.isArticleContentJavascriptEnabled = enableJavaScriptSwitch.isOn
- 	}
 
 	// MARK: - Notifications
 
