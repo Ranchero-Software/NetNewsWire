@@ -8,12 +8,6 @@
 
 import AppKit
 
-extension NSTableRowView {
-	func animateBrowserOpen() {
-		print("animating row")
-	}
-}
-
 final class TimelineTableRowView: NSTableRowView {
 
 	/// The last row has no separator below it.
@@ -71,5 +65,27 @@ final class TimelineTableRowView: NSTableRowView {
 		let gridColor = (superview as? NSTableView)?.gridColor ?? .gridColor
 		gridColor.setFill()
 		separatorRect.fill(using: .sourceOver)
+	}
+
+	// MARK: - Browser-opening feedback
+
+	private let browserOpenAnimation = TimelineTableRowViewAnimation()
+
+	func animateBrowserOpen() {
+		addSubview(browserOpenAnimation, positioned: .below, relativeTo: nil)
+
+		let estimatedSelectionBounds = self.bounds.insetBy(dx: 10, dy: 0)
+		browserOpenAnimation.play(in: estimatedSelectionBounds)
+	}
+
+	func clearBrowserOpenAnimation() {
+		browserOpenAnimation.removeFromSuperview()
+	}
+
+	override func viewWillMove(toWindow newWindow: NSWindow?) {
+		if newWindow == nil {
+			clearBrowserOpenAnimation()
+		}
+		super.viewWillMove(toWindow: newWindow)
 	}
 }

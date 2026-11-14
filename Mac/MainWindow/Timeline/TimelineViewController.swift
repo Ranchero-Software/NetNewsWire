@@ -517,14 +517,14 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		let visibleRows: NSRange = tableView.rows(in: tableView.visibleRect)
 		if let rows = self.rows(for: article) {
 			for row in rows {
-				if (visibleRows.contains(row)) {
+				if visibleRows.contains(row) {
 					tableRowView = tableView.rowView(atRow: row, makeIfNecessary: false)
 					break
 				}
 			}
 		}
 
-		if let rowView = tableRowView {
+		if let rowView = tableRowView as? TimelineTableRowView {
 			rowView.animateBrowserOpen()
 		}
 	}
