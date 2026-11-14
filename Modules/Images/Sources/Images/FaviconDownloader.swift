@@ -226,24 +226,38 @@ private extension FaviconDownloader {
 		}
 		let faviconURLs = htmlMetadata.usableFaviconURLs() ?? [String]()
 
-		guard let scheme = url.scheme, let host = url.host else {
+		guard let defaultFaviconURL = Self.defaultFaviconURL(for: url) else {
 			return faviconURLs.isEmpty ? nil : faviconURLs
 		}
-
-		let defaultFaviconURL = "\(scheme)://\(host)/favicon.ico".lowercased(with: FaviconDownloader.localeForLowercasing)
 		return faviconURLs + [defaultFaviconURL]
+	}
+
+	/// `/favicon.ico` needs no HTML, so it’s still worth a try when the home page can’t be read.
+	func faviconURLsWithoutMetadata(homePageURL: String) -> [String]? {
+		guard HTMLMetadataDownloader.shared.metadataIsUnavailable(for: homePageURL), let url = URL(string: homePageURL), let defaultFaviconURL = Self.defaultFaviconURL(for: url) else {
+			return nil
+		}
+		return [defaultFaviconURL]
+	}
+
+	static func defaultFaviconURL(for url: URL) -> String? {
+		guard let scheme = url.scheme, let host = url.host else {
+			return nil
+		}
+		return "\(scheme)://\(host)/favicon.ico".lowercased(with: localeForLowercasing)
 	}
 
 	func homePageURLsSearching(with faviconURL: String) -> [String] {
 		searches.filter { $0.value.faviconURL == faviconURL }.map { $0.key }
 	}
 
-	/// Without the home page’s metadata in memory, the search starts when `.htmlMetadataAvailable` arrives.
+	/// Without the home page’s metadata in memory, the search starts when `.htmlMetadataAvailable` arrives,
+	/// or tries only `/favicon.ico` if the metadata isn’t coming.
 	func searchForFavicon(homePageURL: String) {
 		guard searches[homePageURL] == nil else {
 			return
 		}
-		guard let faviconURLs = findFaviconURLs(with: homePageURL) else {
+		guard let faviconURLs = findFaviconURLs(with: homePageURL) ?? faviconURLsWithoutMetadata(homePageURL: homePageURL) else {
 			homePagesAwaitingMetadataForSearch.insert(homePageURL)
 			return
 		}
