@@ -1609,11 +1609,11 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func showSettings(showTimelineSettings: Bool = false) {
-		let settingsNavController = UIStoryboard.settings.instantiateInitialViewController() as! UINavigationController
-		let settingsViewController = settingsNavController.topViewController as! SettingsViewController
+		let settingsViewController = SettingsViewController()
 		settingsViewController.showTimelineSettings = showTimelineSettings
-		settingsNavController.modalPresentationStyle = .formSheet
 		settingsViewController.presentingParentController = rootSplitViewController
+		let settingsNavController = UINavigationController(rootViewController: settingsViewController)
+		settingsNavController.modalPresentationStyle = .formSheet
 		rootSplitViewController.present(settingsNavController, animated: true)
 	}
 

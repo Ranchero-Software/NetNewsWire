@@ -17,47 +17,156 @@ import ActivityLog
 
 final class SettingsViewController: UITableViewController {
 
-	private enum Section: Int {
-		case notifications = 0
-		case accounts = 1
-		case feeds = 2
-		case moreScreens = 3
-		case troubleshooting = 4
-		case help = 5
+	private enum Section: Int, CaseIterable {
+		case notifications
+		case accounts
+		case feeds
+		case appearance
+		case troubleshooting
+		case help
+
+		var title: String {
+			switch self {
+			case .notifications:
+				NSLocalizedString("Notifications, Badge, Data, & More", comment: "Notifications, Badge, Data, & More")
+			case .accounts:
+				NSLocalizedString("Accounts", comment: "Preferences")
+			case .feeds:
+				NSLocalizedString("Feeds", comment: "Feeds")
+			case .appearance:
+				NSLocalizedString("Appearance", comment: "Preferences")
+			case .troubleshooting:
+				NSLocalizedString("Troubleshooting", comment: "Troubleshooting")
+			case .help:
+				NSLocalizedString("Help", comment: "Help")
+			}
+		}
 	}
 
-	private enum NotificationsRow: Int {
-		case systemSettings = 0
+	@MainActor fileprivate enum Row {
+		case systemSettings
+		case account(Account)
+		case addAccount
+		case importSubscriptions
+		case exportSubscriptions
+		case addNetNewsWireNewsFeed
+		case general
+		case sidebar
+		case timeline
+		case articles
+		case errorLog
+		case activityLog
+		case accountStats
+		case dinosaurs
+		case cloudKitStats
+		case help
+		case forum
+		case releaseNotes
+		case bugTracker
+		case about
+
+		var title: String {
+			switch self {
+			case .systemSettings:
+				NSLocalizedString("Open System Settings", comment: "Open System Settings button")
+			case .account(let account):
+				account.nameForDisplay
+			case .addAccount:
+				NSLocalizedString("Add Account", comment: "Add Account")
+			case .importSubscriptions:
+				NSLocalizedString("Import Subscriptions", comment: "Import Subscriptions")
+			case .exportSubscriptions:
+				NSLocalizedString("Export Subscriptions", comment: "Export Subscriptions")
+			case .addNetNewsWireNewsFeed:
+				NSLocalizedString("Add NetNewsWire News Feed", comment: "Add NetNewsWire News Feed")
+			case .general:
+				NSLocalizedString("General", comment: "Preferences")
+			case .sidebar:
+				NSLocalizedString("Sidebar", comment: "Sidebar")
+			case .timeline:
+				NSLocalizedString("Timeline", comment: "Timeline")
+			case .articles:
+				NSLocalizedString("Articles", comment: "Articles")
+			case .errorLog:
+				NSLocalizedString("Error Log", comment: "Error Log window title")
+			case .activityLog:
+				NSLocalizedString("Activity Log", comment: "Activity Log screen title")
+			case .accountStats:
+				NSLocalizedString("Account Stats", comment: "Account Stats screen title")
+			case .dinosaurs:
+				NSLocalizedString("Dinosaurs", comment: "Dinosaurs")
+			case .cloudKitStats:
+				NSLocalizedString("iCloud Storage Stats", comment: "iCloud Storage Stats window title")
+			case .help:
+				NSLocalizedString("NetNewsWire Help", comment: "NetNewsWire Help")
+			case .forum:
+				NSLocalizedString("NetNewsWire Forum", comment: "NetNewsWire Forum")
+			case .releaseNotes:
+				NSLocalizedString("Release Notes", comment: "Release Notes")
+			case .bugTracker:
+				NSLocalizedString("Bug Tracker", comment: "Bug Tracker")
+			case .about:
+				NSLocalizedString("About NetNewsWire", comment: "About NetNewsWire")
+			}
+		}
+
+		var iconImage: UIImage {
+			switch self {
+			case .systemSettings:
+				Assets.Images.settingsSystemSettings
+			case .account(let account):
+				Assets.Images.settingsAccountImage(account.type)
+			case .addAccount:
+				Assets.Images.plus
+			case .importSubscriptions:
+				Assets.Images.settingsImportSubscriptions
+			case .exportSubscriptions:
+				Assets.Images.settingsExportSubscriptions
+			case .addNetNewsWireNewsFeed:
+				Assets.Images.settingsNetNewsWireNewsFeed
+			case .general:
+				Assets.Images.preferencesToolbarAppearance
+			case .sidebar:
+				Assets.Images.settingsSidebar
+			case .timeline:
+				Assets.Images.settingsTimeline
+			case .articles:
+				Assets.Images.settingsArticles
+			case .errorLog:
+				Assets.Images.settingsErrorLog
+			case .activityLog:
+				Assets.Images.settingsActivityLog
+			case .accountStats:
+				Assets.Images.settingsAccountStats
+			case .dinosaurs:
+				Assets.Images.settingsDinosaurs
+			case .cloudKitStats:
+				Assets.Images.settingsCloudKitStats
+			case .help:
+				Assets.Images.settingsHelp
+			case .forum:
+				Assets.Images.settingsForum
+			case .releaseNotes:
+				Assets.Images.settingsReleaseNotes
+			case .bugTracker:
+				Assets.Images.settingsBugTracker
+			case .about:
+				Assets.Images.info
+			}
+		}
+
+		/// Rows that push another screen get a disclosure indicator.
+		var pushesScreen: Bool {
+			switch self {
+			case .systemSettings, .importSubscriptions, .exportSubscriptions, .addNetNewsWireNewsFeed, .help, .forum, .releaseNotes, .bugTracker:
+				false
+			case .account, .addAccount, .general, .sidebar, .timeline, .articles, .errorLog, .activityLog, .accountStats, .dinosaurs, .cloudKitStats, .about:
+				true
+			}
+		}
 	}
 
-	private enum MoreScreensRow: Int {
-		case appearance = 0
-		case sidebar = 1
-		case timeline = 2
-		case articles = 3
-	}
-
-	private enum TroubleshootingRow: Int {
-		case errorLog = 0
-		case activityLog = 1
-		case accountStats = 2
-		case dinosaurs = 3
-		case cloudKitZoneStats = 4
-	}
-
-	private enum HelpRow: Int {
-		case help = 0
-		case forum = 1
-		case releaseNotes = 2
-		case bugTracker = 3
-		case about = 4
-	}
-
-	private enum FeedsRow: Int {
-		case importSubscriptions = 0
-		case exportSubscriptions = 1
-		case addNetNewsWireNewsFeed = 2
-	}
+	private static let cellReuseIdentifier = "SettingsCell"
 
 	private weak var opmlAccount: Account?
 
@@ -65,19 +174,27 @@ final class SettingsViewController: UITableViewController {
 	var showTimelineSettings = false
 	weak var presentingParentController: UIViewController?
 
+	init() {
+		super.init(style: .insetGrouped)
+	}
+
+	required init?(coder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
+	}
+
 	override func viewDidLoad() {
-		// This hack mostly works around a bug in static tables with dynamic type.  See: https://spin.atomicobject.com/2018/10/15/dynamic-type-static-uitableview/
-		NotificationCenter.default.removeObserver(tableView!, name: UIContentSizeCategory.didChangeNotification, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
+		super.viewDidLoad()
+		title = NSLocalizedString("Settings", comment: "Settings")
+		let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(done(_:)))
+		doneButton.style = .plain
+		navigationItem.rightBarButtonItem = doneButton
+		clearsSelectionOnViewWillAppear = false
 
-		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidAddAccount, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidDeleteAccount, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleUserDidAddAccount(_:)), name: .UserDidAddAccount, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleUserDidDeleteAccount(_:)), name: .UserDidDeleteAccount, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleDisplayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 
-		tableView.register(UINib(nibName: "SettingsTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsTableViewCell")
-
-		tableView.rowHeight = UITableView.automaticDimension
-		tableView.estimatedRowHeight = 44
+		tableView.register(VibrantTableViewCell.self, forCellReuseIdentifier: Self.cellReuseIdentifier)
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
@@ -104,197 +221,123 @@ final class SettingsViewController: UITableViewController {
 		}
 	}
 
-	// MARK: UITableView
+	// MARK: - UITableViewDataSource
+
+	override func numberOfSections(in tableView: UITableView) -> Int {
+		Section.allCases.count
+	}
+
+	override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+		Section(rawValue: section)?.title
+	}
 
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-
-		switch Section(rawValue: section) {
-		case .accounts:
-			return AccountManager.shared.accounts.count + 1
-		case .feeds:
-			let defaultNumberOfRows = super.tableView(tableView, numberOfRowsInSection: section)
-			if AccountManager.shared.activeAccounts.isEmpty || AccountManager.shared.anyAccountHasNetNewsWireNewsSubscription() {
-				return defaultNumberOfRows - 1
-			}
-			return defaultNumberOfRows
-		case .troubleshooting:
-			let defaultNumberOfRows = super.tableView(tableView, numberOfRowsInSection: section)
-			if !AccountManager.shared.hasiCloudAccount {
-				return defaultNumberOfRows - 1
-			}
-			return defaultNumberOfRows
-		default:
-			return super.tableView(tableView, numberOfRowsInSection: section)
-		}
+		rowsInSection(section).count
 	}
 
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
-		let cell: UITableViewCell
-		switch Section(rawValue: indexPath.section) {
-		case .accounts:
-
-			cell = tableView.dequeueReusableCell(withIdentifier: "SettingsTableViewCell", for: indexPath)
-			let sortedAccounts = AccountManager.shared.sortedAccounts
-			if indexPath.row == sortedAccounts.count {
-				cell.textLabel?.text = NSLocalizedString("Add Account", comment: "Add Account")
-			} else {
-				cell.textLabel?.text = sortedAccounts[indexPath.row].nameForDisplay
-			}
-			cell.imageView?.image = iconImage(for: indexPath)
-		default:
-			cell = super.tableView(tableView, cellForRowAt: indexPath)
-			cell.imageView?.image = iconImage(for: indexPath)
-		}
-
+		let cell = tableView.dequeueReusableCell(withIdentifier: Self.cellReuseIdentifier, for: indexPath)
+		let row = self.row(at: indexPath)
+		cell.textLabel?.text = row.title
+		cell.textLabel?.numberOfLines = 0
+		cell.textLabel?.adjustsFontForContentSizeCategory = true
+		cell.imageView?.image = row.iconImage
+		cell.accessoryType = row.pushesScreen ? .disclosureIndicator : .none
 		return cell
 	}
 
-	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+	// MARK: - UITableViewDelegate
 
-		switch Section(rawValue: indexPath.section) {
-		case .notifications:
-			UIApplication.shared.open(URL(string: "\(UIApplication.openSettingsURLString)")!)
+	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		let row = self.row(at: indexPath)
+		if !row.pushesScreen {
 			tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-		case .accounts:
-			let sortedAccounts = AccountManager.shared.sortedAccounts
-			if indexPath.row == sortedAccounts.count {
-				let addAccountView = AddAccountView(presentationAnchor: view.window) { [weak self] in
-					self?.navigationController?.popViewController(animated: false)
-				}
-				self.navigationController?.pushViewController(UIHostingController(rootView: addAccountView), animated: true)
-			} else {
-				let controller = UIStoryboard.inspector.instantiateController(ofType: AccountInspectorViewController.self)
-				controller.account = sortedAccounts[indexPath.row]
-				self.navigationController?.pushViewController(controller, animated: true)
+		}
+
+		switch row {
+		case .systemSettings:
+			if let url = URL(string: UIApplication.openSettingsURLString) {
+				UIApplication.shared.open(url)
 			}
-		case .feeds:
-			switch FeedsRow(rawValue: indexPath.row) {
-			case .importSubscriptions:
-				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-				if let sourceView = tableView.cellForRow(at: indexPath) {
-					let sourceRect = tableView.rectForRow(at: indexPath)
-					importOPML(sourceView: sourceView, sourceRect: sourceRect)
-				}
-			case .exportSubscriptions:
-				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-				if let sourceView = tableView.cellForRow(at: indexPath) {
-					let sourceRect = tableView.rectForRow(at: indexPath)
-					exportOPML(sourceView: sourceView, sourceRect: sourceRect)
-				}
-			case .addNetNewsWireNewsFeed:
-				addFeed()
-				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			default:
-				break
+		case .account(let account):
+			let controller = UIStoryboard.inspector.instantiateController(ofType: AccountInspectorViewController.self)
+			controller.account = account
+			navigationController?.pushViewController(controller, animated: true)
+		case .addAccount:
+			let addAccountView = AddAccountView(presentationAnchor: view.window) { [weak self] in
+				self?.navigationController?.popViewController(animated: false)
 			}
-		case .moreScreens:
-			switch MoreScreensRow(rawValue: indexPath.row) {
-			case .sidebar:
-				self.navigationController?.pushViewController(SidebarSettingsViewController(), animated: true)
-			case .timeline:
-				self.navigationController?.pushViewController(TimelineSettingsViewController(), animated: true)
-			case .articles:
-				self.navigationController?.pushViewController(ArticlesSettingsViewController(), animated: true)
-			case .appearance:
-				self.navigationController?.pushViewController(GeneralSettingsViewController(), animated: true)
-			default:
-				break
+			navigationController?.pushViewController(UIHostingController(rootView: addAccountView), animated: true)
+		case .importSubscriptions:
+			if let sourceView = tableView.cellForRow(at: indexPath) {
+				importOPML(sourceView: sourceView, sourceRect: tableView.rectForRow(at: indexPath))
 			}
-		case .troubleshooting:
-			let viewController: UIViewController? = {
-				switch TroubleshootingRow(rawValue: indexPath.row) {
-				case .errorLog:
-					return UIHostingController(rootView: ErrorLogView())
-				case .accountStats:
-					return UIHostingController(rootView: AccountStatsView())
-				case .cloudKitZoneStats:
-					return UIHostingController(rootView: CloudKitStatsView())
-				case .activityLog:
-					return UIHostingController(rootView: ActivityLogView())
-				case .dinosaurs:
-					return UIHostingController(rootView: DinosaursView(dismissAndPresent: { [weak self] dinosaur in
-						guard let self else {
-							return
-						}
-						self.dismiss(animated: true) {
-							if let rootSplit = self.presentingParentController as? RootSplitViewController {
-								rootSplit.coordinator.discloseFeed(dinosaur.feed, animations: [.scroll, .navigation])
-							}
-						}
-					}))
-				default:
-					return nil
+		case .exportSubscriptions:
+			if let sourceView = tableView.cellForRow(at: indexPath) {
+				exportOPML(sourceView: sourceView, sourceRect: tableView.rectForRow(at: indexPath))
+			}
+		case .addNetNewsWireNewsFeed:
+			addFeed()
+		case .general:
+			navigationController?.pushViewController(GeneralSettingsViewController(), animated: true)
+		case .sidebar:
+			navigationController?.pushViewController(SidebarSettingsViewController(), animated: true)
+		case .timeline:
+			navigationController?.pushViewController(TimelineSettingsViewController(), animated: true)
+		case .articles:
+			navigationController?.pushViewController(ArticlesSettingsViewController(), animated: true)
+		case .errorLog:
+			navigationController?.pushViewController(UIHostingController(rootView: ErrorLogView()), animated: true)
+		case .activityLog:
+			navigationController?.pushViewController(UIHostingController(rootView: ActivityLogView()), animated: true)
+		case .accountStats:
+			navigationController?.pushViewController(UIHostingController(rootView: AccountStatsView()), animated: true)
+		case .dinosaurs:
+			let dinosaursView = DinosaursView(dismissAndPresent: { [weak self] dinosaur in
+				guard let self else {
+					return
 				}
-			}()
-			if let viewController {
-				self.navigationController?.pushViewController(viewController, animated: true)
-			}
+				self.dismiss(animated: true) {
+					if let rootSplit = self.presentingParentController as? RootSplitViewController {
+						rootSplit.coordinator.discloseFeed(dinosaur.feed, animations: [.scroll, .navigation])
+					}
+				}
+			})
+			navigationController?.pushViewController(UIHostingController(rootView: dinosaursView), animated: true)
+		case .cloudKitStats:
+			navigationController?.pushViewController(UIHostingController(rootView: CloudKitStatsView()), animated: true)
 		case .help:
-			switch HelpRow(rawValue: indexPath.row) {
-			case .help:
-				openURL(HelpURL.helpHome.rawValue)
-				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			case .forum:
-				openURL(HelpURL.discourse.rawValue)
-				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			case .releaseNotes:
-				openURL(HelpURL.releaseNotes.rawValue)
-				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			case .bugTracker:
-				openURL(HelpURL.bugTracker.rawValue)
-				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			case .about:
-				let hosting = UIHostingController(rootView: AboutView())
-				self.navigationController?.pushViewController(hosting, animated: true)
-			default:
-				break
-			}
-		default:
-			tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
+			openURL(HelpURL.helpHome.rawValue)
+		case .forum:
+			openURL(HelpURL.discourse.rawValue)
+		case .releaseNotes:
+			openURL(HelpURL.releaseNotes.rawValue)
+		case .bugTracker:
+			openURL(HelpURL.bugTracker.rawValue)
+		case .about:
+			navigationController?.pushViewController(UIHostingController(rootView: AboutView()), animated: true)
 		}
 	}
 
-	override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-		return false
-	}
+	// MARK: - Actions
 
-	override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-		return false
-	}
-
-	override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-		return .none
-	}
-
-	override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-		return UITableView.automaticDimension
-	}
-
-	override func tableView(_ tableView: UITableView, indentationLevelForRowAt indexPath: IndexPath) -> Int {
-		return super.tableView(tableView, indentationLevelForRowAt: IndexPath(row: 0, section: Section.accounts.rawValue))
-	}
-
-	// MARK: Actions
-
-	@IBAction func done(_ sender: Any) {
+	@objc func done(_ sender: Any) {
 		dismiss(animated: true)
 	}
 
 	// MARK: - Notifications
 
-	@objc func contentSizeCategoryDidChange() {
+	@objc func handleUserDidAddAccount(_ notification: Notification) {
 		tableView.reloadData()
 	}
 
-	@objc func accountsDidChange() {
+	@objc func handleUserDidDeleteAccount(_ notification: Notification) {
 		tableView.reloadData()
 	}
 
-	@objc func displayNameDidChange() {
+	@objc func handleDisplayNameDidChange(_ notification: Notification) {
 		tableView.reloadData()
 	}
-
 }
 
 // MARK: - OPML Document Picker
@@ -322,78 +365,35 @@ extension SettingsViewController: UIDocumentPickerDelegate {
 
 private extension SettingsViewController {
 
-	func iconImage(for indexPath: IndexPath) -> UIImage? {
-		switch Section(rawValue: indexPath.section) {
+	func rowsInSection(_ section: Int) -> [Row] {
+		switch Section(rawValue: section) {
 		case .notifications:
-			switch NotificationsRow(rawValue: indexPath.row) {
-			case .systemSettings:
-				return Assets.Images.settingsSystemSettings
-			case nil:
-				return nil
-			}
+			return [.systemSettings]
 		case .accounts:
-			let sortedAccounts = AccountManager.shared.sortedAccounts
-			if indexPath.row == sortedAccounts.count {
-				return Assets.Images.plus
-			}
-			return Assets.Images.settingsAccountImage(sortedAccounts[indexPath.row].type)
+			return AccountManager.shared.sortedAccounts.map { .account($0) } + [.addAccount]
 		case .feeds:
-			switch FeedsRow(rawValue: indexPath.row) {
-			case .importSubscriptions:
-				return Assets.Images.settingsImportSubscriptions
-			case .exportSubscriptions:
-				return Assets.Images.settingsExportSubscriptions
-			case .addNetNewsWireNewsFeed:
-				return Assets.Images.settingsNetNewsWireNewsFeed
-			case nil:
-				return nil
+			var rows: [Row] = [.importSubscriptions, .exportSubscriptions]
+			if !AccountManager.shared.activeAccounts.isEmpty && !AccountManager.shared.anyAccountHasNetNewsWireNewsSubscription() {
+				rows.append(.addNetNewsWireNewsFeed)
 			}
-		case .moreScreens:
-			switch MoreScreensRow(rawValue: indexPath.row) {
-			case .appearance:
-				return Assets.Images.preferencesToolbarAppearance
-			case .sidebar:
-				return Assets.Images.settingsSidebar
-			case .timeline:
-				return Assets.Images.settingsTimeline
-			case .articles:
-				return Assets.Images.settingsArticles
-			case nil:
-				return nil
-			}
+			return rows
+		case .appearance:
+			return [.general, .sidebar, .timeline, .articles]
 		case .troubleshooting:
-			switch TroubleshootingRow(rawValue: indexPath.row) {
-			case .errorLog:
-				return Assets.Images.settingsErrorLog
-			case .activityLog:
-				return Assets.Images.settingsActivityLog
-			case .accountStats:
-				return Assets.Images.settingsAccountStats
-			case .dinosaurs:
-				return Assets.Images.settingsDinosaurs
-			case .cloudKitZoneStats:
-				return Assets.Images.settingsCloudKitStats
-			case nil:
-				return nil
+			var rows: [Row] = [.errorLog, .activityLog, .accountStats, .dinosaurs]
+			if AccountManager.shared.hasiCloudAccount {
+				rows.append(.cloudKitStats)
 			}
+			return rows
 		case .help:
-			switch HelpRow(rawValue: indexPath.row) {
-			case .help:
-				return Assets.Images.settingsHelp
-			case .forum:
-				return Assets.Images.settingsForum
-			case .releaseNotes:
-				return Assets.Images.settingsReleaseNotes
-			case .bugTracker:
-				return Assets.Images.settingsBugTracker
-			case .about:
-				return Assets.Images.info
-			case nil:
-				return nil
-			}
+			return [.help, .forum, .releaseNotes, .bugTracker, .about]
 		case nil:
-			return nil
+			return []
 		}
+	}
+
+	func row(at indexPath: IndexPath) -> Row {
+		rowsInSection(indexPath.section)[indexPath.row]
 	}
 
 	func addFeed() {
