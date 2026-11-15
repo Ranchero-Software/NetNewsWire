@@ -21,7 +21,9 @@ struct AboutView: View {
 				Text(verbatim: "NetNewsWire")
 					.font(.largeTitle)
 
-				CopyableText(text: "Version \(Bundle.main.versionNumber) (build \(Bundle.main.buildNumber))")
+				Text(verbatim: "\(Bundle.main.appName) \(Bundle.main.versionNumber) (build \(Bundle.main.buildNumber))")
+					.foregroundStyle(.secondary)
+					.textSelection(.enabled)
 
 				Text(verbatim: "By Brent Simmons and the NetNewsWire team")
 				Text("[netnewswire.com](https://netnewswire.com/)")
@@ -66,7 +68,7 @@ struct AboutView: View {
 		}
 		.multilineTextAlignment(.center)
 		.background(Color(uiColor: .systemBackground))
-		.navigationTitle(Text(verbatim: "About NetNewsWire"))
+		.navigationBarTitleDisplayMode(.inline)
     }
 }
 

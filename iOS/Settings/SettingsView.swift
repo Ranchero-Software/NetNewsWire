@@ -83,9 +83,11 @@ struct SettingsView: View {
 					actionRow(.bugTracker) {
 						openHelpURL(HelpURL.bugTracker.rawValue)
 					}
-					navigationRow(.about, destination: .about)
 				} header: {
 					Text(SettingsSection.help.title)
+				}
+				Section {
+					navigationRow(.about, destination: .about)
 				} footer: {
 					Text(verbatim: "\(Bundle.main.appName) \(Bundle.main.versionNumber) (build \(Bundle.main.buildNumber))")
 						.font(.caption2)
