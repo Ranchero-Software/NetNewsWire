@@ -32,7 +32,7 @@ struct SettingsView: View {
 	var body: some View {
 		NavigationStack(path: $path) {
 			List {
-				Section(SettingsSection.notifications.title) {
+				Section {
 					actionRow(.systemSettings) {
 						openSystemSettings()
 					}
@@ -459,7 +459,6 @@ private extension SettingsModel {
 // MARK: - Sections, Rows, and Destinations
 
 private enum SettingsSection {
-	case notifications
 	case accounts
 	case feeds
 	case appearance
@@ -468,8 +467,6 @@ private enum SettingsSection {
 
 	var title: String {
 		switch self {
-		case .notifications:
-			NSLocalizedString("Notifications, Badge, Data, and More", comment: "Notifications, Badge, Data, and More")
 		case .accounts:
 			NSLocalizedString("Accounts", comment: "Preferences")
 		case .feeds:
@@ -509,7 +506,7 @@ private enum SettingsSection {
 	var title: String {
 		switch self {
 		case .systemSettings:
-			NSLocalizedString("Open System Settings", comment: "Open System Settings button")
+			NSLocalizedString("Notifications, Badge, Data, and More", comment: "Notifications, Badge, Data, and More")
 		case .account(let account):
 			account.nameForDisplay
 		case .addAccount:
