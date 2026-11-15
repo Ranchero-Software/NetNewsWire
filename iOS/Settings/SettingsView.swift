@@ -156,11 +156,17 @@ private extension SettingsView {
 	func rowLabel(_ row: SettingsRow) -> some View {
 		Label {
 			Text(row.title)
-				.foregroundStyle(.primary)
+				.foregroundStyle(Color.primary)
 		} icon: {
 			Image(uiImage: row.iconImage)
+				.renderingMode(isTintable(row.iconImage) ? .template : .original)
 				.foregroundStyle(Color(uiColor: Assets.Colors.primaryAccent))
 		}
+	}
+
+	/// Matches UIKit, which tints symbol images by default. SwiftUI tints only images it’s told are templates.
+	func isTintable(_ image: UIImage) -> Bool {
+		image.renderingMode == .alwaysTemplate || (image.renderingMode == .automatic && image.isSymbolImage)
 	}
 
 	func navigationRow(_ row: SettingsRow, destination: SettingsDestination) -> some View {
