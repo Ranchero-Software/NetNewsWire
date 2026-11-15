@@ -27,7 +27,7 @@ struct GeneralSettingsView: View {
 			}
 			.settingsMenuPickerStyle()
 			Toggle(String(localized: "Grayscale Feed Icons", comment: "Grayscale Feed Icons"), isOn: Binding(get: { model.grayscaleIcons }, set: { AppDefaults.grayscaleIcons = $0 }))
-				.settingsToggleTint()
+				.settingsAccentTint()
 		}
 		.navigationTitle(String(localized: "General", comment: "Preferences"))
 	}

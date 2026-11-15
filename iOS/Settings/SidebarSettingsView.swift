@@ -23,7 +23,7 @@ struct SidebarSettingsView: View {
 				Toggle(String(localized: "Show Starred", comment: "Show Starred"), isOn: Binding(get: { model.showStarred }, set: { AppDefaults.showStarredFeed = $0 }))
 			}
 		}
-		.settingsToggleTint()
+		.settingsAccentTint()
 		.navigationTitle(String(localized: "Sidebar", comment: "Sidebar"))
 	}
 }

@@ -28,8 +28,8 @@ extension View {
 		}
 	}
 
-	/// Gives Settings switches the app’s accent color, matching the rest of the app’s switches.
-	func settingsToggleTint() -> some View {
+	/// Gives Settings switches and buttons the app’s accent color.
+	func settingsAccentTint() -> some View {
 		tint(Color(uiColor: Assets.Colors.primaryAccent))
 	}
 

@@ -285,7 +285,13 @@ final class SettingsViewController: UITableViewController {
 		case .timeline:
 			navigationController?.pushViewController(TimelineSettingsViewController(), animated: true)
 		case .articles:
-			navigationController?.pushViewController(ArticlesSettingsViewController(), animated: true)
+			let articlesSettingsView = ArticlesSettingsView(importTheme: { [weak self] url in
+				guard let self else {
+					return
+				}
+				try ArticleThemeImporter.importTheme(controller: self, url: url)
+			})
+			navigationController?.pushViewController(UIHostingController(rootView: articlesSettingsView), animated: true)
 		case .errorLog:
 			navigationController?.pushViewController(UIHostingController(rootView: ErrorLogView()), animated: true)
 		case .activityLog:

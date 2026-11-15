@@ -51,6 +51,7 @@ extension AppDefaults {
 		}
 		set {
 			UserDefaults.standard.setValue(newValue, forKey: Key.useSystemBrowser)
+			NotificationCenter.default.post(name: .useSystemBrowserDidChange, object: nil)
 		}
 	}
 
@@ -87,6 +88,7 @@ extension AppDefaults {
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.articleFullscreenAvailable)
+			NotificationCenter.default.post(name: .articleFullscreenAvailableDidChange, object: nil)
 		}
 	}
 
