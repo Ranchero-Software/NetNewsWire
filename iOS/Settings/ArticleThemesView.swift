@@ -7,6 +7,7 @@
 
 import SwiftUI
 import UniformTypeIdentifiers
+import RSCore
 
 /// Lists the article themes: tap to choose one, swipe to delete one the user installed, and + to import one.
 struct ArticleThemesView: View {
@@ -17,6 +18,7 @@ struct ArticleThemesView: View {
 	@State private var model = ArticleThemesModel()
 	@State private var isShowingThemeImporter = false
 	@State private var themeNamePendingDeletion: String?
+	@State private var isShowingThemesGallery = false
 
 	var body: some View {
 		List {
@@ -28,6 +30,11 @@ struct ArticleThemesView: View {
 					ForEach(model.installedThemeNames, id: \.self) { themeName in
 						themeRow(themeName)
 					}
+				}
+			}
+			Section {
+				Button(String(localized: "Themes Gallery", comment: "Themes Gallery")) {
+					isShowingThemesGallery = true
 				}
 			}
 		}
@@ -43,6 +50,11 @@ struct ArticleThemesView: View {
 		.fileImporter(isPresented: $isShowingThemeImporter, allowedContentTypes: [.netNewsWireTheme]) { result in
 			if case .success(let url) = result {
 				importThemeFile(url)
+			}
+		}
+		.sheet(isPresented: $isShowingThemesGallery) {
+			if let themesGalleryURL = URL(string: HelpURL.themesGallery.rawValue) {
+				SafariView(url: themesGalleryURL)
 			}
 		}
 		.alert(String(localized: "Delete Theme?", comment: "Delete Theme"), isPresented: isShowingDeleteThemeConfirmation, presenting: themeNamePendingDeletion) { themeName in

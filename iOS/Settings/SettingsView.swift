@@ -74,6 +74,9 @@ struct SettingsView: View {
 					actionRow(.forum) {
 						openHelpURL(HelpURL.discourse.rawValue)
 					}
+					actionRow(.themesGallery) {
+						openHelpURL(HelpURL.themesGallery.rawValue)
+					}
 					actionRow(.releaseNotes) {
 						openHelpURL(HelpURL.releaseNotes.rawValue)
 					}
@@ -499,6 +502,7 @@ private enum SettingsSection {
 	case cloudKitStats
 	case help
 	case forum
+	case themesGallery
 	case releaseNotes
 	case bugTracker
 	case about
@@ -539,6 +543,8 @@ private enum SettingsSection {
 			NSLocalizedString("NetNewsWire Help", comment: "NetNewsWire Help")
 		case .forum:
 			NSLocalizedString("NetNewsWire Forum", comment: "NetNewsWire Forum")
+		case .themesGallery:
+			NSLocalizedString("Themes Gallery", comment: "Themes Gallery")
 		case .releaseNotes:
 			NSLocalizedString("Release Notes", comment: "Release Notes")
 		case .bugTracker:
@@ -584,6 +590,8 @@ private enum SettingsSection {
 			Assets.Images.settingsHelp
 		case .forum:
 			Assets.Images.settingsForum
+		case .themesGallery:
+			Assets.Images.settingsThemesGallery
 		case .releaseNotes:
 			Assets.Images.settingsReleaseNotes
 		case .bugTracker:

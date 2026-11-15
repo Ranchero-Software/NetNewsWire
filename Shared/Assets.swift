@@ -129,6 +129,7 @@ struct Assets {
 		static let settingsCloudKitStats = RSImage(symbol: "icloud")!
 		static let settingsHelp = RSImage(symbol: "questionmark.circle")!
 		static let settingsForum = RSImage(symbol: "bubble.left.and.bubble.right")!
+		static let settingsThemesGallery = RSImage(symbol: "paintpalette")!
 		static let settingsReleaseNotes = RSImage(symbol: "doc.text")!
 		static let settingsBugTracker = RSImage(symbol: "ant")!
 		static let settingsNetNewsWireNewsFeed: RSImage = {
