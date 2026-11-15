@@ -19,16 +19,16 @@ struct GeneralSettingsView: View {
 					Text(String(describing: colorPalette))
 				}
 			}
-			.settingsMenuPickerStyle()
+			.pickerStyle(.menu)
 			Picker(String(localized: "Unread Counts", comment: "Unread Counts"), selection: Binding(get: { model.unreadCountDisplay }, set: { AppDefaults.unreadCountDisplay = $0 })) {
 				ForEach(UnreadCountDisplay.allCases, id: \.self) { unreadCountDisplay in
 					Text(String(describing: unreadCountDisplay))
 				}
 			}
-			.settingsMenuPickerStyle()
+			.pickerStyle(.menu)
 			Toggle(String(localized: "Grayscale Feed Icons", comment: "Grayscale Feed Icons"), isOn: Binding(get: { model.grayscaleIcons }, set: { AppDefaults.grayscaleIcons = $0 }))
-				.settingsAccentTint()
 		}
+		.settingsAccentTint()
 		.navigationTitle(String(localized: "General", comment: "Preferences"))
 	}
 }

@@ -1609,12 +1609,10 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func showSettings(showTimelineSettings: Bool = false) {
-		let settingsViewController = SettingsViewController()
-		settingsViewController.showTimelineSettings = showTimelineSettings
-		settingsViewController.presentingParentController = rootSplitViewController
-		let settingsNavController = UINavigationController(rootViewController: settingsViewController)
-		settingsNavController.modalPresentationStyle = .formSheet
-		rootSplitViewController.present(settingsNavController, animated: true)
+		let settingsView = SettingsView(showTimelineSettings: showTimelineSettings, presentingParentController: rootSplitViewController)
+		let hostingController = UIHostingController(rootView: settingsView)
+		hostingController.modalPresentationStyle = .formSheet
+		rootSplitViewController.present(hostingController, animated: true)
 	}
 
 	func showCurrentActivity() {
@@ -1796,7 +1794,7 @@ struct SidebarItemNode: Hashable, Sendable {
 	/// selecting an article via a notification).
 	///
 	/// The dismiss is only applicable if the view controller is a
-	/// `SFSafariViewController` or `SettingsViewController`,
+	/// `SFSafariViewController` or Settings,
 	/// otherwise, this function does nothing.
 	func dismissIfLaunchingFromExternalAction() {
 		guard let presentedController = mainFeedCollectionViewController.presentedViewController else {
@@ -1806,10 +1804,10 @@ struct SidebarItemNode: Hashable, Sendable {
 		if presentedController.isKind(of: SFSafariViewController.self) {
 			presentedController.dismiss(animated: true, completion: nil)
 		}
-		guard let settings = presentedController.children.first as? SettingsViewController else {
+		guard presentedController is UIHostingController<SettingsView> else {
 			return
 		}
-		settings.dismiss(animated: true, completion: nil)
+		presentedController.dismiss(animated: true, completion: nil)
 	}
 
 }

@@ -100,6 +100,7 @@
       "comment" : "Status bar gear menu accessibility label"
     },
     "Active" : {
+      "comment" : "Active",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -415,6 +416,7 @@
       "comment" : "Account Local"
     },
     "Credentials" : {
+      "comment" : "Credentials",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1446,7 +1448,11 @@
         }
       }
     },
+    "Sync Content of Unread Articles" : {
+      "comment" : "Sync Content of Unread Articles"
+    },
     "Syncing article content increases iCloud storage use, sync time, and battery use.\n\nArticle status and the content of starred articles are always synced." : {
+      "comment" : "Sync content of unread articles footer",
       "localizations" : {
         "es" : {
           "stringUnit" : {

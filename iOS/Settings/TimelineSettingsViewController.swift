@@ -339,44 +339,39 @@ private extension TimelineSettingsViewController {
 	}
 
 	static private func configureLayoutCell(_ cell: TimelineSettingsOptionsCell, layoutRow: LayoutRow) {
-		// The pop-up menu accessory shows only a chevron, so the value cell’s secondary text shows the current choice.
-		var content = UIListContentConfiguration.valueCell()
-		cell.isUserInteractionEnabled = true
+		var content = UIListContentConfiguration.cell()
 		switch layoutRow {
 		case .feedIcons:
-			content.text = NSLocalizedString("Feed Icons", comment: "Feed Icons")
-			content.secondaryText = AppDefaults.timelineFeedIconsDisplay.description
-			cell.accessories = [.popUpMenu(timelineFeedIconsDisplayMenu())]
+			let title = NSLocalizedString("Feed Icons", comment: "Feed Icons")
+			content.text = title
+			configurePopUpButton(cell, title: title, value: AppDefaults.timelineFeedIconsDisplay.description, menu: timelineFeedIconsDisplayMenu())
 		case .feedIconSize:
-			content.text = NSLocalizedString("Feed Icon Size", comment: "Feed Icon Size")
-			content.secondaryText = iconSizeTitle(AppDefaults.timelineIconSize)
-			cell.accessories = [.popUpMenu(timelineIconSizeMenu())]
+			let title = NSLocalizedString("Feed Icon Size", comment: "Feed Icon Size")
+			content.text = title
+			configurePopUpButton(cell, title: title, value: iconSizeTitle(AppDefaults.timelineIconSize), menu: timelineIconSizeMenu())
 		case .thumbnails:
-			content.text = NSLocalizedString("Thumbnails", comment: "Thumbnails")
-			content.secondaryText = AppDefaults.timelineThumbnailsDisplay.description
-			cell.accessories = [.popUpMenu(timelineThumbnailsDisplayMenu())]
+			let title = NSLocalizedString("Thumbnails", comment: "Thumbnails")
+			content.text = title
+			configurePopUpButton(cell, title: title, value: AppDefaults.timelineThumbnailsDisplay.description, menu: timelineThumbnailsDisplayMenu())
 		case .rows:
-			content.text = NSLocalizedString("Rows", comment: "Rows")
-			content.secondaryText = AppDefaults.timelineShowFullTitles ? fullTitleTitle : titleAndPreviewTitle
-			cell.accessories = [.popUpMenu(timelineRowsMenu())]
+			let title = NSLocalizedString("Rows", comment: "Rows")
+			content.text = title
+			configurePopUpButton(cell, title: title, value: AppDefaults.timelineShowFullTitles ? fullTitleTitle : titleAndPreviewTitle, menu: timelineRowsMenu())
 		case .numberOfLines:
-			content.text = NSLocalizedString("Lines", comment: "Lines")
-			content.secondaryText = AppDefaults.timelineNumberOfLines.formatted()
-			cell.accessories = [.popUpMenu(timelineNumberOfLinesMenu())]
+			let title = NSLocalizedString("Lines", comment: "Lines")
+			content.text = title
 			// The number of lines applies only to the title and preview.
-			if AppDefaults.timelineShowFullTitles {
+			let isEnabled = !AppDefaults.timelineShowFullTitles
+			if !isEnabled {
 				content.textProperties.color = .secondaryLabel
-				content.secondaryTextProperties.color = .tertiaryLabel
-				cell.isUserInteractionEnabled = false
 			}
+			configurePopUpButton(cell, title: title, value: AppDefaults.timelineNumberOfLines.formatted(), menu: timelineNumberOfLinesMenu(), isEnabled: isEnabled)
 		case .fadeReadArticles:
-			content = UIListContentConfiguration.cell()
 			content.text = NSLocalizedString("Fade Read Articles", comment: "Timeline Layout: switch that fades read articles in the timeline")
 			configureSwitch(cell, isOn: AppDefaults.timelineFadeReadArticles) { isOn in
 				AppDefaults.timelineFadeReadArticles = isOn
 			}
 		case .feedNameAndDateAboveTitle:
-			content = UIListContentConfiguration.cell()
 			content.text = NSLocalizedString("Feed Name and Date Above Title", comment: "Timeline Layout: switch that shows the feed name and date above the title in the timeline")
 			configureSwitch(cell, isOn: AppDefaults.timelineFeedNameAndDateAboveTitle) { isOn in
 				AppDefaults.timelineFeedNameAndDateAboveTitle = isOn
@@ -399,6 +394,16 @@ private extension TimelineSettingsViewController {
 		cell.switchControl.isOn = isOn
 		cell.switchDidChange = switchDidChange
 		cell.accessories = [.customView(configuration: .init(customView: cell.switchControl, placement: .trailing()))]
+	}
+
+	/// The button’s title is only the current choice, so the accessibility label names the setting.
+	static func configurePopUpButton(_ cell: TimelineSettingsOptionsCell, title: String, value: String, menu: UIMenu, isEnabled: Bool = true) {
+		let popUpButton = cell.popUpButton
+		popUpButton.menu = menu
+		popUpButton.isEnabled = isEnabled
+		popUpButton.accessibilityLabel = title
+		popUpButton.accessibilityValue = value
+		cell.accessories = [.customView(configuration: .init(customView: popUpButton, placement: .trailing(), reservedLayoutWidth: .actual))]
 	}
 
 	static func timelineFeedIconsDisplayMenu() -> UIMenu {
@@ -483,7 +488,7 @@ private extension TimelineSettingsViewController {
 
 // MARK: - TimelineSettingsOptionsCell
 
-/// Keeps one switch for the cell’s lifetime, since a new switch on every reconfigure animates into place.
+/// Keeps one switch and one pop-up button for the cell’s lifetime, since a new one on every reconfigure animates into place.
 final class TimelineSettingsOptionsCell: UICollectionViewListCell {
 
 	var switchDidChange: ((Bool) -> Void)?
@@ -497,5 +502,13 @@ final class TimelineSettingsOptionsCell: UICollectionViewListCell {
 			self.switchDidChange?(self.switchControl.isOn)
 		}, for: .valueChanged)
 		return switchControl
+	}()
+
+	/// Shows the current choice as its title, like a SwiftUI menu picker.
+	lazy var popUpButton: UIButton = {
+		let popUpButton = UIButton(configuration: .plain())
+		popUpButton.showsMenuAsPrimaryAction = true
+		popUpButton.changesSelectionAsPrimaryAction = true
+		return popUpButton
 	}()
 }

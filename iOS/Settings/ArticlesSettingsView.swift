@@ -32,7 +32,7 @@ struct ArticlesSettingsView: View {
 						}
 					}
 				}
-				.settingsMenuPickerStyle()
+				.pickerStyle(.menu)
 				Button(String(localized: "Import Theme…", comment: "Import Theme…")) {
 					isShowingThemeImporter = true
 				}

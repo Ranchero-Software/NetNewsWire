@@ -59,17 +59,27 @@ private extension CopyableLabel {
 
 // MARK: - SwiftUI
 
-/// SwiftUI wrapper for `CopyableLabel`: centered, secondary-colored body text.
+/// SwiftUI wrapper for `CopyableLabel`. Defaults to centered, secondary-colored body text.
 struct CopyableText: UIViewRepresentable {
 
 	let text: String
+	let font: UIFont
+	let textColor: UIColor
+	let textAlignment: NSTextAlignment
+
+	init(text: String, font: UIFont = UIFont.preferredFont(forTextStyle: .body), textColor: UIColor = UIColor.secondaryLabel, textAlignment: NSTextAlignment = .center) {
+		self.text = text
+		self.font = font
+		self.textColor = textColor
+		self.textAlignment = textAlignment
+	}
 
 	func makeUIView(context: Context) -> CopyableLabel {
 		let label = CopyableLabel()
-		label.font = UIFont.preferredFont(forTextStyle: .body)
+		label.font = font
 		label.adjustsFontForContentSizeCategory = true
-		label.textColor = UIColor.secondaryLabel
-		label.textAlignment = .center
+		label.textColor = textColor
+		label.textAlignment = textAlignment
 		label.numberOfLines = 0
 		return label
 	}

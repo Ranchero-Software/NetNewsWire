@@ -28,14 +28,8 @@ extension View {
 		}
 	}
 
-	/// Gives Settings switches and buttons the app’s accent color.
+	/// Gives Settings switches, buttons, and pop-up menus the app’s accent color.
 	func settingsAccentTint() -> some View {
 		tint(Color(uiColor: Assets.Colors.primaryAccent))
-	}
-
-	/// A pop-up menu showing the current choice in secondary text, rather than in the accent color.
-	func settingsMenuPickerStyle() -> some View {
-		pickerStyle(.menu)
-			.tint(Color(uiColor: .secondaryLabel))
 	}
 }
