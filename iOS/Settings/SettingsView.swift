@@ -18,6 +18,8 @@ struct SettingsView: View {
 	/// Presents Settings, and presents what Settings hands off to after dismissing itself.
 	let presentingParentController: RootSplitViewController?
 
+	@Environment(\.dismiss) private var dismiss
+	@Environment(\.openURL) private var openURL
 	@State private var model = SettingsModel()
 	@State private var path = [SettingsDestination]()
 	@State private var didShowTimelineSettings = false
@@ -28,8 +30,6 @@ struct SettingsView: View {
 	@State private var opmlExportURL: URL?
 	@State private var safariURL: URL?
 	@State private var alert: SettingsAlert?
-
-	@MainActor private static let buildLabelFont = UIFont.systemFont(ofSize: 11.0)
 
 	var body: some View {
 		NavigationStack(path: $path) {
@@ -94,22 +94,25 @@ struct SettingsView: View {
 				}
 				Section {
 					actionRow(.help) {
-						openURL(HelpURL.helpHome.rawValue)
+						openHelpURL(HelpURL.helpHome.rawValue)
 					}
 					actionRow(.forum) {
-						openURL(HelpURL.discourse.rawValue)
+						openHelpURL(HelpURL.discourse.rawValue)
 					}
 					actionRow(.releaseNotes) {
-						openURL(HelpURL.releaseNotes.rawValue)
+						openHelpURL(HelpURL.releaseNotes.rawValue)
 					}
 					actionRow(.bugTracker) {
-						openURL(HelpURL.bugTracker.rawValue)
+						openHelpURL(HelpURL.bugTracker.rawValue)
 					}
 					navigationRow(.about, destination: .about)
 				} header: {
 					Text(SettingsSection.help.title)
 				} footer: {
-					CopyableText(text: "\(Bundle.main.appName) \(Bundle.main.versionNumber) (build \(Bundle.main.buildNumber))", font: Self.buildLabelFont, textColor: UIColor.gray, textAlignment: .natural)
+					Text(verbatim: "\(Bundle.main.appName) \(Bundle.main.versionNumber) (build \(Bundle.main.buildNumber))")
+						.font(.caption2)
+						.foregroundStyle(.gray)
+						.textSelection(.enabled)
 				}
 			}
 			.navigationTitle(NSLocalizedString("Settings", comment: "Settings"))
@@ -184,11 +187,11 @@ private extension SettingsView {
 	@ViewBuilder var doneButton: some View {
 		if #available(iOS 26, *) {
 			Button(NSLocalizedString("Done", comment: "Done"), systemImage: "checkmark") {
-				presentingParentController?.dismiss(animated: true)
+				dismiss()
 			}
 		} else {
 			Button(NSLocalizedString("Done", comment: "Done")) {
-				presentingParentController?.dismiss(animated: true)
+				dismiss()
 			}
 		}
 	}
@@ -197,9 +200,7 @@ private extension SettingsView {
 		switch destination {
 		case .account(let accountID):
 			if let account = AccountManager.shared.existingAccount(accountID: accountID) {
-				AccountInspectorView(account: account, isModal: false, close: {
-					popDestination()
-				})
+				AccountInspectorView(account: account, isModal: false)
 			}
 		case .addAccount:
 			AddAccountView(presentationAnchor: presentingParentController?.view.window) {
@@ -307,7 +308,7 @@ private extension SettingsView {
 
 	func openSystemSettings() {
 		if let url = URL(string: UIApplication.openSettingsURLString) {
-			UIApplication.shared.open(url)
+			openURL(url)
 		}
 	}
 
@@ -373,7 +374,7 @@ private extension SettingsView {
 		opmlExportURL = tempFile
 	}
 
-	func openURL(_ urlString: String) {
+	func openHelpURL(_ urlString: String) {
 		guard let url = URL(string: urlString) else {
 			return
 		}
@@ -445,7 +446,7 @@ private enum SettingsSection {
 	var title: String {
 		switch self {
 		case .notifications:
-			NSLocalizedString("Notifications, Badge, Data, & More", comment: "Notifications, Badge, Data, & More")
+			NSLocalizedString("Notifications, Badge, Data, and More", comment: "Notifications, Badge, Data, and More")
 		case .accounts:
 			NSLocalizedString("Accounts", comment: "Preferences")
 		case .feeds:

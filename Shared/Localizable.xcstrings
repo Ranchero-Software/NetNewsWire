@@ -566,15 +566,6 @@
     "Email" : {
       "comment" : "Email field placeholder"
     },
-    "Enable Full Screen Articles" : {
-      "comment" : "Enable Full Screen Articles"
-    },
-    "Enable Horizontal Swipe to Previous and Next Article" : {
-      "comment" : "Enable Horizontal Swipe to Previous and Next Article"
-    },
-    "Enable JavaScript" : {
-      "comment" : "Enable JavaScript"
-    },
     "Enable Notifications" : {
       "comment" : "Notifications"
     },
@@ -709,6 +700,9 @@
     "from cache" : {
       "comment" : "Activity log — appended when a download was served from cache instead of the network"
     },
+    "Full Screen Articles" : {
+      "comment" : "Full Screen Articles"
+    },
     "Full Title, No Preview" : {
       "comment" : "Timeline Layout: Rows choice that shows the whole title, without the article preview, in the timeline"
     },
@@ -834,6 +828,9 @@
     },
     "Invalid username/password combination." : {
       "comment" : "Credentials Error"
+    },
+    "JavaScript" : {
+      "comment" : "JavaScript"
     },
     "Keyboard Shortcuts" : {
       "comment" : "window title"
@@ -1066,8 +1063,8 @@
     "Notifications need to be enabled in the Settings app." : {
       "comment" : "Notifications need to be enabled in the Settings app."
     },
-    "Notifications, Badge, Data, & More" : {
-      "comment" : "Notifications, Badge, Data, & More"
+    "Notifications, Badge, Data, and More" : {
+      "comment" : "Notifications, Badge, Data, and More"
     },
     "OK" : {
       "comment" : "OK button"
@@ -1437,6 +1434,9 @@
     },
     "Swipe a feed to show the action menu and delete button." : {
       "comment" : "Dinosaurs swipe hint."
+    },
+    "Swipe Between Articles" : {
+      "comment" : "Swipe Between Articles"
     },
     "Sync content of unread articles" : {
       "localizations" : {

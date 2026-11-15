@@ -16,21 +16,18 @@ struct AccountInspectorView: View {
 	let account: Account
 	/// Shown as a sheet with a Done button, rather than pushed onto Settings.
 	let isModal: Bool
-	/// Pops or dismisses this screen.
-	let close: () -> Void
 
+	@Environment(\.dismiss) private var dismiss
 	@State private var name: String
 	@State private var isActive: Bool
 	@State private var syncContentOfUnreadArticles = AccountManager.shared.syncArticleContentForUnreadArticles
 	@State private var isShowingCredentials = false
 	@State private var isShowingRemoveConfirmation = false
 	@State private var isShowingLimitationsAndSolutions = false
-	@State private var isRemoved = false
 
-	init(account: Account, isModal: Bool, close: @escaping () -> Void) {
+	init(account: Account, isModal: Bool) {
 		self.account = account
 		self.isModal = isModal
-		self.close = close
 		self._name = State(initialValue: account.name ?? "")
 		self._isActive = State(initialValue: account.isActive)
 	}
@@ -91,11 +88,14 @@ struct AccountInspectorView: View {
 				}
 			}
 		}
+		.onChange(of: name) {
+			saveName()
+		}
+		.onChange(of: isActive) {
+			account.isActive = isActive
+		}
 		.onChange(of: syncContentOfUnreadArticles) {
 			AccountManager.shared.syncArticleContentForUnreadArticles = syncContentOfUnreadArticles
-		}
-		.onDisappear {
-			saveNameAndActive()
 		}
 		.sheet(isPresented: $isShowingCredentials) {
 			CredentialsAccountView(accountType: account.type, account: account, didAddAccount: nil)
@@ -147,26 +147,21 @@ private extension AccountInspectorView {
 	@ViewBuilder var doneButton: some View {
 		if #available(iOS 26, *) {
 			Button(role: .confirm) {
-				close()
+				dismiss()
 			}
 		} else {
 			Button(String(localized: "Done", comment: "Done")) {
-				close()
+				dismiss()
 			}
 		}
 	}
 
-	func saveNameAndActive() {
-		guard !isRemoved else {
-			return
-		}
-		account.name = name
-		account.isActive = isActive
+	func saveName() {
+		account.name = name.isEmpty ? nil : name
 	}
 
 	func removeAccount() {
-		isRemoved = true
 		AccountManager.shared.deleteAccount(account)
-		close()
+		dismiss()
 	}
 }

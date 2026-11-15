@@ -52,21 +52,19 @@ struct ArticlesSettingsView: View {
 			}
 			Section(String(localized: "Behavior", comment: "Behavior")) {
 				Toggle(String(localized: "Open Links in NetNewsWire", comment: "Open Links in NetNewsWire"), isOn: Binding(get: { !model.useSystemBrowser }, set: { AppDefaults.useSystemBrowser = !$0 }))
-				Toggle(isOn: Binding(get: { model.isArticleContentJavascriptEnabled }, set: { AppDefaults.isArticleContentJavascriptEnabled = $0 })) {
-					Text("Enable JavaScript", comment: "Enable JavaScript")
-					Text("Some content, such as videos and embedded social media posts, may require JavaScript to work correctly.", comment: "Some content, such as videos and embedded social media posts, may require JavaScript to work correctly.")
-						.font(.footnote)
-						.foregroundStyle(.secondary)
-				}
-				Toggle(String(localized: "Enable Horizontal Swipe to Previous and Next Article", comment: "Enable Horizontal Swipe to Previous and Next Article"), isOn: Binding(get: { model.articleSwipeNavigationEnabled }, set: { AppDefaults.articleSwipeNavigationEnabled = $0 }))
-				// The Full Screen Articles row is iPhone-only.
-				if UIDevice.current.userInterfaceIdiom == .phone {
-					Toggle(isOn: Binding(get: { model.articleFullscreenAvailable }, set: { AppDefaults.articleFullscreenAvailable = $0 })) {
-						Text("Enable Full Screen Articles", comment: "Enable Full Screen Articles")
-						Text("Tap the article top bar to enter Full Screen. Tap the top or bottom to exit.", comment: "Tap the article top bar to enter Full Screen. Tap the top or bottom to exit.")
-							.font(.footnote)
-							.foregroundStyle(.secondary)
-					}
+				Toggle(String(localized: "Swipe Between Articles", comment: "Swipe Between Articles"), isOn: Binding(get: { model.articleSwipeNavigationEnabled }, set: { AppDefaults.articleSwipeNavigationEnabled = $0 }))
+			}
+			Section {
+				Toggle(String(localized: "JavaScript", comment: "JavaScript"), isOn: Binding(get: { model.isArticleContentJavascriptEnabled }, set: { AppDefaults.isArticleContentJavascriptEnabled = $0 }))
+			} footer: {
+				Text("Some content, such as videos and embedded social media posts, may require JavaScript to work correctly.", comment: "Some content, such as videos and embedded social media posts, may require JavaScript to work correctly.")
+			}
+			// Full Screen Articles is iPhone-only.
+			if UIDevice.current.userInterfaceIdiom == .phone {
+				Section {
+					Toggle(String(localized: "Full Screen Articles", comment: "Full Screen Articles"), isOn: Binding(get: { model.articleFullscreenAvailable }, set: { AppDefaults.articleFullscreenAvailable = $0 }))
+				} footer: {
+					Text("Tap the article top bar to enter Full Screen. Tap the top or bottom to exit.", comment: "Tap the article top bar to enter Full Screen. Tap the top or bottom to exit.")
 				}
 			}
 		}

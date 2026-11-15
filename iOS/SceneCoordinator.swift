@@ -1625,10 +1625,7 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func showAccountInspector(for account: Account) {
-		let accountInspectorView = AccountInspectorView(account: account, isModal: true, close: { [weak self] in
-			self?.rootSplitViewController.dismiss(animated: true)
-		})
-		let hostingController = UIHostingController(rootView: NavigationStack { accountInspectorView })
+		let hostingController = UIHostingController(rootView: NavigationStack { AccountInspectorView(account: account, isModal: true) })
 		hostingController.modalPresentationStyle = .formSheet
 		hostingController.preferredContentSize = UIViewController.formSheetSize
 		rootSplitViewController.present(hostingController, animated: true)
