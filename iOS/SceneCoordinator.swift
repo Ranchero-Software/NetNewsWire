@@ -1812,6 +1812,14 @@ struct SidebarItemNode: Hashable, Sendable {
 		articleViewController?.find(nil)
 	}
 
+	func findNextInArticle() {
+		articleViewController?.findNext(nil)
+	}
+
+	func findPreviousInArticle() {
+		articleViewController?.findPrevious(nil)
+	}
+
 	func navigateToFeeds() {
 		revealColumn(.primary) { [weak self] in
 			self?.mainFeedCollectionViewController?.focus()

@@ -254,8 +254,17 @@ final class RootSplitViewController: UISplitViewController {
 		coordinator.showCurrentActivity()
 	}
 
-	@objc func beginFind(_ sender: Any?) {
+	// Find in Article works from any column, not just when the article has focus.
+	override func find(_ sender: Any?) {
 		coordinator.beginFindInArticle()
+	}
+
+	override func findNext(_ sender: Any?) {
+		coordinator.findNextInArticle()
+	}
+
+	override func findPrevious(_ sender: Any?) {
+		coordinator.findPreviousInArticle()
 	}
 
 	@objc func importOPML(_ sender: Any?) {
@@ -291,7 +300,8 @@ final class RootSplitViewController: UISplitViewController {
 	override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
 		switch action {
 		case #selector(toggleRead(_:)), #selector(toggleStarred(_:)),
-			 #selector(markUnreadAndGoToNextUnread(_:)), #selector(toggleReaderView(_:)), #selector(beginFind(_:)):
+			 #selector(markUnreadAndGoToNextUnread(_:)), #selector(toggleReaderView(_:)),
+			 #selector(find(_:)), #selector(findNext(_:)), #selector(findPrevious(_:)):
 			return coordinator.currentArticle != nil
 		case #selector(openArticleInBrowser(_:)):
 			return coordinator.currentArticle != nil && coordinator.canOpenBrowser()
