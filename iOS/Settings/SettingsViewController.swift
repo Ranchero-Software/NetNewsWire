@@ -260,9 +260,10 @@ final class SettingsViewController: UITableViewController {
 				UIApplication.shared.open(url)
 			}
 		case .account(let account):
-			let controller = UIStoryboard.inspector.instantiateController(ofType: AccountInspectorViewController.self)
-			controller.account = account
-			navigationController?.pushViewController(controller, animated: true)
+			let accountInspectorView = AccountInspectorView(account: account, isModal: false, close: { [weak self] in
+				self?.navigationController?.popViewController(animated: true)
+			})
+			navigationController?.pushViewController(UIHostingController(rootView: accountInspectorView), animated: true)
 		case .addAccount:
 			let addAccountView = AddAccountView(presentationAnchor: view.window) { [weak self] in
 				self?.navigationController?.popViewController(animated: false)

@@ -1627,14 +1627,13 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func showAccountInspector(for account: Account) {
-		let accountInspectorNavController =
-			UIStoryboard.inspector.instantiateViewController(identifier: "AccountInspectorNavigationViewController") as! UINavigationController
-		let accountInspectorController = accountInspectorNavController.topViewController as! AccountInspectorViewController
-		accountInspectorNavController.modalPresentationStyle = .formSheet
-		accountInspectorNavController.preferredContentSize = UIViewController.formSheetSize
-		accountInspectorController.isModal = true
-		accountInspectorController.account = account
-		rootSplitViewController.present(accountInspectorNavController, animated: true)
+		let accountInspectorView = AccountInspectorView(account: account, isModal: true, close: { [weak self] in
+			self?.rootSplitViewController.dismiss(animated: true)
+		})
+		let hostingController = UIHostingController(rootView: NavigationStack { accountInspectorView })
+		hostingController.modalPresentationStyle = .formSheet
+		hostingController.preferredContentSize = UIViewController.formSheetSize
+		rootSplitViewController.present(hostingController, animated: true)
 	}
 
 	func showNotificationInspector(for account: Account) {
