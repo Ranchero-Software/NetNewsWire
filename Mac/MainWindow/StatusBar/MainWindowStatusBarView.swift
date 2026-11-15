@@ -283,6 +283,16 @@ final class MainWindowStatusBarView: NSView {
 	@objc func showActivityWindow(_ sender: Any?) {
 		NSApp.sendAction(#selector(AppDelegate.showActivityWindow(_:)), to: nil, from: self)
 	}
+
+	@objc func openThemesFolder(_ sender: Any?) {
+		NSWorkspace.shared.open(URL(fileURLWithPath: ArticleThemesManager.shared.folderPath))
+		selectCurrentThemeInPopUpButton()
+	}
+
+	@objc func openThemesGallery(_ sender: Any?) {
+		HelpURL.themesGallery.open()
+		selectCurrentThemeInPopUpButton()
+	}
 }
 
 // MARK: - NSMenuItemValidation
@@ -515,9 +525,24 @@ private extension MainWindowStatusBarView {
 	// MARK: - Theme
 
 	func updateThemePopUpButton() {
-		themePopUpButton.menu = ArticleThemesManager.shared.makeArticleThemeMenu()
-		themePopUpButton.selectItem(withTitle: ArticleThemesManager.shared.currentThemeName)
+		let menu = ArticleThemesManager.shared.makeArticleThemeMenu()
+		menu.addItem(NSMenuItem.separator())
+		addThemeCommand(to: menu, title: NSLocalizedString("Open Themes Folder", comment: "Open Themes Folder"), action: #selector(openThemesFolder(_:)))
+		addThemeCommand(to: menu, title: NSLocalizedString("Open Themes Gallery", comment: "Open Themes Gallery"), action: #selector(openThemesGallery(_:)))
+		themePopUpButton.menu = menu
+		selectCurrentThemeInPopUpButton()
 		updateThemePopUpButtonVisibility()
+	}
+
+	func addThemeCommand(to menu: NSMenu, title: String, action: Selector) {
+		let menuItem = NSMenuItem(title: title, action: action, keyEquivalent: "")
+		menuItem.target = self
+		menu.addItem(menuItem)
+	}
+
+	/// Choosing a command in the pop-up button selects it, so this puts the current theme back.
+	func selectCurrentThemeInPopUpButton() {
+		themePopUpButton.selectItem(withTitle: ArticleThemesManager.shared.currentThemeName)
 	}
 
 	/// Etches the pop-up button’s title and arrows. A view’s shadow doesn’t follow appearance changes, so it’s resolved here.

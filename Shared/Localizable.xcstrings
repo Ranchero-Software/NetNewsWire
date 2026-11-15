@@ -1116,6 +1116,12 @@
     "Open Theme Folder" : {
       "comment" : "Open Theme Folder"
     },
+    "Open Themes Folder" : {
+      "comment" : "Open Themes Folder"
+    },
+    "Open Themes Gallery" : {
+      "comment" : "Open Themes Gallery"
+    },
     "Overwrite" : {
       "comment" : "Overwrite"
     },
