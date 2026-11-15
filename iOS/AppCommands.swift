@@ -193,18 +193,35 @@ extension AppCommands {
 	// MARK: - Find
 
 	fileprivate static func findMenu(_ builder: UIMenuBuilder) {
-		let findElements = [
-			menuCommand(title: NSLocalizedString("Article Search", comment: "Command"), action: #selector(AppCommandResponder.articleSearch(_:)), input: "f", modifiers: [.command, .alternate]),
-			menuCommand(title: NSLocalizedString("Find in Article", comment: "Command"), action: #selector(AppCommandResponder.beginFind(_:)), input: "f", modifiers: [.command])
-		]
+		let articleSearch = menuCommand(title: NSLocalizedString("Article Search", comment: "Command"), action: #selector(AppCommandResponder.articleSearch(_:)), input: "f", modifiers: [.command, .alternate])
 
-		// Replace the system Find menu: its Find (⌘F) and Find & Replace (⌥⌘F)
-		// conflict with Find in Article and Article Search.
-		let findMenu = UIMenu(title: NSLocalizedString("Find", comment: "Command"), identifier: findMenuIdentifier, children: findElements)
+		// Keep the system Find menu (Find, Find Next, Find Previous) for Find in Article,
+		// minus Find and Replace: articles aren’t editable, and its ⌥⌘F is Article Search’s.
 		if builder.menu(for: .find) != nil {
-			builder.replace(menu: .find, with: findMenu)
+			builder.replaceChildren(ofMenu: .find) { children in
+				[articleSearch] + removingFindAndReplace(from: children)
+			}
 		} else {
+			let findMenu = UIMenu(title: NSLocalizedString("Find", comment: "Command"), identifier: findMenuIdentifier, children: [
+				articleSearch,
+				menuCommand(title: NSLocalizedString("Find in Article", comment: "Command"), action: #selector(UIResponderStandardEditActions.find(_:)), input: "f", modifiers: [.command]),
+				menuCommand(title: NSLocalizedString("Find Next", comment: "Command"), action: #selector(UIResponderStandardEditActions.findNext(_:)), input: "g", modifiers: [.command]),
+				menuCommand(title: NSLocalizedString("Find Previous", comment: "Command"), action: #selector(UIResponderStandardEditActions.findPrevious(_:)), input: "g", modifiers: [.command, .shift])
+			])
 			builder.insertChild(findMenu, atEndOfMenu: .edit)
+		}
+	}
+
+	/// The system Find menu nests its commands in inline groups.
+	fileprivate static func removingFindAndReplace(from elements: [UIMenuElement]) -> [UIMenuElement] {
+		elements.compactMap { element in
+			if let menu = element as? UIMenu {
+				return menu.replacingChildren(removingFindAndReplace(from: menu.children))
+			}
+			if let command = element as? UICommand, command.action == #selector(UIResponderStandardEditActions.findAndReplace(_:)) {
+				return nil
+			}
+			return element
 		}
 	}
 
@@ -352,7 +369,6 @@ extension AppCommands {
 
 	// Find
 	func articleSearch(_ sender: Any?)
-	func beginFind(_ sender: Any?)
 
 	// View
 	func sortByNewestArticleOnTop(_ sender: Any?)
