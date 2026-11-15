@@ -19,19 +19,8 @@
                     <view key="view" contentMode="scaleToFill" id="svH-Pt-448">
                         <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <view hidden="YES" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="h1Q-FS-jlg" customClass="ArticleSearchBar" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="782" width="402" height="31"/>
-                                <color key="backgroundColor" name="barBackgroundColor"/>
-                            </view>
-                        </subviews>
                         <viewLayoutGuide key="safeArea" id="VUw-jc-0yf"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="VUw-jc-0yf" firstAttribute="trailing" secondItem="h1Q-FS-jlg" secondAttribute="trailing" id="2Nt-fa-LhC"/>
-                            <constraint firstItem="h1Q-FS-jlg" firstAttribute="leading" secondItem="VUw-jc-0yf" secondAttribute="leading" id="Vgz-hA-Zrp"/>
-                            <constraint firstItem="VUw-jc-0yf" firstAttribute="bottom" secondItem="h1Q-FS-jlg" secondAttribute="bottom" id="XyH-A7-Trj"/>
-                        </constraints>
                     </view>
                     <toolbarItems>
                         <barButtonItem title="Toggle Read" image="circle" catalog="system" id="hy0-LS-MzE">
@@ -101,8 +90,6 @@
                         <outlet property="nextUnreadBarButtonItem" destination="2w5-e9-C2V" id="Ekf-My-AHN"/>
                         <outlet property="prevArticleBarButtonItem" destination="v4j-fq-23N" id="Gny-Oh-cQa"/>
                         <outlet property="readBarButtonItem" destination="hy0-LS-MzE" id="BzM-x9-tuj"/>
-                        <outlet property="searchBar" destination="h1Q-FS-jlg" id="IQA-Wt-BB8"/>
-                        <outlet property="searchBarBottomConstraint" destination="XyH-A7-Trj" id="5gH-az-8vg"/>
                         <outlet property="starBarButtonItem" destination="wU4-eH-wC9" id="Z8Q-Lt-dKk"/>
                     </connections>
                 </viewController>
