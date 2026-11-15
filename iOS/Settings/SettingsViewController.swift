@@ -281,7 +281,7 @@ final class SettingsViewController: UITableViewController {
 		case .general:
 			navigationController?.pushViewController(GeneralSettingsViewController(), animated: true)
 		case .sidebar:
-			navigationController?.pushViewController(SidebarSettingsViewController(), animated: true)
+			navigationController?.pushViewController(UIHostingController(rootView: SidebarSettingsView()), animated: true)
 		case .timeline:
 			navigationController?.pushViewController(TimelineSettingsViewController(), animated: true)
 		case .articles:
