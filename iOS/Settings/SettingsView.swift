@@ -24,8 +24,6 @@ struct SettingsView: View {
 	@State private var path = [SettingsDestination]()
 	@State private var didShowTimelineSettings = false
 	@State private var opmlAccount: Account?
-	@State private var isShowingImportAccountChoices = false
-	@State private var isShowingExportAccountChoices = false
 	@State private var isShowingOPMLImporter = false
 	@State private var opmlExportURL: URL?
 	@State private var safariURL: URL?
@@ -46,31 +44,8 @@ struct SettingsView: View {
 					navigationRow(.addAccount, destination: .addAccount)
 				}
 				Section(SettingsSection.feeds.title) {
-					actionRow(.importSubscriptions) {
-						importSubscriptions()
-					}
-					.confirmationDialog(NSLocalizedString("Choose an account to receive the imported feeds and folders", comment: "Import Account"), isPresented: $isShowingImportAccountChoices, titleVisibility: .visible) {
-						ForEach(AccountManager.shared.sortedActiveAccounts, id: \.accountID) { account in
-							Button(account.nameForDisplay) {
-								opmlAccount = account
-								isShowingOPMLImporter = true
-							}
-						}
-						Button(NSLocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {
-						}
-					}
-					actionRow(.exportSubscriptions) {
-						exportSubscriptions()
-					}
-					.confirmationDialog(NSLocalizedString("Choose an account with the subscriptions to export", comment: "Export Account"), isPresented: $isShowingExportAccountChoices, titleVisibility: .visible) {
-						ForEach(AccountManager.shared.sortedAccounts, id: \.accountID) { account in
-							Button(account.nameForDisplay) {
-								exportOPML(account)
-							}
-						}
-						Button(NSLocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {
-						}
-					}
+					importSubscriptionsRow
+					exportSubscriptionsRow
 					if model.showAddNetNewsWireNewsFeed {
 						actionRow(.addNetNewsWireNewsFeed) {
 							addNetNewsWireNewsFeed()
@@ -117,7 +92,7 @@ struct SettingsView: View {
 			}
 			.navigationTitle(NSLocalizedString("Settings", comment: "Settings"))
 			.toolbar {
-				ToolbarItem(placement: .topBarTrailing) {
+				ToolbarItem(placement: .confirmationAction) {
 					doneButton
 				}
 			}
@@ -161,9 +136,17 @@ private extension SettingsView {
 			Text(row.title)
 				.foregroundStyle(Color.primary)
 		} icon: {
-			Image(uiImage: row.iconImage)
-				.renderingMode(isTintable(row.iconImage) ? .template : .original)
-				.foregroundStyle(Color(uiColor: Assets.Colors.primaryAccent))
+			if case .account = row {
+				// Account images are full-color logos, scaled to fit beside the symbol icons.
+				Image(uiImage: row.iconImage)
+					.resizable()
+					.scaledToFit()
+					.frame(width: Assets.Images.settingsIconSize.width, height: Assets.Images.settingsIconSize.height)
+			} else {
+				Image(uiImage: row.iconImage)
+					.renderingMode(isTintable(row.iconImage) ? .template : .original)
+					.foregroundStyle(Color(uiColor: Assets.Colors.primaryAccent))
+			}
 		}
 	}
 
@@ -181,6 +164,54 @@ private extension SettingsView {
 	func actionRow(_ row: SettingsRow, action: @escaping () -> Void) -> some View {
 		Button(action: action) {
 			rowLabel(row)
+		}
+	}
+
+	/// With more than one active account, the row is a menu of accounts to import into.
+	@ViewBuilder var importSubscriptionsRow: some View {
+		if model.activeAccounts.count > 1 {
+			Menu {
+				Section(NSLocalizedString("Choose an account to receive the imported feeds and folders", comment: "Import Account")) {
+					ForEach(model.activeAccounts, id: \.accountID) { account in
+						Button(account.nameForDisplay) {
+							importSubscriptions(into: account)
+						}
+					}
+				}
+			} label: {
+				rowLabel(.importSubscriptions)
+			}
+		} else {
+			actionRow(.importSubscriptions) {
+				guard let account = model.activeAccounts.first else {
+					alert = SettingsAlert(title: NSLocalizedString("Error", comment: "Error"), message: NSLocalizedString("You must have at least one active account.", comment: "Missing active account"))
+					return
+				}
+				importSubscriptions(into: account)
+			}
+		}
+	}
+
+	/// With more than one account, the row is a menu of accounts to export.
+	@ViewBuilder var exportSubscriptionsRow: some View {
+		if model.accounts.count > 1 {
+			Menu {
+				Section(NSLocalizedString("Choose an account with the subscriptions to export", comment: "Export Account")) {
+					ForEach(model.accounts, id: \.accountID) { account in
+						Button(account.nameForDisplay) {
+							exportOPML(account)
+						}
+					}
+				}
+			} label: {
+				rowLabel(.exportSubscriptions)
+			}
+		} else {
+			actionRow(.exportSubscriptions) {
+				if let account = model.accounts.first {
+					exportOPML(account)
+				}
+			}
 		}
 	}
 
@@ -323,16 +354,9 @@ private extension SettingsView {
 		presentingParentController?.present(hostingController, animated: true)
 	}
 
-	func importSubscriptions() {
-		switch AccountManager.shared.activeAccounts.count {
-		case 0:
-			alert = SettingsAlert(title: NSLocalizedString("Error", comment: "Error"), message: NSLocalizedString("You must have at least one active account.", comment: "Missing active account"))
-		case 1:
-			opmlAccount = AccountManager.shared.activeAccounts.first
-			isShowingOPMLImporter = true
-		default:
-			isShowingImportAccountChoices = true
-		}
+	func importSubscriptions(into account: Account) {
+		opmlAccount = account
+		isShowingOPMLImporter = true
 	}
 
 	func importOPML(_ url: URL, into account: Account) {
@@ -347,14 +371,6 @@ private extension SettingsView {
 				let message = NSLocalizedString("We were unable to process the selected file.  Please ensure that it is a properly formatted OPML file.", comment: "Import Failed Message")
 				alert = SettingsAlert(title: title, message: message)
 			}
-		}
-	}
-
-	func exportSubscriptions() {
-		if AccountManager.shared.accounts.count == 1, let account = AccountManager.shared.accounts.first {
-			exportOPML(account)
-		} else {
-			isShowingExportAccountChoices = true
 		}
 	}
 
@@ -400,6 +416,7 @@ private extension SettingsView {
 @MainActor @Observable final class SettingsModel {
 
 	private(set) var accounts = [Account]()
+	private(set) var activeAccounts = [Account]()
 	private(set) var showAddNetNewsWireNewsFeed = false
 	private(set) var showCloudKitStats = false
 
@@ -409,6 +426,7 @@ private extension SettingsView {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUserDidAddAccount(_:)), name: .UserDidAddAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUserDidDeleteAccount(_:)), name: .UserDidDeleteAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleDisplayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleAccountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
 	}
 
 	@objc func handleUserDidAddAccount(_ notification: Notification) {
@@ -422,12 +440,17 @@ private extension SettingsView {
 	@objc func handleDisplayNameDidChange(_ notification: Notification) {
 		update()
 	}
+
+	@objc func handleAccountStateDidChange(_ notification: Notification) {
+		update()
+	}
 }
 
 private extension SettingsModel {
 
 	func update() {
 		accounts = AccountManager.shared.sortedAccounts
+		activeAccounts = AccountManager.shared.sortedActiveAccounts
 		showAddNetNewsWireNewsFeed = !AccountManager.shared.activeAccounts.isEmpty && !AccountManager.shared.anyAccountHasNetNewsWireNewsSubscription()
 		showCloudKitStats = AccountManager.shared.hasiCloudAccount
 	}
@@ -533,7 +556,7 @@ private enum SettingsSection {
 		case .systemSettings:
 			Assets.Images.settingsSystemSettings
 		case .account(let account):
-			Assets.Images.settingsAccountImage(account.type)
+			Assets.accountImage(account.type)
 		case .addAccount:
 			Assets.Images.plus
 		case .importSubscriptions:

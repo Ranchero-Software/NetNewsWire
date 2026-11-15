@@ -138,7 +138,7 @@ struct Assets {
 				nnwFeedIcon.draw(in: rect)
 			}
 		}()
-		private static let settingsIconSize = CGSize(width: 22, height: 22)
+		static let settingsIconSize = CGSize(width: 22, height: 22)
 		private static let settingsIconCornerRadius = 5.0
 		private static let settingsEmojiFontSize = 21.0
 
@@ -151,18 +151,6 @@ struct Assets {
 			return image.withTintColor(Assets.Colors.star, renderingMode: .alwaysOriginal)
 		}
 		static let unreadCellIndicator = IconImage(RSImage(symbol: "circle.fill")!, isSymbol: true, isBackgroundSuppressed: true, preferredColor: Assets.Colors.secondaryAccent)
-
-		/// The account image drawn aspect-fit into the same size as the other Settings icons.
-		static func settingsAccountImage(_ accountType: AccountType) -> RSImage {
-			let image = Assets.accountImage(accountType)
-			let scale = min(settingsIconSize.width / image.size.width, settingsIconSize.height / image.size.height)
-			let drawSize = CGSize(width: image.size.width * scale, height: image.size.height * scale)
-			let drawRect = CGRect(x: (settingsIconSize.width - drawSize.width) / 2.0, y: (settingsIconSize.height - drawSize.height) / 2.0, width: drawSize.width, height: drawSize.height)
-			let resizedImage = UIGraphicsImageRenderer(size: settingsIconSize).image { _ in
-				image.draw(in: drawRect)
-			}
-			return resizedImage.withRenderingMode(.alwaysTemplate)
-		}
 #endif
 	}
 

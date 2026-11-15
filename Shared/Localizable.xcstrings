@@ -498,9 +498,6 @@
     "Delete Theme?" : {
       "comment" : "Delete Theme"
     },
-    "Delete Theme…" : {
-      "comment" : "Delete Theme…"
-    },
     "Deleting read content records…" : {
       "comment" : "Cleanup phase text"
     },
@@ -800,8 +797,8 @@
     "Import Subscriptions" : {
       "comment" : "Import Subscriptions"
     },
-    "Import Theme…" : {
-      "comment" : "Import Theme…"
+    "Import Theme" : {
+      "comment" : "Import Theme"
     },
     "Inspector" : {
       "comment" : "Inspector window title"

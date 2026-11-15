@@ -43,13 +43,9 @@ struct AccountInspectorView: View {
 			}
 			if showsCredentials {
 				Section {
-					Button {
+					Button(String(localized: "Credentials", comment: "Credentials")) {
 						isShowingCredentials = true
-					} label: {
-						Text("Credentials", comment: "Credentials")
-							.frame(maxWidth: .infinity)
 					}
-					.foregroundStyle(Color(uiColor: Assets.Colors.secondaryAccent))
 				}
 			}
 			if showsSyncContent {
@@ -83,7 +79,7 @@ struct AccountInspectorView: View {
 		.navigationTitle(account.nameForDisplay)
 		.toolbar {
 			if isModal {
-				ToolbarItem(placement: .topBarLeading) {
+				ToolbarItem(placement: .confirmationAction) {
 					doneButton
 				}
 			}
