@@ -279,7 +279,7 @@ final class SettingsViewController: UITableViewController {
 		case .addNetNewsWireNewsFeed:
 			addFeed()
 		case .general:
-			navigationController?.pushViewController(GeneralSettingsViewController(), animated: true)
+			navigationController?.pushViewController(UIHostingController(rootView: GeneralSettingsView()), animated: true)
 		case .sidebar:
 			navigationController?.pushViewController(UIHostingController(rootView: SidebarSettingsView()), animated: true)
 		case .timeline:
