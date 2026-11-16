@@ -267,6 +267,15 @@ struct ArticleRenderingSpecialCases {
 		return url.pathComponents.contains { $0.hasPrefix(bloggerThumbnailSizePrefix) }
 	}
 
+	private static let substackImageDomains = ["substackcdn.com", "substack-post-media.s3.amazonaws.com"]
+	private static let substackTopImageMarker = "&quot;topImage&quot;:true"
+
+	/// Substack’s enclosure is the post’s cover image, which is sometimes a separate upload of the body’s top image,
+	/// as in `2c9ce7c8-…_2560x1440.png` and `55fb8931-…_848x444.webp`. The top image’s `data-attrs` has `"topImage":true`.
+	static func bodyHasSubstackTopImage(imageURL: String, body: String) -> Bool {
+		SpecialCase.urlStringMatchesDomain(imageURL, substackImageDomains) && body.contains(substackTopImageMarker)
+	}
+
 	private static func anyURLStringMatchesAnyDomain(_ urlStrings: [String?], _ domains: [String]) -> Bool {
 		for urlString in urlStrings {
 			if let urlString, SpecialCase.urlStringMatchesDomain(urlString, domains) {

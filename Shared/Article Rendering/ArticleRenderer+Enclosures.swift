@@ -42,12 +42,16 @@ extension ArticleRenderer {
 		Set(HTMLImageParser.significantImageURLStrings(html: body, baseURL: baseURL, maximumCount: Int.max).compactMap(imageIdentity))
 	}
 
-	/// True when the body has `url`, a resized copy of the image at `url`, or the YouTube video the image at `url` is a still of.
+	/// True when the body has `url`, a resized copy of the image at `url`, the YouTube video the image at `url` is a still of,
+	/// or the top image that the Substack cover image at `url` duplicates.
 	static func bodyContains(_ url: String, body: String, bodyImageIdentities: Set<String>) -> Bool {
 		if bodyContainsURL(body, url) {
 			return true
 		}
 		if ArticleRenderingSpecialCases.bodyEmbedsYouTubeVideo(stillImageURL: url, body: body) {
+			return true
+		}
+		if ArticleRenderingSpecialCases.bodyHasSubstackTopImage(imageURL: url, body: body) {
 			return true
 		}
 		guard let identity = imageIdentity(url) else {

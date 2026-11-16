@@ -88,6 +88,15 @@ import Articles
 		#expect(ArticleRenderer.primaryImage(imageLink: nil, thumbnailLink: imageURL, attachments: [attachment], body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil)) == nil)
 	}
 
+	// Silver Bulletin’s “The NVIDIA story is a BFD”: the enclosure is a separate upload of the body’s top image.
+	@Test func primaryImageSkippedWhenBodyHasSubstackTopImage() throws {
+		let imageURL = "https://substack-post-media.s3.amazonaws.com/public/images/2c9ce7c8-f3df-4d86-b18f-f3a322cd6dc7_2560x1440.png"
+		let attachment = try #require(Attachment(url: imageURL, mimeType: "image/jpeg", title: nil, sizeInBytes: nil, durationInSeconds: nil, width: nil, height: nil, medium: nil))
+		let body = "<div class=\"captioned-image-container\"><figure><img src=\"https://substackcdn.com/image/fetch/$s_!9yvA!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F55fb8931-3455-417c-bc8f-35eda57075d3_848x444.webp\" width=\"848\" height=\"444\" data-attrs=\"{&quot;src&quot;:&quot;https://substack-post-media.s3.amazonaws.com/public/images/55fb8931-3455-417c-bc8f-35eda57075d3_848x444.webp&quot;,&quot;belowTheFold&quot;:false,&quot;topImage&quot;:true}\" class=\"sizing-normal\" alt=\"\"><figcaption class=\"image-caption\">Getty Images/Silver Bulletin illustration.</figcaption></figure></div><p>Jensen Huang, the CEO of Nvidia, one of the world’s most valuable companies.</p>"
+
+		#expect(ArticleRenderer.primaryImage(imageLink: nil, thumbnailLink: nil, attachments: [attachment], body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil)) == nil)
+	}
+
 	// Brett Terpstra’s “Web Excursions for November 14th, 2026” and “New nvALT browser extensions”:
 	// the media:content image is the body’s image with a version number, and sometimes as a square `_fb` crop.
 	@Test func primaryImageSkippedWhenBodyHasBrettTerpstraCopy() throws {
