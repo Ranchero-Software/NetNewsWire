@@ -1,5 +1,24 @@
 # iOS Release Notes
 
+### 7.3 build 7237 16 Nov 2026 - branch: main tag: iOS-7.3-7237
+
+Rebuilt Settings in SwiftUI, with separate Appearance, Sidebar, Timeline, and Articles screens, and an icon for each row
+Reorganized Settings slightly to make it easier to navigate
+Added a link to the themes gallery in the themes screen
+Added a Swipe to Next/Previous Article setting — off for new users, on for existing users
+Made arrow key navigation work from the timeline to the article view and back, and made the up and down arrow keys scroll the article view
+Made iPad better remember sidebar visibility changes user makes
+Made the sidebar show on first run on Duo
+Fixed bug where going back to the timeline from a fullscreen article would forget that you were in fullscreen mode
+Made a swiped timeline row update (read, unread, or starred) before it animates back into place
+Made the Current Activity sheet opaque — looked muddy in dark mode
+Made the filename of an audio enclosure a link
+Fixed duplicate images in brettterpstra.com articles
+Skipped Blogger’s tiny thumbnail as an article’s primary image
+Allowed thumbnail downloading in Low Data Mode
+Made the activity log show every thumbnail download (not just failures), with the feed name and article title
+Fixed a case where the article view could fail to load because no web view was ready
+
 ### 7.3 build 7236 12 Nov 2026 - branch: main tag: iOS-7.3-7236
 
 Added Gray theme — inspired by newsprint design but not meant to be a literal copy

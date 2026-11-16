@@ -1,5 +1,17 @@
 # Mac Release Notes
 
+### 7.3b9 7237 16 Nov 2026 - branch: main tag: mac-7.3b9
+
+Added Open Themes Folder and Open Themes Gallery commands to the bottom of the themes menu in the status bar
+Added a Themes Gallery command to the Help menu, and renamed Discourse Forum to NetNewsWire Forum
+Made the filename of an audio enclosure a link — it’s underlined in the Default, Gray, Plum, and Verdana Revival themes
+Fixed duplicate images in brettterpstra.com articles
+Skipped Blogger’s tiny thumbnail as an article’s primary image
+Allowed thumbnail downloading in Low Data Mode
+Made the activity log show every thumbnail download (not just failures), with the feed name and article title
+Fixed bug where double-clicking an article in an inactive window could open the wrong article
+Made double-clicking an article in an inactive window mark it as read
+
 ### 7.3b8 7235 11 Nov 2026 - branch: main tag: mac-7.3b8
 
 Added Gray theme — inspired by newsprint design but not meant to be a literal copy
