@@ -196,7 +196,7 @@ body .byline a:link, .byline a:visited, .byline a {
 	line-height: 1.8em;
 }
 
-.articleBody a {
+.articleBody a, .nnw-enclosure-caption a {
 	text-decoration: underline;
 }
 

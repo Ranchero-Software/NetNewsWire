@@ -69,29 +69,29 @@ extension ArticleRenderer {
 
 		let src = attachment.url.escapingSpecialXMLCharacters
 		let mediaElement: String
-		let caption: String?
+		let captionHTML: String?
 
 		switch displayMedium {
 		case .audio:
 			mediaElement = "<audio controls preload=\"none\" src=\"\(src)\"></audio>"
-			caption = audioCaption(attachment)
+			captionHTML = audioCaptionHTML(attachment)
 		case .video:
 			var attributes = "controls preload=\"metadata\" playsinline src=\"\(src)\"" + dimensionAttributes(attachment)
 			if let posterURL, !posterURL.isEmpty {
 				attributes += " poster=\"\(posterURL.escapingSpecialXMLCharacters)\""
 			}
 			mediaElement = "<video \(attributes)></video>"
-			caption = attachment.title
+			captionHTML = attachment.title?.escapingSpecialXMLCharacters
 		case .image:
 			mediaElement = "<img src=\"\(src)\" alt=\"\"" + dimensionAttributes(attachment) + ">"
-			caption = attachment.title
+			captionHTML = attachment.title?.escapingSpecialXMLCharacters
 		case .document, .executable:
 			return nil
 		}
 
 		var html = "<div class=\"nnw-enclosure nnw-enclosure-\(displayMedium.rawValue)\">\(mediaElement)"
-		if let caption, !caption.isEmpty {
-			html += "<div class=\"nnw-enclosure-caption\">\(caption.escapingSpecialXMLCharacters)</div>"
+		if let captionHTML, !captionHTML.isEmpty {
+			html += "<div class=\"nnw-enclosure-caption\">\(captionHTML)</div>"
 		}
 		html += "</div>"
 		return html
@@ -101,13 +101,13 @@ extension ArticleRenderer {
 
 private extension ArticleRenderer {
 
-	/// Title (or file name), duration, and size, such as “Episode 311 · 1:54:09 · 54.9 MB”.
-	static func audioCaption(_ attachment: Attachment) -> String {
+	/// Title (or file name, linked to the audio file), duration, and size, such as “Episode 311 · 1:54:09 · 54.9 MB”.
+	static func audioCaptionHTML(_ attachment: Attachment) -> String {
 		var components = [String]()
 		if let title = attachment.title, !title.isEmpty {
-			components.append(title)
+			components.append(title.escapingSpecialXMLCharacters)
 		} else if let fileName = fileName(attachment.url) {
-			components.append(fileName)
+			components.append("<a href=\"\(attachment.url.escapingSpecialXMLCharacters)\">\(fileName.escapingSpecialXMLCharacters)</a>")
 		}
 		if let durationInSeconds = attachment.durationInSeconds {
 			components.append(durationString(durationInSeconds))

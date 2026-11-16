@@ -22,7 +22,7 @@ import Articles
 		let primaryMedia = try #require(ArticleRenderer.primaryMedia(imageLink: artworkURL, thumbnailLink: nil, attachments: [attachment], articleTitle: nil, body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil), includesImage: true))
 
 		#expect(primaryMedia.html.hasPrefix("<div class=\"nnw-primary-media\"><div class=\"nnw-primary-image\"><img src=\"\(artworkURL)\" alt=\"\"></div><div class=\"nnw-enclosure nnw-enclosure-audio\"><audio controls preload=\"none\" src=\"http://traffic.libsyn.com/atpfm/atp311.mp3\"></audio>"))
-		#expect(primaryMedia.html.contains("atp311.mp3 · 1:54:09 · "))
+		#expect(primaryMedia.html.contains("<a href=\"http://traffic.libsyn.com/atpfm/atp311.mp3\">atp311.mp3</a> · 1:54:09 · "))
 		#expect(primaryMedia.attachmentURLs == [artworkURL, attachment.url])
 	}
 

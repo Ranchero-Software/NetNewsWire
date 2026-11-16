@@ -433,7 +433,7 @@ a.footnote:hover,
 		font-size: inherit;
 	}
 
-	.articleBody a:link, .articleBody a:visited {
+	.articleBody a:link, .articleBody a:visited, .nnw-enclosure-caption a:link, .nnw-enclosure-caption a:visited {
 		text-decoration: underline;
 		text-decoration-color: var(--primary-accent-color);
 		text-decoration-thickness: 1px;
@@ -463,7 +463,7 @@ a.footnote:hover,
 		color: var(--secondary-accent-color);
 	}
 
-	.articleBody a:hover {
+	.articleBody a:hover, .nnw-enclosure-caption a:hover {
 		background: var(--ios-hover-color);
 	}
 
@@ -547,7 +547,7 @@ a.footnote:hover,
 		font-size: 1.85rem;
 	}
 
-	.articleBody a:link, .articleBody a:visited {
+	.articleBody a:link, .articleBody a:visited, .nnw-enclosure-caption a:link, .nnw-enclosure-caption a:visited {
 		text-decoration: underline;
 		text-decoration-color: var(--link-underline-color);
 		text-decoration-thickness: 1px;
@@ -560,7 +560,7 @@ a.footnote:hover,
 		text-decoration: none;
 	}
 
-	.articleBody a:hover {
+	.articleBody a:hover, .nnw-enclosure-caption a:hover {
 		border-radius: 2px;
 		background: var(--hover-background-color);
 		color: white;

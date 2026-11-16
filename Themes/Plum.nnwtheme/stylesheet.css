@@ -211,13 +211,13 @@ body > .systemMessage {
 	line-height: 1.7em;
 }
 
-.articleBody a, .footer a {
+.articleBody a, .footer a, .nnw-enclosure-caption a {
 	text-decoration: underline;
 	text-decoration-thickness: 1px;
 	text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
 }
 
-.articleBody a:hover, .footer a:hover {
+.articleBody a:hover, .footer a:hover, .nnw-enclosure-caption a:hover {
 	text-decoration-color: currentColor;
 }
 
