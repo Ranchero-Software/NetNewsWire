@@ -36,6 +36,9 @@ struct CurrentActivityView: View {
 				helpLinkFooter
 			}
 		}
+		// The iOS 26 glass sheet background is too translucent.
+		.scrollContentBackground(.hidden)
+		.background(Color(uiColor: .systemGroupedBackground))
 		.navigationTitle(NSLocalizedString("Current Activity", comment: "Current Activity"))
 		.navigationBarTitleDisplayMode(.inline)
 		.toolbar {
