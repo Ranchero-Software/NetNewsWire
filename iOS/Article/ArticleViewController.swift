@@ -274,7 +274,7 @@ final class ArticleViewController: UIViewController {
 		}
 		// Pass animated: false — animating the nav bar / toolbar visibility change during the
 		// disappear transition triggers an Auto Layout assertion (NSISEngine) and crashes.
-		currentWebViewController?.showBars(animated: false)
+		currentWebViewController?.restoreBars(animated: false)
 	}
 
 	override func viewDidDisappear(_ animated: Bool) {

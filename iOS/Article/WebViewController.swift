@@ -291,6 +291,11 @@ final class WebViewController: UIViewController {
 
 	func showBars(animated: Bool = true) {
 		AppDefaults.articleFullscreenEnabled = false
+		restoreBars(animated: animated)
+	}
+
+	/// Shows the bars without leaving full screen mode, so the next article still opens full screen.
+	func restoreBars(animated: Bool) {
 		coordinator.showStatusBar()
 		topShowBarsViewConstraint?.constant = 0
 		bottomShowBarsViewConstraint?.constant = 0
