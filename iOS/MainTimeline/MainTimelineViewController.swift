@@ -592,7 +592,7 @@ extension MainTimelineViewController: UICollectionViewDelegate {
 			reloadCells([article])
 			return
 		}
-		guard let thumbnailURL, let thumbnail = ThumbnailDownloader.shared.thumbnail(url: thumbnailURL, mode: thumbnailMode, articleTitle: article.title), thumbnail !== cell.thumbnail else {
+		guard let thumbnailURL, let thumbnail = ThumbnailDownloader.shared.thumbnail(url: thumbnailURL, mode: thumbnailMode, feedName: article.feed?.nameForDisplay, articleTitle: article.title), thumbnail !== cell.thumbnail else {
 			return
 		}
 		cell.thumbnail = thumbnail
@@ -994,7 +994,7 @@ private extension MainTimelineViewController {
 		var showThumbnail = false
 		if let thumbnailMode, let thumbnailURL = ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) {
 			showThumbnail = true
-			thumbnail = ThumbnailDownloader.shared.thumbnail(url: thumbnailURL, mode: thumbnailMode, articleTitle: article.title)
+			thumbnail = ThumbnailDownloader.shared.thumbnail(url: thumbnailURL, mode: thumbnailMode, feedName: article.feed?.nameForDisplay, articleTitle: article.title)
 		}
 		let cellData = MainTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, numberOfLines: numberOfTextLines, iconSize: iconSize, thumbnail: thumbnail, showThumbnail: showThumbnail, thumbnailsDisplay: thumbnailsDisplay, fadesReadArticles: fadesReadArticles, feedNameAndDateAboveTitle: feedNameAndDateAboveTitle, showsFullTitles: showsFullTitles)
 		return cellData
@@ -1239,7 +1239,7 @@ private extension MainTimelineViewController {
 		}
 		// The row’s height already allows for the thumbnail, so only the cell’s contents change.
 		for indexPath in collectionView.indexPathsForVisibleItems {
-			guard let article = dataSource.itemIdentifier(for: indexPath), ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) == url, let cell = collectionView.cellForItem(at: indexPath) as? MainTimelineCell, let thumbnail = ThumbnailDownloader.shared.thumbnail(url: url, mode: thumbnailMode, articleTitle: article.title) else {
+			guard let article = dataSource.itemIdentifier(for: indexPath), ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) == url, let cell = collectionView.cellForItem(at: indexPath) as? MainTimelineCell, let thumbnail = ThumbnailDownloader.shared.thumbnail(url: url, mode: thumbnailMode, feedName: article.feed?.nameForDisplay, articleTitle: article.title) else {
 				continue
 			}
 			cell.thumbnail = thumbnail
