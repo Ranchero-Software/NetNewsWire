@@ -7,6 +7,26 @@
     <language>en</language>
 
 <item>
+	<title>NetNewsWire 7.3b9</title>
+	<description><![CDATA[
+<ul>
+<li>Added Open Themes Folder and Open Themes Gallery commands to the bottom of the themes menu in the status bar
+<li>Added a Themes Gallery command to the Help menu, and renamed Discourse Forum to NetNewsWire Forum
+<li>Made the filename of an audio enclosure a link — it’s underlined in the Default, Gray, Plum, and Verdana Revival themes
+<li>Fixed duplicate images in brettterpstra.com articles
+<li>Skipped Blogger’s tiny thumbnail as an article’s primary image
+<li>Allowed thumbnail downloading in Low Data Mode
+<li>Made the activity log show every thumbnail download (not just failures), with the feed name and article title
+<li>Fixed bug where double-clicking an article in an inactive window could open the wrong article
+<li>Made double-clicking an article in an inactive window mark it as read
+</ul>
+	]]></description>
+	<pubDate>Mon, 16 Nov 2026 09:40:00 -0800</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.3b9/NetNewsWire7.3b9.zip" sparkle:version="7237" sparkle:shortVersionString="7.3b9" length="10478827" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
 	<title>NetNewsWire 7.3b8</title>
 	<description><![CDATA[
 <ul>
