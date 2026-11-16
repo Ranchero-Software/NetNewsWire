@@ -88,6 +88,29 @@ import Articles
 		#expect(ArticleRenderer.primaryImage(imageLink: nil, thumbnailLink: imageURL, attachments: [attachment], body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil)) == nil)
 	}
 
+	// Brett Terpstra’s “Web Excursions for November 14th, 2026” and “New nvALT browser extensions”:
+	// the media:content image is the body’s image with a version number, and sometimes as a square `_fb` crop.
+	@Test func primaryImageSkippedWhenBodyHasBrettTerpstraCopy() throws {
+		let webExcursionsImageURL = "https://cdn3.brettterpstra.com/uploads/2017/03/web-exc-map.7542.jpg"
+		let webExcursionsAttachment = try #require(Attachment(url: webExcursionsImageURL, mimeType: nil, title: nil, sizeInBytes: nil, durationInSeconds: nil, width: nil, height: nil, medium: .image))
+		let webExcursionsBody = "<p><img src=\"https://cdn3.brettterpstra.com/uploads/2017/03/web-exc-map.jpg\"></p>"
+		#expect(ArticleRenderer.primaryImage(imageLink: nil, thumbnailLink: webExcursionsImageURL, attachments: [webExcursionsAttachment], body: webExcursionsBody, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(webExcursionsBody, baseURL: nil)) == nil)
+
+		let nvALTImageURL = "https://cdn3.brettterpstra.com/uploads/2026/11/nvalt-extensions-rb_fb.7542.jpg"
+		let nvALTAttachment = try #require(Attachment(url: nvALTImageURL, mimeType: nil, title: nil, sizeInBytes: nil, durationInSeconds: nil, width: nil, height: nil, medium: .image))
+		let nvALTBody = "<p><img src=\"https://cdn3.brettterpstra.com/uploads/2026/11/nvalt-extensions-rb.7542.jpg\" width=\"800\" height=\"226\" style=\"margin:0 auto;clear:both;\" class=\"header\" /></p>"
+		#expect(ArticleRenderer.primaryImage(imageLink: nil, thumbnailLink: nvALTImageURL, attachments: [nvALTAttachment], body: nvALTBody, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(nvALTBody, baseURL: nil)) == nil)
+	}
+
+	// Cliff Mass Weather Blog’s “The Large Effects of El Nino On Our Current Weather”:
+	// the media:thumbnail is Blogger’s 72-pixel crop of the body’s first image.
+	@Test func primaryImageSkipsBloggerThumbnail() {
+		let thumbnailURL = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg5OGZfA2gPDijOTJL2tNo2wUkYs-DXIKggX_5wC9q_hW9MKYqQILTbFBYIGjpWTCONO9Jl-K-wwzVayA9kGXDhzUTFj8wKlpEQq6eN2lTxUMrShypf0MuuZCbK_qe3wPdfo2oQbP8K3mBC2o7kjtOYVuX2Da036hDaCjHEMVzxQV2iPImiFnxn2_UY1eU/s72-w395-h279-c/Screenshot%202026-11-12%20at%207.24.04%E2%80%AFPM.png"
+		let body = "<p>Our current weather is being profoundly influenced by El Nino.</p><img border=\"0\" data-original-height=\"618\" data-original-width=\"874\" height=\"279\" src=\"https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg5OGZfA2gPDijOTJL2tNo2wUkYs-DXIKggX_5wC9q_hW9MKYqQILTbFBYIGjpWTCONO9Jl-K-wwzVayA9kGXDhzUTFj8wKlpEQq6eN2lTxUMrShypf0MuuZCbK_qe3wPdfo2oQbP8K3mBC2o7kjtOYVuX2Da036hDaCjHEMVzxQV2iPImiFnxn2_UY1eU/w395-h279/Screenshot%202026-11-12%20at%207.24.04%E2%80%AFPM.png\" width=\"395\" />"
+
+		#expect(ArticleRenderer.primaryImage(imageLink: nil, thumbnailLink: thumbnailURL, attachments: nil, body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil)) == nil)
+	}
+
 	// The Atlantic’s “The Democrats’ Fight Over Israel Is Just Beginning”: every image is `original.jpg` in its own folder,
 	// and the body’s photos are different ones from the media:content image.
 	@Test func primaryImageShownWhenBodyHasDifferentImages() throws {
