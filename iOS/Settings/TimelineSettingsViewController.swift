@@ -127,8 +127,8 @@ final class TimelineSettingsViewController: UICollectionViewController {
 
 		let layout = UICollectionViewCompositionalLayout { sectionIndex, layoutEnvironment in
 			var config = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
-			config.showsSeparators = false
 			let sectionID = Section(rawValue: sectionIndex)
+			config.showsSeparators = sectionID == .general || sectionID == .layout
 			let isHidden = Self.isHidden(sectionID)
 			config.headerMode = (isHidden || sectionID == .general) ? .none : .supplementary
 			let section = NSCollectionLayoutSection.list(using: config, layoutEnvironment: layoutEnvironment)
