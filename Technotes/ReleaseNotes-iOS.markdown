@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 7.3 build 7238 16 Nov 2026 - branch: main tag: iOS-7.3-7238
+
+Fix bug where separators didn’t appear in the timeline settings screen
+
 ### 7.3 build 7237 16 Nov 2026 - branch: main tag: iOS-7.3-7237
 
 Rebuilt Settings in SwiftUI, with separate Appearance, Sidebar, Timeline, and Articles screens, and an icon for each row
