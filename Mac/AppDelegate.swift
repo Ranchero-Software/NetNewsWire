@@ -843,13 +843,13 @@ extension AppDelegate {
 		accountStatsWindowController?.showWindow(self)
 	}
 
-	@IBAction func showiCloudDriveMissingAlert(_ sender: Any?) {
+	@IBAction func showiCloudUnavailableAlert(_ sender: Any?) {
 		// Manual testing for alert in AccountsAddCloudKitWindowController
 		// Check for:
 		// - Expected text
 		// - Button for opening Settings
 		// - Button works
-		mainWindowController?.presentError(AddCloudKitAccountError.iCloudDriveMissing)
+		mainWindowController?.presentError(AddCloudKitAccountError.iCloudUnavailable)
 	}
 }
 

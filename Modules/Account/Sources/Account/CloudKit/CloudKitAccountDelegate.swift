@@ -39,10 +39,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 
 	private let syncDatabase: SyncDatabase
 
-	private let container: CKContainer = {
-		let orgID = Bundle.main.object(forInfoDictionaryKey: "OrganizationIdentifier") as! String
-		return CKContainer(identifier: "iCloud.\(orgID).NetNewsWire")
-	}()
+	private let container = CloudKitAccountDelegate.makeContainer()
 
 	private let accountZone: CloudKitAccountZone
 	private let articlesZone: CloudKitArticlesZone
@@ -111,6 +108,25 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		NotificationCenter.default.addObserver(self, selector: #selector(syncProgressDidChange(_:)), name: .progressInfoDidChange, object: syncProgress)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleCKAccountChanged(_:)), name: .CKAccountChanged, object: nil)
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
+	}
+
+	nonisolated static func makeContainer() -> CKContainer {
+		let orgID = Bundle.main.object(forInfoDictionaryKey: "OrganizationIdentifier") as! String
+		return CKContainer(identifier: "iCloud.\(orgID).NetNewsWire")
+	}
+
+	/// False when there’s no iCloud account, the account is restricted, or iCloud is turned off for this app.
+	/// True when the status check itself fails, since sync reports its own errors.
+	nonisolated static func isiCloudAvailable() async -> Bool {
+		guard let status = try? await makeContainer().accountStatus() else {
+			return true
+		}
+		switch status {
+		case .noAccount, .restricted:
+			return false
+		default:
+			return true
+		}
 	}
 
 	// CKAccountChanged can arrive on any thread.
