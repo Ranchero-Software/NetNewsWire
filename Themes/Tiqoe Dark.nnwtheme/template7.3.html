@@ -58,13 +58,28 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 <script>
-// TechCrunch → Reader View 
-const feedLink = document.querySelector('.feedlink');
+// TechCrunch → Reader View
+const feedLink = document.querySelector(".feedlink");
 
-if (feedLink.href.includes('techcrunch.com')) {
+if (feedLink.href.includes("techcrunch.com")) {
 
-	document.querySelectorAll('img[sizes^="auto"]').forEach((img) => {
-		img.sizes = img.sizes.split(',').slice(1).join(',').trim();
+	document.querySelectorAll("img[sizes^='auto']").forEach(img => {
+		img.sizes = img.sizes.split(",").slice(1).join(",").trim();
 	});
 }
+</script>
+
+<script>
+// blog.the-ebook-reader.com
+document.addEventListener("DOMContentLoaded", () => {
+
+	const feedLink = document.querySelector(".feedlink");
+
+	if (feedLink.href.includes("blog.the-ebook-reader.com")) {
+
+		document.querySelectorAll(".nnw-primary-media").forEach(div => {
+			div.style.display = "none";
+		});
+	}
+});
 </script>
