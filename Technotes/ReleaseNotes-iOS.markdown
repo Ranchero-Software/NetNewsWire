@@ -2,7 +2,67 @@
 
 ### 7.3 build 7238 16 Nov 2026 - branch: main tag: iOS-7.3-7238
 
-Fix bug where separators didn’t appear in the timeline settings screen
+Changes since 7.2:
+
+Bumped minimum iOS version from 17 to 18
+
+Rebuilt Settings in SwiftUI, with separate Appearance, Sidebar, Timeline, and Articles screens, and an icon for each row
+Added Show Today, Show All Unread, and Show Starred settings, to hide smart feeds
+Added a Show Feed Icons setting for the sidebar
+Added a Grayscale Icons setting — for feed icons and author avatars (article thumbnails stay in color)
+Added a Feed Icons setting to Settings > Timeline — Automatic (folders, smart feeds, and authors with avatars), Always, or Never
+Added Fade Read Articles, Feed Name and Date Above Title (on by default), and Full Titles, No Preview settings to Settings > Timeline
+Added a Show Previews in Context Menus setting
+Added a Swipe to Next/Previous Article setting — off for new users, on for existing users
+Added a link to the themes gallery in the themes screen
+Added version string to the About view
+Added a Copy command to the version string in Settings and in the About view — touch and hold to copy
+
+Added article thumbnails to the timeline — choose large or small in Settings > Timeline. Default is none
+Changed the background behind feed icons to the system fill color
+Made timeline rows always show the author or feed name, instead of leaving that spot empty
+Made the timeline separators more visible — they now use the standard iOS separator color
+Added an article preview to the timeline context menu — touch and hold an article to see it, and tap the preview to open the article
+Made a swiped timeline row update (read, unread, or starred) before it animates back into place
+Added an entry to the Errors Log when a tap in the timeline is ignored
+
+Made arrow key navigation work from the timeline to the article view and back, and made the up and down arrow keys scroll the article view
+Made a left-edge swipe over an article reveal the timeline
+Made iPad better remember sidebar visibility changes you make
+Made the sidebar show on first run on Duo
+Fixed bug where going back to the timeline from a fullscreen article would forget that you were in fullscreen mode
+Kept the reader’s place better in an article across a rotation
+Refreshed the Find in Article controls — translucent, with spacing that adjusts for the keyboard
+Made the Current Activity sheet opaque — looked muddy in dark mode
+
+Added support for enclosures and Media RSS
+Added enclosures to the article view (at the bottom) — you can see images from Mastodon feeds, play an MP3, etc.
+Made YouTube enclosures play in the privacy-enhanced YouTube player (youtube-nocookie.com)
+Made the article view show plain text or media:description when an article has no HTML content
+Used an item’s only Gravatar as its author’s avatar, even when the author name is a username
+Made image downloading kinder to servers — honors Retry-After, waits after errors, and limits downloads to two at a time per host
+
+Added Gray theme — inspired by newsprint design but not meant to be a literal copy
+Added Plum theme — uses the same layout as the Gray theme but with color
+Added [[primary_media]] and [[enclosures]] tags for themes — primary_media is the article’s main image, video, or audio from the feed, when the article’s HTML doesn’t already include it
+Allowed themes to include a template7.3.html file, which is used in 7.3 and later instead of template.html
+Added an optional grayscaleIcon key to theme Info.plist files — when true, the feed icon or author avatar in the article view is grayscale. The Gray theme uses this new feature
+Updated the built-in themes to use [[primary_media]] and [[enclosures]]
+
+Fixed extra vertical space in MacRumors articles
+Fixed inline footnotes in FreshRSS articles
+Fixed embedded YouTube videos (and other iframes) not loading on sites that use Optimole lazy loading
+Fixed blog.rust-lang.org articles — JavaScript is turned off for them, and their noscript content is shown
+
+Fixed the layout and resizing of the full-screen image viewer on Duo
+Fixed bug with footnote popover positioning on Duo
+Removed the empty navigation bar over articles when the bar buttons move to the side on iPhone Duo
+Fixed a case where the article view could fail to load because no web view was ready
+Worked around an Apple crashing bug in iOS 27.2
+
+Changes since 7.3 (7237):
+
+Fixed bug where separators didn’t appear in the timeline settings screen
 
 ### 7.3 build 7237 16 Nov 2026 - branch: main tag: iOS-7.3-7237
 
