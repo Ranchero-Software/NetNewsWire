@@ -1,6 +1,10 @@
 # Mac Release Notes
 
-### 7.3.1b1 7240 18 Nov 2026 -  branch: main tag: mac-7.3.1b1
+### 7.3.1 7242 19 Nov 2026 - branch: main tag: mac-7.3.1
+
+Same as 7.3.1b1 — just bumped the version.
+
+Changes since 7.3:
 
 Fixed bug where smart feeds might not appear in the sidebar
 Stopped refreshing Reddit feeds, since Reddit no longer offers RSS feeds
@@ -8,7 +12,15 @@ Renamed the feed notification setting to Notify About New Articles, in the inspe
 Changed the Create button to Add when adding a Feedbin, NewsBlur, or Reader API account
 Updated the Tiqoe Dark theme — styles for primary images, enclosures, and captions, and fixes for TechCrunch, Macworld, and the-ebook-reader articles
 
-### 7.3 7239 17 Nov 2026 -  branch: main tag: mac-7.3
+### 7.3.1b1 7240 18 Nov 2026 - branch: main tag: mac-7.3.1b1
+
+Fixed bug where smart feeds might not appear in the sidebar
+Stopped refreshing Reddit feeds, since Reddit no longer offers RSS feeds
+Renamed the feed notification setting to Notify About New Articles, in the inspector and in the sidebar’s contextual menu
+Changed the Create button to Add when adding a Feedbin, NewsBlur, or Reader API account
+Updated the Tiqoe Dark theme — styles for primary images, enclosures, and captions, and fixes for TechCrunch, Macworld, and the-ebook-reader articles
+
+### 7.3 7239 17 Nov 2026 - branch: main tag: mac-7.3
 
 Same as 7.3b9 — just bumped the version.
 
