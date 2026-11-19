@@ -168,6 +168,12 @@ final class ArticleViewController: UIViewController {
 				actionBarButtonItem.visibilityPriority = .high
 			}
 			#endif
+			#if compiler(>=6.4.2)
+			// A custom view’s axes can’t be inferred, so without this the button sits outside the vertical bar.
+			if #available(iOS 27.1, *) {
+				articleExtractorBarButtonItem.axisBehavior = .verticalPreferred
+			}
+			#endif
 			toolbarItems?.insert(articleExtractorBarButtonItem, at: 5)
 		} else {
 			let flex = { UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil) }
