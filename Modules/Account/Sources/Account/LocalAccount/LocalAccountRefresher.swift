@@ -87,13 +87,12 @@ import os
 
 	@MainActor private func refreshFeeds(_ feeds: Set<Feed>, completion: (() -> Void)? = nil) {
 		let specialCaseCutoffDate = Date().bySubtracting(hours: 25)
-		let redditURLToRefresh = Self.redditURLToRefresh(in: feeds)
 
 		var filteredFeeds = Set<Feed>()
 		var skippedFeeds = [(Feed, String)]() // feed and skip reason
 
 		for feed in feeds {
-			let (shouldSkip, reason) = Self.feedShouldBeSkipped(feed, specialCaseCutoffDate, redditURLToRefresh)
+			let (shouldSkip, reason) = Self.feedShouldBeSkipped(feed, specialCaseCutoffDate)
 			if shouldSkip, let reason {
 				skippedFeeds.append((feed, reason))
 			} else {
@@ -488,7 +487,11 @@ private extension LocalAccountRefresher {
 	]
 
 	/// Returns whether this feed should be skipped and the reason if so.
-	static func feedShouldBeSkipped(_ feed: Feed, _ specialCaseCutoffDate: Date, _ redditURLToRefresh: String?) -> (Bool, String?) {
+	static func feedShouldBeSkipped(_ feed: Feed, _ specialCaseCutoffDate: Date) -> (Bool, String?) {
+		let (skipForReddit, redditReason) = feedShouldBeSkippedForRedditReasons(feed)
+		if skipForReddit {
+			return (true, redditReason)
+		}
 		let (skipForCacheControl, cacheControlReason) = feedShouldBeSkippedForCacheControlReasons(feed)
 		if skipForCacheControl {
 			return (true, cacheControlReason)
@@ -497,10 +500,6 @@ private extension LocalAccountRefresher {
 		if skipForDisallowedHost {
 			return (true, disallowedHostReason)
 		}
-		let (skipForReddit, redditReason) = feedShouldBeSkippedForRedditReasons(feed, redditURLToRefresh)
-		if skipForReddit {
-			return (true, redditReason)
-		}
 		let (skipForTiming, timingReason) = feedShouldBeSkippedForTimingReasons(feed, specialCaseCutoffDate)
 		if skipForTiming {
 			return (true, timingReason)
@@ -508,26 +507,12 @@ private extension LocalAccountRefresher {
 		return (false, nil)
 	}
 
-	/// Reddit rate-limits to one feed per minute, so we
-	/// refresh the least recently checked one.
-	static func redditURLToRefresh(in feeds: Set<Feed>) -> String? {
-		let redditFeeds = feeds.filter { SpecialCase.urlStringMatchesDomain($0.url, [SpecialCase.redditHostName]) }
-		let winner = redditFeeds.min { ($0.lastCheckDate ?? .distantPast) < ($1.lastCheckDate ?? .distantPast) }
-		return winner?.url
-	}
-
-	static func feedShouldBeSkippedForRedditReasons(_ feed: Feed, _ redditURLToRefresh: String?) -> (Bool, String?) {
+	static func feedShouldBeSkippedForRedditReasons(_ feed: Feed) -> (Bool, String?) {
 		guard SpecialCase.urlStringMatchesDomain(feed.url, [SpecialCase.redditHostName]) else {
 			return (false, nil)
 		}
-		if feed.url == redditURLToRefresh {
-			return (false, nil)
-		}
-		var reason = "Skipped — Reddit allows only one feed per minute"
-		if let redditURLToRefresh {
-			reason += " — refreshing \(redditURLToRefresh) this time"
-		}
-		return (true, reason)
+		Self.logger.info("LocalAccountRefresher: Dropping request because it’s Reddit, which no longer provides feeds: \(feed.url)")
+		return (true, "Skipped — Reddit feed — Reddit no longer offers RSS feeds")
 	}
 
 	static func feedShouldBeSkippedForDisallowedHostReasons(_ feed: Feed) -> (Bool, String?) {
