@@ -1,5 +1,12 @@
 # iOS Release Notes
 
+### 7.3.1 build 7241 19 Nov 2026 - branch: main tag: iOS-7.3.1-7241
+
+Moved the Reader View button into the vertical row of buttons on Duo
+Moved the next-unread button to right below the next and previous buttons on Duo, when the buttons are in a vertical row — easier to reach with your thumb
+Stopped refreshing Reddit feeds, since Reddit no longer offers RSS feeds
+Updated the Tiqoe Dark theme — styles for primary images, enclosures, and captions, and fixes for TechCrunch, Macworld, and the-ebook-reader articles
+
 ### 7.3 build 7238 16 Nov 2026 - branch: main tag: iOS-7.3-7238
 
 Changes since 7.2:
