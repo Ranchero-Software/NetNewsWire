@@ -8,6 +8,22 @@
 
 
 <item>
+	<title>NetNewsWire 7.3.1b1</title>
+	<description><![CDATA[
+<ul>
+<li>Fixed bug where smart feeds might not appear in the sidebar
+<li>Stopped refreshing Reddit feeds, since Reddit no longer offers RSS feeds
+<li>Renamed the feed notification setting to Notify About New Articles, in the inspector and in the sidebar’s contextual menu
+<li>Changed the Create button to Add when adding a Feedbin, NewsBlur, or Reader API account
+<li>Updated the Tiqoe Dark theme — styles for primary images, enclosures, and captions, and fixes for TechCrunch, Macworld, and the-ebook-reader articles
+</ul>
+	]]></description>
+	<pubDate>Thu, 19 Nov 2026 08:55:00 -0700</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.3.1b1/NetNewsWire7.3.1b1.zip" sparkle:version="7240" sparkle:shortVersionString="7.3.1b1" length="10473891" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
 	<title>NetNewsWire 7.3</title>
 	<description><![CDATA[
 	<b>Changes since 7.2.1</b>
