@@ -79,10 +79,6 @@ nonisolated extension URL {
 		SpecialCase.urlStringMatchesDomain(absoluteString, [SpecialCase.youtubeHostName])
 	}
 
-	public var isRedditURL: Bool {
-		SpecialCase.urlStringMatchesDomain(absoluteString, [SpecialCase.redditHostName])
-	}
-
 	/// The Relay FM blog, specifically — not the whole relay.fm domain (its root advertises the master
 	/// podcast feed). Matches the /blog index and /blog/<post> pages.
 	public var isRelayFMBlogURL: Bool {
