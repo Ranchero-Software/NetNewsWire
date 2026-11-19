@@ -70,7 +70,7 @@
                 </textField>
                 <button horizontalHuggingPriority="1000" verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="ZBX-E8-k9c">
                     <rect key="frame" x="20" y="154" width="231" height="16"/>
-                    <buttonCell key="cell" type="check" title="Show notifications for new articles" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Bw5-c7-yDX">
+                    <buttonCell key="cell" type="check" title="Notify about new articles" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Bw5-c7-yDX">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>

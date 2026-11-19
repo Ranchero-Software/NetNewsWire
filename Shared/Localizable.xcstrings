@@ -1063,6 +1063,9 @@
     "Notifications, Badge, Data, and More" : {
       "comment" : "Notifications, Badge, Data, and More"
     },
+    "Notify About New Articles" : {
+      "comment" : "Notify About New Articles"
+    },
     "OK" : {
       "comment" : "OK button"
     },
@@ -1320,9 +1323,6 @@
     },
     "Show feeds that haven’t updated in…" : {
       "comment" : "Show stale feeds text"
-    },
-    "Show notifications for new articles" : {
-      "comment" : "Show notifications for new articles"
     },
     "Show Previews in Context Menus" : {
       "comment" : "Show Previews in Context Menus"

@@ -20,19 +20,19 @@
       }
     },
     "Bw5-c7-yDX.title" : {
-      "comment" : "Class = \"NSButtonCell\"; title = \"Show notifications for new articles\"; ObjectID = \"Bw5-c7-yDX\";",
+      "comment" : "Class = \"NSButtonCell\"; title = \"Notify about new articles\"; ObjectID = \"Bw5-c7-yDX\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Show notifications for new articles"
+            "value" : "Notify about new articles"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostrar notificaciones de artículos nuevos"
+            "value" : "Notificar sobre artículos nuevos"
           }
         }
       }
