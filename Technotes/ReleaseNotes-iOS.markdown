@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 7.3.1 build 7243 20 Nov 2026 - branch: main tag: iOS-7.3.1-7243
+
+Fix (hopefully, we think) a crash related to a nil title in the navbar
+
 ### 7.3.1 build 7241 19 Nov 2026 - branch: main tag: iOS-7.3.1-7241
 
 Moved the Reader View button into the vertical row of buttons on Duo
