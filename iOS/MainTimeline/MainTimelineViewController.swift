@@ -116,7 +116,7 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 		label.addGestureRecognizer(tap)
 		let pointerInteraction = UIPointerInteraction(delegate: nil)
 		label.addInteraction(pointerInteraction)
-		label.text = " " // Placeholder avoids iOS 26 UINavigationBar crash.
+		label.text = Self.navigationBarPlaceholderText
 		label.sizeToFit()
 		return label
 	}()
@@ -130,7 +130,7 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 		label.adjustsFontForContentSizeCategory = false
 		let tap = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
 		label.addGestureRecognizer(tap)
-		label.text = " " // Placeholder avoids iOS 26 UINavigationBar crash.
+		label.text = Self.navigationBarPlaceholderText
 		label.sizeToFit()
 		return label
 	}()
@@ -169,6 +169,8 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "MainTimelineViewController")
 	/// Cells queued within this interval, such as for several thumbnail downloads that failed, are reloaded together.
 	private static let cellReloadDelay: TimeInterval = 0.1
+	/// A zero-size titleView or subtitleView crashes UINavigationBar layout, so empty labels get a space instead.
+	private static let navigationBarPlaceholderText = " "
 
 	// MARK: Constants
 	private let updateQueue = CoalescingQueue(name: "Timeline Update Queue", interval: 0.5, maxInterval: 1.0)
@@ -314,7 +316,7 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 	func updateNavigationBarTitle(_ text: String) {
 		navigationItem.title = text
 		if let label = navigationItem.titleView as? UILabel {
-			label.text = text
+			label.text = text.isEmpty ? Self.navigationBarPlaceholderText : text
 			label.isUserInteractionEnabled = ((coordinator?.timelineFeed as? PseudoFeed) == nil)
 			label.sizeToFit()
 		}
@@ -322,7 +324,7 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 
 	func updateNavigationBarSubtitle(_ text: String) {
 		if #available(iOS 26, *), let label = navigationItem.subtitleView as? UILabel {
-			label.text = text
+			label.text = text.isEmpty ? Self.navigationBarPlaceholderText : text
 			label.isUserInteractionEnabled = ((coordinator?.timelineFeed as? PseudoFeed) == nil)
 			label.sizeToFit()
 		}
