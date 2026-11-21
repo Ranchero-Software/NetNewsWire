@@ -28,8 +28,6 @@ final class ArticleViewController: UIViewController {
 	@IBOutlet private weak var starBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var actionBarButtonItem: UIBarButtonItem!
 
-	@IBOutlet private var searchBar: ArticleSearchBar!
-	@IBOutlet private var searchBarBottomConstraint: NSLayoutConstraint!
 	private var defaultControls: [UIBarButtonItem]?
 
 	private var pageViewController: UIPageViewController!
@@ -61,7 +59,6 @@ final class ArticleViewController: UIViewController {
 	private let poppableDelegate = PoppableGestureRecognizerDelegate()
 	private weak var originalPopGestureRecognizerDelegate: UIGestureRecognizerDelegate?
 	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "ArticleViewController")
-	private static let searchBarSpacing: CGFloat = 8
 
 	var article: Article? {
 		didSet {
@@ -118,9 +115,8 @@ final class ArticleViewController: UIViewController {
 
 	var restoreState: State?
 
-	private let keyboardManager = KeyboardManager(type: .detail)
 	override var keyCommands: [UIKeyCommand]? {
-		return keyboardManager.keyCommands
+		AppCommands.keyCommands(for: .detail)
 	}
 	override var canBecomeFirstResponder: Bool {
 		true
@@ -239,13 +235,7 @@ final class ArticleViewController: UIViewController {
 			controller.hideBars()
 		}
 
-		// Search bar
-		searchBar.translatesAutoresizingMaskIntoConstraints = false
 		NotificationCenter.default.addObserver(self, selector: #selector(beginFind(_:)), name: .FindInArticle, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(endFind(_:)), name: .EndFindInArticle, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChangeFrame(_:)), name: UIWindow.keyboardWillChangeFrameNotification, object: nil)
-		searchBar.delegate = self
-		view.bringSubviewToFront(searchBar)
 
 		updateUI()
 	}
@@ -266,7 +256,6 @@ final class ArticleViewController: UIViewController {
 			navigationController?.navigationBar.topItem?.subtitle = nil
 		}
 		coordinator.isArticleViewControllerPending = false
-		searchBar.shouldBeginEditing = true
 		// Scoped to the article screen — restored in viewDidDisappear.
 		if let parentNavController = navigationController?.parent as? UINavigationController,
 			let gestureRecognizer = parentNavController.interactivePopGestureRecognizer {
@@ -280,10 +269,6 @@ final class ArticleViewController: UIViewController {
 
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
-		if searchBar != nil && !searchBar.isHidden {
-			endFind()
-			searchBar.shouldBeginEditing = false
-		}
 		// Pass animated: false — animating the nav bar / toolbar visibility change during the
 		// disappear transition triggers an Auto Layout assertion (NSISEngine) and crashes.
 		currentWebViewController?.restoreBars(animated: false)
@@ -417,7 +402,7 @@ final class ArticleViewController: UIViewController {
 		currentWebViewController?.showActivityDialog(popOverBarButtonItem: actionBarButtonItem)
 	}
 
-	@objc func toggleReaderView(_ sender: Any?) {
+	func toggleReaderView() {
 		currentWebViewController?.toggleArticleExtractor()
 	}
 
@@ -474,84 +459,38 @@ final class ArticleViewController: UIViewController {
 // MARK: Find in Article
 public extension Notification.Name {
 	static let FindInArticle = Notification.Name("FindInArticle")
-	static let EndFindInArticle = Notification.Name("EndFindInArticle")
-}
-
-extension ArticleViewController: SearchBarDelegate {
-
-	func searchBar(_ searchBar: ArticleSearchBar, textDidChange searchText: String) {
-		currentWebViewController?.searchText(searchText) { found in
-			searchBar.resultsCount = found.count
-
-			if let index = found.index {
-				searchBar.selectedResult = index + 1
-			}
-		}
-	}
-
-	func doneWasPressed(_ searchBar: ArticleSearchBar) {
-		NotificationCenter.default.post(name: .EndFindInArticle, object: nil)
-	}
-
-	func nextWasPressed(_ searchBar: ArticleSearchBar) {
-		if searchBar.selectedResult < searchBar.resultsCount {
-			currentWebViewController?.selectNextSearchResult()
-			searchBar.selectedResult += 1
-		}
-	}
-
-	func previousWasPressed(_ searchBar: ArticleSearchBar) {
-		if searchBar.selectedResult > 1 {
-			currentWebViewController?.selectPreviousSearchResult()
-			searchBar.selectedResult -= 1
-		}
-	}
 }
 
 extension ArticleViewController {
 
 	@objc func beginFind(_ _: Any? = nil) {
-		searchBar.isHidden = false
-		navigationController?.setToolbarHidden(true, animated: true)
-		updateSearchBarPosition(keyboardHeight: 0)
-		searchBar.becomeFirstResponder()
+		currentWebViewController?.findInteraction?.presentFindNavigator(showingReplace: false)
 	}
 
-	@objc func endFind(_ _: Any? = nil) {
-		searchBar.resignFirstResponder()
-		searchBar.isHidden = true
-		searchBarBottomConstraint.constant = 0
-		navigationController?.setToolbarHidden(false, animated: true)
-		currentWebViewController?.additionalSafeAreaInsets.bottom = 0
-		currentWebViewController?.endSearch()
+	override func find(_ sender: Any?) {
+		beginFind()
 	}
 
-	@objc func keyboardWillChangeFrame(_ notification: Notification) {
-		if !searchBar.isHidden,
-			let window = view.window,
-			let duration = notification.userInfo?[UIWindow.keyboardAnimationDurationUserInfoKey] as? Double,
-			let curveRaw = notification.userInfo?[UIWindow.keyboardAnimationCurveUserInfoKey] as? UInt,
-			let frame = notification.userInfo?[UIWindow.keyboardFrameEndUserInfoKey] as? CGRect {
+	override func findNext(_ sender: Any?) {
+		currentWebViewController?.findInteraction?.findNext()
+	}
 
-			let curve = UIView.AnimationOptions(rawValue: curveRaw)
-			let keyboardFrame = view.convert(frame, from: window.screen.coordinateSpace)
-			let coversBottomEdge = keyboardFrame.maxY >= view.bounds.maxY
-			let newHeight = coversBottomEdge ? max(0, view.safeAreaLayoutGuide.layoutFrame.maxY - keyboardFrame.minY) : 0
-			updateSearchBarPosition(keyboardHeight: newHeight)
-			UIView.animate(withDuration: duration, delay: 0, options: curve, animations: {
-				self.view.layoutIfNeeded()
-			})
+	override func findPrevious(_ sender: Any?) {
+		currentWebViewController?.findInteraction?.findPrevious()
+	}
+
+	// The web view handles Use Selection for Find while it has focus. When this view controller
+	// has focus instead, the web view isn’t in the responder chain, so pass it along.
+	override func useSelectionForFind(_ sender: Any?) {
+		currentWebViewController?.useSelectionForFind()
+	}
+
+	override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+		if action == #selector(useSelectionForFind(_:)) {
+			return currentWebViewController?.canUseSelectionForFind ?? false
 		}
+		return super.canPerformAction(action, withSender: sender)
 	}
-
-	/// Puts the search bar above the keyboard and insets the web view to the search bar’s top.
-	private func updateSearchBarPosition(keyboardHeight: CGFloat) {
-		let searchBarBottom = keyboardHeight + Self.searchBarSpacing
-		searchBarBottomConstraint.constant = searchBarBottom
-		// The intrinsic height is correct before layout, unlike the frame right after un-hiding.
-		currentWebViewController?.additionalSafeAreaInsets.bottom = searchBarBottom + searchBar.intrinsicContentSize.height
-	}
-
 }
 
 // MARK: WebViewControllerDelegate

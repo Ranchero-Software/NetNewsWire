@@ -130,6 +130,7 @@ final class WebViewController: UIViewController {
 
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
+		findInteraction?.dismissFindNavigator()
 		// Pause in-flight media before the view goes away. Leaving a video playing during
 		// dismissal lets WebKit's full-screen entry continuation fire on a stale view
 		// hierarchy and trip a RELEASE_ASSERT in WebFullScreenManagerProxy on iOS 26.
@@ -189,6 +190,8 @@ final class WebViewController: UIViewController {
 		stopArticleExtractor()
 
 		if article != self.article {
+			// The find bar must not stay attached to the previous article.
+			findInteraction?.dismissFindNavigator()
 			self.article = article
 			// A restoration offset belongs only to the article it was saved for.
 			// <https://github.com/Ranchero-Software/NetNewsWire/issues/5243>
@@ -387,12 +390,10 @@ final class WebViewController: UIViewController {
 	}
 
 	func openInAppBrowser() {
-		guard let url = article?.preferredURL else { return }
-		if AppDefaults.useSystemBrowser {
-			UIApplication.shared.open(url, options: [:])
-		} else {
-			openURLInSafariViewController(url)
+		guard let url = article?.preferredURL else {
+			return
 		}
+		openURLInSafariViewController(url)
 	}
 }
 
@@ -1026,62 +1027,18 @@ extension WebViewController: @preconcurrency SFSafariViewControllerDelegate {
 
 // MARK: Find in Article
 
-private struct FindInArticleOptions: Codable {
-	var text: String
-	var caseSensitive = false
-	var regex = false
-}
-
-internal struct FindInArticleState: Codable {
-	struct WebViewClientRect: Codable {
-		let x: Double
-		let y: Double
-		let width: Double
-		let height: Double
-	}
-
-	struct FindInArticleResult: Codable {
-		let rects: [WebViewClientRect]
-		let bounds: WebViewClientRect
-		let index: UInt
-		let matchGroups: [String]
-	}
-
-	let index: UInt?
-	let results: [FindInArticleResult]
-	let count: UInt
-}
-
 extension WebViewController {
 
-	func searchText(_ searchText: String, completionHandler: @escaping (FindInArticleState) -> Void) {
-		guard let json = try? JSONEncoder().encode(FindInArticleOptions(text: searchText)) else {
-			return
-		}
-		let encoded = json.base64EncodedString()
-
-		webView?.evaluateJavaScript("updateFind(\"\(encoded)\")") { (result, error) in
-			guard error == nil,
-				let b64 = result as? String,
-				let rawData = Data(base64Encoded: b64),
-				let findState = try? JSONDecoder().decode(FindInArticleState.self, from: rawData) else {
-					return
-			}
-
-			completionHandler(findState)
-		}
+	var findInteraction: UIFindInteraction? {
+		return webView?.findInteraction
 	}
 
-	func endSearch() {
-		webView?.evaluateJavaScript("endFind()")
+	/// Whether the article has selected text to search for.
+	var canUseSelectionForFind: Bool {
+		webView?.canPerformAction(#selector(UIResponder.useSelectionForFind(_:)), withSender: nil) ?? false
 	}
 
-	func selectNextSearchResult() {
-		webView?.evaluateJavaScript("selectNextResult()")
+	func useSelectionForFind() {
+		webView?.useSelectionForFind(nil)
 	}
-
-	func selectPreviousSearchResult() {
-		webView?.evaluateJavaScript("selectPreviousResult()")
-	}
-
 }
