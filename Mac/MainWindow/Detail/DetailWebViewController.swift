@@ -16,6 +16,7 @@ import Images
 @MainActor protocol DetailWebViewControllerDelegate: AnyObject {
 	func mouseDidEnter(_: DetailWebViewController, link: String)
 	func mouseDidExit(_: DetailWebViewController)
+	func detailWebViewController(_ controller: DetailWebViewController, didOpenBrowserFor article: Article)
 }
 
 final class DetailWebViewController: NSViewController {
@@ -223,6 +224,9 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 	func openInBrowser(_ url: URL, flags: NSEvent.ModifierFlags) {
 		let invert = flags.contains(.shift) || flags.contains(.command)
 		Browser.open(url.absoluteString, invertPreference: invert)
+		if let article {
+			delegate?.detailWebViewController(self, didOpenBrowserFor: article)
+		}
 	}
 
 	// WKNavigationDelegate

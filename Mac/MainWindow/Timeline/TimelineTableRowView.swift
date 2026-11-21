@@ -66,4 +66,26 @@ final class TimelineTableRowView: NSTableRowView {
 		gridColor.setFill()
 		separatorRect.fill(using: .sourceOver)
 	}
+
+	// MARK: - Browser-opening feedback
+
+	private let browserOpenAnimation = TimelineTableRowViewAnimation()
+
+	func animateBrowserOpen() {
+		addSubview(browserOpenAnimation, positioned: .below, relativeTo: nil)
+
+		let estimatedSelectionBounds = self.bounds.insetBy(dx: 10, dy: 0)
+		browserOpenAnimation.play(in: estimatedSelectionBounds, cornerRadius: 10)
+	}
+
+	func clearBrowserOpenAnimation() {
+		browserOpenAnimation.removeFromSuperview()
+	}
+
+	override func viewWillMove(toWindow newWindow: NSWindow?) {
+		if newWindow == nil {
+			clearBrowserOpenAnimation()
+		}
+		super.viewWillMove(toWindow: newWindow)
+	}
 }

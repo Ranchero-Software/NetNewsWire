@@ -413,9 +413,13 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 	}
 
 	@IBAction func openArticleInBrowser(_ sender: Any?) {
-		if let link = currentLink {
-			Browser.open(link, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
+		guard let selectedArticle = self.oneSelectedArticle,
+			  let link = selectedArticle.preferredLink  else {
+			return
 		}
+
+		Browser.open(link, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
+		self.currentTimelineViewController?.animateBrowserOpen(for: selectedArticle)
 	}
 
 	@IBAction func openInBrowser(_ sender: Any?) {
@@ -434,9 +438,15 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 		if !AppDefaults.openInBrowserInBackground {
 			window?.makeKeyAndOrderFront(self)
 		}
-		if let link = currentLink {
-			Browser.open(link, inBackground: !AppDefaults.openInBrowserInBackground)
+
+		guard let selectedArticle = self.oneSelectedArticle,
+			  let link = selectedArticle.preferredLink  else {
+			return
 		}
+
+		Browser.open(link, inBackground: !AppDefaults.openInBrowserInBackground)
+		self.currentTimelineViewController?.animateBrowserOpen(for: selectedArticle)
+
 	}
 
 	@IBAction func nextUnread(_ sender: Any?) {
@@ -877,6 +887,10 @@ extension MainWindowController: ScriptingMainWindowController {
 // MARK: - DetailViewControllerDelegate
 
 extension MainWindowController: DetailViewControllerDelegate {
+
+	func detailViewController(_ controller: DetailViewController, didOpenBrowserFor article: Article) {
+		currentTimelineViewController?.animateBrowserOpen(for: article)
+	}
 
 	func detailViewController(_ detailViewController: DetailViewController, mouseoverLinkDidChange link: String?) {
 		mouseoverLink = link
