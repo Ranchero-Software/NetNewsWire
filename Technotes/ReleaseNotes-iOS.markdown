@@ -2,6 +2,16 @@
 
 ### 7.3.1 build 7244 21 Nov 2026 - branch: main tag: iOS-7.3.1-7244
 
+Changes since 7.3:
+
+Moved the Reader View button into the vertical row of buttons on Duo
+Moved the next-unread button to right below the next and previous buttons on Duo, when the buttons are in a vertical row — easier to reach with your thumb
+Stopped refreshing Reddit feeds, since Reddit no longer offers RSS feeds
+Updated the Tiqoe Dark theme — styles for primary images, enclosures, and captions, and fixes for TechCrunch, Macworld, and the-ebook-reader articles
+Fixed a bug where installing a theme from the themes gallery in Settings didn’t show the install prompt
+
+Changes since build 7243:
+
 Fixed a bug where installing a theme from the themes gallery in Settings didn’t show the install prompt
 
 ### 7.3.1 build 7243 20 Nov 2026 - branch: main tag: iOS-7.3.1-7243
