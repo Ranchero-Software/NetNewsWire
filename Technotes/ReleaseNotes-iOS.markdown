@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 7.3.1 build 7244 21 Nov 2026 - branch: main tag: iOS-7.3.1-7244
+
+Fixed a bug where installing a theme from the themes gallery in Settings didn’t show the install prompt
+
 ### 7.3.1 build 7243 20 Nov 2026 - branch: main tag: iOS-7.3.1-7243
 
 Fix (hopefully, we think) a crash related to a nil title in the navbar
