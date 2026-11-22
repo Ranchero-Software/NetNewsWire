@@ -629,7 +629,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		let title = NSLocalizedString("Mark All as Read", comment: "Command")
 		let articlesToMark = coordinator.articles
 
-		MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
+		MarkAsReadAlertController.confirm(self, confirmTitle: title, sourceType: contentView) { [weak self] in
 			self?.coordinator.markAsReadAndShowSidebar(articlesToMark)
 		}
 	}
@@ -1309,7 +1309,7 @@ extension MainFeedCollectionViewController {
 		}
 
 		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
-			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView, cancelCompletion: cancel) { [weak self] in
+			MarkAsReadAlertController.confirm(self, confirmTitle: title, sourceType: contentView, cancelCompletion: cancel) { [weak self] in
 				self?.coordinator.markAllAsRead(Array(articles), in: feed)
 				completion(true)
 			}
@@ -1393,7 +1393,7 @@ extension MainFeedCollectionViewController {
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, sidebarItem.nameForDisplay) as String
 		let action = UIAction(title: title, image: Assets.Images.markAllAsRead) { [weak self] _ in
-			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
+			MarkAsReadAlertController.confirm(self, confirmTitle: title, sourceType: contentView) { [weak self] in
 				let articles = sidebarItem.fetchUnreadArticles()
 				self?.coordinator.markAllAsRead(Array(articles), in: sidebarItem)
 			}
@@ -1410,7 +1410,7 @@ extension MainFeedCollectionViewController {
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, account.nameForDisplay) as String
 		let action = UIAction(title: title, image: Assets.Images.markAllAsRead) { [weak self] _ in
-			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
+			MarkAsReadAlertController.confirm(self, confirmTitle: title, sourceType: contentView) { [weak self] in
 				// If you don’t have this delay the screen flashes when it executes this code
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
 					let articles = account.fetchArticles(.unread())

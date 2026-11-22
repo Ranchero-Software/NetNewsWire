@@ -1610,8 +1610,8 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 	}
 
-	func showSettings(showTimelineSettings: Bool = false) {
-		let settingsView = SettingsView(showTimelineSettings: showTimelineSettings, presentingParentController: rootSplitViewController)
+	func showSettings() {
+		let settingsView = SettingsView(presentingParentController: rootSplitViewController)
 		let hostingController = UIHostingController(rootView: settingsView)
 		hostingController.modalPresentationStyle = .formSheet
 		rootSplitViewController.present(hostingController, animated: true)

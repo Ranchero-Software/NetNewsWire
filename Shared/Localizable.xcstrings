@@ -896,9 +896,6 @@
     "Mark as Read" : {
       "comment" : "Command"
     },
-    "Mark As Read" : {
-      "comment" : "Mark As Read"
-    },
     "Mark as Starred" : {
       "comment" : "Command"
     },
@@ -1793,9 +1790,6 @@
     },
     "You can enable NetNewsWire notifications in System Preferences." : {
       "comment" : "Notifications are not enabled."
-    },
-    "You can turn this confirmation off in Settings." : {
-      "comment" : "You can turn this confirmation off in Settings."
     },
     "You must have at least one active account." : {
       "comment" : "Missing active account"

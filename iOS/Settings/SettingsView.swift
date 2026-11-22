@@ -13,8 +13,6 @@ import Account
 
 struct SettingsView: View {
 
-	/// Pushes the Timeline screen on appearing, so a user can turn off the Mark All as Read confirmation.
-	let showTimelineSettings: Bool
 	/// Presents Settings, and presents what Settings hands off to after dismissing itself.
 	let presentingParentController: RootSplitViewController?
 
@@ -22,7 +20,6 @@ struct SettingsView: View {
 	@Environment(\.openURL) private var openURL
 	@State private var model = SettingsModel()
 	@State private var path = [SettingsDestination]()
-	@State private var didShowTimelineSettings = false
 	@State private var opmlAccount: Account?
 	@State private var isShowingOPMLImporter = false
 	@State private var opmlExportURL: URL?
@@ -103,12 +100,6 @@ struct SettingsView: View {
 			}
 			.navigationDestination(for: SettingsDestination.self) { destination in
 				destinationView(destination)
-			}
-		}
-		.onAppear {
-			if showTimelineSettings && !didShowTimelineSettings {
-				didShowTimelineSettings = true
-				path.append(.timeline)
 			}
 		}
 		.fileImporter(isPresented: $isShowingOPMLImporter, allowedContentTypes: Self.opmlContentTypes) { result in

@@ -17,19 +17,18 @@ extension UIBarButtonItem: MarkAsReadAlertControllerSourceType {}
 @MainActor struct MarkAsReadAlertController {
 
 	static func confirm<T>(_ controller: UIViewController?,
-	                       coordinator: SceneCoordinator?,
 	                       confirmTitle: String,
 	                       sourceType: T,
 	                       cancelCompletion: (() -> Void)? = nil,
 	                       completion: @escaping () -> Void) where T: MarkAsReadAlertControllerSourceType {
 
-		guard let controller, let coordinator else {
+		guard let controller else {
 			completion()
 			return
 		}
 
 		if AppDefaults.confirmMarkAllAsRead {
-			let alertController = MarkAsReadAlertController.alert(coordinator: coordinator, confirmTitle: confirmTitle, cancelCompletion: cancelCompletion, sourceType: sourceType) { _ in
+			let alertController = MarkAsReadAlertController.alert(confirmTitle: confirmTitle, cancelCompletion: cancelCompletion, sourceType: sourceType) { _ in
 				completion()
 			}
 			controller.present(alertController, animated: true)
@@ -38,31 +37,20 @@ extension UIBarButtonItem: MarkAsReadAlertControllerSourceType {}
 		}
 	}
 
-	private static func alert<T>(coordinator: SceneCoordinator,
-	                             confirmTitle: String,
+	private static func alert<T>(confirmTitle: String,
 	                             cancelCompletion: (() -> Void)?,
 	                             sourceType: T,
 	                             completion: @escaping (UIAlertAction) -> Void) -> UIAlertController where T: MarkAsReadAlertControllerSourceType {
 
-		let title = NSLocalizedString("Mark As Read", comment: "Mark As Read")
-		let message = NSLocalizedString("You can turn this confirmation off in Settings.",
-										comment: "You can turn this confirmation off in Settings.")
 		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel button")
-		let settingsTitle = NSLocalizedString("Open Settings", comment: "Open Settings button")
 
-		let alertController = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
+		let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 		let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel) { _ in
 			cancelCompletion?()
-		}
-		let settingsAction = UIAlertAction(title: settingsTitle, style: .default) { _ in
-			Task { @MainActor in
-				coordinator.showSettings(showTimelineSettings: true)
-			}
 		}
 		let markAction = UIAlertAction(title: confirmTitle, style: .default, handler: completion)
 
 		alertController.addAction(markAction)
-		alertController.addAction(settingsAction)
 		alertController.addAction(cancelAction)
 
 		if let barButtonItem = sourceType as? UIBarButtonItem {
