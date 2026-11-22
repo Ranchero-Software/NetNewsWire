@@ -498,7 +498,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	// MARK: - Actions
 
 	@objc func openArticleInBrowser(_ sender: Any?) {
-		let modifierFlags = NSApp.currentEvent?.modifierFlags ?? []
+		let modifierFlags = NSEvent.modifierFlags
 
 		if (sender as? NSTableView) === tableView {
 			// Two selection-changing clicks can land fast enough to count as a double-click.
