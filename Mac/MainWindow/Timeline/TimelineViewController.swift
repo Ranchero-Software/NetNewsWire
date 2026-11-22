@@ -498,6 +498,17 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	// MARK: - Actions
 
 	@objc func openArticleInBrowser(_ sender: Any?) {
+		let modifierFlags = NSApp.currentEvent?.modifierFlags ?? []
+
+		if (sender as? NSTableView) === tableView {
+			// Two selection-changing clicks can land fast enough to count as a double-click.
+			let togglesSelection = modifierFlags.contains(.command)
+			let extendsSelection = modifierFlags.contains(.shift) && selectedArticles.count > 1
+			guard !togglesSelection && !extendsSelection else {
+				return
+			}
+		}
+
 		let article: Article?
 
 		if let tableView = sender as? NSTableView, tableView === self.tableView, let clickedArticle = articles.articleAtRow(tableView.clickedRow) {
@@ -510,7 +521,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 
 		if let link = article?.preferredLink {
-			Browser.open(link, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
+			Browser.open(link, invertPreference: modifierFlags.contains(.shift))
 		}
 	}
 
