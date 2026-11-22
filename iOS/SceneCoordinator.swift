@@ -705,8 +705,10 @@ struct SidebarItemNode: Hashable, Sendable {
 				  return
 			  }
 		DispatchQueue.main.async {
-			let title = NSLocalizedString("Theme Error", comment: "Theme download error")
-			self.rootSplitViewController.presentError(title: title, message: ArticleThemesManager.importErrorMessage(for: error))
+			self.withFrontmostController { controller in
+				let title = NSLocalizedString("Theme Error", comment: "Theme download error")
+				controller.presentError(title: title, message: ArticleThemesManager.importErrorMessage(for: error))
+			}
 		}
 	}
 
@@ -1778,12 +1780,13 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func importTheme(filename: String) {
-		do {
-			try ArticleThemeImporter.importTheme(controller: rootSplitViewController, url: URL(fileURLWithPath: filename))
-		} catch {
-			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
+		withFrontmostController { controller in
+			do {
+				try ArticleThemeImporter.importTheme(controller: controller, url: URL(fileURLWithPath: filename))
+			} catch {
+				NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
+			}
 		}
-
 	}
 
 	/// This will dismiss the foremost view controller if the user
@@ -1952,6 +1955,23 @@ private extension SceneCoordinator {
 			// Forward navigation — push the destination column onto the stack.
 			rootSplitViewController.showColumn(column, bypassDisplayModeRestriction: true)
 			focusWhenTransitionCompletes(in: navController, thenFocus: focus)
+		}
+	}
+
+	/// Calls `handler` with the frontmost presented controller (such as Settings), so
+	/// alerts can be presented over it. Waits for any presentation transition to finish.
+	func withFrontmostController(_ handler: @escaping @MainActor (UIViewController) -> Void) {
+		var controller: UIViewController = rootSplitViewController
+		while let presentedController = controller.presentedViewController, !presentedController.isBeingDismissed {
+			controller = presentedController
+		}
+
+		if let transitionCoordinator = controller.transitionCoordinator {
+			transitionCoordinator.animate(alongsideTransition: nil) { _ in
+				handler(controller)
+			}
+		} else {
+			handler(controller)
 		}
 	}
 

@@ -57,6 +57,9 @@ struct ArticleThemesView: View {
 				SafariView(url: themesGalleryURL)
 			}
 		}
+		.onReceive(NotificationCenter.default.publisher(for: .didBeginDownloadingTheme)) { _ in
+			isShowingThemesGallery = false
+		}
 		.alert(String(localized: "Delete Theme?", comment: "Delete Theme"), isPresented: isShowingDeleteThemeConfirmation, presenting: themeNamePendingDeletion) { themeName in
 			Button(String(localized: "Cancel", comment: "Cancel button"), role: .cancel) {
 			}

@@ -123,6 +123,9 @@ struct SettingsView: View {
 				SafariView(url: safariURL)
 			}
 		}
+		.onReceive(NotificationCenter.default.publisher(for: .didBeginDownloadingTheme)) { _ in
+			safariURL = nil
+		}
 		.alert(alert?.title ?? "", isPresented: isShowingAlert, presenting: alert) { _ in
 			Button(NSLocalizedString("OK", comment: "OK button")) {
 			}
