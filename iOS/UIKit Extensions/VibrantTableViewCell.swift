@@ -19,6 +19,10 @@ class VibrantTableViewCell: UITableViewCell {
 		return isHighlighted || isSelected ? Assets.Colors.vibrantText : UIColor.label
 	}
 
+	var iconTint: UIColor {
+		isHighlighted || isSelected ? labelColor : Assets.Colors.primaryAccent
+	}
+
 	var secondaryLabelColor: UIColor {
 		if selectionStyle == .none {
 			return UIColor.secondaryLabel
@@ -50,8 +54,7 @@ class VibrantTableViewCell: UITableViewCell {
 		updateVibrancy(animated: animated)
 	}
 
-	/// Subclass overrides should call super
-	func applyThemeProperties() {
+	private func applyThemeProperties() {
 		let selectedBackgroundView = UIView(frame: .zero)
 		selectedBackgroundView.backgroundColor = Assets.Colors.secondaryAccent
 		self.selectedBackgroundView = selectedBackgroundView
@@ -61,6 +64,21 @@ class VibrantTableViewCell: UITableViewCell {
 	func updateVibrancy(animated: Bool) {
 		updateLabelVibrancy(textLabel, color: labelColor, animated: animated)
 		updateLabelVibrancy(detailTextLabel, color: labelColor, animated: animated)
+		updateImageViewVibrancy(animated: animated)
+	}
+
+	private func updateImageViewVibrancy(animated: Bool) {
+		guard let imageView else {
+			return
+		}
+		let color = iconTint
+		if animated {
+			UIView.animate(withDuration: Self.duration) {
+				imageView.tintColor = color
+			}
+		} else {
+			imageView.tintColor = color
+		}
 	}
 
 	func updateLabelVibrancy(_ label: UILabel?, color: UIColor, animated: Bool) {
@@ -84,10 +102,6 @@ class VibrantBasicTableViewCell: VibrantTableViewCell {
 
 	@IBInspectable var imageNormal: UIImage?
 	@IBInspectable var imageSelected: UIImage?
-
-	var iconTint: UIColor {
-		return isHighlighted || isSelected ? labelColor : Assets.Colors.primaryAccent
-	}
 
 	var iconImage: UIImage? {
 		return isHighlighted || isSelected ? imageSelected : imageNormal

@@ -100,8 +100,13 @@ extension Notification.Name {
 		}
 	}
 
-	/// False when offline or in Low Data Mode.
+	/// False when offline. Low Data Mode doesn’t stop thumbnail downloads.
 	static var networkAllowsDownloads: Bool {
+		NetworkMonitor.shared.isConnected
+	}
+
+	/// False when offline or in Low Data Mode.
+	static var networkAllowsRevalidation: Bool {
 		NetworkMonitor.shared.isConnected && !NetworkMonitor.shared.isConstrained
 	}
 
@@ -269,16 +274,14 @@ private extension DownloadedImageCache {
 
 	func downloadImageFromNetwork(_ url: String, maximumByteCount: Int?, isIcon: Bool, activityOwner: ActivityOwner?, activityKind: ActivityKind?, activityDetail: String?) async -> Result<Data, ImageDownloadError> {
 		let activityLog = ActivityLog.shared
-		// Thumbnails log only failures, since a few screens of scrolling would otherwise push out the rest of the log.
-		let logsOnlyFailure = activityOwner == .thumbnailDownloader
-		if !logsOnlyFailure, let activityOwner, let activityKind {
+		if let activityOwner, let activityKind {
 			activityLog.createActivity(owner: activityOwner, kind: activityKind, detail: activityDetail)
 			activityLog.didStart(activityOwner, kind: activityKind)
 		}
 
 		do {
 			let (data, downloadResponse) = try await downloadImage(url, maximumByteCount: maximumByteCount, isIcon: isIcon)
-			if !logsOnlyFailure, let activityOwner, let activityKind {
+			if let activityOwner, let activityKind {
 				let message = downloadResponse.data.map(ActivityLog.dataSizeMessage)
 				activityLog.didComplete(activityOwner, kind: activityKind, message: message, returnedFromCache: downloadResponse.returnedFromCache)
 			}
@@ -286,9 +289,6 @@ private extension DownloadedImageCache {
 			return .success(data)
 		} catch {
 			if let activityOwner, let activityKind {
-				if logsOnlyFailure {
-					activityLog.createActivity(owner: activityOwner, kind: activityKind, detail: activityDetail)
-				}
 				activityLog.didFail(activityOwner, kind: activityKind, error: error)
 			}
 			if error.rejectedByteCount != nil {
@@ -379,7 +379,7 @@ private extension DownloadedImageCache {
 	/// Doesn’t use the download queue, since icons aren’t limited either.
 	/// A network that doesn’t allow downloads, a retry wait, or a network error leaves `nextCheck` as is, so the next day’s use tries again.
 	func revalidateIfDue(_ url: String) async {
-		guard Self.networkAllowsDownloads, !isWaitingToRetry(url) else {
+		guard Self.networkAllowsRevalidation, !isWaitingToRetry(url) else {
 			return
 		}
 		// Not <=, which is back-deployed and crashes on iOS 27.2 betas.

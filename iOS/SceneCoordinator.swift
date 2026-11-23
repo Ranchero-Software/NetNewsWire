@@ -11,6 +11,7 @@ import os
 import UserNotifications
 import Account
 import Articles
+import ErrorLog
 import RSCore
 import RSTree
 import SafariServices
@@ -704,8 +705,10 @@ struct SidebarItemNode: Hashable, Sendable {
 				  return
 			  }
 		DispatchQueue.main.async {
-			let title = NSLocalizedString("Theme Error", comment: "Theme download error")
-			self.rootSplitViewController.presentError(title: title, message: ArticleThemesManager.importErrorMessage(for: error))
+			self.withFrontmostController { controller in
+				let title = NSLocalizedString("Theme Error", comment: "Theme download error")
+				controller.presentError(title: title, message: ArticleThemesManager.importErrorMessage(for: error))
+			}
 		}
 	}
 
@@ -1205,6 +1208,7 @@ struct SidebarItemNode: Hashable, Sendable {
 
 	func selectArticle(_ article: Article?, animations: Animations = [], isShowingExtractedArticle: Bool? = nil, articleWindowScrollY: Int? = nil) {
 		guard article != currentArticle else {
+			reportIgnoredSelection(of: article)
 			return
 		}
 
@@ -1236,6 +1240,30 @@ struct SidebarItemNode: Hashable, Sendable {
 		if let isShowingExtractedArticle = isShowingExtractedArticle, let articleWindowScrollY = articleWindowScrollY {
 			articleViewController?.restoreScrollPosition = (isShowingExtractedArticle, articleWindowScrollY)
 		}
+	}
+
+	/// Selecting the current article while the article view isn’t showing does nothing, which is never expected.
+	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/5516>
+	private func reportIgnoredSelection(of article: Article?) {
+		guard let article, isRootSplitCollapsed, !isArticleViewControllerShowing else {
+			return
+		}
+
+		let selectedItemCount = mainTimelineViewController?.collectionView?.indexPathsForSelectedItems?.count ?? 0
+		let navigationStackDepth = mainTimelineViewController?.navigationController?.viewControllers.count ?? 0
+		let message = """
+		Selection ignored because the article is already the current article.
+		Article: \(article.title ?? "(no title)") [\(article.articleID)]
+		Feed: \(article.feed?.nameForDisplay ?? "(unknown)")
+		Timeline: \(timelineFeed?.nameForDisplay ?? "(none)")
+		isArticleViewControllerPending: \(isArticleViewControllerPending)
+		isRestoringState: \(isRestoringState)
+		isNavigationDisabled: \(isNavigationDisabled)
+		Navigation stack depth: \(navigationStackDepth)
+		Selected item count: \(selectedItemCount)
+		"""
+		let userInfo = ErrorLogUserInfoKey.userInfo(sourceName: "Timeline", sourceID: 102, operation: "Selecting article", errorMessage: message)
+		NotificationCenter.default.post(name: .appDidEncounterError, object: nil, userInfo: userInfo)
 	}
 
 	func beginSearching() {
@@ -1582,13 +1610,11 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 	}
 
-	func showSettings(scrollToArticlesSection: Bool = false) {
-		let settingsNavController = UIStoryboard.settings.instantiateInitialViewController() as! UINavigationController
-		let settingsViewController = settingsNavController.topViewController as! SettingsViewController
-		settingsViewController.scrollToArticlesSection = scrollToArticlesSection
-		settingsNavController.modalPresentationStyle = .formSheet
-		settingsViewController.presentingParentController = rootSplitViewController
-		rootSplitViewController.present(settingsNavController, animated: true)
+	func showSettings() {
+		let settingsView = SettingsView(presentingParentController: rootSplitViewController)
+		let hostingController = UIHostingController(rootView: settingsView)
+		hostingController.modalPresentationStyle = .formSheet
+		rootSplitViewController.present(hostingController, animated: true)
 	}
 
 	func showCurrentActivity() {
@@ -1601,14 +1627,10 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func showAccountInspector(for account: Account) {
-		let accountInspectorNavController =
-			UIStoryboard.inspector.instantiateViewController(identifier: "AccountInspectorNavigationViewController") as! UINavigationController
-		let accountInspectorController = accountInspectorNavController.topViewController as! AccountInspectorViewController
-		accountInspectorNavController.modalPresentationStyle = .formSheet
-		accountInspectorNavController.preferredContentSize = UIViewController.formSheetSize
-		accountInspectorController.isModal = true
-		accountInspectorController.account = account
-		rootSplitViewController.present(accountInspectorNavController, animated: true)
+		let hostingController = UIHostingController(rootView: NavigationStack { AccountInspectorView(account: account, isModal: true) })
+		hostingController.modalPresentationStyle = .formSheet
+		hostingController.preferredContentSize = UIViewController.formSheetSize
+		rootSplitViewController.present(hostingController, animated: true)
 	}
 
 	func showNotificationInspector(for account: Account) {
@@ -1758,12 +1780,13 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func importTheme(filename: String) {
-		do {
-			try ArticleThemeImporter.importTheme(controller: rootSplitViewController, url: URL(fileURLWithPath: filename))
-		} catch {
-			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
+		withFrontmostController { controller in
+			do {
+				try ArticleThemeImporter.importTheme(controller: controller, url: URL(fileURLWithPath: filename))
+			} catch {
+				NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
+			}
 		}
-
 	}
 
 	/// This will dismiss the foremost view controller if the user
@@ -1771,7 +1794,7 @@ struct SidebarItemNode: Hashable, Sendable {
 	/// selecting an article via a notification).
 	///
 	/// The dismiss is only applicable if the view controller is a
-	/// `SFSafariViewController` or `SettingsViewController`,
+	/// `SFSafariViewController` or Settings,
 	/// otherwise, this function does nothing.
 	func dismissIfLaunchingFromExternalAction() {
 		guard let presentedController = mainFeedCollectionViewController.presentedViewController else {
@@ -1781,10 +1804,10 @@ struct SidebarItemNode: Hashable, Sendable {
 		if presentedController.isKind(of: SFSafariViewController.self) {
 			presentedController.dismiss(animated: true, completion: nil)
 		}
-		guard let settings = presentedController.children.first as? SettingsViewController else {
+		guard presentedController is UIHostingController<SettingsView> else {
 			return
 		}
-		settings.dismiss(animated: true, completion: nil)
+		presentedController.dismiss(animated: true, completion: nil)
 	}
 
 }
@@ -1817,7 +1840,13 @@ extension SceneCoordinator: UISplitViewControllerDelegate {
 	}
 
 	func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
-		AppDefaults.splitViewPreferredDisplayMode = displayMode.rawValue
+		// Save only user-initiated changes. UIKit also changes the display mode during
+		// rotation, window resizes, and background snapshots, and those must not be saved.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5524>
+		let isSceneActive = svc.view.window?.windowScene?.activationState == .foregroundActive
+		if isSceneActive && !svc.isCollapsed && !rootSplitViewController.isTransitioningSize {
+			AppDefaults.splitViewPreferredDisplayMode = displayMode.rawValue
+		}
 		mainTimelineViewController?.updateToolbarProgressView(for: displayMode)
 	}
 
@@ -1926,6 +1955,23 @@ private extension SceneCoordinator {
 			// Forward navigation — push the destination column onto the stack.
 			rootSplitViewController.showColumn(column, bypassDisplayModeRestriction: true)
 			focusWhenTransitionCompletes(in: navController, thenFocus: focus)
+		}
+	}
+
+	/// Calls `handler` with the frontmost presented controller (such as Settings), so
+	/// alerts can be presented over it. Waits for any presentation transition to finish.
+	func withFrontmostController(_ handler: @escaping @MainActor (UIViewController) -> Void) {
+		var controller: UIViewController = rootSplitViewController
+		while let presentedController = controller.presentedViewController, !presentedController.isBeingDismissed {
+			controller = presentedController
+		}
+
+		if let transitionCoordinator = controller.transitionCoordinator {
+			transitionCoordinator.animate(alongsideTransition: nil) { _ in
+				handler(controller)
+			}
+		} else {
+			handler(controller)
 		}
 	}
 

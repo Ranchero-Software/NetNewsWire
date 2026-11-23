@@ -101,8 +101,20 @@ struct DinosaursView: View {
 				helpLinkFooter
 			}
 		}
-		.navigationTitle("🦖 Dinosaurs")
+		.navigationTitle(Text("Dinosaurs", comment: "Dinosaurs"))
 		.navigationBarTitleDisplayMode(.inline)
+		.toolbar {
+			ToolbarItem(placement: .principal) {
+				HStack {
+					Image(uiImage: Assets.Images.settingsDinosaurs)
+						.renderingMode(.template)
+						.foregroundStyle(Color(uiColor: Assets.Colors.primaryAccent))
+						.accessibilityHidden(true)
+					Text("Dinosaurs", comment: "Dinosaurs")
+						.font(.headline)
+				}
+			}
+		}
 		.task {
 			model.sortBy(.lastArticleDate, ascending: true)
 			await model.refresh()

@@ -17,6 +17,7 @@ enum HelpURL: String {
 	case githubRepo = "https://github.com/Ranchero-Software/NetNewsWire"
 	case bugTracker = "https://github.com/Ranchero-Software/NetNewsWire/issues"
 	case discourse = "https://discourse.netnewswire.com/"
+	case themesGallery = "https://dave-atx.github.io/nnw-theme-marketplace/"
 	case technotes = "https://github.com/Ranchero-Software/NetNewsWire/tree/main/Technotes"
 	case privacyPolicy = "https://netnewswire.com/privacypolicy.html"
 

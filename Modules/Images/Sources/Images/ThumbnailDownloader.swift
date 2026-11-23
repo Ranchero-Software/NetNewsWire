@@ -78,23 +78,23 @@ public enum ThumbnailMode: String, Sendable, CaseIterable {
 		DownloadedImageCache.networkAllowsDownloads
 	}
 
-	/// `url` is from `ArticleThumbnailFinder.thumbnailURL(for:mode:)`. `articleTitle` is shown in the activity log when the download fails.
+	/// `url` is from `ArticleThumbnailFinder.thumbnailURL(for:mode:)`. `feedName` and `articleTitle` are shown in the activity log.
 	/// Nil when the image isn’t ready. Starts a download when needed and posts
 	/// `.thumbnailDidBecomeAvailable` once the image is ready.
-	public func thumbnail(url: String, mode: ThumbnailMode, articleTitle: String?) -> RSImage? {
+	public func thumbnail(url: String, mode: ThumbnailMode, feedName: String?, articleTitle: String?) -> RSImage? {
 		if let image = imageCache.object(forKey: Self.cacheKey(url, mode)) {
 			DownloadedImageCache.shared.imageWasUsed(url, checksForUpdates: false)
 			return image
 		}
-		findImage(url, mode: mode, activityDetail: articleTitle)
+		findImage(url, mode: mode, activityDetail: Self.activityDetail(feedName: feedName, articleTitle: articleTitle))
 		return nil
 	}
 
 	/// The image as downloaded, for the article view, which shows the thumbnail image at full size.
 	/// Shares the timeline’s copy and any download in progress, so the image is downloaded once.
 	/// A download starts right away rather than waiting behind timeline downloads.
-	public func fullSizeImageData(url: String, articleTitle: String?) async throws(ImageDownloadError) -> Data {
-		try await DownloadedImageCache.shared.imageData(for: url, usesDownloadQueue: false, checksForUpdates: false, activityOwner: .thumbnailDownloader, activityKind: .downloadThumbnail(imageURL: url), activityDetail: articleTitle)
+	public func fullSizeImageData(url: String, feedName: String?, articleTitle: String?) async throws(ImageDownloadError) -> Data {
+		try await DownloadedImageCache.shared.imageData(for: url, usesDownloadQueue: false, checksForUpdates: false, activityOwner: .thumbnailDownloader, activityKind: .downloadThumbnail(imageURL: url), activityDetail: Self.activityDetail(feedName: feedName, articleTitle: articleTitle))
 	}
 
 	// MARK: - Notifications
@@ -106,6 +106,16 @@ public enum ThumbnailMode: String, Sendable, CaseIterable {
 }
 
 private extension ThumbnailDownloader {
+
+	/// Starts with a dash to separate it from the image URL that precedes it in the log.
+	static func activityDetail(feedName: String?, articleTitle: String?) -> String? {
+		let quotedTitle = articleTitle.map { "“\($0)”" }
+		let parts = [feedName, quotedTitle].compactMap { $0 }
+		guard !parts.isEmpty else {
+			return nil
+		}
+		return "- " + parts.joined(separator: ": ")
+	}
 
 	/// The same URL can be cached at both sizes.
 	static func cacheKey(_ url: String, _ mode: ThumbnailMode) -> NSString {

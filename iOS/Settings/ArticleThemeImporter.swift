@@ -7,7 +7,12 @@
 //
 
 import UIKit
+import UniformTypeIdentifiers
 import RSWeb
+
+extension UTType {
+	static var netNewsWireTheme: UTType { UTType(importedAs: "com.ranchero.netnewswire.theme") }
+}
 
 @MainActor struct ArticleThemeImporter {
 

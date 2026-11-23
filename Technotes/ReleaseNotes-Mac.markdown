@@ -1,5 +1,87 @@
 # Mac Release Notes
 
+### 7.3.1 7242 19 Nov 2026 - branch: main tag: mac-7.3.1
+
+Same as 7.3.1b1 — just bumped the version.
+
+Changes since 7.3:
+
+Fixed bug where smart feeds might not appear in the sidebar
+Stopped refreshing Reddit feeds, since Reddit no longer offers RSS feeds
+Renamed the feed notification setting to Notify About New Articles, in the inspector and in the sidebar’s contextual menu
+Changed the Create button to Add when adding a Feedbin, NewsBlur, or Reader API account
+Updated the Tiqoe Dark theme — styles for primary images, enclosures, and captions, and fixes for TechCrunch, Macworld, and the-ebook-reader articles
+
+### 7.3.1b1 7240 18 Nov 2026 - branch: main tag: mac-7.3.1b1
+
+Fixed bug where smart feeds might not appear in the sidebar
+Stopped refreshing Reddit feeds, since Reddit no longer offers RSS feeds
+Renamed the feed notification setting to Notify About New Articles, in the inspector and in the sidebar’s contextual menu
+Changed the Create button to Add when adding a Feedbin, NewsBlur, or Reader API account
+Updated the Tiqoe Dark theme — styles for primary images, enclosures, and captions, and fixes for TechCrunch, Macworld, and the-ebook-reader articles
+
+### 7.3 7239 17 Nov 2026 - branch: main tag: mac-7.3
+
+Same as 7.3b9 — just bumped the version.
+
+Changes since 7.2.1:
+
+Restored the status bar from NetNewsWire of Yore (NetNewsWire 1-3) pretty much exactly. Show and hide it via the View menu. Status bar includes a gear menu for various commands, a status report next to it (click to change what’s shown), current URL, and Themes menu. Clicking the progress indicator during a refresh opens the Current Activity window
+Added an Appearance settings pane — appearance (system, light, or dark), sidebar text size, sidebar icons, which smart feeds to show (Today, All Unread, Starred), and the article theme and text size (moved from General)
+Added a Timeline settings pane — text size, feed icons (automatic, always, or never), feed icon size, thumbnails, rows (full title with no preview, or title and preview in 1 to 6 lines), separators, fading read articles, and showing the feed name and date above the title (on by default)
+Added a Grayscale icons setting to Settings > Appearance — for feed icons and author avatars (article thumbnails stay in color)
+Made separators a regular setting (it was a hidden preference) — your existing choice carries over
+Reorganized the View menu into sections — sidebar, timeline, status bar, and toolbar
+Added a Themes Gallery command to the Help menu, and renamed Discourse Forum to NetNewsWire Forum
+Made the main window’s split view dividers a little darker in light mode
+Added article thumbnails to the timeline — choose large or small in Settings > Timeline. Default is none. (Works in standard layout but not column layout)
+Made rows fit their content (variable row heights) in the timeline
+Made timeline rows always show the author or feed name, instead of leaving that spot empty
+Fixed bug where the last article in the timeline had a separator below it
+Added support for enclosures and Media RSS
+Added enclosures to the article view — you can see images from Mastodon feeds, play an MP3 or video, etc.
+Made YouTube enclosures play in the privacy-enhanced YouTube player (youtube-nocookie.com)
+Made the article view show plain text or media:description when an article has no HTML content
+Used an item’s only Gravatar as its author’s avatar, even when the author name is a username
+Made image downloading kinder to servers — honors Retry-After, waits after errors, and limits downloads to two at a time per host
+Added Gray theme — inspired by newsprint design but not meant to be a literal copy
+Added Plum theme — uses the same layout as the Gray theme but with color
+Added [[primary_media]] and [[enclosures]] tags for themes — primary_media is the article’s main image, video, or audio from the feed, when the article’s HTML doesn’t already include it
+Allowed themes to include a template7.3.html file, which is used in 7.3 and later instead of template.html
+Added an optional grayscaleIcon key to theme Info.plist files — when true, the feed icon or author avatar in the article view is grayscale. The Gray theme uses this new feature
+Updated the built-in themes to use [[primary_media]] and [[enclosures]]
+Added netnewswire, feed, feeds, and x-netnewswire-feed as allowed link schemes in the article view — so clicking a link to install a theme (for instance) works
+Fixed extra vertical space in MacRumors articles
+Fixed inline footnotes in FreshRSS articles
+Fixed embedded YouTube videos (and other iframes) not loading on sites that use Optimole lazy loading
+Fixed blog.rust-lang.org articles — JavaScript is turned off for them, and their noscript content is shown
+Fixed footnote popover positioning near the edge of the article view and after resizing the window on Duo
+Fixed bug where deleting a feed could remove the wrong row (usually the next row) from the sidebar
+Fixed bug where restoring with no article selected, then clicking an article, would auto-scroll the article view
+Fixed bug where double-clicking an article in an inactive window could open the wrong article
+Made double-clicking an article in an inactive window mark it as read
+
+### 7.3b9 7237 16 Nov 2026 - branch: main tag: mac-7.3b9
+
+Added Open Themes Folder and Open Themes Gallery commands to the bottom of the themes menu in the status bar
+Added a Themes Gallery command to the Help menu, and renamed Discourse Forum to NetNewsWire Forum
+Made the filename of an audio enclosure a link — it’s underlined in the Default, Gray, Plum, and Verdana Revival themes
+Fixed duplicate images in brettterpstra.com articles
+Skipped Blogger’s tiny thumbnail as an article’s primary image
+Allowed thumbnail downloading in Low Data Mode
+Made the activity log show every thumbnail download (not just failures), with the feed name and article title
+Fixed bug where double-clicking an article in an inactive window could open the wrong article
+Made double-clicking an article in an inactive window mark it as read
+
+### 7.3b8 7235 11 Nov 2026 - branch: main tag: mac-7.3b8
+
+Added Gray theme — inspired by newsprint design but not meant to be a literal copy
+Added Plum theme — uses the same layout as the Gray theme but with color
+Added an optional grayscaleIcon key to theme Info.plist files — when true, the feed icon or author avatar in the article view is grayscale. The Gray theme uses this new feature
+Fixed a crash in the timeline (too many layout passes) caused by row-height measurement mixing up same articles from different accounts
+Fixed bug where deleting a feed could remove the wrong row (usually the next row) from the sidebar
+Fixed bug where restoring with no article selected, then clicking an article, would auto-scroll the article view
+
 ### 7.3b7 7234 9 Nov 2026 - branch: main tag: mac-7.3b7
 
 Make image cache eviction less aggressive, which should fix a loop where images get evicted, re-cached, evicted, re-cached, etc. (See this Discourse forum post <https://discourse.netnewswire.com/t/favicons-disappear-in-7-3b3/481>.)

@@ -1,5 +1,5 @@
 //
-//  TimelineCustomizerCollectionViewController.swift
+//  TimelineSettingsViewController.swift
 //  NetNewsWire-iOS
 //
 //  Created by Stuart Breckenridge on 27/01/2026.
@@ -10,10 +10,11 @@ import UIKit
 import Articles
 import Images
 
-class TimelineCustomizerCollectionViewController: UICollectionViewController {
+final class TimelineSettingsViewController: UICollectionViewController {
 
 	private enum Section: Int, CaseIterable {
-		case options
+		case general
+		case layout
 		case preview
 		case previewWithThumbnail
 		case previewWithFeedIcon
@@ -30,8 +31,16 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 		}
 	}
 
+	private enum GeneralRow: Int, CaseIterable {
+		case sortOrder
+		case groupByFeed
+		case refreshClearsReadArticles
+		case confirmMarkAllAsRead
+		case showPreviewInContextMenu
+	}
+
 	/// Same order as the Mac Timeline settings.
-	private enum OptionsRow: Int, CaseIterable {
+	private enum LayoutRow: Int, CaseIterable {
 		case feedIcons
 		case feedIconSize
 		case thumbnails
@@ -73,13 +82,26 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 	}
 
 	// Created up front, since UIKit disallows creating a registration in cellForItemAt.
-	private let optionsCellRegistration = UICollectionView.CellRegistration<TimelineCustomizerOptionsCell, OptionsRow> { cell, _, optionsRow in
-		TimelineCustomizerCollectionViewController.configureOptionsCell(cell, optionsRow: optionsRow)
+	private let generalCellRegistration = UICollectionView.CellRegistration<TimelineSettingsOptionsCell, GeneralRow> { cell, _, generalRow in
+		TimelineSettingsViewController.configureGeneralCell(cell, generalRow: generalRow)
+	}
+
+	private let layoutCellRegistration = UICollectionView.CellRegistration<TimelineSettingsOptionsCell, LayoutRow> { cell, _, layoutRow in
+		TimelineSettingsViewController.configureLayoutCell(cell, layoutRow: layoutRow)
+	}
+
+	init() {
+		// The layout is replaced in configureCollectionView.
+		super.init(collectionViewLayout: UICollectionViewFlowLayout())
+	}
+
+	required init?(coder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
 	}
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		title = NSLocalizedString("Timeline Layout", comment: "Timeline Layout")
+		title = NSLocalizedString("Timeline", comment: "Timeline")
 
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFeedIconsDisplayDidChange(_:)), name: .timelineFeedIconsDisplayDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineIconSizeDidChange(_:)), name: .timelineIconSizeDidChange, object: nil)
@@ -93,6 +115,8 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 	}
 
 	private func configureCollectionView() {
+		collectionView.backgroundColor = .systemBackground
+
 		collectionView.register(
 			TimelineHeaderView.self,
 			forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
@@ -103,9 +127,10 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 
 		let layout = UICollectionViewCompositionalLayout { sectionIndex, layoutEnvironment in
 			var config = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
-			config.showsSeparators = false
-			let isHidden = Self.isHidden(Section(rawValue: sectionIndex))
-			config.headerMode = isHidden ? .none : .supplementary
+			let sectionID = Section(rawValue: sectionIndex)
+			config.showsSeparators = sectionID == .general || sectionID == .layout
+			let isHidden = Self.isHidden(sectionID)
+			config.headerMode = (isHidden || sectionID == .general) ? .none : .supplementary
 			let section = NSCollectionLayoutSection.list(using: config, layoutEnvironment: layoutEnvironment)
 			if isHidden {
 				// An empty section still has insets, which would leave a gap.
@@ -128,8 +153,11 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 		if Self.isHidden(section) {
 			return 0
 		}
-		if section == .options {
-			return OptionsRow.allCases.count
+		if section == .general {
+			return GeneralRow.allCases.count
+		}
+		if section == .layout {
+			return LayoutRow.allCases.count
 		}
 		return 1
 	}
@@ -137,9 +165,12 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 	override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 
 		switch Section(rawValue: indexPath.section) {
-		case .options:
-			let optionsRow = OptionsRow(rawValue: indexPath.item) ?? .feedIcons
-			return collectionView.dequeueConfiguredReusableCell(using: optionsCellRegistration, for: indexPath, item: optionsRow)
+		case .general:
+			let generalRow = GeneralRow(rawValue: indexPath.item) ?? .sortOrder
+			return collectionView.dequeueConfiguredReusableCell(using: generalCellRegistration, for: indexPath, item: generalRow)
+		case .layout:
+			let layoutRow = LayoutRow(rawValue: indexPath.item) ?? .feedIcons
+			return collectionView.dequeueConfiguredReusableCell(using: layoutCellRegistration, for: indexPath, item: layoutRow)
 		case .preview, .previewWithThumbnail, .previewWithFeedIcon, .previewWithFeedIconAndThumbnail:
 			return previewCell(section: Section(rawValue: indexPath.section) ?? .preview, indexPath: indexPath)
 		case .none:
@@ -165,7 +196,9 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 		switch Section(rawValue: indexPath.section) {
 		case .preview, .previewWithThumbnail, .previewWithFeedIcon, .previewWithFeedIconAndThumbnail:
 			header.label.text = Self.previewHeaderTitle(Section(rawValue: indexPath.section) ?? .preview)
-		case .options, .none:
+		case .layout:
+			header.label.text = NSLocalizedString("Layout", comment: "Layout")
+		case .general, .none:
 			header.label.text = nil
 		}
 		return header
@@ -183,37 +216,37 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 	// MARK: Notifications
 
 	@objc func handleTimelineFeedIconsDisplayDidChange(_ notification: Notification) {
-		reloadOptionsRowsAndPreviews()
+		reloadLayoutRowsAndPreviews()
 	}
 
 	@objc func handleTimelineIconSizeDidChange(_ notification: Notification) {
-		reloadOptionsRowsAndPreviews()
+		reloadLayoutRowsAndPreviews()
 	}
 
 	@objc func handleTimelineThumbnailsDisplayDidChange(_ notification: Notification) {
-		reloadOptionsRowsAndPreviews()
+		reloadLayoutRowsAndPreviews()
 	}
 
 	@objc func handleTimelineNumberOfLinesDidChange(_ notification: Notification) {
-		reloadOptionsRowsAndPreviews()
+		reloadLayoutRowsAndPreviews()
 	}
 
 	@objc func handleTimelineShowFullTitlesDidChange(_ notification: Notification) {
-		reloadOptionsRowsAndPreviews()
+		reloadLayoutRowsAndPreviews()
 	}
 
 	@objc func handleTimelineFadeReadArticlesDidChange(_ notification: Notification) {
-		reloadOptionsRowsAndPreviews()
+		reloadLayoutRowsAndPreviews()
 	}
 
 	@objc func handleTimelineFeedNameAndDateAboveTitleDidChange(_ notification: Notification) {
-		reloadOptionsRowsAndPreviews()
+		reloadLayoutRowsAndPreviews()
 	}
 }
 
 // MARK: - Private
 
-private extension TimelineCustomizerCollectionViewController {
+private extension TimelineSettingsViewController {
 
 	/// Hides a preview that the Feed Icons and Thumbnail Size settings mean would never be seen.
 	/// Thumbnails don’t hide previews without one, since not every article has a thumbnail.
@@ -272,52 +305,83 @@ private extension TimelineCustomizerCollectionViewController {
 		return cell
 	}
 
-	static private func configureOptionsCell(_ cell: TimelineCustomizerOptionsCell, optionsRow: OptionsRow) {
-		// The pop-up menu accessory shows only a chevron, so the value cell’s secondary text shows the current choice.
-		var content = UIListContentConfiguration.valueCell()
-		cell.isUserInteractionEnabled = true
-		switch optionsRow {
-		case .feedIcons:
-			content.text = NSLocalizedString("Feed Icons", comment: "Feed Icons")
-			content.secondaryText = AppDefaults.timelineFeedIconsDisplay.description
-			cell.accessories = [.popUpMenu(timelineFeedIconsDisplayMenu())]
-		case .feedIconSize:
-			content.text = NSLocalizedString("Feed Icon Size", comment: "Feed Icon Size")
-			content.secondaryText = iconSizeTitle(AppDefaults.timelineIconSize)
-			cell.accessories = [.popUpMenu(timelineIconSizeMenu())]
-		case .thumbnails:
-			content.text = NSLocalizedString("Thumbnails", comment: "Thumbnails")
-			content.secondaryText = AppDefaults.timelineThumbnailsDisplay.description
-			cell.accessories = [.popUpMenu(timelineThumbnailsDisplayMenu())]
-		case .rows:
-			content.text = NSLocalizedString("Rows", comment: "Rows")
-			content.secondaryText = AppDefaults.timelineShowFullTitles ? fullTitleTitle : titleAndPreviewTitle
-			cell.accessories = [.popUpMenu(timelineRowsMenu())]
-		case .numberOfLines:
-			content.text = NSLocalizedString("Lines", comment: "Lines")
-			content.secondaryText = AppDefaults.timelineNumberOfLines.formatted()
-			cell.accessories = [.popUpMenu(timelineNumberOfLinesMenu())]
-			// The number of lines applies only to the title and preview.
-			if AppDefaults.timelineShowFullTitles {
-				content.textProperties.color = .secondaryLabel
-				content.secondaryTextProperties.color = .tertiaryLabel
-				cell.isUserInteractionEnabled = false
+	static private func configureGeneralCell(_ cell: TimelineSettingsOptionsCell, generalRow: GeneralRow) {
+		var content = UIListContentConfiguration.cell()
+		switch generalRow {
+		case .sortOrder:
+			content.text = NSLocalizedString("Sort Oldest to Newest", comment: "Sort Oldest to Newest")
+			configureSwitch(cell, isOn: AppDefaults.timelineSortDirection == .orderedAscending) { isOn in
+				AppDefaults.timelineSortDirection = isOn ? .orderedAscending : .orderedDescending
 			}
+		case .groupByFeed:
+			content.text = NSLocalizedString("Group by Feed", comment: "Group by Feed")
+			configureSwitch(cell, isOn: AppDefaults.timelineGroupByFeed) { isOn in
+				AppDefaults.timelineGroupByFeed = isOn
+			}
+		case .refreshClearsReadArticles:
+			content.text = NSLocalizedString("Refresh to Clear Read Articles", comment: "Refresh to Clear Read Articles")
+			configureSwitch(cell, isOn: AppDefaults.refreshClearsReadArticles) { isOn in
+				AppDefaults.refreshClearsReadArticles = isOn
+			}
+		case .confirmMarkAllAsRead:
+			content.text = NSLocalizedString("Confirm Mark All as Read", comment: "Confirm Mark All as Read")
+			configureSwitch(cell, isOn: AppDefaults.confirmMarkAllAsRead) { isOn in
+				AppDefaults.confirmMarkAllAsRead = isOn
+			}
+		case .showPreviewInContextMenu:
+			content.text = NSLocalizedString("Show Previews in Context Menus", comment: "Show Previews in Context Menus")
+			configureSwitch(cell, isOn: AppDefaults.showPreviewInTimelineContextMenu) { isOn in
+				AppDefaults.showPreviewInTimelineContextMenu = isOn
+			}
+		}
+		cell.contentConfiguration = content
+		configureBackground(cell)
+	}
+
+	static private func configureLayoutCell(_ cell: TimelineSettingsOptionsCell, layoutRow: LayoutRow) {
+		var content = UIListContentConfiguration.cell()
+		switch layoutRow {
+		case .feedIcons:
+			let title = NSLocalizedString("Feed Icons", comment: "Feed Icons")
+			content.text = title
+			configurePopUpButton(cell, title: title, value: AppDefaults.timelineFeedIconsDisplay.description, menu: timelineFeedIconsDisplayMenu())
+		case .feedIconSize:
+			let title = NSLocalizedString("Feed Icon Size", comment: "Feed Icon Size")
+			content.text = title
+			configurePopUpButton(cell, title: title, value: iconSizeTitle(AppDefaults.timelineIconSize), menu: timelineIconSizeMenu())
+		case .thumbnails:
+			let title = NSLocalizedString("Thumbnails", comment: "Thumbnails")
+			content.text = title
+			configurePopUpButton(cell, title: title, value: AppDefaults.timelineThumbnailsDisplay.description, menu: timelineThumbnailsDisplayMenu())
+		case .rows:
+			let title = NSLocalizedString("Rows", comment: "Rows")
+			content.text = title
+			configurePopUpButton(cell, title: title, value: AppDefaults.timelineShowFullTitles ? fullTitleTitle : titleAndPreviewTitle, menu: timelineRowsMenu())
+		case .numberOfLines:
+			let title = NSLocalizedString("Lines", comment: "Lines")
+			content.text = title
+			// The number of lines applies only to the title and preview.
+			let isEnabled = !AppDefaults.timelineShowFullTitles
+			if !isEnabled {
+				content.textProperties.color = .secondaryLabel
+			}
+			configurePopUpButton(cell, title: title, value: AppDefaults.timelineNumberOfLines.formatted(), menu: timelineNumberOfLinesMenu(), isEnabled: isEnabled)
 		case .fadeReadArticles:
-			content = UIListContentConfiguration.cell()
 			content.text = NSLocalizedString("Fade Read Articles", comment: "Timeline Layout: switch that fades read articles in the timeline")
 			configureSwitch(cell, isOn: AppDefaults.timelineFadeReadArticles) { isOn in
 				AppDefaults.timelineFadeReadArticles = isOn
 			}
 		case .feedNameAndDateAboveTitle:
-			content = UIListContentConfiguration.cell()
 			content.text = NSLocalizedString("Feed Name and Date Above Title", comment: "Timeline Layout: switch that shows the feed name and date above the title in the timeline")
 			configureSwitch(cell, isOn: AppDefaults.timelineFeedNameAndDateAboveTitle) { isOn in
 				AppDefaults.timelineFeedNameAndDateAboveTitle = isOn
 			}
 		}
 		cell.contentConfiguration = content
+		configureBackground(cell)
+	}
 
+	static func configureBackground(_ cell: TimelineSettingsOptionsCell) {
 		cell.configurationUpdateHandler = { cell, state in
 			var backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
 			backgroundConfig.backgroundColor = cell.traitCollection.userInterfaceStyle == .dark ? .secondarySystemBackground : .white
@@ -326,10 +390,20 @@ private extension TimelineCustomizerCollectionViewController {
 		}
 	}
 
-	static func configureSwitch(_ cell: TimelineCustomizerOptionsCell, isOn: Bool, switchDidChange: @escaping (Bool) -> Void) {
+	static func configureSwitch(_ cell: TimelineSettingsOptionsCell, isOn: Bool, switchDidChange: @escaping (Bool) -> Void) {
 		cell.switchControl.isOn = isOn
 		cell.switchDidChange = switchDidChange
 		cell.accessories = [.customView(configuration: .init(customView: cell.switchControl, placement: .trailing()))]
+	}
+
+	/// The button’s title is only the current choice, so the accessibility label names the setting.
+	static func configurePopUpButton(_ cell: TimelineSettingsOptionsCell, title: String, value: String, menu: UIMenu, isEnabled: Bool = true) {
+		let popUpButton = cell.popUpButton
+		popUpButton.menu = menu
+		popUpButton.isEnabled = isEnabled
+		popUpButton.accessibilityLabel = title
+		popUpButton.accessibilityValue = value
+		cell.accessories = [.customView(configuration: .init(customView: popUpButton, placement: .trailing(), reservedLayoutWidth: .actual))]
 	}
 
 	static func timelineFeedIconsDisplayMenu() -> UIMenu {
@@ -403,19 +477,19 @@ private extension TimelineCustomizerCollectionViewController {
 	}
 
 	/// One batch, since reconfiguring alone fails validation when a preview section’s item count has changed.
-	func reloadOptionsRowsAndPreviews() {
+	func reloadLayoutRowsAndPreviews() {
 		collectionView.performBatchUpdates {
-			let indexPaths = OptionsRow.allCases.map { IndexPath(item: $0.rawValue, section: Section.options.rawValue) }
+			let indexPaths = LayoutRow.allCases.map { IndexPath(item: $0.rawValue, section: Section.layout.rawValue) }
 			collectionView.reconfigureItems(at: indexPaths)
 			reloadPreviews()
 		}
 	}
 }
 
-// MARK: - TimelineCustomizerOptionsCell
+// MARK: - TimelineSettingsOptionsCell
 
-/// Keeps one switch for the cell’s lifetime, since a new switch on every reconfigure animates into place.
-final class TimelineCustomizerOptionsCell: UICollectionViewListCell {
+/// Keeps one switch and one pop-up button for the cell’s lifetime, since a new one on every reconfigure animates into place.
+final class TimelineSettingsOptionsCell: UICollectionViewListCell {
 
 	var switchDidChange: ((Bool) -> Void)?
 
@@ -428,5 +502,13 @@ final class TimelineCustomizerOptionsCell: UICollectionViewListCell {
 			self.switchDidChange?(self.switchControl.isOn)
 		}, for: .valueChanged)
 		return switchControl
+	}()
+
+	/// Shows the current choice as its title, like a SwiftUI menu picker.
+	lazy var popUpButton: UIButton = {
+		let popUpButton = UIButton(configuration: .plain())
+		popUpButton.showsMenuAsPrimaryAction = true
+		popUpButton.changesSelectionAsPrimaryAction = true
+		return popUpButton
 	}()
 }

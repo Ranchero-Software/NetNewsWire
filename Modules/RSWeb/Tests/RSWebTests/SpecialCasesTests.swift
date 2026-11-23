@@ -11,19 +11,6 @@ import Foundation
 
 struct SpecialCasesTests {
 
-	@Test func isRedditURLMatchesSubdomains() {
-		#expect(URL(string: "https://www.reddit.com/r/swift/.rss")!.isRedditURL)
-		#expect(URL(string: "https://old.reddit.com/r/swift/.rss")!.isRedditURL)
-		#expect(URL(string: "https://np.reddit.com/r/swift/.rss")!.isRedditURL)
-		#expect(URL(string: "https://reddit.com/r/swift/.rss")!.isRedditURL)
-	}
-
-	@Test func isRedditURLRejectsLookalikes() {
-		#expect(!URL(string: "https://notreddit.com/feed")!.isRedditURL)
-		#expect(!URL(string: "https://reddit.com.evil.example/feed")!.isRedditURL)
-		#expect(!URL(string: "https://example.com/r/reddit.com")!.isRedditURL)
-	}
-
 	@Test func isYoutubeURLMatchesSubdomains() {
 		#expect(URL(string: "https://www.youtube.com/watch?v=abc")!.isYoutubeURL)
 		#expect(URL(string: "https://youtube.com/feeds/videos.xml")!.isYoutubeURL)

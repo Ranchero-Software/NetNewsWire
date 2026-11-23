@@ -46,7 +46,7 @@ struct AccountsDetailView: View {
 				GridRow {
 					Color.clear
 						.gridCellUnsizedAxes([.horizontal, .vertical])
-					Toggle("Active", isOn: $isActive)
+					Toggle(String(localized: "Active", comment: "Active"), isOn: $isActive)
 						.onChange(of: isActive) {
 							account.isActive = isActive
 						}
@@ -79,7 +79,7 @@ struct AccountsDetailView: View {
 					GridRow {
 						Color.clear
 							.gridCellUnsizedAxes([.horizontal, .vertical])
-						Button("Credentials") {
+						Button(String(localized: "Credentials", comment: "Credentials")) {
 							onCredentials?()
 						}
 						.padding(.top, 12)
@@ -94,7 +94,7 @@ struct AccountsDetailView: View {
 					}
 					.padding(.top, 12)
 
-				Text("Syncing article content increases iCloud storage use, sync time, and battery use.\n\nArticle status and the content of starred articles are always synced.")
+				Text("Syncing article content increases iCloud storage use, sync time, and battery use.\n\nArticle status and the content of starred articles are always synced.", comment: "Sync content of unread articles footer")
 					.foregroundStyle(.secondary)
 					.fixedSize(horizontal: false, vertical: true)
 					.padding(.top, 4)

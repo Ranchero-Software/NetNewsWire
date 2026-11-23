@@ -59,7 +59,7 @@ extension ArticleRenderer {
 	}
 
 	/// The article image (JSON Feed `image`, `itunes:image`, or a sync service’s image), else the first image attachment,
-	/// else the thumbnail (`media:thumbnail`, which Wired uses for its full-size lead image).
+	/// else the thumbnail (`media:thumbnail`, which Wired uses for its full-size lead image), unless it’s Blogger’s tiny crop.
 	/// Nil when the body already has the image, or a resized copy of it at a different URL.
 	/// An attachment with the same URL supplies the dimensions and title.
 	static func primaryImage(imageLink: String?, thumbnailLink: String?, attachments: [Attachment]?, body: String, bodyImageIdentities: Set<String>) -> Attachment? {
@@ -69,7 +69,7 @@ extension ArticleRenderer {
 			image = attachments.first { $0.url == imageLink } ?? imageAttachment(imageLink)
 		} else if let firstImageAttachment = attachments.first(where: { $0.displayMedium == .image }) {
 			image = firstImageAttachment
-		} else if let thumbnailLink, !thumbnailLink.isEmpty {
+		} else if let thumbnailLink, !thumbnailLink.isEmpty, !ArticleRenderingSpecialCases.isBloggerThumbnail(thumbnailLink) {
 			image = imageAttachment(thumbnailLink)
 		} else {
 			image = nil

@@ -22,6 +22,8 @@ import Images
 
 final class WebViewController: UIViewController {
 
+	private static let arrowKeyScrollDistance: CGFloat = 60
+
 	private struct MessageName {
 		static let imageWasClicked = "imageWasClicked"
 		static let imageWasShown = "imageWasShown"
@@ -128,6 +130,7 @@ final class WebViewController: UIViewController {
 
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
+		findInteraction?.dismissFindNavigator()
 		// Pause in-flight media before the view goes away. Leaving a video playing during
 		// dismissal lets WebKit's full-screen entry continuation fire on a stale view
 		// hierarchy and trip a RELEASE_ASSERT in WebFullScreenManagerProxy on iOS 26.
@@ -187,6 +190,8 @@ final class WebViewController: UIViewController {
 		stopArticleExtractor()
 
 		if article != self.article {
+			// The find bar must not stay attached to the previous article.
+			findInteraction?.dismissFindNavigator()
 			self.article = article
 			// A restoration offset belongs only to the article it was saved for.
 			// <https://github.com/Ranchero-Software/NetNewsWire/issues/5243>
@@ -222,10 +227,6 @@ final class WebViewController: UIViewController {
 		}
 	}
 
-	func focus() {
-		webView?.becomeFirstResponder()
-	}
-
 	func canScrollDown() -> Bool {
 		guard let webView = webView else { return false }
 		return webView.scrollView.contentOffset.y < finalScrollPosition(scrollingUp: false)
@@ -242,8 +243,16 @@ final class WebViewController: UIViewController {
 		}
 
 		let overlap = 2 * UIFont.systemFont(ofSize: UIFont.systemFontSize).lineHeight * windowScene.screen.scale
+		let scrollDistance = webView.scrollView.layoutMarginsGuide.layoutFrame.height - overlap
+		scroll(up: scrollingUp, distance: scrollDistance)
+	}
+
+	private func scroll(up scrollingUp: Bool, distance scrollDistance: CGFloat) {
+		guard let webView else {
+			return
+		}
+
 		let scrollToY: CGFloat = {
-			let scrollDistance = webView.scrollView.layoutMarginsGuide.layoutFrame.height - overlap
 			let fullScroll = webView.scrollView.contentOffset.y + (scrollingUp ? -scrollDistance : scrollDistance)
 			let final = finalScrollPosition(scrollingUp: scrollingUp)
 			return (scrollingUp ? fullScroll > final : fullScroll < final) ? fullScroll : final
@@ -262,6 +271,14 @@ final class WebViewController: UIViewController {
 		scrollPage(up: true)
 	}
 
+	func scrollLineDown() {
+		scroll(up: false, distance: Self.arrowKeyScrollDistance)
+	}
+
+	func scrollLineUp() {
+		scroll(up: true, distance: Self.arrowKeyScrollDistance)
+	}
+
 	func hideClickedImage() {
 		webView?.evaluateJavaScript("hideClickedImage();")
 	}
@@ -277,6 +294,11 @@ final class WebViewController: UIViewController {
 
 	func showBars(animated: Bool = true) {
 		AppDefaults.articleFullscreenEnabled = false
+		restoreBars(animated: animated)
+	}
+
+	/// Shows the bars without leaving full screen mode, so the next article still opens full screen.
+	func restoreBars(animated: Bool) {
 		coordinator.showStatusBar()
 		topShowBarsViewConstraint?.constant = 0
 		bottomShowBarsViewConstraint?.constant = 0
@@ -797,7 +819,7 @@ private extension WebViewController {
 			var data: Data?
 			// Only a correctly signed routed URL uses the timeline’s copy, so page content can’t claim one.
 			if imageURL.scheme?.caseInsensitiveCompare(ArticleRenderer.articleImageScheme) == .orderedSame, let timelineImageURL = ArticleImageSchemeHandler.imageURL(imageURL) {
-				data = try? await ThumbnailDownloader.shared.fullSizeImageData(url: timelineImageURL, articleTitle: nil)
+				data = try? await ThumbnailDownloader.shared.fullSizeImageData(url: timelineImageURL, feedName: nil, articleTitle: nil)
 			} else {
 				data = try? await Downloader.shared.download(imageURL, userAgentStyle: .browser).data
 			}
@@ -1007,62 +1029,18 @@ extension WebViewController: @preconcurrency SFSafariViewControllerDelegate {
 
 // MARK: Find in Article
 
-private struct FindInArticleOptions: Codable {
-	var text: String
-	var caseSensitive = false
-	var regex = false
-}
-
-internal struct FindInArticleState: Codable {
-	struct WebViewClientRect: Codable {
-		let x: Double
-		let y: Double
-		let width: Double
-		let height: Double
-	}
-
-	struct FindInArticleResult: Codable {
-		let rects: [WebViewClientRect]
-		let bounds: WebViewClientRect
-		let index: UInt
-		let matchGroups: [String]
-	}
-
-	let index: UInt?
-	let results: [FindInArticleResult]
-	let count: UInt
-}
-
 extension WebViewController {
 
-	func searchText(_ searchText: String, completionHandler: @escaping (FindInArticleState) -> Void) {
-		guard let json = try? JSONEncoder().encode(FindInArticleOptions(text: searchText)) else {
-			return
-		}
-		let encoded = json.base64EncodedString()
-
-		webView?.evaluateJavaScript("updateFind(\"\(encoded)\")") { (result, error) in
-			guard error == nil,
-				let b64 = result as? String,
-				let rawData = Data(base64Encoded: b64),
-				let findState = try? JSONDecoder().decode(FindInArticleState.self, from: rawData) else {
-					return
-			}
-
-			completionHandler(findState)
-		}
+	var findInteraction: UIFindInteraction? {
+		webView?.findInteraction
 	}
 
-	func endSearch() {
-		webView?.evaluateJavaScript("endFind()")
+	/// Whether the article has selected text to search for.
+	var canUseSelectionForFind: Bool {
+		webView?.canPerformAction(#selector(UIResponder.useSelectionForFind(_:)), withSender: nil) ?? false
 	}
 
-	func selectNextSearchResult() {
-		webView?.evaluateJavaScript("selectNextResult()")
+	func useSelectionForFind() {
+		webView?.useSelectionForFind(nil)
 	}
-
-	func selectPreviousSearchResult() {
-		webView?.evaluateJavaScript("selectPreviousResult()")
-	}
-
 }

@@ -343,24 +343,7 @@ extension Notification.Name {
 
 	@IBAction func delete(_ sender: AnyObject?) {
 		let availableSelectedNodes = selectedNodes.filter { !($0.representedObject is PseudoFeed) }
-
-		if availableSelectedNodes.isEmpty {
-			return
-		}
-
-		let alert = SidebarDeleteItemsAlert.build(availableSelectedNodes)
-
-		alert.beginSheetModal(for: view.window!) { [weak self] result in
-			if result == NSApplication.ModalResponse.alertFirstButtonReturn {
-				guard let self = self else { return }
-
-				let firstRow = self.outlineView.selectedRowIndexes.min()
-				self.deleteNodes(availableSelectedNodes)
-				if let restoreRow = firstRow, restoreRow < self.outlineView.numberOfRows {
-					self.outlineView.selectRow(restoreRow)
-				}
-			}
-		}
+		confirmAndDeleteNodes(availableSelectedNodes)
 	}
 
 	@IBAction func doubleClickedSidebar(_ sender: Any?) {
@@ -546,22 +529,98 @@ extension Notification.Name {
 	func deleteNodes(_ nodes: [Node]) {
 		let nodesToDelete = treeController.normalizedSelectedNodes(nodes)
 
-		guard let undoManager = undoManager, let deleteCommand = DeleteCommand(nodesToDelete: nodesToDelete, treeController: treeController, undoManager: undoManager, errorHandler: ErrorHandler.present) else {
+		guard let undoManager = undoManager, let deleteCommand = DeleteCommand(nodesToDelete: nodesToDelete, undoManager: undoManager, errorHandler: ErrorHandler.present) else {
 			return
+		}
+
+		// Remove rows by the outline view’s own child indexes, which can differ from the tree’s.
+		var indexSetsGroupedByParent = [Node: IndexSet]()
+		for node in nodesToDelete {
+			let index = outlineView.childIndex(forItem: node)
+			guard index >= 0, let parent = outlineView.parent(forItem: node) as? Node else {
+				continue
+			}
+			indexSetsGroupedByParent[parent, default: IndexSet()].insert(index)
 		}
 
 		animatingChanges = true
 		outlineView.beginUpdates()
 
-		let indexSetsGroupedByParent = Node.indexSetsGroupedByParent(nodesToDelete)
 		for (parent, indexSet) in indexSetsGroupedByParent {
-			outlineView.removeItems(at: indexSet, inParent: parent.isRoot ? nil : parent, withAnimation: [.slideDown])
+			outlineView.removeItems(at: indexSet, inParent: parent, withAnimation: [.slideDown])
 		}
 
 		outlineView.endUpdates()
 
 		runCommand(deleteCommand)
 		animatingChanges = false
+	}
+
+	/// Asks for confirmation, then deletes. If the selection is deleted, selects the next row.
+	func confirmAndDeleteNodes(_ nodes: [Node]) {
+		guard !nodes.isEmpty, let window = view.window else {
+			return
+		}
+
+		let alert = SidebarDeleteItemsAlert.build(nodes)
+		alert.beginSheetModal(for: window) { [weak self] result in
+			guard result == NSApplication.ModalResponse.alertFirstButtonReturn, let self else {
+				return
+			}
+
+			let nodesToDelete = self.nodesInOutlineView(nodes)
+			let selectionIsDeleted = self.selectedNodes.contains { nodesToDelete.contains($0) || $0.hasAncestor(in: nodesToDelete) }
+			let nodeToSelect = selectionIsDeleted ? self.nodeToSelectAfterDeleting(nodesToDelete) : nil
+
+			self.deleteNodes(nodesToDelete)
+
+			if let nodeToSelect {
+				let row = self.outlineView.row(forItem: nodeToSelect)
+				if row >= 0 {
+					self.outlineView.selectRow(row)
+				}
+			}
+		}
+	}
+
+	/// The clicked or selected nodes that represent these objects — clicked first, for a feed in more than one folder.
+	func clickedOrSelectedNodes(representing objects: [AnyObject]) -> [Node] {
+		var candidateNodes = selectedNodes
+		if let clickedNode = nodeForRow(outlineView.clickedRow) {
+			candidateNodes.insert(clickedNode, at: 0)
+		}
+		return objects.compactMap { object in
+			candidateNodes.first { $0.representedObject === object }
+		}
+	}
+
+	/// The nodes that are still showing in the outline view.
+	func nodesInOutlineView(_ nodes: [Node]) -> [Node] {
+		nodes.filter { outlineView.row(forItem: $0) >= 0 }
+	}
+
+	/// The first node after the deleted rows (skipping their children), or else the node just before them.
+	func nodeToSelectAfterDeleting(_ deletedNodes: [Node]) -> Node? {
+		let rows = IndexSet(deletedNodes.map { outlineView.row(forItem: $0) }.filter { $0 >= 0 })
+		guard let firstRow = rows.first, let lastRow = rows.last else {
+			return nil
+		}
+
+		var row = lastRow + 1
+		while let node = nodeForRow(row) {
+			if !deletedNodes.contains(node) && !node.hasAncestor(in: deletedNodes) {
+				if !node.isGroupItem {
+					return node
+				}
+				break
+			}
+			row += 1
+		}
+
+		if let node = nodeForRow(firstRow - 1), !node.isGroupItem {
+			return node
+		}
+		return nil
 	}
 
 	// MARK: - API

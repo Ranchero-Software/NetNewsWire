@@ -38,7 +38,7 @@ final class AccountsNewsBlurWindowController: NSWindowController {
 			noAccountTextField.isHidden = true
 			createNewAccountButton.isHidden = true
 		} else {
-			actionButton.title = NSLocalizedString("Create", comment: "Create")
+			actionButton.title = NSLocalizedString("Add", comment: "Add button")
 			signInTextField.stringValue = NSLocalizedString("Sign in to your NewsBlur account.", comment: "SignIn")
 		}
 		enableAutofill()

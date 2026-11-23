@@ -718,6 +718,18 @@
                                     <action selector="openWebsite:" target="-1" id="rmL-lt-p8g"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="NetNewsWire Forum" id="OKC-FV-V33">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="openDiscourse:" target="-1" id="pHL-0j-vVt"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Themes Gallery" id="TgL-mK-7pQ">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="openThemesGallery:" target="-1" id="hW3-zR-9sN"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Release Notes" id="b5s-xg-B1w" userLabel="Release Notes">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
@@ -740,12 +752,6 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="openBugTracker:" target="-1" id="fZQ-ng-gIm"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Discourse Forum" id="OKC-FV-V33">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="openDiscourse:" target="-1" id="pHL-0j-vVt"/>
                                 </connections>
                             </menuItem>
                         </items>

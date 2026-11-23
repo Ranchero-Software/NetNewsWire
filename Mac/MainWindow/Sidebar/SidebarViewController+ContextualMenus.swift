@@ -102,14 +102,7 @@ extension SidebarViewController {
 			return
 		}
 
-		let nodes = objects.compactMap { treeController.nodeInTreeRepresentingObject($0) }
-
-		let alert = SidebarDeleteItemsAlert.build(nodes)
-		alert.beginSheetModal(for: view.window!) { [weak self] result in
-			if result == NSApplication.ModalResponse.alertFirstButtonReturn {
-				self?.deleteNodes(nodes)
-			}
-		}
+		confirmAndDeleteNodes(clickedOrSelectedNodes(representing: objects))
 	}
 
 	@objc func renameFromContextualMenu(_ sender: Any?) {
@@ -267,7 +260,7 @@ private extension SidebarViewController {
 		}
 		menu.addItem(NSMenuItem.separator())
 
-		let notificationText = feed.notificationDisplayName.capitalized
+		let notificationText = NSLocalizedString("Notify About New Articles", comment: "Notify About New Articles")
 
 		let notificationMenuItem = menuItem(notificationText, #selector(toggleNotificationsFromContextMenu(_:)), feed)
 		notificationMenuItem.state = feed.newArticleNotificationsEnabled ? .on : .off

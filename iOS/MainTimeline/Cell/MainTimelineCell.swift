@@ -91,9 +91,8 @@ final class MainTimelineCell: UICollectionViewListCell {
 		super.updateConfiguration(using: state)
 
 		var backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
-		// The Settings timeline preview isn't in the split view hierarchy, so style it
-		// the way the timeline usually looks on the device.
-		let usesExpandedStyle = isPreview ? UIDevice.current.userInterfaceIdiom == .pad : isInExpandedSplitView
+		// The Settings timeline preview fills its card, like the other Settings rows.
+		let usesExpandedStyle = !isPreview && isInExpandedSplitView
 		if !usesExpandedStyle {
 			// Full-bleed rectangle selection when the timeline has the screen to itself.
 			// When the split view is expanded — iPad, or a large iPhone in landscape —
@@ -106,8 +105,6 @@ final class MainTimelineCell: UICollectionViewListCell {
 			backgroundConfig.edgesAddingLayoutMarginsToBackgroundInsets = [.leading, .trailing]
 			if UIDevice.current.userInterfaceIdiom == .pad {
 				backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: -8, bottom: 0, trailing: -8)
-			} else if isPreview {
-				backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: -16, bottom: 0, trailing: -16)
 			} else {
 				backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: -12, bottom: 0, trailing: -12)
 			}

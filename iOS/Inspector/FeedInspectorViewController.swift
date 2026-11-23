@@ -144,15 +144,7 @@ extension FeedInspectorViewController {
 	}
 
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		let cell = super.tableView(tableView, cellForRowAt: shift(indexPath))
-		if indexPath.section == 0 && indexPath.row == 1 {
-			guard let label = cell.contentView.subviews.filter({ $0.isKind(of: UILabel.self) })[0] as? UILabel else {
-				return cell
-			}
-			label.numberOfLines = 2
-			label.text = feed.notificationDisplayName.capitalized
-		}
-		return cell
+		super.tableView(tableView, cellForRowAt: shift(indexPath))
 	}
 
 	override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {

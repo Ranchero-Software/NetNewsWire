@@ -26,6 +26,8 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 	private var feedNameAndDateAboveTitle = false
 	private var showsFullTitles = false
 	private var articleIDsToReload = Set<String>()
+	/// The article whose row was just swiped to change its status.
+	private var swipedArticleID: String?
 	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
 	private lazy var filterButton = UIBarButtonItem(image: Assets.Images.filter, style: .plain, target: self, action: #selector(toggleFilter(_:)))
 	private lazy var nextUnreadButton = UIBarButtonItem(image: Assets.Images.nextUnread, style: .plain, target: self, action: #selector(nextUnread(_:)))
@@ -114,7 +116,7 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 		label.addGestureRecognizer(tap)
 		let pointerInteraction = UIPointerInteraction(delegate: nil)
 		label.addInteraction(pointerInteraction)
-		label.text = " " // Placeholder avoids iOS 26 UINavigationBar crash.
+		label.text = Self.navigationBarPlaceholderText
 		label.sizeToFit()
 		return label
 	}()
@@ -128,7 +130,7 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 		label.adjustsFontForContentSizeCategory = false
 		let tap = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
 		label.addGestureRecognizer(tap)
-		label.text = " " // Placeholder avoids iOS 26 UINavigationBar crash.
+		label.text = Self.navigationBarPlaceholderText
 		label.sizeToFit()
 		return label
 	}()
@@ -167,6 +169,8 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "MainTimelineViewController")
 	/// Cells queued within this interval, such as for several thumbnail downloads that failed, are reloaded together.
 	private static let cellReloadDelay: TimeInterval = 0.1
+	/// A zero-size titleView or subtitleView crashes UINavigationBar layout, so empty labels get a space instead.
+	private static let navigationBarPlaceholderText = " "
 
 	// MARK: Constants
 	private let updateQueue = CoalescingQueue(name: "Timeline Update Queue", interval: 0.5, maxInterval: 1.0)
@@ -312,7 +316,7 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 	func updateNavigationBarTitle(_ text: String) {
 		navigationItem.title = text
 		if let label = navigationItem.titleView as? UILabel {
-			label.text = text
+			label.text = text.isEmpty ? Self.navigationBarPlaceholderText : text
 			label.isUserInteractionEnabled = ((coordinator?.timelineFeed as? PseudoFeed) == nil)
 			label.sizeToFit()
 		}
@@ -320,7 +324,7 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 
 	func updateNavigationBarSubtitle(_ text: String) {
 		if #available(iOS 26, *), let label = navigationItem.subtitleView as? UILabel {
-			label.text = text
+			label.text = text.isEmpty ? Self.navigationBarPlaceholderText : text
 			label.isUserInteractionEnabled = ((coordinator?.timelineFeed as? PseudoFeed) == nil)
 			label.sizeToFit()
 		}
@@ -532,7 +536,7 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 		let articlesToMark = coordinator.articles
 
 		if let source = sender as? UIBarButtonItem {
-			MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: source) { [weak self] in
+			MarkAsReadAlertController.confirm(self, confirmTitle: title, sourceType: source) { [weak self] in
 				self?.coordinator?.markAsReadAndShowSidebar(articlesToMark)
 			}
 		}
@@ -545,7 +549,7 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 				return
 			}
 
-			MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
+			MarkAsReadAlertController.confirm(self, confirmTitle: title, sourceType: contentView) { [weak self] in
 				self?.coordinator?.markAsReadAndShowSidebar(articlesToMark)
 			}
 		}
@@ -590,7 +594,7 @@ extension MainTimelineViewController: UICollectionViewDelegate {
 			reloadCells([article])
 			return
 		}
-		guard let thumbnailURL, let thumbnail = ThumbnailDownloader.shared.thumbnail(url: thumbnailURL, mode: thumbnailMode, articleTitle: article.title), thumbnail !== cell.thumbnail else {
+		guard let thumbnailURL, let thumbnail = ThumbnailDownloader.shared.thumbnail(url: thumbnailURL, mode: thumbnailMode, feedName: article.feed?.nameForDisplay, articleTitle: article.title), thumbnail !== cell.thumbnail else {
 			return
 		}
 		cell.thumbnail = thumbnail
@@ -838,14 +842,8 @@ private extension MainTimelineViewController {
 					NSLocalizedString("Starred", comment: "Starred")
 				UIAccessibility.post(notification: .announcement, argument: announcement)
 
-				/// The call to `toggleStar` is delayed in order to allow
-				/// the swipe animation to complete. Calling `toggleStar` with no
-				/// delay results UICollectionView internal inconsistency: unexpected
-				/// removal of the current swipe occurrence’s mask view error.
-				DispatchQueue.main.asyncAfter(deadline: .now() + 0.85) {
-					self?.toggleStar(article)
-				}
-
+				self?.swipedArticleID = article.articleID
+				self?.toggleStar(article)
 				completion(true)
 			}
 
@@ -932,13 +930,8 @@ private extension MainTimelineViewController {
 					NSLocalizedString("Marked as Read", comment: "Accessibility announcement")
 				UIAccessibility.post(notification: .announcement, argument: announcement)
 
-				/// The call to `toggleRead` is delayed in order to allow
-				/// the swipe animation to complete. Calling `toggleRead` with no
-				/// delay results UICollectionView internal inconsistency: unexpected
-				/// removal of the current swipe occurrence’s mask view error.
-				DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.85) {
-					self?.toggleRead(article)
-				}
+				self?.swipedArticleID = article.articleID
+				self?.toggleRead(article)
 				completion(true)
 			}
 
@@ -1003,7 +996,7 @@ private extension MainTimelineViewController {
 		var showThumbnail = false
 		if let thumbnailMode, let thumbnailURL = ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) {
 			showThumbnail = true
-			thumbnail = ThumbnailDownloader.shared.thumbnail(url: thumbnailURL, mode: thumbnailMode, articleTitle: article.title)
+			thumbnail = ThumbnailDownloader.shared.thumbnail(url: thumbnailURL, mode: thumbnailMode, feedName: article.feed?.nameForDisplay, articleTitle: article.title)
 		}
 		let cellData = MainTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, numberOfLines: numberOfTextLines, iconSize: iconSize, thumbnail: thumbnail, showThumbnail: showThumbnail, thumbnailsDisplay: thumbnailsDisplay, fadesReadArticles: fadesReadArticles, feedNameAndDateAboveTitle: feedNameAndDateAboveTitle, showsFullTitles: showsFullTitles)
 		return cellData
@@ -1156,8 +1149,20 @@ private extension MainTimelineViewController {
 			return
 		}
 
-		let visibleArticles = indexPaths.compactMap { dataSource.itemIdentifier(for: $0) }
-		let visibleUpdatedArticles = visibleArticles.filter { articleIDs.contains($0.articleID) }
+		var visibleUpdatedArticles = indexPaths.compactMap { dataSource.itemIdentifier(for: $0) }.filter { articleIDs.contains($0.articleID) }
+
+		// The swiped row is updated in place, since a snapshot reload during the swipe animation triggers a UICollectionView
+		// “unexpected removal of the current swipe occurrence’s mask view” error. A status change doesn’t change a row’s height.
+		if let swipedArticleID, articleIDs.contains(swipedArticleID) {
+			self.swipedArticleID = nil
+			if let index = visibleUpdatedArticles.firstIndex(where: { $0.articleID == swipedArticleID }) {
+				let swipedArticle = visibleUpdatedArticles.remove(at: index)
+				if let indexPath = dataSource.indexPath(for: swipedArticle), let cell = collectionView.cellForItem(at: indexPath) as? MainTimelineCell {
+					cell.cellData = configure(article: swipedArticle)
+				}
+			}
+		}
+
 		reloadCells(visibleUpdatedArticles)
 	}
 
@@ -1236,7 +1241,7 @@ private extension MainTimelineViewController {
 		}
 		// The row’s height already allows for the thumbnail, so only the cell’s contents change.
 		for indexPath in collectionView.indexPathsForVisibleItems {
-			guard let article = dataSource.itemIdentifier(for: indexPath), ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) == url, let cell = collectionView.cellForItem(at: indexPath) as? MainTimelineCell, let thumbnail = ThumbnailDownloader.shared.thumbnail(url: url, mode: thumbnailMode, articleTitle: article.title) else {
+			guard let article = dataSource.itemIdentifier(for: indexPath), ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) == url, let cell = collectionView.cellForItem(at: indexPath) as? MainTimelineCell, let thumbnail = ThumbnailDownloader.shared.thumbnail(url: url, mode: thumbnailMode, feedName: article.feed?.nameForDisplay, articleTitle: article.title) else {
 				continue
 			}
 			cell.thumbnail = thumbnail
@@ -1255,7 +1260,7 @@ private extension MainTimelineViewController {
 		guard thumbnailMode != nil, ThumbnailDownloader.shared.networkAllowsDownloads else {
 			return
 		}
-		// Thumbnails that couldn’t download while offline or in Low Data Mode try again.
+		// Thumbnails that couldn’t download while offline try again.
 		reloadVisibleCells()
 	}
 
@@ -1400,7 +1405,7 @@ extension MainTimelineViewController {
 		let title = NSLocalizedString("Mark Above as Read", comment: "Command")
 		let image = Assets.Images.markAboveAsRead
 		let action = UIAction(title: title, image: image) { [weak self] _ in
-			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
+			MarkAsReadAlertController.confirm(self, confirmTitle: title, sourceType: contentView) { [weak self] in
 				self?.markAboveAsRead(article)
 			}
 		}
@@ -1425,7 +1430,7 @@ extension MainTimelineViewController {
 		let title = NSLocalizedString("Mark Below as Read", comment: "Command")
 		let image = Assets.Images.markBelowAsRead
 		let action = UIAction(title: title, image: image) { [weak self] _ in
-			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
+			MarkAsReadAlertController.confirm(self, confirmTitle: title, sourceType: contentView) { [weak self] in
 				self?.markBelowAsRead(article)
 			}
 		}
@@ -1443,7 +1448,7 @@ extension MainTimelineViewController {
 		}
 
 		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
-			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView, cancelCompletion: cancel) { [weak self] in
+			MarkAsReadAlertController.confirm(self, confirmTitle: title, sourceType: contentView, cancelCompletion: cancel) { [weak self] in
 				self?.markAboveAsRead(article)
 				completion(true)
 			}
@@ -1462,7 +1467,7 @@ extension MainTimelineViewController {
 		}
 
 		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
-			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView, cancelCompletion: cancel) { [weak self] in
+			MarkAsReadAlertController.confirm(self, confirmTitle: title, sourceType: contentView, cancelCompletion: cancel) { [weak self] in
 				self?.markBelowAsRead(article)
 				completion(true)
 			}
@@ -1521,7 +1526,7 @@ extension MainTimelineViewController {
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
 
 		let action = UIAction(title: title, image: Assets.Images.markAllAsRead) { [weak self] _ in
-			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
+			MarkAsReadAlertController.confirm(self, confirmTitle: title, sourceType: contentView) { [weak self] in
 				let articles = feed.fetchUnreadArticles()
 				self?.markAllAsRead(Array(articles))
 			}
@@ -1547,7 +1552,7 @@ extension MainTimelineViewController {
 		}
 
 		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
-			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView, cancelCompletion: cancel) { [weak self] in
+			MarkAsReadAlertController.confirm(self, confirmTitle: title, sourceType: contentView, cancelCompletion: cancel) { [weak self] in
 				self?.markAllAsRead(articles)
 				completion(true)
 			}

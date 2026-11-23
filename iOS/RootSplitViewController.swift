@@ -13,6 +13,9 @@ final class RootSplitViewController: UISplitViewController {
 
 	var coordinator: SceneCoordinator!
 
+	/// True during rotation, window resizes, and background snapshots, when UIKit changes the display mode on its own.
+	private(set) var isTransitioningSize = false
+
 	override var prefersStatusBarHidden: Bool {
 		return coordinator.prefersStatusBarHidden
 	}
@@ -24,6 +27,14 @@ final class RootSplitViewController: UISplitViewController {
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		coordinator.resetFocus()
+	}
+
+	override func viewWillTransition(to size: CGSize, with transitionCoordinator: UIViewControllerTransitionCoordinator) {
+		isTransitioningSize = true
+		super.viewWillTransition(to: size, with: transitionCoordinator)
+		transitionCoordinator.animate(alongsideTransition: nil) { [weak self] _ in
+			self?.isTransitioningSize = false
+		}
 	}
 
 	/// Show a column for programmatic navigation.
@@ -105,9 +116,9 @@ final class RootSplitViewController: UISplitViewController {
 		// Anchor to the Mark All as Read button (keyboard shortcut has no source view).
 		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5370>
 		if let markAllAsReadButton = (viewController(for: .supplementary) as? MainTimelineViewController)?.markAllAsReadButton {
-			MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: markAllAsReadButton, completion: completion)
+			MarkAsReadAlertController.confirm(self, confirmTitle: title, sourceType: markAllAsReadButton, completion: completion)
 		} else {
-			MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: view as UIView, completion: completion)
+			MarkAsReadAlertController.confirm(self, confirmTitle: title, sourceType: view as UIView, completion: completion)
 		}
 	}
 

@@ -36,9 +36,11 @@ import WebKit
 		flushQueue()
 	}
 
+	// Refill synchronously: a dequeue operation may already be pending,
+	// and it must not find the queue empty.
 	private func flushQueue() {
 		queue.removeAllObjects()
-		replenishQueueIfNeeded()
+		WebViewProviderReplenishQueueOperation.fill(queue, articleIconSchemeHandler: articleIconSchemeHandler)
 	}
 
 	func dequeueWebView(completion: @escaping (PreloadedWebView) -> Void) {
@@ -48,7 +50,7 @@ import WebKit
 }
 
 final class WebViewProviderReplenishQueueOperation: MainThreadOperation, @unchecked Sendable {
-	private let minimumQueueDepth = 3
+	private static let minimumQueueDepth = 3
 
 	private var queue: NSMutableArray
 	private var articleIconSchemeHandler: ArticleIconSchemeHandler
@@ -60,12 +62,16 @@ final class WebViewProviderReplenishQueueOperation: MainThreadOperation, @unchec
 	}
 
 	override func run() {
+		Self.fill(queue, articleIconSchemeHandler: articleIconSchemeHandler)
+		didComplete()
+	}
+
+	@MainActor static func fill(_ queue: NSMutableArray, articleIconSchemeHandler: ArticleIconSchemeHandler) {
 		while queue.count < minimumQueueDepth {
 			let webView = PreloadedWebView(articleIconSchemeHandler: articleIconSchemeHandler)
 			webView.preload()
 			queue.insert(webView, at: 0)
 		}
-		didComplete()
 	}
 }
 

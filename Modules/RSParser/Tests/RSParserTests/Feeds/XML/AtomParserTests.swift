@@ -612,6 +612,26 @@ import RSParser
 		#expect(summary.contains("<p>Hello <em>world</em>.</p>"))
 	}
 
+	@Test func xhtmlTitleWithCDATA() throws {
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5484>
+		let xml = """
+		<?xml version="1.0" encoding="utf-8"?>
+		<feed xmlns="http://www.w3.org/2005/Atom">
+		  <title>t</title><id>urn:t</id>
+		  <entry>
+		    <id>urn:t:1</id>
+		    <title type="xhtml"><![CDATA[Wheels within (mouse) wheels]]></title>
+		    <updated>2020-05-01T00:00:00Z</updated>
+		    <content>Body.</content>
+		  </entry>
+		</feed>
+		"""
+		let d = ParserData(url: "http://example.com/", data: Data(xml.utf8))
+		let feed = try #require(try FeedParser.parse(d))
+		let item = try #require(feed.items.first)
+		#expect(item.title == "Wheels within (mouse) wheels")
+	}
+
 	@Test func contentTypeDefault() throws {
 		// No `type` attribute — RFC 4287 specifies default is "text". The
 		// parser treats it as plain text (same path as `type="text"`).

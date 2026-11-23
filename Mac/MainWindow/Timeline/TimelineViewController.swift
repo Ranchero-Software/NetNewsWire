@@ -498,7 +498,18 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	// MARK: - Actions
 
 	@objc func openArticleInBrowser(_ sender: Any?) {
-		if let link = oneSelectedArticle?.preferredLink {
+		let article: Article?
+
+		if let tableView = sender as? NSTableView, tableView === self.tableView, let clickedArticle = articles.articleAtRow(tableView.clickedRow) {
+			article = clickedArticle
+			if !clickedArticle.status.read {
+				markArticles(Set([clickedArticle]), statusKey: .read, flag: true)
+			}
+		} else {
+			article = oneSelectedArticle
+		}
+
+		if let link = article?.preferredLink {
 			Browser.open(link, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
 		}
 	}
@@ -812,7 +823,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 		// The row already has room for the thumbnail, so only the image changes.
 		tableView.enumerateAvailableRowViews { rowView, row in
-			guard let article = articles.articleAtRow(row), ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) == url, let cell = cellForRowView(rowView) as? TimelineTableCellView, let thumbnail = ThumbnailDownloader.shared.thumbnail(url: url, mode: thumbnailMode, articleTitle: article.title) else {
+			guard let article = articles.articleAtRow(row), ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) == url, let cell = cellForRowView(rowView) as? TimelineTableCellView, let thumbnail = ThumbnailDownloader.shared.thumbnail(url: url, mode: thumbnailMode, feedName: article.feed?.nameForDisplay, articleTitle: article.title) else {
 				return
 			}
 			cell.thumbnail = thumbnail
@@ -834,7 +845,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		// After ArticleThumbnailFinder forgets its choices, which it does on this notification too.
 		Task { @MainActor in
 			remeasureRowsWhoseThumbnailChanged()
-			// Thumbnails that couldn’t download while offline or in Low Data Mode try again.
+			// Thumbnails that couldn’t download while offline try again.
 			if ThumbnailDownloader.shared.networkAllowsDownloads {
 				reloadVisibleCells()
 			}
@@ -1400,7 +1411,7 @@ extension TimelineViewController: NSTableViewDelegate {
 		var showThumbnail = false
 		if let thumbnailMode, let thumbnailURL = ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) {
 			showThumbnail = true
-			thumbnail = ThumbnailDownloader.shared.thumbnail(url: thumbnailURL, mode: thumbnailMode, articleTitle: article.title)
+			thumbnail = ThumbnailDownloader.shared.thumbnail(url: thumbnailURL, mode: thumbnailMode, feedName: article.feed?.nameForDisplay, articleTitle: article.title)
 		}
 		cell.cellData = TimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcons, thumbnail: thumbnail, showThumbnail: showThumbnail)
 	}
