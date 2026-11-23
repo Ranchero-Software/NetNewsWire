@@ -236,7 +236,7 @@ final class ArticleViewController: UIViewController {
 			controller.hideBars()
 		}
 
-		NotificationCenter.default.addObserver(self, selector: #selector(beginFind(_:)), name: .FindInArticle, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleFindInArticle(_:)), name: .FindInArticle, object: nil)
 
 		updateUI()
 	}
@@ -464,12 +464,12 @@ public extension Notification.Name {
 
 extension ArticleViewController {
 
-	@objc func beginFind(_ _: Any? = nil) {
-		currentWebViewController?.findInteraction?.presentFindNavigator(showingReplace: false)
+	@objc func handleFindInArticle(_ notification: Notification) {
+		presentFindNavigator()
 	}
 
 	override func find(_ sender: Any?) {
-		beginFind()
+		presentFindNavigator()
 	}
 
 	override func findNext(_ sender: Any?) {
@@ -489,6 +489,9 @@ extension ArticleViewController {
 	override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
 		if action == #selector(useSelectionForFind(_:)) {
 			return currentWebViewController?.canUseSelectionForFind ?? false
+		}
+		if action == #selector(find(_:)) || action == #selector(findNext(_:)) || action == #selector(findPrevious(_:)) {
+			return currentWebViewController?.findInteraction != nil
 		}
 		return super.canPerformAction(action, withSender: sender)
 	}
@@ -595,6 +598,10 @@ extension ArticleViewController: UIGestureRecognizerDelegate {
 // MARK: Private
 
 private extension ArticleViewController {
+
+	func presentFindNavigator() {
+		currentWebViewController?.findInteraction?.presentFindNavigator(showingReplace: false)
+	}
 
 	func createWebViewController(_ article: Article?, updateView: Bool = true) -> WebViewController {
 		let controller = WebViewController()

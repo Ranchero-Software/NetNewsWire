@@ -25,17 +25,6 @@
         }
       }
     },
-    "%d of %d" : {
-      "comment" : "Results selection and count",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$d of %2$d"
-          }
-        }
-      }
-    },
     "%d unread" : {
       "comment" : "Unread"
     },
@@ -1031,9 +1020,6 @@
     },
     "No Errors Logged" : {
       "comment" : "Error log empty state"
-    },
-    "No results" : {
-      "comment" : "No results"
     },
     "None" : {
       "comment" : "None"

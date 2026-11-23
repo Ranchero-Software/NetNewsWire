@@ -1032,7 +1032,7 @@ extension WebViewController: @preconcurrency SFSafariViewControllerDelegate {
 extension WebViewController {
 
 	var findInteraction: UIFindInteraction? {
-		return webView?.findInteraction
+		webView?.findInteraction
 	}
 
 	/// Whether the article has selected text to search for.
