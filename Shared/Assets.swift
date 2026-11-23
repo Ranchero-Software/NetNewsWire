@@ -48,6 +48,7 @@ struct Assets {
 		static let share = RSImage(symbol: "square.and.arrow.up")!
 		static let folder = RSImage(symbol: "folder")!
 		static let starredFeed = IconImage(starClosed, isSymbol: true, isBackgroundSuppressed: true, preferredColor: Assets.Colors.star)
+		static var preferencesToolbarAppearance: RSImage { RSImage(named: "preferencesToolbarAppearance")! }
 
 #if os(macOS)
 		static var accountLocal: RSImage { RSImage(named: "accountLocal")! }
@@ -61,7 +62,6 @@ struct Assets {
 		static let openInBrowser = RSImage(symbol: "safari")!
 		static let preferencesToolbarAccounts = RSImage(symbol: "at")!
 		static let preferencesToolbarGeneral = RSImage(symbol: "gearshape")!
-		static var preferencesToolbarAppearance: RSImage { RSImage(named: "preferencesToolbarAppearance")! }
 		static let preferencesToolbarTimeline = RSImage(symbol: "list.bullet.rectangle")!
 		static let preferencesToolbarAdvanced = RSImage(symbol: "gearshape.2")!
 		static let readClosed = RSImage(symbol: "largecircle.fill.circle")!
@@ -103,6 +103,45 @@ struct Assets {
 		static let safari = RSImage(symbol: "safari")!
 		static let smartFeed = RSImage(symbol: "gear")!
 		static let trash = RSImage(symbol: "trash")!
+
+		static let settingsSystemSettings = RSImage(symbol: "gear")!
+		static let settingsImportSubscriptions = RSImage(symbol: "square.and.arrow.down")!
+		static let settingsExportSubscriptions = RSImage(symbol: "square.and.arrow.up")!
+		static var settingsSidebar: RSImage { RSImage(named: "settingsSidebar")! }
+		static var settingsTimeline: RSImage { RSImage(named: "settingsTimeline")! }
+		static var settingsArticles: RSImage { RSImage(named: "settingsArticles")! }
+		static let settingsErrorLog = RSImage(symbol: "exclamationmark.triangle")!
+		static let settingsActivityLog = RSImage(symbol: "clock.arrow.circlepath")!
+		static let settingsAccountStats = RSImage(symbol: "chart.bar")!
+		static let settingsDinosaurs: RSImage = {
+			let emoji = "🦖" as NSString
+			let attributes: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: settingsEmojiFontSize)]
+			let emojiSize = emoji.size(withAttributes: attributes)
+			// Template, mirrored so the dinosaur faces the row’s text.
+			let image = UIGraphicsImageRenderer(size: settingsIconSize).image { context in
+				context.cgContext.translateBy(x: settingsIconSize.width, y: 0.0)
+				context.cgContext.scaleBy(x: -1.0, y: 1.0)
+				let origin = CGPoint(x: (settingsIconSize.width - emojiSize.width) / 2.0, y: (settingsIconSize.height - emojiSize.height) / 2.0)
+				emoji.draw(at: origin, withAttributes: attributes)
+			}
+			return image.withRenderingMode(.alwaysTemplate)
+		}()
+		static let settingsCloudKitStats = RSImage(symbol: "icloud")!
+		static let settingsHelp = RSImage(symbol: "questionmark.circle")!
+		static let settingsForum = RSImage(symbol: "bubble.left.and.bubble.right")!
+		static let settingsThemesGallery = RSImage(symbol: "paintpalette")!
+		static let settingsReleaseNotes = RSImage(symbol: "doc.text")!
+		static let settingsBugTracker = RSImage(symbol: "ant")!
+		static let settingsNetNewsWireNewsFeed: RSImage = {
+			let rect = CGRect(origin: .zero, size: settingsIconSize)
+			return UIGraphicsImageRenderer(size: settingsIconSize).image { _ in
+				UIBezierPath(roundedRect: rect, cornerRadius: settingsIconCornerRadius).addClip()
+				nnwFeedIcon.draw(in: rect)
+			}
+		}()
+		static let settingsIconSize = CGSize(width: 22, height: 22)
+		private static let settingsIconCornerRadius = 5.0
+		private static let settingsEmojiFontSize = 21.0
 
 		static let searchFeed = IconImage(RSImage(symbol: "magnifyingglass")!, isSymbol: true)
 		static let mainFolder = IconImage(folder, isSymbol: true, isBackgroundSuppressed: true, preferredColor: Assets.Colors.primaryAccent)

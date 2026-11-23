@@ -120,6 +120,7 @@ enum AppDefaults {
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.articleContentJavascriptEnabled)
+			NotificationCenter.default.post(name: .articleContentJavascriptEnabledDidChange, object: nil)
 		}
 	}
 

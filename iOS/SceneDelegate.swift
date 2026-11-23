@@ -26,8 +26,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		rootViewController.showsSecondaryOnlyButton = true
 		rootViewController.preferredDisplayMode = UISplitViewController.DisplayMode(rawValue: AppDefaults.splitViewPreferredDisplayMode) ?? .oneBesideSecondary
 
-		// On first run on iPad, show all three columns so the sidebar is visible
-		if AppDefaults.isFirstRun && UIDevice.current.userInterfaceIdiom == .pad {
+		// On first run, show all three columns so the sidebar is visible.
+		if AppDefaults.isFirstRun {
 			rootViewController.preferredDisplayMode = .twoBesideSecondary
 		}
 
@@ -121,6 +121,21 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 		DispatchQueue.main.async {
 
+			// Theme URLs leave Settings open so the install prompt can appear over it.
+			let filename = context.url.standardizedFileURL.path
+			if filename.hasSuffix(ArticleTheme.nnwThemeSuffix) {
+				self.coordinator.importTheme(filename: filename)
+				return
+			}
+
+			// Handle theme URLs: netnewswire://theme/add?url={url}
+			if let urlComponents = URLComponents(url: context.url, resolvingAgainstBaseURL: false), urlComponents.scheme?.lowercased() == "netnewswire", urlComponents.host == "theme" {
+				if let providedThemeURL = urlComponents.queryItems?.first(where: { $0.name == "url" })?.value, let themeURL = URL(string: providedThemeURL) {
+					ArticleThemeDownloader.shared.downloadTheme(from: themeURL)
+				}
+				return
+			}
+
 			DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
 				self.coordinator.dismissIfLaunchingFromExternalAction()
 			}
@@ -191,25 +206,6 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 					self.coordinator.selectStarredFeed()
 				}
 				return
-			}
-
-			let filename = context.url.standardizedFileURL.path
-			if filename.hasSuffix(ArticleTheme.nnwThemeSuffix) {
-				self.coordinator.importTheme(filename: filename)
-				return
-			}
-
-			// Handle theme URLs: netnewswire://theme/add?url={url}
-			guard let comps = URLComponents(url: context.url, resolvingAgainstBaseURL: false),
-				  comps.scheme?.lowercased() == "netnewswire",
-				  "theme" == comps.host,
-				 let queryItems = comps.queryItems else {
-				return
-			}
-
-			if let providedThemeURL = queryItems.first(where: { $0.name == "url" })?.value,
-			   let themeURL = URL(string: providedThemeURL) {
-				ArticleThemeDownloader.shared.downloadTheme(from: themeURL)
 			}
 		}
 	}

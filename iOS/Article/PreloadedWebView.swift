@@ -19,6 +19,7 @@ final class PreloadedWebView: WKWebView {
 		let configuration = WebViewConfiguration.configuration(with: articleIconSchemeHandler)
 		super.init(frame: .zero, configuration: configuration)
 		isInspectable = true
+		isFindInteractionEnabled = true
 		fullscreenStateObservation = observe(\.fullscreenState, options: []) { [weak self] _, _ in
 			Task { @MainActor in
 				guard let self else {

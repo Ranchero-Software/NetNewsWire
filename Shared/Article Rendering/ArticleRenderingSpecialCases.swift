@@ -242,6 +242,40 @@ struct ArticleRenderingSpecialCases {
 		return String(fileName.dropFirst(engadgetLargeImagePrefix.count))
 	}
 
+	private static let brettTerpstraImageDomains = ["brettterpstra.com"]
+
+	/// Brett Terpstra’s `media:content` is the body’s image with a version number, often as a square `_fb` crop,
+	/// as in `web-exc-map.7542.jpg` and `web-exc-map.jpg`, or `nvalt-extensions-rb_fb.7542.jpg` and `nvalt-extensions-rb.7542.jpg`.
+	static func removingBrettTerpstraImageSuffixes(_ fileName: String, imageURL: String) -> String {
+		guard SpecialCase.urlStringMatchesDomain(imageURL, brettTerpstraImageDomains) else {
+			return fileName
+		}
+		// The `_fb` crop marker and the version number, as in `nvalt-extensions-rb_fb.7542.jpg`.
+		let suffixRegex = #/(?:_fb)?(?:\.\d+)?(?=\.[A-Za-z0-9]+$)/#
+		return fileName.replacing(suffixRegex, with: "")
+	}
+
+	private static let bloggerImageDomains = ["blogger.googleusercontent.com", "bp.blogspot.com"]
+	private static let bloggerThumbnailSizePrefix = "s72-"
+
+	/// Blogger’s `media:thumbnail` is a 72-pixel square crop of one of the body’s images,
+	/// as in `…/s72-c/image.jpg` or `…/s72-w395-h279-c/image.png`.
+	static func isBloggerThumbnail(_ urlString: String) -> Bool {
+		guard SpecialCase.urlStringMatchesDomain(urlString, bloggerImageDomains), let url = URL(string: urlString) else {
+			return false
+		}
+		return url.pathComponents.contains { $0.hasPrefix(bloggerThumbnailSizePrefix) }
+	}
+
+	private static let substackImageDomains = ["substackcdn.com", "substack-post-media.s3.amazonaws.com"]
+	private static let substackTopImageMarker = "&quot;topImage&quot;:true"
+
+	/// Substack’s enclosure is the post’s cover image, which is sometimes a separate upload of the body’s top image,
+	/// as in `2c9ce7c8-…_2560x1440.png` and `55fb8931-…_848x444.webp`. The top image’s `data-attrs` has `"topImage":true`.
+	static func bodyHasSubstackTopImage(imageURL: String, body: String) -> Bool {
+		SpecialCase.urlStringMatchesDomain(imageURL, substackImageDomains) && body.contains(substackTopImageMarker)
+	}
+
 	private static func anyURLStringMatchesAnyDomain(_ urlStrings: [String?], _ domains: [String]) -> Bool {
 		for urlString in urlStrings {
 			if let urlString, SpecialCase.urlStringMatchesDomain(urlString, domains) {

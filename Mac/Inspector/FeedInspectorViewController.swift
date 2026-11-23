@@ -175,7 +175,6 @@ private extension FeedInspectorViewController {
 	}
 
 	func updateNewArticleNotificationsEnabled() {
-		newArticleNotificationsEnabledCheckBox?.title = feed?.notificationDisplayName ?? NSLocalizedString("Show notifications for new articles", comment: "Show notifications for new articles")
 		newArticleNotificationsEnabledCheckBox?.state = (feed?.newArticleNotificationsEnabled ?? false) ? .on : .off
 	}
 

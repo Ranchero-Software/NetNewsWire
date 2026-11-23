@@ -1442,19 +1442,19 @@
       }
     },
     "OKC-FV-V33.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Discourse Forum\"; ObjectID = \"OKC-FV-V33\";",
+      "comment" : "Class = \"NSMenuItem\"; title = \"NetNewsWire Forum\"; ObjectID = \"OKC-FV-V33\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Discourse Forum"
+            "value" : "NetNewsWire Forum"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Foro de Discourse"
+            "value" : "Foro de NetNewsWire"
           }
         }
       }
@@ -2001,6 +2001,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ventana"
+          }
+        }
+      }
+    },
+    "TgL-mK-7pQ.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Themes Gallery\"; ObjectID = \"TgL-mK-7pQ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Themes Gallery"
           }
         }
       }

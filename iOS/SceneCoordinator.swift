@@ -705,8 +705,10 @@ struct SidebarItemNode: Hashable, Sendable {
 				  return
 			  }
 		DispatchQueue.main.async {
-			let title = NSLocalizedString("Theme Error", comment: "Theme download error")
-			self.rootSplitViewController.presentError(title: title, message: ArticleThemesManager.importErrorMessage(for: error))
+			self.withFrontmostController { controller in
+				let title = NSLocalizedString("Theme Error", comment: "Theme download error")
+				controller.presentError(title: title, message: ArticleThemesManager.importErrorMessage(for: error))
+			}
 		}
 	}
 
@@ -1608,13 +1610,11 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 	}
 
-	func showSettings(scrollToArticlesSection: Bool = false) {
-		let settingsNavController = UIStoryboard.settings.instantiateInitialViewController() as! UINavigationController
-		let settingsViewController = settingsNavController.topViewController as! SettingsViewController
-		settingsViewController.scrollToArticlesSection = scrollToArticlesSection
-		settingsNavController.modalPresentationStyle = .formSheet
-		settingsViewController.presentingParentController = rootSplitViewController
-		rootSplitViewController.present(settingsNavController, animated: true)
+	func showSettings() {
+		let settingsView = SettingsView(presentingParentController: rootSplitViewController)
+		let hostingController = UIHostingController(rootView: settingsView)
+		hostingController.modalPresentationStyle = .formSheet
+		rootSplitViewController.present(hostingController, animated: true)
 	}
 
 	func showCurrentActivity() {
@@ -1627,14 +1627,10 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func showAccountInspector(for account: Account) {
-		let accountInspectorNavController =
-			UIStoryboard.inspector.instantiateViewController(identifier: "AccountInspectorNavigationViewController") as! UINavigationController
-		let accountInspectorController = accountInspectorNavController.topViewController as! AccountInspectorViewController
-		accountInspectorNavController.modalPresentationStyle = .formSheet
-		accountInspectorNavController.preferredContentSize = UIViewController.formSheetSize
-		accountInspectorController.isModal = true
-		accountInspectorController.account = account
-		rootSplitViewController.present(accountInspectorNavController, animated: true)
+		let hostingController = UIHostingController(rootView: NavigationStack { AccountInspectorView(account: account, isModal: true) })
+		hostingController.modalPresentationStyle = .formSheet
+		hostingController.preferredContentSize = UIViewController.formSheetSize
+		rootSplitViewController.present(hostingController, animated: true)
 	}
 
 	func showNotificationInspector(for account: Account) {
@@ -1784,12 +1780,13 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func importTheme(filename: String) {
-		do {
-			try ArticleThemeImporter.importTheme(controller: rootSplitViewController, url: URL(fileURLWithPath: filename))
-		} catch {
-			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
+		withFrontmostController { controller in
+			do {
+				try ArticleThemeImporter.importTheme(controller: controller, url: URL(fileURLWithPath: filename))
+			} catch {
+				NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
+			}
 		}
-
 	}
 
 	/// This will dismiss the foremost view controller if the user
@@ -1797,7 +1794,7 @@ struct SidebarItemNode: Hashable, Sendable {
 	/// selecting an article via a notification).
 	///
 	/// The dismiss is only applicable if the view controller is a
-	/// `SFSafariViewController` or `SettingsViewController`,
+	/// `SFSafariViewController` or Settings,
 	/// otherwise, this function does nothing.
 	func dismissIfLaunchingFromExternalAction() {
 		guard let presentedController = mainFeedCollectionViewController.presentedViewController else {
@@ -1807,10 +1804,10 @@ struct SidebarItemNode: Hashable, Sendable {
 		if presentedController.isKind(of: SFSafariViewController.self) {
 			presentedController.dismiss(animated: true, completion: nil)
 		}
-		guard let settings = presentedController.children.first as? SettingsViewController else {
+		guard presentedController is UIHostingController<SettingsView> else {
 			return
 		}
-		settings.dismiss(animated: true, completion: nil)
+		presentedController.dismiss(animated: true, completion: nil)
 	}
 
 }
@@ -1958,6 +1955,23 @@ private extension SceneCoordinator {
 			// Forward navigation — push the destination column onto the stack.
 			rootSplitViewController.showColumn(column, bypassDisplayModeRestriction: true)
 			focusWhenTransitionCompletes(in: navController, thenFocus: focus)
+		}
+	}
+
+	/// Calls `handler` with the frontmost presented controller (such as Settings), so
+	/// alerts can be presented over it. Waits for any presentation transition to finish.
+	func withFrontmostController(_ handler: @escaping @MainActor (UIViewController) -> Void) {
+		var controller: UIViewController = rootSplitViewController
+		while let presentedController = controller.presentedViewController, !presentedController.isBeingDismissed {
+			controller = presentedController
+		}
+
+		if let transitionCoordinator = controller.transitionCoordinator {
+			transitionCoordinator.animate(alongsideTransition: nil) { _ in
+				handler(controller)
+			}
+		} else {
+			handler(controller)
 		}
 	}
 

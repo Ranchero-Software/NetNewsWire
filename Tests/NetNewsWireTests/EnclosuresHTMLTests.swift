@@ -22,7 +22,7 @@ import Articles
 		let primaryMedia = try #require(ArticleRenderer.primaryMedia(imageLink: artworkURL, thumbnailLink: nil, attachments: [attachment], articleTitle: nil, body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil), includesImage: true))
 
 		#expect(primaryMedia.html.hasPrefix("<div class=\"nnw-primary-media\"><div class=\"nnw-primary-image\"><img src=\"\(artworkURL)\" alt=\"\"></div><div class=\"nnw-enclosure nnw-enclosure-audio\"><audio controls preload=\"none\" src=\"http://traffic.libsyn.com/atpfm/atp311.mp3\"></audio>"))
-		#expect(primaryMedia.html.contains("atp311.mp3 · 1:54:09 · "))
+		#expect(primaryMedia.html.contains("<a href=\"http://traffic.libsyn.com/atpfm/atp311.mp3\">atp311.mp3</a> · 1:54:09 · "))
 		#expect(primaryMedia.attachmentURLs == [artworkURL, attachment.url])
 	}
 
@@ -86,6 +86,38 @@ import Articles
 		let body = "The latest probe questions the effectiveness of Waymo's software recall from 2025.<p><img src=\"https://www.engadget.com/img/gallery/nhtsa-investigates-if-waymo-robotaxis-are-still-running-school-bus-stop-signs/intro-1794240937.jpg\" /></p>"
 
 		#expect(ArticleRenderer.primaryImage(imageLink: nil, thumbnailLink: imageURL, attachments: [attachment], body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil)) == nil)
+	}
+
+	// Silver Bulletin’s “The NVIDIA story is a BFD”: the enclosure is a separate upload of the body’s top image.
+	@Test func primaryImageSkippedWhenBodyHasSubstackTopImage() throws {
+		let imageURL = "https://substack-post-media.s3.amazonaws.com/public/images/2c9ce7c8-f3df-4d86-b18f-f3a322cd6dc7_2560x1440.png"
+		let attachment = try #require(Attachment(url: imageURL, mimeType: "image/jpeg", title: nil, sizeInBytes: nil, durationInSeconds: nil, width: nil, height: nil, medium: nil))
+		let body = "<div class=\"captioned-image-container\"><figure><img src=\"https://substackcdn.com/image/fetch/$s_!9yvA!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F55fb8931-3455-417c-bc8f-35eda57075d3_848x444.webp\" width=\"848\" height=\"444\" data-attrs=\"{&quot;src&quot;:&quot;https://substack-post-media.s3.amazonaws.com/public/images/55fb8931-3455-417c-bc8f-35eda57075d3_848x444.webp&quot;,&quot;belowTheFold&quot;:false,&quot;topImage&quot;:true}\" class=\"sizing-normal\" alt=\"\"><figcaption class=\"image-caption\">Getty Images/Silver Bulletin illustration.</figcaption></figure></div><p>Jensen Huang, the CEO of Nvidia, one of the world’s most valuable companies.</p>"
+
+		#expect(ArticleRenderer.primaryImage(imageLink: nil, thumbnailLink: nil, attachments: [attachment], body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil)) == nil)
+	}
+
+	// Brett Terpstra’s “Web Excursions for November 14th, 2026” and “New nvALT browser extensions”:
+	// the media:content image is the body’s image with a version number, and sometimes as a square `_fb` crop.
+	@Test func primaryImageSkippedWhenBodyHasBrettTerpstraCopy() throws {
+		let webExcursionsImageURL = "https://cdn3.brettterpstra.com/uploads/2017/03/web-exc-map.7542.jpg"
+		let webExcursionsAttachment = try #require(Attachment(url: webExcursionsImageURL, mimeType: nil, title: nil, sizeInBytes: nil, durationInSeconds: nil, width: nil, height: nil, medium: .image))
+		let webExcursionsBody = "<p><img src=\"https://cdn3.brettterpstra.com/uploads/2017/03/web-exc-map.jpg\"></p>"
+		#expect(ArticleRenderer.primaryImage(imageLink: nil, thumbnailLink: webExcursionsImageURL, attachments: [webExcursionsAttachment], body: webExcursionsBody, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(webExcursionsBody, baseURL: nil)) == nil)
+
+		let nvALTImageURL = "https://cdn3.brettterpstra.com/uploads/2026/11/nvalt-extensions-rb_fb.7542.jpg"
+		let nvALTAttachment = try #require(Attachment(url: nvALTImageURL, mimeType: nil, title: nil, sizeInBytes: nil, durationInSeconds: nil, width: nil, height: nil, medium: .image))
+		let nvALTBody = "<p><img src=\"https://cdn3.brettterpstra.com/uploads/2026/11/nvalt-extensions-rb.7542.jpg\" width=\"800\" height=\"226\" style=\"margin:0 auto;clear:both;\" class=\"header\" /></p>"
+		#expect(ArticleRenderer.primaryImage(imageLink: nil, thumbnailLink: nvALTImageURL, attachments: [nvALTAttachment], body: nvALTBody, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(nvALTBody, baseURL: nil)) == nil)
+	}
+
+	// Cliff Mass Weather Blog’s “The Large Effects of El Nino On Our Current Weather”:
+	// the media:thumbnail is Blogger’s 72-pixel crop of the body’s first image.
+	@Test func primaryImageSkipsBloggerThumbnail() {
+		let thumbnailURL = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg5OGZfA2gPDijOTJL2tNo2wUkYs-DXIKggX_5wC9q_hW9MKYqQILTbFBYIGjpWTCONO9Jl-K-wwzVayA9kGXDhzUTFj8wKlpEQq6eN2lTxUMrShypf0MuuZCbK_qe3wPdfo2oQbP8K3mBC2o7kjtOYVuX2Da036hDaCjHEMVzxQV2iPImiFnxn2_UY1eU/s72-w395-h279-c/Screenshot%202026-11-12%20at%207.24.04%E2%80%AFPM.png"
+		let body = "<p>Our current weather is being profoundly influenced by El Nino.</p><img border=\"0\" data-original-height=\"618\" data-original-width=\"874\" height=\"279\" src=\"https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg5OGZfA2gPDijOTJL2tNo2wUkYs-DXIKggX_5wC9q_hW9MKYqQILTbFBYIGjpWTCONO9Jl-K-wwzVayA9kGXDhzUTFj8wKlpEQq6eN2lTxUMrShypf0MuuZCbK_qe3wPdfo2oQbP8K3mBC2o7kjtOYVuX2Da036hDaCjHEMVzxQV2iPImiFnxn2_UY1eU/w395-h279/Screenshot%202026-11-12%20at%207.24.04%E2%80%AFPM.png\" width=\"395\" />"
+
+		#expect(ArticleRenderer.primaryImage(imageLink: nil, thumbnailLink: thumbnailURL, attachments: nil, body: body, bodyImageIdentities: ArticleRenderer.bodyImageIdentities(body, baseURL: nil)) == nil)
 	}
 
 	// The Atlantic’s “The Democrats’ Fight Over Israel Is Just Beginning”: every image is `original.jpg` in its own folder,

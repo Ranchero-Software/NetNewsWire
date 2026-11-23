@@ -129,21 +129,21 @@
                 <rect id="right-margin" fill="#00AEEF" fill-rule="nonzero" opacity="0.4" x="1236.9137" y="405.79" width="8.74023" height="119.336"></rect>
             </g>
             <g id="Symbols" transform="translate(1399, 1016)" fill="#000000" fill-rule="nonzero">
-                <g id="Regular-L" transform="translate(-6, 420)">
+                <g id="Regular-L" transform="translate(-6, 391.58)">
                     <g transform="translate(-7.9081, 48.7996)">
                         <path d="M0,64.3945 A64.3945,64.3945 0 1 1 128.7889,64.3945 A64.3945,64.3945 0 1 1 0,64.3945 Z M9.4697,64.3945 A54.9248,54.9248 0 1 0 119.3192,64.3945 A54.9248,54.9248 0 1 0 9.4697,64.3945 Z" id="Ring"></path>
                         <path d="M64.3945,4.7349 A59.6596,59.6596 0 0 0 64.3945,124.0541 L64.3945,91.8569 A27.4624,27.4624 0 0 1 64.3945,36.9321 Z" id="Left-half"></path>
                         <path d="M64.3945,36.9321 A27.4624,27.4624 0 0 1 64.3945,91.8569 Z" id="Inner-right-half"></path>
                     </g>
                 </g>
-                <g id="Regular-M" transform="translate(6, 7)">
+                <g id="Regular-M" transform="translate(6, -14.11)">
                     <g transform="translate(-6.2093, 38.3166)">
                         <path d="M0,50.5615 A50.5615,50.5615 0 1 1 101.123,50.5615 A50.5615,50.5615 0 1 1 0,50.5615 Z M7.4355,50.5615 A43.126,43.126 0 1 0 93.6875,50.5615 A43.126,43.126 0 1 0 7.4355,50.5615 Z" id="Ring"></path>
                         <path d="M50.5615,3.7177 A46.8438,46.8438 0 0 0 50.5615,97.4053 L50.5615,72.1245 A21.563,21.563 0 0 1 50.5615,28.9985 Z" id="Left-half"></path>
                         <path d="M50.5615,28.9985 A21.563,21.563 0 0 1 50.5615,72.1245 Z" id="Inner-right-half"></path>
                     </g>
                 </g>
-                <g id="Regular-S" transform="translate(18, -404)">
+                <g id="Regular-S" transform="translate(18, -420.85)">
                     <g transform="translate(-4.5842, 28.2881)">
                         <path d="M0,37.3281 A37.3281,37.3281 0 1 1 74.6563,37.3281 A37.3281,37.3281 0 1 1 0,37.3281 Z M5.4894,37.3281 A31.8388,31.8388 0 1 0 69.1669,37.3281 A31.8388,31.8388 0 1 0 5.4894,37.3281 Z" id="Ring"></path>
                         <path d="M37.3281,2.7447 A34.5835,34.5835 0 0 0 37.3281,71.9116 L37.3281,53.2475 A15.9194,15.9194 0 0 1 37.3281,21.4088 Z" id="Left-half"></path>

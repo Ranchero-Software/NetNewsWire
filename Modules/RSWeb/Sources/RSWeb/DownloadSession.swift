@@ -403,7 +403,7 @@ extension DownloadSession {
 		cancelAndRemoveTasksWithHost(message.host)
 	}
 
-	// Default for sites like Reddit that don’t send a value.
+	// Default for sites that don’t send a value.
 	static let defaultRetryAfter: TimeInterval = 10 * 60 // 10 minutes
 
 	func createHTTPResponse429(_ dataTask: URLSessionDataTask, _ response: URLResponse) -> HTTPResponse429? {

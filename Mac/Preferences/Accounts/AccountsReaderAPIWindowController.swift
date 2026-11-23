@@ -69,7 +69,7 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 			apiURLTextField.stringValue = account.endpointURL?.absoluteString ?? ""
 			actionButton.title = NSLocalizedString("Update", comment: "Update")
 		} else {
-			actionButton.title = NSLocalizedString("Create", comment: "Create")
+			actionButton.title = NSLocalizedString("Add", comment: "Add button")
 		}
 
 		enableAutofill()

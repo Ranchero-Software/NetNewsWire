@@ -117,6 +117,9 @@ let appName = "NetNewsWire"
 			self.crashReporter = crashReporter
 		}
 
+		// Register before window restoration, which happens before applicationDidFinishLaunching.
+		AppDefaults.registerDefaults()
+
 		AccountManager.shared.start()
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: AccountManager.shared)
@@ -183,7 +186,6 @@ let appName = "NetNewsWire"
 			Self.logger.error("Failed to start software updater with error: \(error.localizedDescription)")
 		}
 
-		AppDefaults.registerDefaults()
 		let isFirstRun = AppDefaults.isFirstRun
 		if isFirstRun {
 			Self.logger.debug("Is first run.")
@@ -719,6 +721,10 @@ let appName = "NetNewsWire"
 
 	@IBAction func openDiscourse(_ sender: Any?) {
 		HelpURL.discourse.open()
+	}
+
+	@IBAction func openThemesGallery(_ sender: Any?) {
+		HelpURL.themesGallery.open()
 	}
 
 	@IBAction func showHelp(_ sender: Any?) {

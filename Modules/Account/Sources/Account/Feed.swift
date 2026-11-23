@@ -236,23 +236,6 @@ import Articles
 		}
 	}
 
-    // MARK: - NotificationDisplayName
-    public var notificationDisplayName: String {
-        #if os(macOS)
-        if self.url.contains("www.reddit.com") {
-            return NSLocalizedString("Show notifications for new posts", comment: "notifyNameDisplay / Reddit")
-        } else {
-            return NSLocalizedString("Show notifications for new articles", comment: "Show notifications for new articles")
-        }
-        #else
-        if self.url.contains("www.reddit.com") {
-            return NSLocalizedString("Notify about new posts", comment: "notifyNameDisplay / Reddit")
-        } else {
-            return NSLocalizedString("Notify about new articles", comment: "notifyNameDisplay / Default")
-        }
-        #endif
-    }
-
 	var settings: FeedSettings
 
 	// MARK: - Init

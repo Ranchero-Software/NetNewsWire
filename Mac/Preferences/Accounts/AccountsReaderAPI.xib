@@ -124,7 +124,7 @@
                     </gridView>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9mz-D9-krh">
                         <rect key="frame" x="354" y="20" width="62" height="24"/>
-                        <buttonCell key="cell" type="push" title="Create" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="IMO-YT-k9Z">
+                        <buttonCell key="cell" type="push" title="Add" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="IMO-YT-k9Z">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                             <string key="keyEquivalent" base64-UTF8="YES">
@@ -230,7 +230,7 @@ Gw
                     <constraint firstAttribute="trailing" secondItem="lti-yM-8LV" secondAttribute="trailing" constant="20" symbolic="YES" id="CeA-ET-oeg"/>
                     <constraint firstItem="Ssh-Dh-xbg" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" symbolic="YES" id="EKF-Yq-DxZ"/>
                     <constraint firstItem="q5z-LG-0Fm" firstAttribute="top" secondItem="zBB-JH-huI" secondAttribute="bottom" constant="15" id="Hdb-dd-lM9"/>
-                    <constraint firstItem="XAM-Hb-0Hw" firstAttribute="width" secondItem="9mz-D9-krh" secondAttribute="width" multiplier="0.951613" constant="3" id="IN4-Kx-qyK"/>
+                    <constraint firstItem="XAM-Hb-0Hw" firstAttribute="width" secondItem="9mz-D9-krh" secondAttribute="width" id="IN4-Kx-qyK"/>
                     <constraint firstItem="XAM-Hb-0Hw" firstAttribute="centerY" secondItem="9mz-D9-krh" secondAttribute="centerY" id="M2M-fb-kfR"/>
                     <constraint firstItem="zBB-JH-huI" firstAttribute="leading" secondItem="R8e-67-Bwh" secondAttribute="leading" id="Mqa-R7-znW"/>
                     <constraint firstAttribute="bottom" secondItem="9mz-D9-krh" secondAttribute="bottom" constant="20" id="PK2-Ye-400"/>

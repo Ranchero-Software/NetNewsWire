@@ -116,9 +116,9 @@ final class RootSplitViewController: UISplitViewController {
 		// Anchor to the Mark All as Read button (keyboard shortcut has no source view).
 		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5370>
 		if let markAllAsReadButton = (viewController(for: .supplementary) as? MainTimelineViewController)?.markAllAsReadButton {
-			MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: markAllAsReadButton, completion: completion)
+			MarkAsReadAlertController.confirm(self, confirmTitle: title, sourceType: markAllAsReadButton, completion: completion)
 		} else {
-			MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: view as UIView, completion: completion)
+			MarkAsReadAlertController.confirm(self, confirmTitle: title, sourceType: view as UIView, completion: completion)
 		}
 	}
 

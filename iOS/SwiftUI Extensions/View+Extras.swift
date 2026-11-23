@@ -27,4 +27,9 @@ extension View {
 			Text(verbatim: message.wrappedValue ?? "")
 		}
 	}
+
+	/// Gives Settings switches, buttons, and pop-up menus the app’s accent color.
+	func settingsAccentTint() -> some View {
+		tint(Color(uiColor: Assets.Colors.primaryAccent))
+	}
 }

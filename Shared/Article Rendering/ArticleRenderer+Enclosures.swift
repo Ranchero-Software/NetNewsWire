@@ -42,12 +42,16 @@ extension ArticleRenderer {
 		Set(HTMLImageParser.significantImageURLStrings(html: body, baseURL: baseURL, maximumCount: Int.max).compactMap(imageIdentity))
 	}
 
-	/// True when the body has `url`, a resized copy of the image at `url`, or the YouTube video the image at `url` is a still of.
+	/// True when the body has `url`, a resized copy of the image at `url`, the YouTube video the image at `url` is a still of,
+	/// or the top image that the Substack cover image at `url` duplicates.
 	static func bodyContains(_ url: String, body: String, bodyImageIdentities: Set<String>) -> Bool {
 		if bodyContainsURL(body, url) {
 			return true
 		}
 		if ArticleRenderingSpecialCases.bodyEmbedsYouTubeVideo(stillImageURL: url, body: body) {
+			return true
+		}
+		if ArticleRenderingSpecialCases.bodyHasSubstackTopImage(imageURL: url, body: body) {
 			return true
 		}
 		guard let identity = imageIdentity(url) else {
@@ -69,29 +73,29 @@ extension ArticleRenderer {
 
 		let src = attachment.url.escapingSpecialXMLCharacters
 		let mediaElement: String
-		let caption: String?
+		let captionHTML: String?
 
 		switch displayMedium {
 		case .audio:
 			mediaElement = "<audio controls preload=\"none\" src=\"\(src)\"></audio>"
-			caption = audioCaption(attachment)
+			captionHTML = audioCaptionHTML(attachment)
 		case .video:
 			var attributes = "controls preload=\"metadata\" playsinline src=\"\(src)\"" + dimensionAttributes(attachment)
 			if let posterURL, !posterURL.isEmpty {
 				attributes += " poster=\"\(posterURL.escapingSpecialXMLCharacters)\""
 			}
 			mediaElement = "<video \(attributes)></video>"
-			caption = attachment.title
+			captionHTML = attachment.title?.escapingSpecialXMLCharacters
 		case .image:
 			mediaElement = "<img src=\"\(src)\" alt=\"\"" + dimensionAttributes(attachment) + ">"
-			caption = attachment.title
+			captionHTML = attachment.title?.escapingSpecialXMLCharacters
 		case .document, .executable:
 			return nil
 		}
 
 		var html = "<div class=\"nnw-enclosure nnw-enclosure-\(displayMedium.rawValue)\">\(mediaElement)"
-		if let caption, !caption.isEmpty {
-			html += "<div class=\"nnw-enclosure-caption\">\(caption.escapingSpecialXMLCharacters)</div>"
+		if let captionHTML, !captionHTML.isEmpty {
+			html += "<div class=\"nnw-enclosure-caption\">\(captionHTML)</div>"
 		}
 		html += "</div>"
 		return html
@@ -101,13 +105,13 @@ extension ArticleRenderer {
 
 private extension ArticleRenderer {
 
-	/// Title (or file name), duration, and size, such as “Episode 311 · 1:54:09 · 54.9 MB”.
-	static func audioCaption(_ attachment: Attachment) -> String {
+	/// Title (or file name, linked to the audio file), duration, and size, such as “Episode 311 · 1:54:09 · 54.9 MB”.
+	static func audioCaptionHTML(_ attachment: Attachment) -> String {
 		var components = [String]()
 		if let title = attachment.title, !title.isEmpty {
-			components.append(title)
+			components.append(title.escapingSpecialXMLCharacters)
 		} else if let fileName = fileName(attachment.url) {
-			components.append(fileName)
+			components.append("<a href=\"\(attachment.url.escapingSpecialXMLCharacters)\">\(fileName.escapingSpecialXMLCharacters)</a>")
 		}
 		if let durationInSeconds = attachment.durationInSeconds {
 			components.append(durationString(durationInSeconds))
@@ -140,7 +144,8 @@ private extension ArticleRenderer {
 		body.contains(url) || body.contains(url.escapingSpecialXMLCharacters)
 	}
 
-	/// The last two path components, lowercased, without a WordPress size suffix or Engadget size prefix.
+	/// The last two path components, lowercased, without a WordPress size suffix, Engadget size prefix,
+	/// or Brett Terpstra version number and crop marker.
 	/// Two components, since some sites name every image `original.jpg` in its own folder.
 	/// Ignores the host and query, since resized copies are often served through a resizing service.
 	static func imageIdentity(_ urlString: String) -> String? {
@@ -151,7 +156,8 @@ private extension ArticleRenderer {
 		guard let lastPathComponent = pathComponents.last else {
 			return nil
 		}
-		let fileName = ArticleRenderingSpecialCases.removingEngadgetImagePrefix(lastPathComponent, imageURL: urlString).replacing(wordPressSizeSuffix, with: "")
+		let engadgetFileName = ArticleRenderingSpecialCases.removingEngadgetImagePrefix(lastPathComponent, imageURL: urlString)
+		let fileName = ArticleRenderingSpecialCases.removingBrettTerpstraImageSuffixes(engadgetFileName, imageURL: urlString).replacing(wordPressSizeSuffix, with: "")
 		let folderName = pathComponents.dropLast().suffix(1)
 		return (folderName + [fileName]).joined(separator: "/").lowercased()
 	}
