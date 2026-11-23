@@ -1297,7 +1297,6 @@ extension MainFeedCollectionViewController {
 			  feed.unreadCount > 0 else {
 			return nil
 		}
-		let articles = feed.fetchArticles()
 		guard let contentView = self.collectionView.cellForItem(at: indexPath)?.contentView else {
 				return nil
 		}
@@ -1310,6 +1309,7 @@ extension MainFeedCollectionViewController {
 
 		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, confirmTitle: title, sourceType: contentView, cancelCompletion: cancel) { [weak self] in
+				let articles = feed.fetchUnreadArticles()
 				self?.coordinator.markAllAsRead(Array(articles), in: feed)
 				completion(true)
 			}
