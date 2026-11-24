@@ -66,7 +66,7 @@ struct AddAccountView: View {
 			case .web:
 				return [.bazQux, .feedbin, .feedly, .inoreader, .newsBlur, .theOldReader]
 			case .selfhosted:
-				return [.freshRSS]
+				return [.freshRSS, .miniflux]
 			}
 		}
 	}
@@ -100,6 +100,8 @@ struct AddAccountView: View {
 				LocalAccountView(didAddAccount: didAddAccount)
 			case .cloudKit:
 				CloudKitAccountView(didAddAccount: didAddAccount)
+			case .miniflux:
+				MinifluxAccountView(account: nil, didAddAccount: didAddAccount)
 			default:
 				CredentialsAccountView(accountType: sheet.accountType, account: nil, didAddAccount: didAddAccount)
 			}

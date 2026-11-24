@@ -94,7 +94,7 @@ struct AccountInspectorView: View {
 			AccountManager.shared.syncArticleContentForUnreadArticles = syncContentOfUnreadArticles
 		}
 		.sheet(isPresented: $isShowingCredentials) {
-			CredentialsAccountView(accountType: account.type, account: account, didAddAccount: nil)
+			credentialsView
 		}
 		.sheet(isPresented: $isShowingLimitationsAndSolutions) {
 			SafariView(url: CloudKitWebDocumentation.limitationsAndSolutionsURL)
@@ -120,7 +120,15 @@ private extension AccountInspectorView {
 	}
 
 	var showsCredentials: Bool {
-		!isDefaultAccount && CredentialsAccountView.accountTypes.contains(account.type)
+		!isDefaultAccount && (account.type == .miniflux || CredentialsAccountView.accountTypes.contains(account.type))
+	}
+
+	@ViewBuilder var credentialsView: some View {
+		if account.type == .miniflux {
+			MinifluxAccountView(account: account, didAddAccount: nil)
+		} else {
+			CredentialsAccountView(accountType: account.type, account: account, didAddAccount: nil)
+		}
 	}
 
 	var showsSyncContent: Bool {
