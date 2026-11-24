@@ -17,6 +17,7 @@ import Secrets
 	// Miniflux caps /v1/entries/ids at MaxEntryIDsLimit (10000) per response, so page at that size.
 	static let entryIDsPageSize = 10000
 	static let statusChunkSize = 1000
+	private static let entryIDsScanAttempts = 3
 
 	private static let minimumVersion = MinifluxVersion(2, 0, 49)
 	// /v1/entries/ids and batch starred updates require this newer version; below it,
@@ -284,8 +285,19 @@ private extension MinifluxAPICaller {
 			return try await retrieveEntryIDsByPagingEntries(matching: filter)
 		}
 
+		for _ in 0..<Self.entryIDsScanAttempts {
+			if let entryIDs = try await scanEntryIDs(matching: filter) {
+				return entryIDs
+			}
+		}
+		throw MinifluxError.entriesChangedDuringSync
+	}
+
+	/// Returns nil if `total` changed during the scan, since offset paging may then have skipped IDs.
+	private func scanEntryIDs(matching filter: [URLQueryItem]) async throws -> Set<Int64>? {
 		var entryIDs = Set<Int64>()
 		var offset = 0
+		var firstTotal: Int?
 
 		while true {
 			let query = filter + [
@@ -293,6 +305,11 @@ private extension MinifluxAPICaller {
 				URLQueryItem(name: "offset", value: String(offset))
 			]
 			let response: MinifluxEntryIDsResponse = try await fetch("entries/ids", query: query)
+
+			if let firstTotal, firstTotal != response.total {
+				return nil
+			}
+			firstTotal = response.total
 
 			entryIDs.formUnion(response.entryIDs)
 			offset += response.entryIDs.count
@@ -310,15 +327,25 @@ private extension MinifluxAPICaller {
 	/// so a full paginated scan here is a one-time cost, not a recurring one.
 	func retrieveEntryIDsByPagingEntries(matching filter: [URLQueryItem]) async throws -> Set<Int64> {
 		var entryIDs = Set<Int64>()
-		var offset = 0
+		var afterEntryID: Int64 = 0
 
+		// Keyset paging, since offset paging skips IDs when the filtered set shrinks during the scan.
 		while true {
-			let response: MinifluxEntriesResponse = try await fetch("entries", query: filter + Self.entriesPageQueryItems(offset: offset))
-			entryIDs.formUnion(response.entries.map { $0.entryID })
-			offset += response.entries.count
-			if response.entries.isEmpty || offset >= response.total {
+			let query = filter + [
+				URLQueryItem(name: "order", value: "id"),
+				URLQueryItem(name: "direction", value: "asc"),
+				URLQueryItem(name: "limit", value: String(Self.entriesPageSize)),
+				URLQueryItem(name: "after_entry_id", value: String(afterEntryID))
+			]
+			let response: MinifluxEntriesResponse = try await fetch("entries", query: query)
+			guard let lastEntryID = response.entries.map(\.entryID).max() else {
 				break
 			}
+			entryIDs.formUnion(response.entries.map(\.entryID))
+			if response.entries.count >= response.total {
+				break
+			}
+			afterEntryID = lastEntryID
 		}
 
 		return entryIDs

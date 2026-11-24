@@ -21,6 +21,7 @@ enum MinifluxError: LocalizedError {
 
 	case serverVersionTooOld(foundVersion: String?)
 	case serverError(message: String)
+	case entriesChangedDuringSync
 
 	var errorDescription: String? {
 		switch self {
@@ -33,6 +34,8 @@ enum MinifluxError: LocalizedError {
 		case .serverError(let message):
 			let localizedText = NSLocalizedString("The Miniflux server reported an error: %@", comment: "Server error")
 			return NSString.localizedStringWithFormat(localizedText as NSString, message) as String
+		case .entriesChangedDuringSync:
+			return NSLocalizedString("Articles on the Miniflux server kept changing during sync. NetNewsWire will try again on the next refresh.", comment: "Entries changed during sync")
 		}
 	}
 }
