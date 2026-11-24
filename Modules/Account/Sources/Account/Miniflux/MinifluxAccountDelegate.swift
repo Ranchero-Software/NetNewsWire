@@ -57,6 +57,10 @@ import Secrets
 	private static let sendStatusBatchThreshold = 100
 	/// `changed_after` is compared against the server’s clock, so back it up to cover a device clock that runs ahead.
 	private static let changedAfterClockSkewMargin: TimeInterval = 5 * 60
+	/// Missing articles are fetched one request per entry, so each refresh fetches at most this many.
+	private static let missingArticlesFetchLimit = 250
+	/// Fetched entries are saved, and deleted statuses removed, after each chunk of this many.
+	private static let missingArticlesChunkSize = 50
 
 	init(dataFolder: String) {
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
@@ -827,34 +831,45 @@ private extension MinifluxAccountDelegate {
 			var savedError: Error?
 
 			let fetchedArticleIDs = await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
-			let entryIDs = fetchedArticleIDs.compactMap { Int64($0) }
-			let chunkedEntryIDs = entryIDs.chunked(into: 100)
-			var serverDeletedArticleIDs = Set<String>()
+			// Newest first, since Miniflux fetches one entry per request.
+			let entryIDs = fetchedArticleIDs.compactMap { Int64($0) }.sorted(by: >).prefix(Self.missingArticlesFetchLimit)
 
-			for chunk in chunkedEntryIDs {
-				do {
-					var entries = [MinifluxEntry]()
-					for entryID in chunk {
+			var shouldStopFetching = false
+
+			for chunk in Array(entryIDs).chunked(into: Self.missingArticlesChunkSize) {
+				var entries = [MinifluxEntry]()
+				var serverDeletedArticleIDs = Set<String>()
+
+				for entryID in chunk {
+					do {
 						if let entry = try await caller.retrieveEntry(entryID: entryID) {
 							entries.append(entry)
 						} else {
 							serverDeletedArticleIDs.insert(String(entryID))
 						}
+					} catch {
+						savedError = error
+						Self.logger.error("Miniflux: Refresh missing articles error: \(error.localizedDescription)")
+						// An HTTP error is about this entry, so skip it. Anything else, such as no connection, would fail every remaining request.
+						if case WebserviceError.httpError = error {
+							continue
+						}
+						shouldStopFetching = true
+						break
 					}
-					await processEntries(account: account, entries: entries)
-				} catch {
-					savedError = error
-					Self.logger.error("Miniflux: Refresh missing articles error: \(error.localizedDescription)")
 				}
-			}
 
-			// A 404 from retrieveEntry means the entry is gone server-side (feed deleted,
-			// server cleanup). Delete those statuses — otherwise they match the
-			// statuses-without-articles query again on every refresh, and we re-request
-			// articles the server will never return.
-			if !serverDeletedArticleIDs.isEmpty {
-				Self.logger.info("Miniflux: Deleting statuses for \(serverDeletedArticleIDs.count) entries removed on the server")
-				await account.deleteStatuses(articleIDs: serverDeletedArticleIDs)
+				await processEntries(account: account, entries: entries)
+
+				// A 404 means the entry is gone on the server, so its status would be re-requested forever.
+				if !serverDeletedArticleIDs.isEmpty {
+					Self.logger.info("Miniflux: Deleting statuses for \(serverDeletedArticleIDs.count) entries removed on the server")
+					await account.deleteStatuses(articleIDs: serverDeletedArticleIDs)
+				}
+
+				if shouldStopFetching {
+					break
+				}
 			}
 
 			if let savedError {
