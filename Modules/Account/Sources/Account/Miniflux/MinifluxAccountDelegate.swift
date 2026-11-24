@@ -55,6 +55,8 @@ import Secrets
 	private static let logger = Miniflux.logger
 	/// Send statuses immediately once this many are queued, rather than waiting for the next scheduled sync.
 	private static let sendStatusBatchThreshold = 100
+	/// `changed_after` is compared against the server’s clock, so back it up to cover a device clock that runs ahead.
+	private static let changedAfterClockSkewMargin: TimeInterval = 5 * 60
 
 	init(dataFolder: String) {
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
@@ -760,7 +762,7 @@ private extension MinifluxAccountDelegate {
 		do {
 			let fetchStartDate = Date()
 			let isInitialSync = accountSettings?.lastRefreshCompletedDate == nil
-			let changedAfter = isInitialSync ? nil : accountSettings?.lastArticleFetchStartTime
+			let changedAfter = isInitialSync ? nil : accountSettings?.lastArticleFetchStartTime?.addingTimeInterval(-Self.changedAfterClockSkewMargin)
 			let publishedAfter = isInitialSync ? Calendar.current.date(byAdding: .month, value: -3, to: fetchStartDate) : nil
 
 			let processedCount = try await account.logActivity(kind: .refreshArticles, successMessage: { "\($0) articles" }, {
