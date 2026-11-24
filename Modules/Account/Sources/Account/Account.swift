@@ -1045,15 +1045,7 @@ public enum FetchType {
 		await database.deleteAsync(articleIDs: articleIDs)
 	}
 
-	/// Delete the statuses for the given articleIDs. Call this only when the sync
-	/// service has affirmatively reported the articles as deleted server-side.
-	///
-	/// Statuses deliberately outlive their articles — they're the memory that stops
-	/// old articles from reappearing as unread, so no cleanup removes them early.
-	/// But a status whose article is gone from the service matches the
-	/// statuses-without-articles query on every sync, and the delegate re-requests
-	/// an article the service will never return. When the service says the article
-	/// is deleted, removing the status is correct and ends that loop.
+	/// Delete statuses for articles the sync service reports as deleted.
 	func deleteStatuses(articleIDs: Set<String>) async {
 		guard !articleIDs.isEmpty else {
 			return

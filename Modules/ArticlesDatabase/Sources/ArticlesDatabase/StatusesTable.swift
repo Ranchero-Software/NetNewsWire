@@ -229,6 +229,7 @@ final class StatusesTable: DatabaseTable, Sendable {
 
 	func removeStatuses(_ articleIDs: Set<String>, _ database: FMDatabase) {
 		deleteRowsWhere(key: DatabaseKey.articleID, equalsAnyValue: Array(articleIDs), in: database)
+		cache.remove(articleIDs)
 	}
 }
 
@@ -340,6 +341,14 @@ private final class StatusCache: Sendable {
 				if state.dictionary[articleID] == nil {
 					state.dictionary[articleID] = status
 				}
+			}
+		}
+	}
+
+	func remove(_ articleIDs: Set<String>) {
+		state.withLock { state in
+			for articleID in articleIDs {
+				state.dictionary[articleID] = nil
 			}
 		}
 	}

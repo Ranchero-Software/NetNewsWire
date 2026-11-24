@@ -352,10 +352,7 @@ public struct ArticleCounts: Sendable {
 		}
 	}
 
-	/// Delete statuses — only for articles the sync service has affirmatively reported
-	/// as deleted. Statuses intentionally outlive their articles (see
-	/// `ArticlesTable.deleteStatuses`); deleting one on any weaker signal reintroduces
-	/// the old-articles-reappear-as-unread class of bugs.
+	/// Delete statuses for articles the sync service reports as deleted.
 	public func deleteStatusesAsync(articleIDs: Set<String>) async {
 		await withCheckedContinuation { continuation in
 			_deleteStatuses(articleIDs: articleIDs) {
