@@ -29,8 +29,21 @@ import Secrets
 	var credentials: Credentials?
 	var accountSettings: AccountSettings?
 
+	/// Keychain server key: host, port, and path, so accounts on one host don’t share credentials.
 	var server: String? {
-		apiBaseURL?.host
+		guard let apiBaseURL, let host = apiBaseURL.host else {
+			return nil
+		}
+		var server = host
+		if let port = apiBaseURL.port {
+			server += ":\(port)"
+		}
+		var path = apiBaseURL.path
+		while path.hasSuffix("/") {
+			path.removeLast()
+		}
+		server += path
+		return server
 	}
 
 	private var apiBaseURL: URL? {
