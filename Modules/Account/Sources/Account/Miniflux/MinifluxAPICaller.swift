@@ -370,8 +370,9 @@ private extension MinifluxAPICaller {
 			guard let entry = try await retrieveEntry(entryID: entryID) else {
 				continue // Gone server-side; nothing to update.
 			}
-			guard entry.starred != starred else {
-				continue // Already correct — toggling would flip it the wrong way.
+			// Unknown state can’t be toggled safely, and the correct state needs no toggle.
+			guard let entryStarred = entry.starred, entryStarred != starred else {
+				continue
 			}
 			try await toggleBookmark(entryID: entryID)
 		}
