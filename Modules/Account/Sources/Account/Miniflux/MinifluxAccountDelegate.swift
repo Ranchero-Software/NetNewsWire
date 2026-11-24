@@ -50,6 +50,8 @@ import Secrets
 
 	private let syncDatabase: SyncDatabase
 	private let caller: MinifluxAPICaller
+	/// Overlapping sends would select the same rows, and the starred fallback toggles, so two sends would undo each other.
+	private var isSendingArticleStatus = false
 	private static let logger = Miniflux.logger
 	/// Send statuses immediately once this many are queued, rather than waiting for the next scheduled sync.
 	private static let sendStatusBatchThreshold = 100
@@ -107,8 +109,14 @@ import Secrets
 
 	/// Sends queued local status changes upstream. Returns the count successfully sent.
 	private func sendArticleStatusReturningCount(for account: Account) async throws -> Int {
+		guard !isSendingArticleStatus else {
+			Self.logger.info("Miniflux: Skipping article status send because one is in progress")
+			return 0
+		}
+		isSendingArticleStatus = true
 		Self.logger.info("Miniflux: Sending article statuses")
 		defer {
+			isSendingArticleStatus = false
 			Self.logger.info("Miniflux: Finished sending article statuses")
 		}
 
