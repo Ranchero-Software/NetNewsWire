@@ -143,12 +143,10 @@ final class AccountsMinifluxWindowController: NSWindowController {
 				}
 
 				do {
+					// The Keychain key comes from the endpoint and username, so remove the old credentials before either changes.
+					try? account?.removeCredentials(type: .minifluxBasic)
+					try? account?.removeCredentials(type: .minifluxAPIToken)
 					account?.endpointURL = apiURL
-
-					// Remove any credentials of the other type so a stale token or
-					// password doesn't take precedence after switching auth modes.
-					let staleCredentialsType: CredentialsType = validatedCredentials.type == .minifluxAPIToken ? .minifluxBasic : .minifluxAPIToken
-					try? account?.removeCredentials(type: staleCredentialsType)
 					try account?.storeCredentials(validatedCredentials)
 
 					hostWindow?.endSheet(window!, returnCode: NSApplication.ModalResponse.OK)

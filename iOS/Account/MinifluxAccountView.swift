@@ -117,10 +117,20 @@ struct MinifluxAccountView: View {
 			}
 
 			let account = self.account ?? AccountManager.shared.createAccount(type: .miniflux)
+
+			// The Keychain key comes from the endpoint and username, so remove the old credentials before either changes.
+			try? account.removeCredentials(type: .minifluxBasic)
+			try? account.removeCredentials(type: .minifluxAPIToken)
 			account.endpointURL = endpoint
-			let staleType: CredentialsType = validatedCredentials.type == .minifluxAPIToken ? .minifluxBasic : .minifluxAPIToken
-			try? account.removeCredentials(type: staleType)
-			try account.storeCredentials(validatedCredentials)
+			do {
+				try account.storeCredentials(validatedCredentials)
+			} catch {
+				if self.account == nil {
+					AccountManager.shared.deleteAccount(account)
+				}
+				errorMessage = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")
+				return
+			}
 
 			account.triggerRefreshAll()
 			dismiss()
