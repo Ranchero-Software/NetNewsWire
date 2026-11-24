@@ -1,0 +1,54 @@
+//
+//  AccountManagerDuplicateEndpointTests.swift
+//  AccountTests
+//
+//  Created by Dave Marquard on 7/15/26.
+//  Copyright © 2026 Ranchero Software, LLC. All rights reserved.
+//
+
+import XCTest
+@testable import Account
+
+@MainActor final class AccountManagerDuplicateEndpointTests: XCTestCase {
+
+	func testCaseInsensitiveHostMatches() {
+		let a = AccountManager.normalizedEndpointForComparison(URL(string: "https://Miniflux.Example.com"))
+		let b = AccountManager.normalizedEndpointForComparison(URL(string: "https://miniflux.example.com"))
+		XCTAssertEqual(a, b)
+	}
+
+	func testTrailingSlashIsIgnored() {
+		let a = AccountManager.normalizedEndpointForComparison(URL(string: "https://miniflux.example.com/"))
+		let b = AccountManager.normalizedEndpointForComparison(URL(string: "https://miniflux.example.com"))
+		XCTAssertEqual(a, b)
+	}
+
+	func testDifferentPathsDoNotMatch() {
+		let a = AccountManager.normalizedEndpointForComparison(URL(string: "https://example.com/miniflux"))
+		let b = AccountManager.normalizedEndpointForComparison(URL(string: "https://example.com/other"))
+		XCTAssertNotEqual(a, b)
+	}
+
+	func testNilURLNormalizesToNil() {
+		XCTAssertNil(AccountManager.normalizedEndpointForComparison(nil))
+	}
+
+	func testSameUsernameOnDifferentServersIsAllowed() {
+		let existingAccount = TestAccountManager.shared.createAccount(type: .miniflux)
+		defer { TestAccountManager.shared.deleteAccount(existingAccount) }
+		existingAccount.username = "admin"
+		existingAccount.endpointURL = URL(string: "https://first.miniflux.test")
+
+		XCTAssertFalse(AccountManager.duplicateServiceAccount(type: .miniflux, endpointURL: URL(string: "https://second.miniflux.test"), username: "admin", among: [existingAccount]))
+		XCTAssertTrue(AccountManager.duplicateServiceAccount(type: .miniflux, endpointURL: URL(string: "https://first.miniflux.test"), username: "admin", among: [existingAccount]))
+	}
+
+	func testDifferentUsernamesOnSameServerAreAllowed() {
+		let existingAccount = TestAccountManager.shared.createAccount(type: .miniflux)
+		defer { TestAccountManager.shared.deleteAccount(existingAccount) }
+		existingAccount.username = "admin"
+		existingAccount.endpointURL = URL(string: "https://first.miniflux.test")
+
+		XCTAssertFalse(AccountManager.duplicateServiceAccount(type: .miniflux, endpointURL: URL(string: "https://first.miniflux.test"), username: "claude", among: [existingAccount]))
+	}
+}

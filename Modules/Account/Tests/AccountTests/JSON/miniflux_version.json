@@ -1,0 +1,9 @@
+{
+	"version": "2.3.2",
+	"commit": "abc1234",
+	"build_date": "2026-06-01T00:00:00Z",
+	"go_version": "go1.24.0",
+	"compiler": "gc",
+	"arch": "arm64",
+	"os": "linux"
+}
