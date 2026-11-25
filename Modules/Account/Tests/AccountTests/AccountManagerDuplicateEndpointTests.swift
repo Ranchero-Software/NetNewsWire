@@ -23,6 +23,12 @@ import XCTest
 		XCTAssertEqual(a, b)
 	}
 
+	func testSchemeAndDefaultPortAreIgnored() {
+		let endpoint = AccountManager.normalizedEndpointForComparison(URL(string: "https://miniflux.example.com"))
+		XCTAssertEqual(AccountManager.normalizedEndpointForComparison(URL(string: "https://miniflux.example.com:443")), endpoint)
+		XCTAssertEqual(AccountManager.normalizedEndpointForComparison(URL(string: "http://miniflux.example.com")), endpoint)
+	}
+
 	func testDifferentPathsDoNotMatch() {
 		let a = AccountManager.normalizedEndpointForComparison(URL(string: "https://example.com/miniflux"))
 		let b = AccountManager.normalizedEndpointForComparison(URL(string: "https://example.com/other"))
@@ -39,8 +45,8 @@ import XCTest
 		existingAccount.username = "admin"
 		existingAccount.endpointURL = URL(string: "https://first.miniflux.test")
 
-		XCTAssertFalse(AccountManager.duplicateServiceAccount(type: .miniflux, endpointURL: URL(string: "https://second.miniflux.test"), username: "admin", among: [existingAccount]))
-		XCTAssertTrue(AccountManager.duplicateServiceAccount(type: .miniflux, endpointURL: URL(string: "https://first.miniflux.test"), username: "admin", among: [existingAccount]))
+		XCTAssertFalse(AccountManager.duplicateServiceAccount(type: .miniflux, username: "admin", endpoint: URL(string: "https://second.miniflux.test"), among: [existingAccount]))
+		XCTAssertTrue(AccountManager.duplicateServiceAccount(type: .miniflux, username: "admin", endpoint: URL(string: "https://first.miniflux.test"), among: [existingAccount]))
 	}
 
 	func testDifferentUsernamesOnSameServerAreAllowed() {
@@ -49,6 +55,6 @@ import XCTest
 		existingAccount.username = "admin"
 		existingAccount.endpointURL = URL(string: "https://first.miniflux.test")
 
-		XCTAssertFalse(AccountManager.duplicateServiceAccount(type: .miniflux, endpointURL: URL(string: "https://first.miniflux.test"), username: "claude", among: [existingAccount]))
+		XCTAssertFalse(AccountManager.duplicateServiceAccount(type: .miniflux, username: "claude", endpoint: URL(string: "https://first.miniflux.test"), among: [existingAccount]))
 	}
 }

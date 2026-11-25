@@ -33,6 +33,7 @@ import ActivityLog
 
 	private var lastStatusRepairDate: Date?
 	private static let statusRepairInterval: TimeInterval = 1 * 60 * 60
+	private static let defaultPorts = ["http": 80, "https": 443]
 
 	public var isSuspended = false
 
@@ -240,46 +241,44 @@ import ActivityLog
 	}
 
 	public func duplicateServiceAccount(type: AccountType, username: String?, endpoint: URL? = nil) -> Bool {
-		guard type != .onMyMac else {
-			return false
-		}
-		for account in accounts {
-			if account.type == type && username == account.username {
-				// Self-hosted services can have the same username on different servers.
-				if let endpoint, let existingEndpoint = account.endpointURL, endpoint != existingEndpoint {
-					continue
-				}
-				return true
-			}
-		}
-		return false
+		Self.duplicateServiceAccount(type: type, username: username, endpoint: endpoint, among: accounts)
 	}
 
 	public func duplicateServiceAccount(type: AccountType, endpointURL: URL?, username: String?) -> Bool {
-		Self.duplicateServiceAccount(type: type, endpointURL: endpointURL, username: username, among: accounts)
+		duplicateServiceAccount(type: type, username: username, endpoint: endpointURL)
 	}
 
-	/// A self-hosted server can have several users, so only the same user on the same server is a duplicate.
-	static func duplicateServiceAccount(type: AccountType, endpointURL: URL?, username: String?, among accounts: [Account]) -> Bool {
-		guard type != .onMyMac, let normalizedEndpoint = Self.normalizedEndpointForComparison(endpointURL) else {
+	/// Self-hosted services can have the same username on different servers, so when both endpoints are known, they must match too.
+	static func duplicateServiceAccount(type: AccountType, username: String?, endpoint: URL?, among accounts: [Account]) -> Bool {
+		guard type != .onMyMac else {
 			return false
 		}
-		return accounts.contains { $0.type == type && $0.username == username && Self.normalizedEndpointForComparison($0.endpointURL) == normalizedEndpoint }
+		let normalizedEndpoint = normalizedEndpointForComparison(endpoint)
+		return accounts.contains { account in
+			guard account.type == type, account.username == username else {
+				return false
+			}
+			guard let normalizedEndpoint, let existingEndpoint = normalizedEndpointForComparison(account.endpointURL) else {
+				return true
+			}
+			return normalizedEndpoint == existingEndpoint
+		}
 	}
 
-	/// Normalizes for duplicate-server comparison: lowercases scheme/host (case-insensitive
-	/// per RFC 3986) and drops a trailing slash from the path, so `https://Host.example/` and
-	/// `https://host.example` compare equal.
+	/// Host, non-default port, and path, so that case, scheme, default port, and a trailing slash don’t hide a duplicate.
 	static func normalizedEndpointForComparison(_ url: URL?) -> String? {
-		guard var components = url.flatMap({ URLComponents(url: $0, resolvingAgainstBaseURL: false) }) else {
+		guard let url, let host = url.host?.lowercased() else {
 			return nil
 		}
-		components.scheme = components.scheme?.lowercased()
-		components.host = components.host?.lowercased()
-		if components.path.hasSuffix("/") {
-			components.path.removeLast()
+		var normalized = host
+		if let port = url.port, port != defaultPorts[url.scheme?.lowercased() ?? ""] {
+			normalized += ":\(port)"
 		}
-		return components.string
+		var path = url.path
+		while path.hasSuffix("/") {
+			path.removeLast()
+		}
+		return normalized + path
 	}
 
 	public func existingAccount(accountID: String) -> Account? {
