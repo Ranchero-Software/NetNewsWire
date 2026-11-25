@@ -18,9 +18,12 @@ import SyncDatabase
 
 	func testFailedStarredSendKeepsItsQueuedStatusAfterReadSendSucceeds() async throws {
 		let account = TestAccountManager.shared.createAccount(type: .miniflux)
-		defer { TestAccountManager.shared.deleteAccount(account) }
+		defer {
+			TestAccountManager.shared.deleteAccount(account)
+		}
 		account.endpointURL = URL(string: "https://miniflux.test")
-		(account.delegate as! MinifluxAccountDelegate).accountSettings?.detectedServerVersion = "2.1.0"
+		let delegate = try XCTUnwrap(account.delegate as? MinifluxAccountDelegate)
+		delegate.accountSettings?.detectedServerVersion = "2.1.0"
 
 		let databasePath = (account.dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
 		let database = SyncDatabase(databasePath: databasePath)
@@ -50,13 +53,17 @@ import SyncDatabase
 		TestingURLProtocol.setResponse(.init(statusCode: 500), forURLContaining: "/v1/entries/ids")
 
 		let account = TestAccountManager.shared.createAccount(type: .miniflux)
-		defer { TestAccountManager.shared.deleteAccount(account) }
+		defer {
+			TestAccountManager.shared.deleteAccount(account)
+		}
 		account.endpointURL = URL(string: "https://miniflux.test")
 
 		do {
 			try await account.refreshAll()
 			XCTFail("Expected initial reconciliation to fail")
-		} catch {}
+		} catch {
+			// Expected: the first /v1/entries/ids request returns 500.
+		}
 		let firstAttemptCount = TestingURLProtocol.requestCount(forURLContaining: "/v1/entries/ids")
 		XCTAssertGreaterThan(firstAttemptCount, 0)
 
@@ -66,10 +73,12 @@ import SyncDatabase
 		XCTAssertGreaterThan(TestingURLProtocol.requestCount(forURLContaining: "/v1/entries/ids"), firstAttemptCount)
 	}
 
-	func testInitialReconciliationPreservesPendingLocalStatus() async {
+	func testInitialReconciliationPreservesPendingLocalStatus() async throws {
 		let account = TestAccountManager.shared.createAccount(type: .miniflux)
-		defer { TestAccountManager.shared.deleteAccount(account) }
-		let delegate = account.delegate as! MinifluxAccountDelegate
+		defer {
+			TestAccountManager.shared.deleteAccount(account)
+		}
+		let delegate = try XCTUnwrap(account.delegate as? MinifluxAccountDelegate)
 		var markedOff = Set<String>()
 
 		let changedCount = await delegate.syncArticleState(

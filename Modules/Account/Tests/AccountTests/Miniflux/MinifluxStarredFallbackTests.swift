@@ -19,6 +19,9 @@ import Secrets
 
 	func testFallbackOnlyTogglesEntriesWhoseStateDiffers() async throws {
 		let accountSettings = AccountSettings(accountID: UUID().uuidString, dataFolder: NSTemporaryDirectory())
+		defer {
+			accountSettings.deleteSettings()
+		}
 		accountSettings.endpointURL = URL(string: "https://miniflux.test")
 		accountSettings.detectedServerVersion = "2.1.0" // Below entryIDsMinimumVersion.
 

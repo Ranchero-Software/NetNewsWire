@@ -25,6 +25,9 @@ import RSWeb
 		TestingURLProtocol.setResponse("/v1/entries?", file: "JSON/miniflux_entries_page1.json")
 
 		let account = TestAccountManager.shared.createAccount(type: .miniflux)
+		defer {
+			TestAccountManager.shared.deleteAccount(account)
+		}
 		account.endpointURL = URL(string: "https://miniflux.test")
 
 		// Test initial folders
@@ -32,7 +35,7 @@ import RSWeb
 		try await account.refreshAll()
 
 		guard let initialFolders = account.folders else {
-			XCTFail()
+			XCTFail("Expected folders after the initial sync")
 			return
 		}
 
@@ -63,7 +66,7 @@ import RSWeb
 		try await account.refreshAll()
 
 		guard let deleteFolders = account.folders else {
-			XCTFail()
+			XCTFail("Expected folders after removing a category")
 			return
 		}
 
@@ -80,7 +83,7 @@ import RSWeb
 		try await account.refreshAll()
 
 		guard let addFolders = account.folders else {
-			XCTFail()
+			XCTFail("Expected folders after adding a category")
 			return
 		}
 
@@ -94,8 +97,6 @@ import RSWeb
 			return
 		}
 		XCTAssertEqual("4", reviews.externalID)
-
-		TestAccountManager.shared.deleteAccount(account)
 	}
 
 	func testFeedsLandInCorrectFolders() async throws {
@@ -107,12 +108,15 @@ import RSWeb
 		TestingURLProtocol.setResponse("/v1/entries?", file: "JSON/miniflux_entries_page1.json")
 
 		let account = TestAccountManager.shared.createAccount(type: .miniflux)
+		defer {
+			TestAccountManager.shared.deleteAccount(account)
+		}
 		account.endpointURL = URL(string: "https://miniflux.test")
 
 		try await account.refreshAll()
 
 		guard let folders = account.folders else {
-			XCTFail()
+			XCTFail("Expected folders after the initial sync")
 			return
 		}
 		XCTAssertEqual(3, folders.count)
@@ -155,8 +159,6 @@ import RSWeb
 		}
 		XCTAssertEqual("https://miniflux.test/feeds/general.xml", generalFeed.url)
 		XCTAssertEqual("General Feed", generalFeed.name)
-
-		TestAccountManager.shared.deleteAccount(account)
 	}
 
 }

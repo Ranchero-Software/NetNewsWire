@@ -149,7 +149,8 @@ import XCTest
 private extension MinifluxModelDecodingTests {
 
 	func decode<T: Decodable>(_ type: T.Type, from fileName: String) throws -> T {
-		let fileURL = Bundle.module.resourceURL!.appendingPathComponent("JSON/\(fileName)")
+		let resourceURL = try XCTUnwrap(Bundle.module.resourceURL)
+		let fileURL = resourceURL.appendingPathComponent("JSON/\(fileName)")
 		let data = try Data(contentsOf: fileURL)
 		return try JSONDecoder().decode(T.self, from: data)
 	}

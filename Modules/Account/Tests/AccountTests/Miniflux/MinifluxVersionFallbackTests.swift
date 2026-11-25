@@ -26,6 +26,9 @@ import RSWeb
 		TestingURLProtocol.setResponse("/v1/entries?", file: "JSON/miniflux_entries_page1.json")
 
 		let account = TestAccountManager.shared.createAccount(type: .miniflux)
+		defer {
+			TestAccountManager.shared.deleteAccount(account)
+		}
 		account.endpointURL = URL(string: "https://miniflux.test")
 
 		try await account.refreshAll()
@@ -34,8 +37,6 @@ import RSWeb
 		let starredArticleIDs = await account.fetchStarredArticleIDsAsync()
 		XCTAssertTrue(unreadArticleIDs.contains("5001"))
 		XCTAssertTrue(starredArticleIDs.contains("5001"))
-
-		TestAccountManager.shared.deleteAccount(account)
 	}
 
 	/// On a current server, the initial sync's reconciliation should still use
@@ -48,6 +49,9 @@ import RSWeb
 		TestingURLProtocol.setResponse("/v1/entries?", file: "JSON/miniflux_entries_page1.json")
 
 		let account = TestAccountManager.shared.createAccount(type: .miniflux)
+		defer {
+			TestAccountManager.shared.deleteAccount(account)
+		}
 		account.endpointURL = URL(string: "https://miniflux.test")
 
 		try await account.refreshAll()
@@ -58,7 +62,5 @@ import RSWeb
 		let starredArticleIDs = await account.fetchStarredArticleIDsAsync()
 		XCTAssertTrue(unreadArticleIDs.contains("5001"))
 		XCTAssertTrue(starredArticleIDs.contains("5001"))
-
-		TestAccountManager.shared.deleteAccount(account)
 	}
 }
