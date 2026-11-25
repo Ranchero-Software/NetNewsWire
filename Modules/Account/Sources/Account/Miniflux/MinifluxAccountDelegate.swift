@@ -677,8 +677,10 @@ private extension MinifluxAccountDelegate {
 					folder.name = category.title
 				}
 			} else {
-				let folder = account.ensureFolder(with: category.title)
-				folder?.externalID = externalID
+				// Every remaining folder belongs to a live category, so matching by name would take another category’s folder.
+				let folder = Folder(account: account, name: category.title)
+				folder.externalID = externalID
+				account.addFolderToTree(folder)
 			}
 		}
 	}
