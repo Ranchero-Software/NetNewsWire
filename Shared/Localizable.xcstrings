@@ -48,9 +48,6 @@
         }
       }
     },
-    "A username and password are required." : {
-      "comment" : "Credentials Error"
-    },
     "A web browser will open the Feedly login for you to authorize access." : {
       "comment" : "Alert informative text when adding a Feedly account and waiting for authorization from the user.",
       "localizations" : {
@@ -189,7 +186,7 @@
       "comment" : "Credentials Error"
     },
     "API Token" : {
-      "comment" : "Miniflux authentication mode and token field"
+      "comment" : "API Token"
     },
     "API URL: https://fresh.rss.net/api/greader.php" : {
       "comment" : "FreshRSS API Helper"
@@ -264,14 +261,14 @@
         }
       }
     },
+    "Authentication" : {
+      "comment" : "Miniflux authentication mode"
+    },
     "Author‘s website:" : {
       "comment" : "Author's Website"
     },
     "Author’s website:\n%@" : {
       "comment" : "Authors website"
-    },
-    "Authentication" : {
-      "comment" : "Miniflux authentication mode picker"
     },
     "Automatic" : {
       "comment" : "Automatic"
@@ -532,7 +529,7 @@
       "comment" : "No FreshRSS"
     },
     "Don’t have a Miniflux instance?" : {
-      "comment" : "No Miniflux"
+      "comment" : "Don’t have a Miniflux instance?"
     },
     "Don’t have a The Old Reader account?" : {
       "comment" : "No OldReader"
@@ -672,7 +669,7 @@
       "comment" : "Find in Article"
     },
     "Find out more" : {
-      "comment" : "No FreshRSS Button\nNo Miniflux Button"
+      "comment" : "Find out more"
     },
     "Find Out More" : {
       "comment" : "Find Out More"
@@ -826,9 +823,6 @@
     },
     "Invalid API URL." : {
       "comment" : "Invalid API URL"
-    },
-    "Invalid credentials." : {
-      "comment" : "Credentials Error"
     },
     "Invalid email/password combination." : {
       "comment" : "Credentials Error"
@@ -1395,7 +1389,7 @@
       "comment" : "Inoreader"
     },
     "Sign in to your Miniflux account." : {
-      "comment" : "Miniflux"
+      "comment" : "Sign in to your Miniflux account."
     },
     "Sign in to your Miniflux instance and sync your feeds across your devices. Your credentials will be encrypted and stored in Keychain.\n\nDon’t have a Miniflux instance?" : {
       "comment" : "Miniflux"
@@ -1753,11 +1747,14 @@
     "Use iCloud" : {
       "comment" : "Use iCloud button"
     },
-    "Username and password are required." : {
-      "comment" : "Credentials Error"
+    "Username" : {
+      "comment" : "Username"
     },
     "Username and Password" : {
-      "comment" : "Miniflux authentication mode"
+      "comment" : "Username and Password"
+    },
+    "Username and password are required." : {
+      "comment" : "Credentials Error"
     },
     "Username or Email" : {
       "comment" : "Username field placeholder"

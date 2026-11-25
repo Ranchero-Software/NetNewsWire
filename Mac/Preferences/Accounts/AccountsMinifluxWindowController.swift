@@ -51,9 +51,9 @@ final class AccountsMinifluxWindowController: NSWindowController {
 
 	override func windowDidLoad() {
 		titleImageView?.image = Assets.Images.accountMiniflux
-		titleLabel?.stringValue = NSLocalizedString("Sign in to your Miniflux account.", comment: "Miniflux")
-		noAccountTextField?.stringValue = NSLocalizedString("Don’t have a Miniflux instance?", comment: "No Miniflux")
-		createAccountButton?.title = NSLocalizedString("Find out more", comment: "No Miniflux Button")
+		titleLabel?.stringValue = NSLocalizedString("Sign in to your Miniflux account.", comment: "Sign in to your Miniflux account.")
+		noAccountTextField?.stringValue = NSLocalizedString("Don’t have a Miniflux instance?", comment: "Don’t have a Miniflux instance?")
+		createAccountButton?.title = NSLocalizedString("Find out more", comment: "Find out more")
 		apiURLTextField?.placeholderString = NSLocalizedString("https://miniflux.example.com", comment: "Miniflux API Helper")
 
 		authModeControl?.setLabel(NSLocalizedString("Username and Password", comment: "Username and Password"), forSegment: AuthMode.usernameAndPassword.rawValue)
