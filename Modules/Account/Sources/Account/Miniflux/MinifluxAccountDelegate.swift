@@ -368,7 +368,7 @@ import Secrets
 				refreshProgress.completeTask()
 				uncompletedTasks -= 1
 
-				return try await createFeed(account: account, feedID: feedID, name: name, container: container)
+				return try await createFeed(account: account, feedID: feedID, name: name, categoryID: categoryID)
 			}
 		} catch {
 			throw AccountError.wrapped(error, account)
@@ -686,9 +686,7 @@ private extension MinifluxAccountDelegate {
 
 		let feedExternalIDs = Set(feeds.map { String($0.feedID) })
 
-		// Remove any feeds that are no longer on the server. Miniflux guarantees every
-		// feed has a category, so feeds only ever live inside folders — never at the
-		// account top level.
+		// Remove any feeds that are no longer on the server.
 		if let folders = account.folders {
 			for folder in folders {
 				for feed in folder.topLevelFeeds {
@@ -701,6 +699,17 @@ private extension MinifluxAccountDelegate {
 						folder.removeFeedFromTreeAtTopLevel(feed)
 					}
 				}
+			}
+		}
+
+		// Miniflux has no top level, so a top-level feed is either gone or belongs in its category’s folder.
+		let categorizedFeedExternalIDs = Set(feeds.filter { $0.category != nil }.map { String($0.feedID) })
+		for feed in account.topLevelFeeds {
+			if !feedExternalIDs.contains(feed.feedID) {
+				account.clearFeedSettings(feed)
+				account.removeFeedFromTreeAtTopLevel(feed)
+			} else if categorizedFeedExternalIDs.contains(feed.feedID) {
+				account.removeFeedFromTreeAtTopLevel(feed)
 			}
 		}
 
@@ -1053,13 +1062,18 @@ private extension MinifluxAccountDelegate {
 	}
 
 	@discardableResult
-	func createFeed(account: Account, feedID: Int64, name: String?, container: Container) async throws -> Feed {
+	func createFeed(account: Account, feedID: Int64, name: String?, categoryID: Int64) async throws -> Feed {
 		let minifluxFeed = try await caller.retrieveFeed(feedID: feedID)
 
 		let feed = account.createFeed(with: minifluxFeed.title, url: minifluxFeed.feedURL, feedID: String(feedID), homePageURL: minifluxFeed.siteURL)
 		feed.externalID = String(feedID)
 
-		try await account.addFeed(feed, container: container)
+		// The feed is already in this category on the server, so add it locally without another move.
+		if let folder = account.existingFolder(withExternalID: String(categoryID)) {
+			folder.addFeedToTreeAtTopLevel(feed)
+		} else {
+			account.addFeedToTreeAtTopLevel(feed)
+		}
 		if let name {
 			try await renameFeed(with: feed, to: name)
 		}
