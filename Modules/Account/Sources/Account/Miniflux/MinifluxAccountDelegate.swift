@@ -104,8 +104,8 @@ import Secrets
 			return false
 		}
 		let sentCount = try await sendArticleStatusReturningCount(for: account)
-		let refreshedCount = try await refreshArticles(account)
-		return sentCount > 0 || refreshedCount > 0
+		let changedStatusCount = try await refreshArticles(account)
+		return sentCount > 0 || changedStatusCount > 0
 	}
 
 	func sendArticleStatus() async throws {
@@ -800,6 +800,7 @@ private extension MinifluxAccountDelegate {
 		return Dictionary(pairs, uniquingKeysWith: { first, _ in first })
 	}
 
+	/// Returns the number of local statuses changed.
 	@discardableResult
 	func refreshArticles(_ account: Account, reportProgress: Bool = false) async throws -> Int {
 		Self.logger.info("Miniflux: Refreshing articles")
@@ -811,12 +812,12 @@ private extension MinifluxAccountDelegate {
 			// With no changed_after, as after an OPML import, limit the fetch to recent history.
 			let publishedAfter = changedAfter == nil ? Calendar.current.date(byAdding: .month, value: -Self.articleHistoryMonths, to: fetchStartDate) : nil
 
-			let processedCount = try await account.logActivity(kind: .refreshArticles, successMessage: { "\($0) articles" }, {
+			let counts = try await account.logActivity(kind: .refreshArticles, successMessage: { "\($0.entryCount) articles" }, {
 				try await refreshArticlesPage(account: account, changedAfter: changedAfter, publishedAfter: publishedAfter, reportProgress: reportProgress)
 			})
 
 			accountSettings?.lastArticleFetchStartTime = fetchStartDate
-			return processedCount
+			return counts.changedStatusCount
 		} catch {
 			postSyncError(error, account: account, operation: "Refreshing articles")
 			throw error
@@ -827,9 +828,10 @@ private extension MinifluxAccountDelegate {
 	/// first page (keeping the progress denominator stable for single-page refreshes);
 	/// continuation pages add their own. Background status syncs pass false so the
 	/// progress UI stays quiet.
-	func refreshArticlesPage(account: Account, changedAfter: Date?, publishedAfter: Date?, reportProgress: Bool) async throws -> Int {
+	func refreshArticlesPage(account: Account, changedAfter: Date?, publishedAfter: Date?, reportProgress: Bool) async throws -> (entryCount: Int, changedStatusCount: Int) {
 		var offset = 0
 		var totalEntriesProcessed = 0
+		var changedStatusCount = 0
 		var isFirstPage = true
 
 		while true {
@@ -851,7 +853,7 @@ private extension MinifluxAccountDelegate {
 			})
 
 			totalEntriesProcessed += response.entries.count
-			await processEntries(account: account, entries: response.entries)
+			changedStatusCount += await processEntries(account: account, entries: response.entries)
 
 			offset += response.entries.count
 			if response.entries.isEmpty || offset >= response.total {
@@ -859,7 +861,7 @@ private extension MinifluxAccountDelegate {
 			}
 		}
 
-		return totalEntriesProcessed
+		return (totalEntriesProcessed, changedStatusCount)
 	}
 
 	func refreshMissingArticles(_ account: Account) async throws {
@@ -921,20 +923,24 @@ private extension MinifluxAccountDelegate {
 		}
 	}
 
-	func processEntries(account: Account, entries: [MinifluxEntry]) async {
+	/// Returns the number of local statuses changed.
+	@discardableResult
+	func processEntries(account: Account, entries: [MinifluxEntry]) async -> Int {
 		let parsedItems = mapEntriesToParsedItems(entries: entries)
 		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL }).mapValues { Set($0) }
 		await account.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
-		await applyEntryStatuses(account: account, entries: entries)
+		return await applyEntryStatuses(account: account, entries: entries)
 	}
 
 	/// Statuses ride along on the changed_after entries fetch — Miniflux bumps changed_at
 	/// whenever an entry's status or starred state changes — so applying them per page
 	/// replaces the per-refresh full ID scans. Pending local changes are always excluded:
 	/// they must win, so server state is never applied without first knowing what's pending.
-	func applyEntryStatuses(account: Account, entries: [MinifluxEntry]) async {
+	/// Returns the number of local statuses changed.
+	@discardableResult
+	func applyEntryStatuses(account: Account, entries: [MinifluxEntry]) async -> Int {
 		guard !entries.isEmpty else {
-			return
+			return 0
 		}
 
 		let pendingReadArticleIDs = try? await syncDatabase.selectPendingReadStatusArticleIDs()
@@ -966,14 +972,16 @@ private extension MinifluxAccountDelegate {
 			}
 		}
 
+		var changedCount = 0
 		if let pendingReadArticleIDs {
-			_ = await account.markAsUnreadAsync(articleIDs: unreadIDs.subtracting(pendingReadArticleIDs))
-			_ = await account.markAsReadAsync(articleIDs: readIDs.subtracting(pendingReadArticleIDs))
+			changedCount += await account.updateStatusesAsync(articleIDs: unreadIDs.subtracting(pendingReadArticleIDs), statusKey: .read, flag: false).count
+			changedCount += await account.updateStatusesAsync(articleIDs: readIDs.subtracting(pendingReadArticleIDs), statusKey: .read, flag: true).count
 		}
 		if let pendingStarredArticleIDs {
-			_ = await account.markAsStarredAsync(articleIDs: starredIDs.subtracting(pendingStarredArticleIDs))
-			_ = await account.markAsUnstarredAsync(articleIDs: unstarredIDs.subtracting(pendingStarredArticleIDs))
+			changedCount += await account.updateStatusesAsync(articleIDs: starredIDs.subtracting(pendingStarredArticleIDs), statusKey: .starred, flag: true).count
+			changedCount += await account.updateStatusesAsync(articleIDs: unstarredIDs.subtracting(pendingStarredArticleIDs), statusKey: .starred, flag: false).count
 		}
+		return changedCount
 	}
 
 	func mapEntriesToParsedItems(entries: [MinifluxEntry]) -> Set<ParsedItem> {
