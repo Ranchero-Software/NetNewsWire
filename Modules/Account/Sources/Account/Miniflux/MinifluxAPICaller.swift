@@ -349,13 +349,8 @@ private extension MinifluxAPICaller {
 		try await session.send(request: makeRequest(path: "entries"), method: HTTPMethod.put, payload: payload)
 	}
 
-	/// Fallback for servers below `entryIDsMinimumVersion`: fetches each entry's current
-	/// starred state and only calls the toggle when it actually differs from `starred`.
-	/// This is the important part — the toggle endpoint flips state, so blindly calling it
-	/// on an entry already in the desired state would set it *wrong*. Fetch-then-compare
-	/// also makes retries safe: if this throws partway through and the caller resets the
-	/// whole chunk for a retry, re-running re-checks each entry's now-current state and
-	/// skips the ones already fixed, rather than toggling them a second time.
+	/// Older servers only have a toggle, so this toggles only entries whose starred state differs.
+	/// Not atomic: a change made elsewhere between the fetch and the toggle gets flipped.
 	func updateEntriesStarredFallback(entryIDs: [Int64], starred: Bool) async throws {
 		for entryID in entryIDs {
 			guard let entry = try await retrieveEntry(entryID: entryID) else {
