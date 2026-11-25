@@ -41,7 +41,9 @@ import XCTest
 
 	func testSameUsernameOnDifferentServersIsAllowed() {
 		let existingAccount = TestAccountManager.shared.createAccount(type: .miniflux)
-		defer { TestAccountManager.shared.deleteAccount(existingAccount) }
+		defer {
+			TestAccountManager.shared.deleteAccount(existingAccount)
+		}
 		existingAccount.username = "admin"
 		existingAccount.endpointURL = URL(string: "https://first.miniflux.test")
 
@@ -51,7 +53,9 @@ import XCTest
 
 	func testDifferentUsernamesOnSameServerAreAllowed() {
 		let existingAccount = TestAccountManager.shared.createAccount(type: .miniflux)
-		defer { TestAccountManager.shared.deleteAccount(existingAccount) }
+		defer {
+			TestAccountManager.shared.deleteAccount(existingAccount)
+		}
 		existingAccount.username = "admin"
 		existingAccount.endpointURL = URL(string: "https://first.miniflux.test")
 
