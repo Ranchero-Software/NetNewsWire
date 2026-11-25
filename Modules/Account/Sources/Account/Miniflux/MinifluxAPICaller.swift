@@ -210,7 +210,7 @@ import Secrets
 	}
 
 	func retrieveUnreadEntryIDs() async throws -> Set<Int64> {
-		try await retrieveEntryIDs(matching: [URLQueryItem(name: "status", value: "unread")])
+		try await retrieveEntryIDs(matching: [URLQueryItem(name: "status", value: MinifluxEntryStatus.unread.rawValue)])
 	}
 
 	func retrieveStarredEntryIDs() async throws -> Set<Int64> {
@@ -218,7 +218,7 @@ import Secrets
 	}
 
 	func updateEntries(entryIDs: [Int64], read: Bool) async throws {
-		try await updateEntries(entryIDs: entryIDs, payload: MinifluxUpdateEntriesPayload(entryIDs: entryIDs, status: read ? "read" : "unread", starred: nil))
+		try await updateEntries(entryIDs: entryIDs, payload: MinifluxUpdateEntriesPayload(entryIDs: entryIDs, status: read ? .read : .unread, starred: nil))
 	}
 
 	/// Uses the batch endpoint on servers that support it (2.3.2+), where `starred` is

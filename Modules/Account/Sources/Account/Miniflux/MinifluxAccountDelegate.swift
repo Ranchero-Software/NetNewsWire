@@ -63,6 +63,10 @@ import Secrets
 	private static let missingArticlesFetchLimit = 250
 	/// Fetched entries are saved, and deleted statuses removed, after each chunk of this many.
 	private static let missingArticlesChunkSize = 50
+	/// Categories, feeds, local folder and feed sync, the first article page, and missing articles.
+	private static let refreshAllTaskCount = 5
+	/// Finding the feed and creating it on the server.
+	private static let createFeedTaskCount = 2
 
 	init(dataFolder: String) {
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
@@ -82,11 +86,7 @@ import Secrets
 		retrieveCredentialsIfNeeded(account)
 
 		refreshProgress.reset()
-		// Five tasks completed across refreshAccount and refreshArticlesAndStatuses:
-		// categories fetch, feeds fetch, local folder/feed sync, the first page of
-		// articles, and missing articles. Continuation article pages add their own
-		// tasks as they're fetched.
-		refreshProgress.addTasks(5)
+		refreshProgress.addTasks(Self.refreshAllTaskCount)
 
 		do {
 			try await account.logActivity(kind: .refreshAll) {
@@ -350,8 +350,8 @@ import Secrets
 			throw AccountError.invalidParameter
 		}
 
-		refreshProgress.addTasks(2)
-		var uncompletedTasks = 2
+		refreshProgress.addTasks(Self.createFeedTaskCount)
+		var uncompletedTasks = Self.createFeedTaskCount
 		defer {
 			while uncompletedTasks > 0 {
 				refreshProgress.completeTask()
@@ -981,9 +981,9 @@ private extension MinifluxAccountDelegate {
 
 		for entry in entries {
 			let articleID = String(entry.entryID)
-			if entry.status == "unread" {
+			if entry.status == .unread {
 				unreadIDs.insert(articleID)
-			} else if entry.status == "read" {
+			} else if entry.status == .read {
 				readIDs.insert(articleID)
 			}
 			if entry.starred == true {

@@ -82,7 +82,7 @@ import XCTest
 		}
 		XCTAssertEqual(101, unreadStarred.feedID)
 		XCTAssertEqual("Jane Doe", unreadStarred.author)
-		XCTAssertEqual("unread", unreadStarred.status)
+		XCTAssertEqual(.unread, unreadStarred.status)
 		XCTAssertEqual(true, unreadStarred.starred)
 		// published_at has fractional seconds — confirms DateParser (not JSONDecoder's
 		// .iso8601 strategy) is what's doing the parsing.
@@ -92,7 +92,7 @@ import XCTest
 			XCTFail("Expected entry 5002")
 			return
 		}
-		XCTAssertEqual("read", readEntry.status)
+		XCTAssertEqual(.read, readEntry.status)
 		XCTAssertEqual(false, readEntry.starred)
 
 		guard let missingAuthor = response.entries.first(where: { $0.entryID == 5003 }) else {

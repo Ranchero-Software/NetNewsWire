@@ -23,7 +23,7 @@ struct MinifluxEntry: Decodable, Sendable {
 	let contentHTML: String?
 	let datePublished: String?
 	let enclosures: [MinifluxEnclosure]?
-	let status: String?
+	let status: MinifluxEntryStatus?
 	let starred: Bool?
 
 	// Miniflux emits ISO8601 dates with fractional seconds and offsets, which JSONDecoder’s
@@ -65,9 +65,15 @@ struct MinifluxEntry: Decodable, Sendable {
 		contentHTML = try? container.decode(String.self, forKey: .contentHTML)
 		datePublished = try? container.decode(String.self, forKey: .datePublished)
 		enclosures = try? container.decode([MinifluxEnclosure].self, forKey: .enclosures)
-		status = try? container.decode(String.self, forKey: .status)
+		status = try? container.decode(MinifluxEntryStatus.self, forKey: .status)
 		starred = try? container.decode(Bool.self, forKey: .starred)
 	}
+}
+
+enum MinifluxEntryStatus: String, Codable, Sendable {
+	case read
+	case unread
+	case removed
 }
 
 struct MinifluxEnclosure: Decodable, Sendable {
@@ -125,7 +131,7 @@ struct MinifluxEntryIDsResponse: Decodable, Sendable {
 
 struct MinifluxUpdateEntriesPayload: Encodable, Sendable {
 	let entryIDs: [Int64]
-	let status: String?
+	let status: MinifluxEntryStatus?
 	let starred: Bool?
 
 	enum CodingKeys: String, CodingKey {
