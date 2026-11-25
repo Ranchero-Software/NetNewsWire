@@ -11,7 +11,7 @@ import Foundation
 // GET /v1/categories → [{"id":38,"title":"All","user_id":35,"hide_globally":false},...]
 // A Miniflux category maps one-to-one to an NNW folder.
 struct MinifluxCategory: Decodable, Sendable {
-	let categoryID: Int64
+	let categoryID: Int
 	let title: String
 
 	enum CodingKeys: String, CodingKey {

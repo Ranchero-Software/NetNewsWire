@@ -125,11 +125,11 @@ import Secrets
 		return category
 	}
 
-	func renameCategory(categoryID: Int64, title: String) async throws {
+	func renameCategory(categoryID: Int, title: String) async throws {
 		try await session.send(request: makeRequest(path: "categories/\(categoryID)"), method: HTTPMethod.put, payload: MinifluxCategoryPayload(title: title))
 	}
 
-	func deleteCategory(categoryID: Int64) async throws {
+	func deleteCategory(categoryID: Int) async throws {
 		try await session.send(request: makeRequest(path: "categories/\(categoryID)"), method: HTTPMethod.delete)
 	}
 
@@ -138,7 +138,7 @@ import Secrets
 	}
 
 	/// Miniflux has no error code for an existing feed, so the error message text is the only way to tell.
-	func createFeed(url urlString: String, categoryID: Int64) async throws -> Int64 {
+	func createFeed(url urlString: String, categoryID: Int) async throws -> Int {
 		var request = try makeRequest(path: "feeds")
 		request.addValue(Self.jsonContentType, forHTTPHeaderField: HTTPRequestHeader.contentType)
 		let payload = try JSONEncoder().encode(MinifluxCreateFeed(feedURL: urlString, categoryID: categoryID))
@@ -160,19 +160,19 @@ import Secrets
 		}
 	}
 
-	func retrieveFeed(feedID: Int64) async throws -> MinifluxFeed {
+	func retrieveFeed(feedID: Int) async throws -> MinifluxFeed {
 		try await fetch("feeds/\(feedID)")
 	}
 
-	func renameFeed(feedID: Int64, title: String) async throws {
+	func renameFeed(feedID: Int, title: String) async throws {
 		try await session.send(request: makeRequest(path: "feeds/\(feedID)"), method: HTTPMethod.put, payload: MinifluxUpdateFeed(title: title, categoryID: nil))
 	}
 
-	func moveFeed(feedID: Int64, categoryID: Int64) async throws {
+	func moveFeed(feedID: Int, categoryID: Int) async throws {
 		try await session.send(request: makeRequest(path: "feeds/\(feedID)"), method: HTTPMethod.put, payload: MinifluxUpdateFeed(title: nil, categoryID: categoryID))
 	}
 
-	func deleteFeed(feedID: Int64) async throws {
+	func deleteFeed(feedID: Int) async throws {
 		try await session.send(request: makeRequest(path: "feeds/\(feedID)"), method: HTTPMethod.delete)
 	}
 
@@ -188,12 +188,12 @@ import Secrets
 		return try await fetch("entries", query: query)
 	}
 
-	func retrieveEntries(feedID: Int64, offset: Int) async throws -> MinifluxEntriesResponse {
+	func retrieveEntries(feedID: Int, offset: Int) async throws -> MinifluxEntriesResponse {
 		try await fetch("feeds/\(feedID)/entries", query: Self.entriesPageQueryItems(offset: offset))
 	}
 
 	/// Returns `nil` if the entry has been removed server-side.
-	func retrieveEntry(entryID: Int64) async throws -> MinifluxEntry? {
+	func retrieveEntry(entryID: Int) async throws -> MinifluxEntry? {
 		do {
 			return try await fetch("entries/\(entryID)")
 		} catch {
@@ -204,20 +204,20 @@ import Secrets
 		}
 	}
 
-	func retrieveUnreadEntryIDs() async throws -> Set<Int64> {
+	func retrieveUnreadEntryIDs() async throws -> Set<Int> {
 		try await retrieveEntryIDs(matching: [URLQueryItem(name: QueryName.status, value: MinifluxEntryStatus.unread.rawValue)])
 	}
 
-	func retrieveStarredEntryIDs() async throws -> Set<Int64> {
+	func retrieveStarredEntryIDs() async throws -> Set<Int> {
 		try await retrieveEntryIDs(matching: [URLQueryItem(name: QueryName.starred, value: QueryValue.true)])
 	}
 
-	func updateEntries(entryIDs: [Int64], read: Bool) async throws {
+	func updateEntries(entryIDs: [Int], read: Bool) async throws {
 		try await updateEntries(entryIDs: entryIDs, payload: MinifluxUpdateEntriesPayload(entryIDs: entryIDs, status: read ? .read : .unread, starred: nil))
 	}
 
 	/// Older servers have no batch starred update, only a per-entry toggle.
-	func updateEntries(entryIDs: [Int64], starred: Bool) async throws {
+	func updateEntries(entryIDs: [Int], starred: Bool) async throws {
 		guard !entryIDs.isEmpty else {
 			return
 		}
@@ -278,7 +278,7 @@ private extension MinifluxAPICaller {
 	}
 
 	/// Uses `/v1/entries/ids` when the server has it, and pages `/v1/entries` otherwise.
-	func retrieveEntryIDs(matching filter: [URLQueryItem]) async throws -> Set<Int64> {
+	func retrieveEntryIDs(matching filter: [URLQueryItem]) async throws -> Set<Int> {
 		guard supportsEntryIDsEndpoint else {
 			return try await retrieveEntryIDsByPagingEntries(matching: filter)
 		}
@@ -292,8 +292,8 @@ private extension MinifluxAPICaller {
 	}
 
 	/// Returns nil if `total` changed during the scan, since offset paging may then have skipped IDs.
-	private func scanEntryIDs(matching filter: [URLQueryItem]) async throws -> Set<Int64>? {
-		var entryIDs = Set<Int64>()
+	private func scanEntryIDs(matching filter: [URLQueryItem]) async throws -> Set<Int>? {
+		var entryIDs = Set<Int>()
 		var offset = 0
 		var firstTotal: Int?
 
@@ -320,9 +320,9 @@ private extension MinifluxAPICaller {
 	}
 
 	/// For servers without `/v1/entries/ids`.
-	func retrieveEntryIDsByPagingEntries(matching filter: [URLQueryItem]) async throws -> Set<Int64> {
-		var entryIDs = Set<Int64>()
-		var afterEntryID: Int64 = 0
+	func retrieveEntryIDsByPagingEntries(matching filter: [URLQueryItem]) async throws -> Set<Int> {
+		var entryIDs = Set<Int>()
+		var afterEntryID: Int = 0
 
 		// Keyset paging, since offset paging skips IDs when the filtered set shrinks during the scan.
 		while true {
@@ -346,7 +346,7 @@ private extension MinifluxAPICaller {
 		return entryIDs
 	}
 
-	func updateEntries(entryIDs: [Int64], payload: MinifluxUpdateEntriesPayload) async throws {
+	func updateEntries(entryIDs: [Int], payload: MinifluxUpdateEntriesPayload) async throws {
 		guard !entryIDs.isEmpty else {
 			return
 		}
@@ -355,7 +355,7 @@ private extension MinifluxAPICaller {
 
 	/// Older servers only have a toggle, so this toggles only entries whose starred state differs.
 	/// Not atomic: a change made elsewhere between the fetch and the toggle gets flipped.
-	func updateEntriesStarredFallback(entryIDs: [Int64], starred: Bool) async throws {
+	func updateEntriesStarredFallback(entryIDs: [Int], starred: Bool) async throws {
 		for entryID in entryIDs {
 			guard let entry = try await retrieveEntry(entryID: entryID) else {
 				continue // Gone server-side; nothing to update.
@@ -368,7 +368,7 @@ private extension MinifluxAPICaller {
 		}
 	}
 
-	func toggleBookmark(entryID: Int64) async throws {
+	func toggleBookmark(entryID: Int) async throws {
 		try await session.send(request: makeRequest(path: "entries/\(entryID)/bookmark"), method: HTTPMethod.put)
 	}
 

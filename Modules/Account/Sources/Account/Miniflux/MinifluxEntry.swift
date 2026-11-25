@@ -15,8 +15,8 @@ import RSParser
 //   "content":"...","author":"...","starred":false,"reading_time":1,"enclosures":[],
 //   "feed":{...},"tags":[...]}]}
 struct MinifluxEntry: Decodable, Sendable {
-	let entryID: Int64
-	let feedID: Int64
+	let entryID: Int
+	let feedID: Int
 	let title: String?
 	let url: String?
 	let author: String?
@@ -58,8 +58,8 @@ struct MinifluxEntry: Decodable, Sendable {
 
 	init(from decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
-		entryID = try container.decode(Int64.self, forKey: .entryID)
-		feedID = try container.decode(Int64.self, forKey: .feedID)
+		entryID = try container.decode(Int.self, forKey: .entryID)
+		feedID = try container.decode(Int.self, forKey: .feedID)
 		title = try? container.decode(String.self, forKey: .title)
 		url = try? container.decode(String.self, forKey: .url)
 		author = try? container.decode(String.self, forKey: .author)
@@ -122,7 +122,7 @@ struct MinifluxEntriesResponse: Decodable, Sendable {
 // GET /v1/entries/ids?status=unread → {"total":1960,"entry_ids":[121634,121624,...]}
 struct MinifluxEntryIDsResponse: Decodable, Sendable {
 	let total: Int
-	let entryIDs: [Int64]
+	let entryIDs: [Int]
 
 	enum CodingKeys: String, CodingKey {
 		case total
@@ -131,7 +131,7 @@ struct MinifluxEntryIDsResponse: Decodable, Sendable {
 }
 
 struct MinifluxUpdateEntriesPayload: Encodable, Sendable {
-	let entryIDs: [Int64]
+	let entryIDs: [Int]
 	let status: MinifluxEntryStatus?
 	let starred: Bool?
 

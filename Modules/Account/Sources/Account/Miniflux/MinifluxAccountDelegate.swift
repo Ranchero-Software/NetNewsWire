@@ -286,7 +286,7 @@ import Secrets
 		guard let account else {
 			return
 		}
-		guard let externalID = folder.externalID, let categoryID = Int64(externalID) else {
+		guard let externalID = folder.externalID, let categoryID = Int(externalID) else {
 			throw AccountError.invalidParameter
 		}
 
@@ -309,7 +309,7 @@ import Secrets
 		guard let account else {
 			return
 		}
-		guard let externalID = folder.externalID, let categoryID = Int64(externalID) else {
+		guard let externalID = folder.externalID, let categoryID = Int(externalID) else {
 			throw AccountError.invalidParameter
 		}
 
@@ -321,7 +321,7 @@ import Secrets
 					refreshProgress.completeTask()
 				}
 
-				guard let feedExternalID = feed.externalID, let feedID = Int64(feedExternalID) else {
+				guard let feedExternalID = feed.externalID, let feedID = Int(feedExternalID) else {
 					continue
 				}
 				do {
@@ -384,7 +384,7 @@ import Secrets
 		guard let account else {
 			return
 		}
-		guard let externalID = feed.externalID, let feedID = Int64(externalID) else {
+		guard let externalID = feed.externalID, let feedID = Int(externalID) else {
 			throw AccountError.invalidParameter
 		}
 
@@ -407,7 +407,7 @@ import Secrets
 		guard let account else {
 			return
 		}
-		guard let externalID = feed.externalID, let feedID = Int64(externalID) else {
+		guard let externalID = feed.externalID, let feedID = Int(externalID) else {
 			throw AccountError.invalidParameter
 		}
 
@@ -433,9 +433,9 @@ import Secrets
 		}
 		guard
 			let feedExternalID = feed.externalID,
-			let feedID = Int64(feedExternalID),
+			let feedID = Int(feedExternalID),
 			let destinationExternalID = (destinationContainer as? Folder)?.externalID,
-			let destinationCategoryID = Int64(destinationExternalID)
+			let destinationCategoryID = Int(destinationExternalID)
 		else {
 			throw AccountError.invalidParameter
 		}
@@ -464,9 +464,9 @@ import Secrets
 			if let folder = container as? Folder {
 				guard
 					let feedExternalID = feed.externalID,
-					let feedID = Int64(feedExternalID),
+					let feedID = Int(feedExternalID),
 					let folderExternalID = folder.externalID,
-					let destinationCategoryID = Int64(folderExternalID)
+					let destinationCategoryID = Int(folderExternalID)
 				else {
 					throw AccountError.invalidParameter
 				}
@@ -895,7 +895,7 @@ private extension MinifluxAccountDelegate {
 
 			let fetchedArticleIDs = await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
 			// Newest first, since Miniflux fetches one entry per request.
-			let entryIDs = fetchedArticleIDs.compactMap { Int64($0) }.sorted(by: >).prefix(Self.missingArticlesFetchLimit)
+			let entryIDs = fetchedArticleIDs.compactMap { Int($0) }.sorted(by: >).prefix(Self.missingArticlesFetchLimit)
 
 			var shouldStopFetching = false
 
@@ -1010,7 +1010,7 @@ private extension MinifluxAccountDelegate {
 		return Set(parsedItems)
 	}
 
-	func syncArticleReadState(account: Account, entryIDs: Set<Int64>) async -> Int {
+	func syncArticleReadState(account: Account, entryIDs: Set<Int>) async -> Int {
 		guard let pendingArticleIDs = try? await syncDatabase.selectPendingReadStatusArticleIDs() else {
 			Self.logger.error("Miniflux: Sync database selectPendingReadStatusArticleIDs failed")
 			return 0
@@ -1025,7 +1025,7 @@ private extension MinifluxAccountDelegate {
 		)
 	}
 
-	func syncArticleStarredState(account: Account, entryIDs: Set<Int64>) async -> Int {
+	func syncArticleStarredState(account: Account, entryIDs: Set<Int>) async -> Int {
 		guard let pendingArticleIDs = try? await syncDatabase.selectPendingStarredStatusArticleIDs() else {
 			Self.logger.error("Miniflux: Sync database selectPendingStarredStatusArticleIDs failed")
 			return 0
@@ -1044,7 +1044,7 @@ private extension MinifluxAccountDelegate {
 	/// pushes each chunk via `update`, then clears the sync-database rows on success or resets
 	/// them on failure. Miniflux’s update-entries call is absolute state (not a toggle), so
 	/// repeated sends are idempotent. Returns the count successfully sent.
-	func sendEntryStatuses(_ entryIDs: [Int64], key: SyncStatus.Key, update: (_ chunk: [Int64]) async throws -> Void) async throws -> Int {
+	func sendEntryStatuses(_ entryIDs: [Int], key: SyncStatus.Key, update: (_ chunk: [Int]) async throws -> Void) async throws -> Int {
 		guard !entryIDs.isEmpty else {
 			return 0
 		}
@@ -1072,16 +1072,16 @@ private extension MinifluxAccountDelegate {
 	}
 
 	/// Numeric entry IDs of the pending sync statuses matching `key`/`flag`.
-	func pendingEntryIDs(in statuses: some Sequence<SyncStatus>, key: SyncStatus.Key, flag: Bool) -> [Int64] {
-		statuses.filter { $0.key == key && $0.flag == flag }.compactMap { Int64($0.articleID) }
+	func pendingEntryIDs(in statuses: some Sequence<SyncStatus>, key: SyncStatus.Key, flag: Bool) -> [Int] {
+		statuses.filter { $0.key == key && $0.flag == flag }.compactMap { Int($0.articleID) }
 	}
 
 	/// Resolves the category to use when creating a feed into `container`: the folder's
 	/// externalID if `container` is a Folder, otherwise the lowest-id category (used when
 	/// the UI hands us the account itself as the container, which Miniflux has no concept
 	/// of — every feed must belong to a category).
-	func categoryID(for container: Container) async throws -> Int64 {
-		if let folder = container as? Folder, let externalID = folder.externalID, let categoryID = Int64(externalID) {
+	func categoryID(for container: Container) async throws -> Int {
+		if let folder = container as? Folder, let externalID = folder.externalID, let categoryID = Int(externalID) {
 			return categoryID
 		}
 
@@ -1093,7 +1093,7 @@ private extension MinifluxAccountDelegate {
 	}
 
 	@discardableResult
-	func createFeed(account: Account, feedID: Int64, name: String?, categoryID: Int64) async throws -> Feed {
+	func createFeed(account: Account, feedID: Int, name: String?, categoryID: Int) async throws -> Feed {
 		let minifluxFeed = try await caller.retrieveFeed(feedID: feedID)
 
 		let feed = account.createFeed(with: minifluxFeed.title, url: minifluxFeed.feedURL, feedID: String(feedID), homePageURL: minifluxFeed.siteURL)
@@ -1121,7 +1121,7 @@ private extension MinifluxAccountDelegate {
 		return feed
 	}
 
-	func initialFeedDownload(account: Account, feed: Feed, feedID: Int64) async throws {
+	func initialFeedDownload(account: Account, feed: Feed, feedID: Int) async throws {
 		refreshProgress.addTask()
 		defer {
 			refreshProgress.completeTask()
@@ -1143,7 +1143,7 @@ private extension MinifluxAccountDelegate {
 }
 
 extension MinifluxAccountDelegate {
-	func syncArticleState(entryIDs: Set<Int64>, pendingArticleIDs: Set<String>, currentArticleIDs: () async -> Set<String>, markOn: (Set<String>) async -> Set<String>, markOff: (Set<String>) async -> Set<String>) async -> Int {
+	func syncArticleState(entryIDs: Set<Int>, pendingArticleIDs: Set<String>, currentArticleIDs: () async -> Set<String>, markOn: (Set<String>) async -> Set<String>, markOff: (Set<String>) async -> Set<String>) async -> Int {
 		let serverArticleIDs = Set(entryIDs.map { String($0) })
 		let updatableArticleIDs = serverArticleIDs.subtracting(pendingArticleIDs)
 

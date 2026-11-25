@@ -11,7 +11,7 @@ import Foundation
 // GET /v1/feeds → [{"id":311,"feed_url":"...","site_url":"...","title":"...",
 //                   "category":{"id":39,...},"icon":{"feed_id":311,...},...}]
 struct MinifluxFeed: Decodable, Sendable {
-	let feedID: Int64
+	let feedID: Int
 	let feedURL: String
 	let siteURL: String?
 	let title: String?
@@ -27,7 +27,7 @@ struct MinifluxFeed: Decodable, Sendable {
 
 	init(from decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
-		feedID = try container.decode(Int64.self, forKey: .feedID)
+		feedID = try container.decode(Int.self, forKey: .feedID)
 		feedURL = try container.decode(String.self, forKey: .feedURL)
 		siteURL = try? container.decode(String.self, forKey: .siteURL)
 		title = try? container.decode(String.self, forKey: .title)
@@ -38,7 +38,7 @@ struct MinifluxFeed: Decodable, Sendable {
 
 struct MinifluxCreateFeed: Encodable, Sendable {
 	let feedURL: String
-	let categoryID: Int64
+	let categoryID: Int
 
 	enum CodingKeys: String, CodingKey {
 		case feedURL = "feed_url"
@@ -47,7 +47,7 @@ struct MinifluxCreateFeed: Encodable, Sendable {
 }
 
 struct MinifluxCreateFeedResponse: Decodable, Sendable {
-	let feedID: Int64
+	let feedID: Int
 
 	enum CodingKeys: String, CodingKey {
 		case feedID = "feed_id"
@@ -57,7 +57,7 @@ struct MinifluxCreateFeedResponse: Decodable, Sendable {
 // Only non-nil properties are encoded, so callers can send a title-only or category-only update.
 struct MinifluxUpdateFeed: Encodable, Sendable {
 	let title: String?
-	let categoryID: Int64?
+	let categoryID: Int?
 
 	enum CodingKeys: String, CodingKey {
 		case title

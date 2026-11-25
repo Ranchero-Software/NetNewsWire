@@ -36,7 +36,7 @@ import Secrets
 
 // MARK: - Helpers
 
-private func entriesResponse(entryIDs: [Int64], total: Int) -> TestingURLProtocol.Response {
+private func entriesResponse(entryIDs: [Int], total: Int) -> TestingURLProtocol.Response {
 	let entries = entryIDs.map { "{\"id\": \($0), \"feed_id\": 1}" }.joined(separator: ", ")
 	let json = "{\"total\": \(total), \"entries\": [\(entries)]}"
 	return TestingURLProtocol.Response(data: Data(json.utf8))
