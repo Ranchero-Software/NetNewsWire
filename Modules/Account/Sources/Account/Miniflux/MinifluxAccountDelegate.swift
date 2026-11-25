@@ -136,20 +136,43 @@ import Secrets
 				}
 
 				var sentCount = 0
+				var savedError: Error?
 
-				sentCount += try await sendEntryStatuses(pendingEntryIDs(in: syncStatuses, key: .read, flag: true), key: .read) {
-					try await caller.updateEntries(entryIDs: $0, read: true)
-				}
-				sentCount += try await sendEntryStatuses(pendingEntryIDs(in: syncStatuses, key: .read, flag: false), key: .read) {
-					try await caller.updateEntries(entryIDs: $0, read: false)
-				}
-				sentCount += try await sendEntryStatuses(pendingEntryIDs(in: syncStatuses, key: .starred, flag: true), key: .starred) {
-					try await caller.updateEntries(entryIDs: $0, starred: true)
-				}
-				sentCount += try await sendEntryStatuses(pendingEntryIDs(in: syncStatuses, key: .starred, flag: false), key: .starred) {
-					try await caller.updateEntries(entryIDs: $0, starred: false)
+				do {
+					sentCount += try await sendEntryStatuses(pendingEntryIDs(in: syncStatuses, key: .read, flag: true), key: .read) {
+						try await caller.updateEntries(entryIDs: $0, read: true)
+					}
+				} catch {
+					savedError = error
 				}
 
+				do {
+					sentCount += try await sendEntryStatuses(pendingEntryIDs(in: syncStatuses, key: .read, flag: false), key: .read) {
+						try await caller.updateEntries(entryIDs: $0, read: false)
+					}
+				} catch {
+					savedError = error
+				}
+
+				do {
+					sentCount += try await sendEntryStatuses(pendingEntryIDs(in: syncStatuses, key: .starred, flag: true), key: .starred) {
+						try await caller.updateEntries(entryIDs: $0, starred: true)
+					}
+				} catch {
+					savedError = error
+				}
+
+				do {
+					sentCount += try await sendEntryStatuses(pendingEntryIDs(in: syncStatuses, key: .starred, flag: false), key: .starred) {
+						try await caller.updateEntries(entryIDs: $0, starred: false)
+					}
+				} catch {
+					savedError = error
+				}
+
+				if let savedError {
+					throw savedError
+				}
 				return sentCount
 			}
 		} catch {
