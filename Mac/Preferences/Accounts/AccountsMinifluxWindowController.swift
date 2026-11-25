@@ -36,6 +36,15 @@ final class AccountsMinifluxWindowController: NSWindowController {
 	private let passwordRowIndex = 2
 	private let apiTokenRowIndex = 3
 
+	private enum AuthMode: Int {
+		case usernameAndPassword = 0
+		case apiToken = 1
+	}
+
+	private var isTokenMode: Bool {
+		authModeControl.selectedSegment == AuthMode.apiToken.rawValue
+	}
+
 	convenience init() {
 		self.init(windowNibName: NSNib.Name("AccountsMiniflux"))
 	}
@@ -47,15 +56,17 @@ final class AccountsMinifluxWindowController: NSWindowController {
 		createAccountButton.title = NSLocalizedString("Find out more", comment: "No Miniflux Button")
 		apiURLTextField.placeholderString = NSLocalizedString("https://miniflux.example.com", comment: "Miniflux API Helper")
 
-		authModeControl.selectedSegment = 0
+		authModeControl.setLabel(NSLocalizedString("Username and Password", comment: "Username and Password"), forSegment: AuthMode.usernameAndPassword.rawValue)
+		authModeControl.setLabel(NSLocalizedString("API Token", comment: "API Token"), forSegment: AuthMode.apiToken.rawValue)
+		authModeControl.selectedSegment = AuthMode.usernameAndPassword.rawValue
 
 		if let account {
 			if let tokenCredentials = try? account.retrieveCredentials(type: .minifluxAPIToken) {
 				apiTokenTextField.stringValue = tokenCredentials.secret
-				authModeControl.selectedSegment = 1
+				authModeControl.selectedSegment = AuthMode.apiToken.rawValue
 			} else if let basicCredentials = try? account.retrieveCredentials(type: .minifluxBasic) {
 				usernameTextField.stringValue = basicCredentials.username
-				authModeControl.selectedSegment = 0
+				authModeControl.selectedSegment = AuthMode.usernameAndPassword.rawValue
 			}
 			apiURLTextField.stringValue = account.endpointURL?.absoluteString ?? ""
 			actionButton.title = NSLocalizedString("Update", comment: "Update")
@@ -93,7 +104,6 @@ final class AccountsMinifluxWindowController: NSWindowController {
 			return
 		}
 
-		let isTokenMode = authModeControl.selectedSegment == 1
 		let credentials: Credentials
 
 		if isTokenMode {
@@ -188,7 +198,6 @@ final class AccountsMinifluxWindowController: NSWindowController {
 	// MARK: Auth Mode
 
 	private func updateAuthModeVisibility() {
-		let isTokenMode = authModeControl.selectedSegment == 1
 		gridView.row(at: usernameRowIndex).isHidden = isTokenMode
 		gridView.row(at: passwordRowIndex).isHidden = isTokenMode
 		gridView.row(at: apiTokenRowIndex).isHidden = !isTokenMode
