@@ -88,7 +88,7 @@ final class AccountsMinifluxWindowController: NSWindowController {
 	@IBAction func action(_ sender: Any) {
 		errorMessageLabel.stringValue = ""
 
-		guard let apiURL = normalizedEndpointURL(from: apiURLTextField.stringValue) else {
+		guard let apiURL = Miniflux.normalizedEndpointURL(from: apiURLTextField.stringValue) else {
 			errorMessageLabel.stringValue = NSLocalizedString("Invalid API URL.", comment: "Invalid API URL")
 			return
 		}
@@ -193,38 +193,4 @@ final class AccountsMinifluxWindowController: NSWindowController {
 		gridView.row(at: passwordRowIndex).isHidden = isTokenMode
 		gridView.row(at: apiTokenRowIndex).isHidden = !isTokenMode
 	}
-
-	// MARK: URL Normalization
-
-	/// Trims whitespace, adds a `https://` scheme if none was given, drops a
-	/// trailing slash, and strips a trailing `/v1` path component in case the
-	/// user pasted the API URL rather than the instance's base URL —
-	/// e.g. `https://host/v1/` becomes `https://host`.
-	private func normalizedEndpointURL(from string: String) -> URL? {
-		var trimmed = string.trimmingWhitespace
-		guard !trimmed.isEmpty else {
-			return nil
-		}
-
-		if !trimmed.contains("://") {
-			trimmed = "https://" + trimmed
-		}
-
-		if trimmed.hasSuffix("/") {
-			trimmed = String(trimmed.dropLast())
-		}
-		if trimmed.hasSuffix("/v1") {
-			trimmed = String(trimmed.dropLast(3))
-		}
-		if trimmed.hasSuffix("/") {
-			trimmed = String(trimmed.dropLast())
-		}
-
-		guard !trimmed.isEmpty else {
-			return nil
-		}
-
-		return URL(string: trimmed)
-	}
-
 }

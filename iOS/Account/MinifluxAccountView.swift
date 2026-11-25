@@ -95,7 +95,7 @@ struct MinifluxAccountView: View {
 	}
 
 	@MainActor private func submit() async {
-		guard let endpoint = normalizedEndpointURL else {
+		guard let endpoint = Miniflux.normalizedEndpointURL(from: apiURLString) else {
 			errorMessage = NSLocalizedString("Invalid API URL.", comment: "Invalid API URL")
 			return
 		}
@@ -138,17 +138,5 @@ struct MinifluxAccountView: View {
 		} catch {
 			errorMessage = error.localizedDescription
 		}
-	}
-
-	private var normalizedEndpointURL: URL? {
-		var text = apiURLString.trimmingWhitespace
-		while text.hasSuffix("/") { text.removeLast() }
-		if text.hasSuffix("/v1") { text.removeLast(3) }
-		while text.hasSuffix("/") { text.removeLast() }
-		guard !text.isEmpty else {
-			return nil
-		}
-		if !text.contains("://") { text = "https://" + text }
-		return URL(string: text)
 	}
 }
