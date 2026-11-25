@@ -56,7 +56,7 @@ public extension URLRequest {
 			let auth = "Basic \(base64)"
 			setValue(auth, forHTTPHeaderField: HTTPRequestHeader.authorization)
 		case .minifluxAPIToken:
-			setValue(credentials.secret, forHTTPHeaderField: "X-Auth-Token")
+			setValue(credentials.secret, forHTTPHeaderField: HTTPRequestHeader.minifluxAuthToken)
 		case .oauthAccessToken:
 			let auth = "OAuth \(credentials.secret)"
 			setValue(auth, forHTTPHeaderField: "Authorization")
@@ -83,4 +83,9 @@ public extension URLRequest {
 			setValue(etag, forHTTPHeaderField: HTTPRequestHeader.ifNoneMatch)
 		}
 	}
+}
+
+private extension HTTPRequestHeader {
+
+	static let minifluxAuthToken = "X-Auth-Token"
 }
