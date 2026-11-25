@@ -16,17 +16,6 @@ extension UIViewController {
 	/// Size of form sheets on iPad.
 	static let formSheetSize = CGSize(width: 460, height: 400)
 
-	/// The sheet for updating an account's credentials, or nil if its type has none.
-	static func credentialsViewController(for account: Account) -> UIViewController? {
-		if account.type == .miniflux {
-			return UIHostingController(rootView: MinifluxAccountView(account: account, didAddAccount: nil))
-		}
-		guard CredentialsAccountView.accountTypes.contains(account.type) else {
-			return nil
-		}
-		return UIHostingController(rootView: CredentialsAccountView(accountType: account.type, account: account, didAddAccount: nil))
-	}
-
 	func presentError(_ error: Error, dismiss: (() -> Void)? = nil) {
 		if let accountError = error as? AccountError, accountError.isCredentialsError {
 			presentAccountError(accountError, dismiss: dismiss)
@@ -46,11 +35,13 @@ private extension UIViewController {
 		let title = NSLocalizedString("Account Error", comment: "Account Error")
 		let alertController = UIAlertController(title: title, message: error.localizedDescription, preferredStyle: .alert)
 
-		if let account = AccountError.account(from: error), let hostingController = UIViewController.credentialsViewController(for: account) {
+		if let account = AccountError.account(from: error), account.hasCredentialsView {
 			let credentialsTitle = NSLocalizedString("Update Credentials", comment: "Update Credentials")
 			let credentialsAction = UIAlertAction(title: credentialsTitle, style: .default) { [weak self] _ in
 				dismiss?()
 
+				// Built here, not when the alert is shown, since CredentialsAccountView reads the Keychain in its init.
+				let hostingController = UIHostingController(rootView: account.credentialsView())
 				hostingController.modalPresentationStyle = .formSheet
 				hostingController.preferredContentSize = UIViewController.formSheetSize
 				self?.present(hostingController, animated: true)
