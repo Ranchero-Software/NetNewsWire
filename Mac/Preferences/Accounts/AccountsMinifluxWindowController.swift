@@ -151,7 +151,8 @@ final class AccountsMinifluxWindowController: NSWindowController {
 					return
 				}
 
-				if account == nil {
+				let isNewAccount = account == nil
+				if isNewAccount {
 					account = AccountManager.shared.createAccount(type: .miniflux)
 				}
 
@@ -175,6 +176,10 @@ final class AccountsMinifluxWindowController: NSWindowController {
 						}
 					}
 				} catch {
+					if isNewAccount, let account {
+						AccountManager.shared.deleteAccount(account)
+						self.account = nil
+					}
 					errorMessageLabel?.stringValue = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")
 				}
 
