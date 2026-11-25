@@ -521,9 +521,12 @@ import Secrets
 				throw error
 			}
 
-			for feed in folder.topLevelFeeds {
-				folder.topLevelFeeds.remove(feed)
+			// The folder goes in the tree first, so each restored feed finds it by externalID.
+			let feeds = folder.topLevelFeeds
+			folder.topLevelFeeds.removeAll()
+			account.addFolderToTree(folder)
 
+			for feed in feeds {
 				do {
 					try await restoreFeed(feed: feed, container: folder)
 				} catch {
@@ -531,8 +534,6 @@ import Secrets
 					account.postSyncError(error, operation: "Restoring feed")
 				}
 			}
-
-			account.addFolderToTree(folder)
 		}
 	}
 
