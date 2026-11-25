@@ -18,6 +18,7 @@ import Secrets
 	static let entryIDsPageSize = 10000
 	static let statusChunkSize = 1000
 	private static let entryIDsScanAttempts = 3
+	private static let feedAlreadyExistsMessage = "already exists"
 
 	private static let minimumVersion = MinifluxVersion(2, 0, 49)
 	// /v1/entries/ids and batch starred updates require this newer version; below it,
@@ -141,34 +142,27 @@ import Secrets
 		try await fetch("feeds")
 	}
 
-	/// On failure, attempts to decode a `MinifluxErrorResponse` from the response body to distinguish
-	/// “feed already exists” from other errors. Miniflux has no machine-readable error code for this,
-	/// so this is a heuristic based on the human-readable `error_message` text. Any other decodable
-	/// server error is surfaced as `MinifluxError.serverError` with the server's message; otherwise
-	/// the failure is reported as a plain HTTP error.
+	/// Miniflux has no error code for an existing feed, so the error message text is the only way to tell.
 	func createFeed(url urlString: String, categoryID: Int64) async throws -> Int64 {
 		var request = try makeRequest(path: "feeds")
 		request.addValue("application/json; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
-		request.httpMethod = HTTPMethod.post
-		request.httpBody = try JSONEncoder().encode(MinifluxCreateFeed(feedURL: urlString, categoryID: categoryID))
+		let payload = try JSONEncoder().encode(MinifluxCreateFeed(feedURL: urlString, categoryID: categoryID))
 
-		let (data, urlResponse) = try await session.data(for: request)
-
-		guard (200...399).contains(urlResponse.forcedStatusCode) else {
-			if let errorResponse = try? JSONDecoder().decode(MinifluxErrorResponse.self, from: data) {
-				if errorResponse.errorMessage.contains("already exists") {
-					throw AccountError.createErrorAlreadySubscribed
-				}
-				throw MinifluxError.serverError(message: errorResponse.errorMessage)
+		do {
+			let (_, response) = try await session.send(request: request, method: HTTPMethod.post, data: payload, resultType: MinifluxCreateFeedResponse.self)
+			guard let response else {
+				throw WebserviceError.noData
 			}
-			throw WebserviceError.httpError(status: urlResponse.forcedStatusCode, responseBody: nil)
+			return response.feedID
+		} catch WebserviceError.httpError(let status, let responseBody?) {
+			guard let errorResponse = try? JSONDecoder().decode(MinifluxErrorResponse.self, from: Data(responseBody.utf8)) else {
+				throw WebserviceError.httpError(status: status, responseBody: responseBody)
+			}
+			if errorResponse.errorMessage.contains(Self.feedAlreadyExistsMessage) {
+				throw AccountError.createErrorAlreadySubscribed
+			}
+			throw MinifluxError.serverError(message: errorResponse.errorMessage)
 		}
-
-		guard !data.isEmpty else {
-			throw WebserviceError.noData
-		}
-		let response = try JSONDecoder().decode(MinifluxCreateFeedResponse.self, from: data)
-		return response.feedID
 	}
 
 	func retrieveFeed(feedID: Int64) async throws -> MinifluxFeed {
