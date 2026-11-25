@@ -2,6 +2,7 @@
 //  MinifluxAccountView.swift
 //  NetNewsWire-iOS
 //
+//  Created by Dave Marquard on 7/15/26.
 //  Copyright © 2026 Ranchero Software. All rights reserved.
 //
 
@@ -53,7 +54,9 @@ struct MinifluxAccountView: View {
 			}
 			Section {
 				Button(account == nil ? NSLocalizedString("Add Account", comment: "Add Account") : NSLocalizedString("Update Credentials", comment: "Update Credentials")) {
-					Task { await submit() }
+					Task {
+						await submit()
+					}
 				}
 				.frame(maxWidth: .infinity)
 				.disabled(!canSubmit || isValidating)
@@ -69,7 +72,9 @@ struct MinifluxAccountView: View {
 				SafariView(url: signUpURL)
 			}
 		}
-		.onAppear { loadExistingCredentials() }
+		.onAppear {
+			loadExistingCredentials()
+		}
 	}
 
 	private var canSubmit: Bool {
@@ -105,7 +110,9 @@ struct MinifluxAccountView: View {
 			: Credentials(type: .minifluxBasic, username: username.trimmingWhitespace, secret: password)
 
 		isValidating = true
-		defer { isValidating = false }
+		defer {
+			isValidating = false
+		}
 
 		do {
 			guard let validatedCredentials = try await Account.validateCredentials(type: .miniflux, credentials: credentials, endpoint: endpoint) else {
