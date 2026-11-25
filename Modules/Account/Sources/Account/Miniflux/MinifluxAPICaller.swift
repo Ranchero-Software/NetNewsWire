@@ -106,10 +106,7 @@ import Secrets
 	/// previously detected version (if any) in place, and gating already treats an unknown
 	/// version conservatively.
 	func detectServerVersion() async {
-		guard let apiBaseURL else {
-			return
-		}
-		guard let response = try? await fetchVersionResponse(endpoint: apiBaseURL) else {
+		guard let response: MinifluxVersionResponse = try? await fetch("version") else {
 			return
 		}
 		accountSettings?.detectedServerVersion = response.version
