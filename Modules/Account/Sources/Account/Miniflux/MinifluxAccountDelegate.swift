@@ -491,16 +491,17 @@ import Secrets
 		guard let account else {
 			return
 		}
-		await account.logActivity(kind: .restoreFolder, detail: folder.name ?? "") {
-			// The category was deleted server-side along with the folder — re-create it and
-			// point the folder at the new externalID before restoring its member feeds.
+		guard let folderName = folder.name, !folderName.isEmpty else {
+			throw AccountError.invalidParameter
+		}
+		try await account.logActivity(kind: .restoreFolder, detail: folderName) {
+			// The category was deleted on the server along with the folder, so re-create it before restoring its feeds.
 			do {
-				let category = try await caller.createCategory(title: folder.name ?? "")
+				let category = try await caller.createCategory(title: folderName)
 				folder.externalID = String(category.categoryID)
 			} catch {
 				Self.logger.error("Miniflux: Restore folder category error: \(error.localizedDescription)")
-				postSyncError(error, account: account, operation: "Restoring folder")
-				return
+				throw error
 			}
 
 			for feed in folder.topLevelFeeds {
