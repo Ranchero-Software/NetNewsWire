@@ -73,6 +73,32 @@ import SyncDatabase
 		XCTAssertGreaterThan(TestingURLProtocol.requestCount(forURLContaining: "/v1/entries/ids"), firstAttemptCount)
 	}
 
+	func testRefreshAfterFailedInitialSyncSendsChangedAfter() async throws {
+		TestingURLProtocol.setResponse("/v1/version", file: "JSON/miniflux_version.json")
+		TestingURLProtocol.setResponse("/v1/categories", file: "JSON/miniflux_categories_initial.json")
+		TestingURLProtocol.setResponse("/v1/feeds", file: "JSON/miniflux_feeds_initial.json")
+		TestingURLProtocol.setResponse("/v1/entries?", file: "JSON/miniflux_entries_page1.json")
+		TestingURLProtocol.setResponse(.init(statusCode: 500), forURLContaining: "/v1/entries/ids")
+
+		let account = TestAccountManager.shared.createAccount(type: .miniflux)
+		defer {
+			TestAccountManager.shared.deleteAccount(account)
+		}
+		account.endpointURL = URL(string: "https://miniflux.test")
+
+		do {
+			try await account.refreshAll()
+			XCTFail("Expected initial reconciliation to fail")
+		} catch {
+			// Expected: the article fetch succeeds, then /v1/entries/ids returns 500.
+		}
+		XCTAssertEqual(TestingURLProtocol.requestCount(forURLContaining: "changed_after"), 0)
+
+		try? await account.refreshAll()
+
+		XCTAssertGreaterThan(TestingURLProtocol.requestCount(forURLContaining: "changed_after"), 0)
+	}
+
 	func testInitialReconciliationPreservesPendingLocalStatus() async throws {
 		let account = TestAccountManager.shared.createAccount(type: .miniflux)
 		defer {

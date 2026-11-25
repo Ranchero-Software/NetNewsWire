@@ -826,9 +826,8 @@ private extension MinifluxAccountDelegate {
 
 		do {
 			let fetchStartDate = Date()
-			let isInitialSync = accountSettings?.lastRefreshCompletedDate == nil
-			let changedAfter = isInitialSync ? nil : accountSettings?.lastArticleFetchStartTime?.addingTimeInterval(-Self.changedAfterClockSkewMargin)
-			// With no changed_after, as after an OPML import, limit the fetch to recent history.
+			let changedAfter = accountSettings?.lastArticleFetchStartTime?.addingTimeInterval(-Self.changedAfterClockSkewMargin)
+			// With no changed_after, as on the first sync or after an OPML import, limit the fetch to recent history.
 			let publishedAfter = changedAfter == nil ? Calendar.current.date(byAdding: .month, value: -Self.articleHistoryMonths, to: fetchStartDate) : nil
 
 			let counts = try await account.logActivity(kind: .refreshArticles, successMessage: { "\($0.entryCount) articles" }, {
