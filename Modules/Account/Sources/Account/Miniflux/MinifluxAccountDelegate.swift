@@ -465,7 +465,11 @@ import Secrets
 
 				do {
 					try await caller.moveFeed(feedID: feedID, categoryID: destinationCategoryID)
+					// A Miniflux feed has one category, so the move takes it out of every other folder.
 					account.removeFeedFromTreeAtTopLevel(feed)
+					for otherFolder in account.folders ?? [] where otherFolder !== folder {
+						otherFolder.removeFeedFromTreeAtTopLevel(feed)
+					}
 					folder.addFeedToTreeAtTopLevel(feed)
 				} catch {
 					throw AccountError.wrapped(error, account)
