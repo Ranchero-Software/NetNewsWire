@@ -57,6 +57,8 @@ import Secrets
 	private static let sendStatusBatchThreshold = 100
 	/// `changed_after` is compared against the server’s clock, so back it up to cover a device clock that runs ahead.
 	private static let changedAfterClockSkewMargin: TimeInterval = 5 * 60
+	/// How far back to fetch articles when there’s no changed_after date.
+	private static let articleHistoryMonths = 3
 	/// Missing articles are fetched one request per entry, so each refresh fetches at most this many.
 	private static let missingArticlesFetchLimit = 250
 	/// Fetched entries are saved, and deleted statuses removed, after each chunk of this many.
@@ -767,7 +769,8 @@ private extension MinifluxAccountDelegate {
 			let fetchStartDate = Date()
 			let isInitialSync = accountSettings?.lastRefreshCompletedDate == nil
 			let changedAfter = isInitialSync ? nil : accountSettings?.lastArticleFetchStartTime?.addingTimeInterval(-Self.changedAfterClockSkewMargin)
-			let publishedAfter = isInitialSync ? Calendar.current.date(byAdding: .month, value: -3, to: fetchStartDate) : nil
+			// With no changed_after, as after an OPML import, limit the fetch to recent history.
+			let publishedAfter = changedAfter == nil ? Calendar.current.date(byAdding: .month, value: -Self.articleHistoryMonths, to: fetchStartDate) : nil
 
 			let processedCount = try await account.logActivity(kind: .refreshArticles, successMessage: { "\($0) articles" }, {
 				try await refreshArticlesPage(account: account, changedAfter: changedAfter, publishedAfter: publishedAfter, reportProgress: reportProgress)
