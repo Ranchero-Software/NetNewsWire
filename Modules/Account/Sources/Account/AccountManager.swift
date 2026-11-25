@@ -244,10 +244,6 @@ import ActivityLog
 		Self.duplicateServiceAccount(type: type, username: username, endpoint: endpoint, among: accounts)
 	}
 
-	public func duplicateServiceAccount(type: AccountType, endpointURL: URL?, username: String?) -> Bool {
-		duplicateServiceAccount(type: type, username: username, endpoint: endpointURL)
-	}
-
 	/// Self-hosted services can have the same username on different servers, so when both endpoints are known, they must match too.
 	static func duplicateServiceAccount(type: AccountType, username: String?, endpoint: URL?, among accounts: [Account]) -> Bool {
 		guard type != .onMyMac else {
