@@ -131,8 +131,7 @@ import RSWeb
 		}
 	}
 
-	/// The sync server's self-reported version string (e.g. "2.4.1"), for services whose
-	/// available endpoints vary by version. `nil` until the first successful detection.
+	/// The version the sync server reports, for services whose endpoints vary by version.
 	var detectedServerVersion: String? {
 		get {
 			UserDefaults.standard.string(forKey: defaultsKey(.detectedServerVersion))
