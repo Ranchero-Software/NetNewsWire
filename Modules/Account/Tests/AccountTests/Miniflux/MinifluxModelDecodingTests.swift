@@ -13,7 +13,6 @@ import XCTest
 
 	func testDecodeUser() throws {
 		let user = try decode(MinifluxUser.self, from: "miniflux_me.json")
-		XCTAssertEqual(35, user.id)
 		XCTAssertEqual("testuser", user.username)
 	}
 

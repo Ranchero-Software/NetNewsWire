@@ -10,6 +10,5 @@ import Foundation
 
 // GET /v1/me → {"id":35,"username":"claude","is_admin":false,...}
 struct MinifluxUser: Decodable, Sendable {
-	let id: Int64
 	let username: String
 }

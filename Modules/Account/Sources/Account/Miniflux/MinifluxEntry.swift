@@ -26,11 +26,12 @@ struct MinifluxEntry: Decodable, Sendable {
 	let status: MinifluxEntryStatus?
 	let starred: Bool?
 
-	// Miniflux emits ISO8601 dates with fractional seconds and offsets, which JSONDecoder’s
-	// .iso8601 strategy can’t parse. Rather than lose the whole entry, decode the date as a
-	// String and let DateParser take care of it — exactly like FeedbinEntry.parsedDatePublished.
+	/// Decoded as a String, since JSONDecoder’s .iso8601 strategy can’t parse Miniflux’s fractional seconds.
 	var parsedDatePublished: Date? {
-		datePublished.flatMap { DateParser.date(from: $0) }
+		guard let datePublished else {
+			return nil
+		}
+		return DateParser.date(from: datePublished)
 	}
 
 	var attachments: [ParsedAttachment]? {
@@ -107,9 +108,9 @@ struct MinifluxEnclosure: Decodable, Sendable {
 
 	init(from decoder: Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
-		url = try? container.decodeIfPresent(String.self, forKey: .url)
-		mimeType = try? container.decodeIfPresent(String.self, forKey: .mimeType)
-		size = try? container.decodeIfPresent(Int.self, forKey: .size)
+		url = try? container.decode(String.self, forKey: .url)
+		mimeType = try? container.decode(String.self, forKey: .mimeType)
+		size = try? container.decode(Int.self, forKey: .size)
 	}
 }
 
@@ -124,7 +125,7 @@ struct MinifluxEntryIDsResponse: Decodable, Sendable {
 	let entryIDs: [Int64]
 
 	enum CodingKeys: String, CodingKey {
-		case total = "total"
+		case total
 		case entryIDs = "entry_ids"
 	}
 }

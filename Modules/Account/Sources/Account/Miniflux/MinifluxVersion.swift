@@ -23,7 +23,10 @@ struct MinifluxVersion: Comparable, Sendable {
 		self.components = components
 	}
 
-	init?(string: String) {
+	init?(string: String?) {
+		guard let string else {
+			return nil
+		}
 		let parts = string.split(separator: ".")
 		guard !parts.isEmpty else {
 			return nil

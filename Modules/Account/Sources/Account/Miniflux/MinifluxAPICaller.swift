@@ -414,7 +414,7 @@ private extension MinifluxAPICaller {
 
 	/// Nil until `detectServerVersion()` has succeeded once.
 	var detectedVersion: MinifluxVersion? {
-		accountSettings?.detectedServerVersion.flatMap(MinifluxVersion.init(string:))
+		MinifluxVersion(string: accountSettings?.detectedServerVersion)
 	}
 
 	/// False when the version is unknown, since the fallback works on every supported server.
