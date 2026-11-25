@@ -259,8 +259,7 @@ private extension MinifluxAPICaller {
 		static let `true` = "true"
 	}
 
-	/// Builds an authenticated request for `v1/<path>`, honoring `suspend()`. Auth for both
-	/// `.minifluxBasic` and `.minifluxAPIToken` is applied inside `URLRequest(url:credentials:)`.
+	/// Builds an authenticated request for `v1/<path>`, honoring `suspend()`.
 	func makeRequest(path: String, query: [URLQueryItem] = []) throws -> URLRequest {
 		if suspended {
 			throw WebserviceError.suspended
@@ -358,7 +357,7 @@ private extension MinifluxAPICaller {
 	func updateEntriesStarredFallback(entryIDs: [Int], starred: Bool) async throws {
 		for entryID in entryIDs {
 			guard let entry = try await retrieveEntry(entryID: entryID) else {
-				continue // Gone server-side; nothing to update.
+				continue
 			}
 			// Unknown state can’t be toggled safely, and the correct state needs no toggle.
 			guard let entryStarred = entry.starred, entryStarred != starred else {
@@ -381,8 +380,7 @@ private extension MinifluxAPICaller {
 		]
 	}
 
-	/// Requires the server response before this call to have already confirmed credentials
-	/// are valid — a plain 404 here means the server predates `/v1/version` (< 2.0.49).
+	/// The caller has already validated the credentials, so a 404 means the server predates `/v1/version` (2.0.49).
 	func validateServerVersion(endpoint: URL) async throws {
 		let response: MinifluxVersionResponse
 		do {
@@ -426,7 +424,8 @@ private extension MinifluxAPICaller {
 	}
 
 	var supportsBatchStarredUpdates: Bool {
-		supportsEntryIDsEndpoint // Same 2.3.2 threshold as the ids endpoint.
+		// Batch starred updates arrived in 2.3.2, along with the ids endpoint.
+		supportsEntryIDsEndpoint
 	}
 
 	func apiURL(path: String, queryItems: [URLQueryItem] = []) throws -> URL {

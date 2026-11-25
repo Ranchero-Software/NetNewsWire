@@ -163,8 +163,7 @@ import Secrets
 		}
 	}
 
-	/// Status changes arrive via the changed_after entries fetch (statuses ride along
-	/// with content), so refreshing statuses is the same operation as refreshing articles.
+	/// Statuses come with the changed_after entries fetch, so this is the same as refreshing articles.
 	func refreshArticleStatus() async throws {
 		guard let account else {
 			return
@@ -172,8 +171,7 @@ import Secrets
 		_ = try await refreshArticles(account)
 	}
 
-	/// Reconciles against the server’s complete unread and starred ID sets, on initial sync.
-	/// Returns the number of articles whose local status changed.
+	/// Reconciles against the server’s full unread and starred ID sets. Returns the number of statuses changed.
 	private func reconcileAllArticleStatuses(for account: Account) async throws -> Int {
 		Self.logger.info("Miniflux: Refreshing article statuses")
 
@@ -315,8 +313,7 @@ import Secrets
 				}
 			}
 
-			// Miniflux refuses to delete a category that still has feeds — throw rather than
-			// silently leaving the folder gone locally but present on the server.
+			// Miniflux won’t delete a category that still has feeds, so remove the folder locally only after the server does.
 			try await caller.deleteCategory(categoryID: categoryID)
 			account.removeFolderFromTree(folder)
 		}
@@ -543,8 +540,7 @@ import Secrets
 		}
 		retrieveCredentialsIfNeeded(account)
 
-		// A send in progress when the app was killed left its statuses selected. Clear them so
-		// they get sent, instead of waiting for the next selectForProcessing to pick them up.
+		// Clear statuses left selected by a send that was in progress when the app quit.
 		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4280>
 		syncDatabase.resetAllSelectedForProcessing()
 	}
@@ -638,10 +634,7 @@ private extension MinifluxAccountDelegate {
 		_ = try await refreshArticles(account, reportProgress: true)
 
 		if isInitialSync {
-			// The first sync's published_after window misses older unread/starred entries;
-			// a one-time full ID reconciliation (plus refreshMissingArticles right after)
-			// pulls them in. Order matters: reconcile must run before refreshMissingArticles
-			// so the statuses it creates get their articles downloaded.
+			// The published_after window misses older unread and starred entries. Reconcile first, so refreshMissingArticles downloads them.
 			_ = try await reconcileAllArticleStatuses(for: account)
 		}
 
@@ -650,9 +643,7 @@ private extension MinifluxAccountDelegate {
 		refreshProgress.reset()
 	}
 
-	/// Every Miniflux category maps to exactly one NNW folder, matched by externalID
-	/// (the category's server-side id), not by name — so a category rename doesn't
-	/// orphan the folder.
+	/// Folders match categories by externalID, not name, so renaming a category keeps its folder.
 	func syncFolders(_ account: Account, _ categories: [MinifluxCategory]) {
 		assert(Thread.isMainThread)
 
@@ -698,10 +689,7 @@ private extension MinifluxAccountDelegate {
 			for folder in folders {
 				for feed in folder.topLevelFeeds {
 					if !feedExternalIDs.contains(feed.feedID) {
-						// Clear settings before removing so a feed re-added at this URL — which
-						// Miniflux assigns a new numeric feedID — doesn't inherit the stale
-						// feedID from the settings cache/database and end up unable to match
-						// incoming articles.
+						// Clear settings first, so a feed re-added at this URL, which gets a new feedID, doesn’t inherit the old one.
 						account.clearFeedSettings(feed)
 						folder.removeFeedFromTreeAtTopLevel(feed)
 					}
@@ -720,9 +708,7 @@ private extension MinifluxAccountDelegate {
 			}
 		}
 
-		// Add any feeds we don't have and update any we do. New feeds are added directly
-		// to their folder in syncFeedFolderRelationship — Miniflux guarantees every feed
-		// has exactly one category.
+		// Update existing feeds. syncFeedFolderRelationship adds new ones to their folders.
 		for feed in feeds {
 			let feedExternalID = String(feed.feedID)
 			if let existingFeed = account.existingFeed(withFeedID: feedExternalID) {
@@ -733,8 +719,7 @@ private extension MinifluxAccountDelegate {
 		}
 	}
 
-	/// No `folderRelationship` bookkeeping — a feed's folder membership is derived
-	/// entirely from its `category.id` on each refresh.
+	/// A feed’s folder comes from its category on every refresh, so there’s no `folderRelationship` bookkeeping.
 	func syncFeedFolderRelationship(_ account: Account, _ feeds: [MinifluxFeed]) {
 		assert(Thread.isMainThread)
 
@@ -748,8 +733,7 @@ private extension MinifluxAccountDelegate {
 			dict[String(categoryID), default: []].append(feed)
 		}
 
-		// Feeds with no category (a lenient decode) must not be silently pulled out of
-		// their existing folder — track them so the removal loop below leaves them alone.
+		// A feed with no category (a lenient decode) stays in its current folder.
 		var feedIDsWithNoCategory = Set<String>()
 		for feed in feeds where feed.category == nil {
 			feedIDsWithNoCategory.insert(String(feed.feedID))
@@ -825,10 +809,7 @@ private extension MinifluxAccountDelegate {
 		}
 	}
 
-	/// When `reportProgress` is true, the caller must have pre-added one task for the
-	/// first page (keeping the progress denominator stable for single-page refreshes);
-	/// continuation pages add their own. Background status syncs pass false so the
-	/// progress UI stays quiet.
+	/// With `reportProgress`, the caller adds the first page’s progress task, and later pages add their own.
 	func refreshArticlesPage(account: Account, changedAfter: Date?, publishedAfter: Date?, reportProgress: Bool) async throws -> (entryCount: Int, changedStatusCount: Int) {
 		var offset = 0
 		var totalEntriesProcessed = 0
@@ -840,8 +821,7 @@ private extension MinifluxAccountDelegate {
 				refreshProgress.addTask()
 			}
 			isFirstPage = false
-			// Complete the task on every exit from this iteration — including a thrown
-			// fetch error — so a task is never stranded.
+			// Complete the task on every exit, including a thrown error.
 			defer {
 				if reportProgress {
 					refreshProgress.completeTask()
@@ -933,9 +913,7 @@ private extension MinifluxAccountDelegate {
 		return await applyEntryStatuses(account: account, entries: entries)
 	}
 
-	/// Applies statuses from the changed_after entries fetch, since Miniflux bumps changed_at
-	/// whenever an entry’s status or starred state changes. Pending local changes are excluded,
-	/// since they win. Returns the number of local statuses changed.
+	/// Applies statuses from the changed_after entries fetch, except pending local changes, which win. Returns the number of statuses changed.
 	@discardableResult
 	func applyEntryStatuses(account: Account, entries: [MinifluxEntry]) async -> Int {
 		guard !entries.isEmpty else {
@@ -1022,10 +1000,7 @@ private extension MinifluxAccountDelegate {
 		)
 	}
 
-	/// Read/unread and starred/unstarred changes all funnel through here. Chunks `entryIDs`,
-	/// pushes each chunk via `update`, then clears the sync-database rows on success or resets
-	/// them on failure. Miniflux’s update-entries call is absolute state (not a toggle), so
-	/// repeated sends are idempotent. Returns the count successfully sent.
+	/// Sends `entryIDs` in chunks, deleting their sync rows on success and resetting them on failure. Returns the count sent.
 	func sendEntryStatuses(_ entryIDs: [Int], key: SyncStatus.Key, update: (_ chunk: [Int]) async throws -> Void) async throws -> Int {
 		guard !entryIDs.isEmpty else {
 			return 0
@@ -1058,10 +1033,7 @@ private extension MinifluxAccountDelegate {
 		statuses.filter { $0.key == key && $0.flag == flag }.compactMap { Int($0.articleID) }
 	}
 
-	/// Resolves the category to use when creating a feed into `container`: the folder's
-	/// externalID if `container` is a Folder, otherwise the lowest-id category (used when
-	/// the UI hands us the account itself as the container, which Miniflux has no concept
-	/// of — every feed must belong to a category).
+	/// The folder’s category, or the lowest-id category when `container` is the account, since every Miniflux feed needs one.
 	func categoryID(for container: Container) async throws -> Int {
 		if let folder = container as? Folder, let externalID = folder.externalID, let categoryID = Int(externalID) {
 			return categoryID
