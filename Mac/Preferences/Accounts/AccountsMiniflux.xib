@@ -152,7 +152,7 @@
                                     <constraints>
                                         <constraint firstAttribute="width" constant="200" id="Mfx-C4-wid"/>
                                     </constraints>
-                                    <secureTextFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="optional" drawsBackground="YES" usesSingleLineMode="YES" id="Mfx-C4-fcl">
+                                    <secureTextFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="Mfx-C4-fcl">
                                         <font key="font" metaFont="system"/>
                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -244,7 +244,7 @@ Gw
                             <constraint firstAttribute="height" constant="39" id="Zv4-mj-po0"/>
                             <constraint firstAttribute="width" constant="333" id="xsi-I6-XNM"/>
                         </constraints>
-                        <textFieldCell key="cell" title="Your username and password will be encrypted and stored in Keychain. " id="Ec9-bB-tQz">
+                        <textFieldCell key="cell" title="Your credentials will be encrypted and stored in Keychain." id="Ec9-bB-tQz">
                             <font key="font" usesAppearanceFont="YES"/>
                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
