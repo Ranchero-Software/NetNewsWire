@@ -176,7 +176,7 @@ import Secrets
 				return sentCount
 			}
 		} catch {
-			postSyncError(error, account: account, operation: "Sending article status")
+			account.postSyncError(error, operation: "Sending article status")
 			throw error
 		}
 	}
@@ -190,9 +190,8 @@ import Secrets
 		_ = try await refreshArticles(account)
 	}
 
-	/// Full reconciliation against the server's complete unread/starred ID sets. Used only
-	/// on initial sync now — routine refreshes get status changes from the changed_after
-	/// entries fetch. Returns the count of articles whose local state actually changed.
+	/// Reconciles against the server’s complete unread and starred ID sets, on initial sync.
+	/// Returns the number of articles whose local status changed.
 	private func reconcileAllArticleStatuses(for account: Account) async throws -> Int {
 		Self.logger.info("Miniflux: Refreshing article statuses")
 
@@ -221,7 +220,7 @@ import Secrets
 
 			Self.logger.info("Miniflux: Finished refreshing article statuses")
 			if let refreshError {
-				postSyncError(refreshError, account: account, operation: "Refreshing article status")
+				account.postSyncError(refreshError, operation: "Refreshing article status")
 				throw refreshError
 			}
 			return changedCount
@@ -251,7 +250,7 @@ import Secrets
 				Self.logger.info("Miniflux: Finished importing OPML")
 			}
 		} catch {
-			Self.logger.info("Miniflux: OPML import failed: \(error.localizedDescription)")
+			Self.logger.error("Miniflux: OPML import failed: \(error.localizedDescription)")
 			throw AccountError.wrapped(error, account)
 		}
 	}
@@ -330,7 +329,7 @@ import Secrets
 					account.clearFeedSettings(feed)
 				} catch {
 					Self.logger.error("Miniflux: Remove feed error: \(error.localizedDescription)")
-					postSyncError(error, account: account, operation: "Removing feed")
+					account.postSyncError(error, operation: "Removing feed")
 				}
 			}
 
@@ -529,7 +528,7 @@ import Secrets
 					try await restoreFeed(feed: feed, container: folder)
 				} catch {
 					Self.logger.error("Miniflux: Restore folder feed error: \(error.localizedDescription)")
-					postSyncError(error, account: account, operation: "Restoring feed")
+					account.postSyncError(error, operation: "Restoring feed")
 				}
 			}
 
@@ -644,7 +643,7 @@ private extension MinifluxAccountDelegate {
 				return (folders: categories.count, feeds: feeds.count)
 			})
 		} catch {
-			postSyncError(error, account: account, operation: "Refreshing account")
+			account.postSyncError(error, operation: "Refreshing account")
 			throw error
 		}
 	}
@@ -747,7 +746,6 @@ private extension MinifluxAccountDelegate {
 				existingFeed.name = feed.title
 				existingFeed.editedName = nil
 				existingFeed.homePageURL = feed.siteURL
-				existingFeed.externalID = feedExternalID
 			}
 		}
 	}
@@ -840,7 +838,7 @@ private extension MinifluxAccountDelegate {
 			accountSettings?.lastArticleFetchStartTime = fetchStartDate
 			return counts.changedStatusCount
 		} catch {
-			postSyncError(error, account: account, operation: "Refreshing articles")
+			account.postSyncError(error, operation: "Refreshing articles")
 			throw error
 		}
 	}
@@ -938,7 +936,7 @@ private extension MinifluxAccountDelegate {
 			}
 
 			if let savedError {
-				postSyncError(savedError, account: account, operation: "Refreshing missing articles")
+				account.postSyncError(savedError, operation: "Refreshing missing articles")
 				throw savedError
 			}
 		}
@@ -953,11 +951,9 @@ private extension MinifluxAccountDelegate {
 		return await applyEntryStatuses(account: account, entries: entries)
 	}
 
-	/// Statuses ride along on the changed_after entries fetch — Miniflux bumps changed_at
-	/// whenever an entry's status or starred state changes — so applying them per page
-	/// replaces the per-refresh full ID scans. Pending local changes are always excluded:
-	/// they must win, so server state is never applied without first knowing what's pending.
-	/// Returns the number of local statuses changed.
+	/// Applies statuses from the changed_after entries fetch, since Miniflux bumps changed_at
+	/// whenever an entry’s status or starred state changes. Pending local changes are excluded,
+	/// since they win. Returns the number of local statuses changed.
 	@discardableResult
 	func applyEntryStatuses(account: Account, entries: [MinifluxEntry]) async -> Int {
 		guard !entries.isEmpty else {
@@ -1118,7 +1114,7 @@ private extension MinifluxAccountDelegate {
 				try await initialFeedDownload(account: account, feed: feed, feedID: feedID)
 			} catch {
 				Self.logger.error("Miniflux: Initial feed download failed: \(error.localizedDescription)")
-				postSyncError(error, account: account, operation: "Downloading feed articles")
+				account.postSyncError(error, operation: "Downloading feed articles")
 			}
 		}
 
@@ -1143,11 +1139,6 @@ private extension MinifluxAccountDelegate {
 				}
 			}
 		}
-	}
-
-	func postSyncError(_ error: Error, account: Account, operation: String, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {
-		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: operation, errorMessage: AccountError.detailedErrorMessage(error), fileName: fileName, functionName: functionName, lineNumber: lineNumber)
-		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 	}
 }
 
