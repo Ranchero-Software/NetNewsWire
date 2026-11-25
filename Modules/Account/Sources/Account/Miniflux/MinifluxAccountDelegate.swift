@@ -265,7 +265,9 @@ import Secrets
 		}
 
 		refreshProgress.addTask()
-		defer { refreshProgress.completeTask() }
+		defer {
+			refreshProgress.completeTask()
+		}
 
 		do {
 			return try await account.logActivity(kind: .createFolder, detail: name) {
@@ -290,7 +292,9 @@ import Secrets
 		}
 
 		refreshProgress.addTask()
-		defer { refreshProgress.completeTask() }
+		defer {
+			refreshProgress.completeTask()
+		}
 
 		do {
 			try await account.logActivity(kind: .renameFolder, detail: folder.name) {
@@ -314,7 +318,9 @@ import Secrets
 			refreshProgress.addTasks(folder.topLevelFeeds.count)
 
 			for feed in folder.topLevelFeeds {
-				defer { refreshProgress.completeTask() }
+				defer {
+					refreshProgress.completeTask()
+				}
 
 				guard let feedExternalID = feed.externalID, let feedID = Int64(feedExternalID) else {
 					continue
@@ -384,7 +390,9 @@ import Secrets
 		}
 
 		refreshProgress.addTask()
-		defer { refreshProgress.completeTask() }
+		defer {
+			refreshProgress.completeTask()
+		}
 
 		do {
 			try await account.logActivity(kind: .renameFeed, detail: feed.url) {
@@ -405,7 +413,9 @@ import Secrets
 		}
 
 		refreshProgress.addTask()
-		defer { refreshProgress.completeTask() }
+		defer {
+			refreshProgress.completeTask()
+		}
 
 		do {
 			try await account.logActivity(kind: .removeFeed, detail: feed.url) {
@@ -432,7 +442,9 @@ import Secrets
 		}
 
 		refreshProgress.addTask()
-		defer { refreshProgress.completeTask() }
+		defer {
+			refreshProgress.completeTask()
+		}
 
 		do {
 			try await account.logActivity(kind: .moveFeed, detail: feed.url) {
@@ -461,7 +473,9 @@ import Secrets
 				}
 
 				refreshProgress.addTask()
-				defer { refreshProgress.completeTask() }
+				defer {
+					refreshProgress.completeTask()
+				}
 
 				do {
 					try await caller.moveFeed(feedID: feedID, categoryID: destinationCategoryID)
@@ -747,7 +761,9 @@ private extension MinifluxAccountDelegate {
 
 		let folderDict = externalIDToFolderDictionary(with: account.folders)
 		let feedsByCategoryID = feeds.reduce(into: [String: [MinifluxFeed]]()) { dict, feed in
-			guard let categoryID = feed.category?.categoryID else { return }
+			guard let categoryID = feed.category?.categoryID else {
+				return
+			}
 			dict[String(categoryID), default: []].append(feed)
 		}
 
@@ -1111,7 +1127,9 @@ private extension MinifluxAccountDelegate {
 
 	func initialFeedDownload(account: Account, feed: Feed, feedID: Int64) async throws {
 		refreshProgress.addTask()
-		defer { refreshProgress.completeTask() }
+		defer {
+			refreshProgress.completeTask()
+		}
 
 		try await account.logActivity(kind: .refreshFeedContent(feedURL: feed.url), detail: feed.nameForDisplay) {
 			var offset = 0
