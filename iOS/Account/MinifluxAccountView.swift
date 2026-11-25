@@ -30,12 +30,12 @@ struct MinifluxAccountView: View {
 	var body: some View {
 		AccountSetupSheet(accountType: .miniflux, isWorking: isValidating) {
 			Section {
-				Picker(NSLocalizedString("Authentication", comment: "Miniflux authentication mode"), selection: $usesAPIToken) {
-					Text(NSLocalizedString("Username and Password", comment: "Miniflux authentication mode")).tag(false)
-					Text(NSLocalizedString("API Token", comment: "Miniflux authentication mode")).tag(true)
+				Picker(NSLocalizedString("Authentication", comment: "Authentication"), selection: $usesAPIToken) {
+					Text(NSLocalizedString("Username and Password", comment: "Username and Password")).tag(false)
+					Text(NSLocalizedString("API Token", comment: "API Token")).tag(true)
 				}
 				if usesAPIToken {
-					SecureField(NSLocalizedString("API Token", comment: "Miniflux API token"), text: $apiToken)
+					SecureField(NSLocalizedString("API Token", comment: "API Token"), text: $apiToken)
 				} else {
 					TextField(NSLocalizedString("Username", comment: "Username"), text: $username)
 						.textContentType(.username)

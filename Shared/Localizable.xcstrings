@@ -262,7 +262,7 @@
       }
     },
     "Authentication" : {
-      "comment" : "Miniflux authentication mode"
+      "comment" : "Authentication"
     },
     "Author‘s website:" : {
       "comment" : "Author's Website"
