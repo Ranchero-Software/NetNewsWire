@@ -99,6 +99,26 @@ import SyncDatabase
 		XCTAssertGreaterThan(TestingURLProtocol.requestCount(forURLContaining: "changed_after"), 0)
 	}
 
+	func testMissingArticleHTTPErrorDoesNotFailRefresh() async throws {
+		TestingURLProtocol.setResponse("/v1/version", file: "JSON/miniflux_version.json")
+		TestingURLProtocol.setResponse("/v1/categories", file: "JSON/miniflux_categories_initial.json")
+		TestingURLProtocol.setResponse("/v1/feeds", file: "JSON/miniflux_feeds_initial.json")
+		TestingURLProtocol.setResponse("/v1/entries?", file: "JSON/miniflux_entries_page1.json")
+		TestingURLProtocol.setResponse("/v1/entries/ids", file: "JSON/miniflux_entry_ids_missing_article.json")
+		TestingURLProtocol.setResponse(.init(statusCode: 500), forURLContaining: "/v1/entries/9001")
+
+		let account = TestAccountManager.shared.createAccount(type: .miniflux)
+		defer {
+			TestAccountManager.shared.deleteAccount(account)
+		}
+		account.endpointURL = URL(string: "https://miniflux.test")
+
+		try await account.refreshAll()
+
+		XCTAssertGreaterThan(TestingURLProtocol.requestCount(forURLContaining: "/v1/entries/9001"), 0)
+		XCTAssertNotNil(account.lastRefreshCompletedDate)
+	}
+
 	func testInitialReconciliationPreservesPendingLocalStatus() async throws {
 		let account = TestAccountManager.shared.createAccount(type: .miniflux)
 		defer {

@@ -910,12 +910,12 @@ private extension MinifluxAccountDelegate {
 							serverDeletedArticleIDs.insert(String(entryID))
 						}
 					} catch {
-						savedError = error
 						Self.logger.error("Miniflux: Refresh missing articles error: \(error.localizedDescription)")
-						// An HTTP error is about this entry, so skip it. Anything else, such as no connection, would fail every remaining request.
+						// An HTTP error is about this entry, so skip it without failing the refresh. Anything else, such as no connection, would fail every remaining request.
 						if case WebserviceError.httpError = error {
 							continue
 						}
+						savedError = error
 						shouldStopFetching = true
 						break
 					}
