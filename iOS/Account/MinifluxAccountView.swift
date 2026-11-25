@@ -36,11 +36,12 @@ struct MinifluxAccountView: View {
 				if usesAPIToken {
 					SecureField(NSLocalizedString("API Token", comment: "Miniflux API token"), text: $apiToken)
 				} else {
-					TextField(NSLocalizedString("Username or Email", comment: "Username field placeholder"), text: $username)
+					TextField(NSLocalizedString("Username", comment: "Username"), text: $username)
 						.textContentType(.username)
 						.textInputAutocapitalization(.never)
 						.autocorrectionDisabled()
 					SecureField(NSLocalizedString("Password", comment: "Password field placeholder"), text: $password)
+						.textContentType(.password)
 				}
 				TextField(NSLocalizedString("API URL: https://miniflux.example.com", comment: "Miniflux API Helper"), text: $apiURLString)
 					.textContentType(.URL)
