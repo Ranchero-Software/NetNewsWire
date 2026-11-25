@@ -43,7 +43,7 @@
                         <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="Mfx-Sg-cel">
                             <font key="font" metaFont="system"/>
                             <segments>
-                                <segment label="Username &amp; Password" width="0.0" tag="0" selected="YES"/>
+                                <segment label="Username and Password" width="0.0" tag="0" selected="YES"/>
                                 <segment label="API Token" width="0.0" tag="1"/>
                             </segments>
                         </segmentedCell>
