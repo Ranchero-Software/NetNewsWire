@@ -111,7 +111,7 @@ struct MinifluxAccountView: View {
 				errorMessage = NSLocalizedString("Invalid username/password combination, or invalid API token.", comment: "Credentials Error")
 				return
 			}
-			if account == nil && AccountManager.shared.duplicateServiceAccount(type: .miniflux, endpointURL: endpoint, username: validatedCredentials.username) {
+			if account == nil && AccountManager.shared.duplicateServiceAccount(type: .miniflux, username: validatedCredentials.username, endpoint: endpoint) {
 				errorMessage = NSLocalizedString("There is already a Miniflux account for this user on this server.", comment: "Duplicate Error")
 				return
 			}
