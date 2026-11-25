@@ -2,6 +2,7 @@
 //  AccountsMinifluxWindowController.swift
 //  NetNewsWire
 //
+//  Created by Dave Marquard on 7/15/26.
 //  Copyright © 2026 Ranchero Software. All rights reserved.
 //
 
@@ -12,26 +13,25 @@ import Secrets
 
 final class AccountsMinifluxWindowController: NSWindowController {
 
-	@IBOutlet var titleImageView: NSImageView!
-	@IBOutlet var titleLabel: NSTextField!
+	@IBOutlet var titleImageView: NSImageView?
+	@IBOutlet var titleLabel: NSTextField?
 
-	@IBOutlet var gridView: NSGridView!
-	@IBOutlet var progressIndicator: NSProgressIndicator!
-	@IBOutlet var usernameTextField: NSTextField!
-	@IBOutlet var apiURLTextField: NSTextField!
-	@IBOutlet var passwordTextField: NSSecureTextField!
-	@IBOutlet var apiTokenTextField: NSSecureTextField!
-	@IBOutlet var authModeControl: NSSegmentedControl!
-	@IBOutlet var createAccountButton: NSButton!
-	@IBOutlet var errorMessageLabel: NSTextField!
-	@IBOutlet var actionButton: NSButton!
-	@IBOutlet var noAccountTextField: NSTextField!
+	@IBOutlet var gridView: NSGridView?
+	@IBOutlet var progressIndicator: NSProgressIndicator?
+	@IBOutlet var usernameTextField: NSTextField?
+	@IBOutlet var apiURLTextField: NSTextField?
+	@IBOutlet var passwordTextField: NSSecureTextField?
+	@IBOutlet var apiTokenTextField: NSSecureTextField?
+	@IBOutlet var authModeControl: NSSegmentedControl?
+	@IBOutlet var createAccountButton: NSButton?
+	@IBOutlet var errorMessageLabel: NSTextField?
+	@IBOutlet var actionButton: NSButton?
+	@IBOutlet var noAccountTextField: NSTextField?
 
 	var account: Account?
 
 	private weak var hostWindow: NSWindow?
 
-	/// Fixed row indices in `gridView`: API URL, Username, Password, API Token.
 	private let usernameRowIndex = 1
 	private let passwordRowIndex = 2
 	private let apiTokenRowIndex = 3
@@ -42,7 +42,7 @@ final class AccountsMinifluxWindowController: NSWindowController {
 	}
 
 	private var isTokenMode: Bool {
-		authModeControl.selectedSegment == AuthMode.apiToken.rawValue
+		authModeControl?.selectedSegment == AuthMode.apiToken.rawValue
 	}
 
 	convenience init() {
@@ -50,33 +50,33 @@ final class AccountsMinifluxWindowController: NSWindowController {
 	}
 
 	override func windowDidLoad() {
-		titleImageView.image = Assets.Images.accountMiniflux
-		titleLabel.stringValue = NSLocalizedString("Sign in to your Miniflux account.", comment: "Miniflux")
-		noAccountTextField.stringValue = NSLocalizedString("Don’t have a Miniflux instance?", comment: "No Miniflux")
-		createAccountButton.title = NSLocalizedString("Find out more", comment: "No Miniflux Button")
-		apiURLTextField.placeholderString = NSLocalizedString("https://miniflux.example.com", comment: "Miniflux API Helper")
+		titleImageView?.image = Assets.Images.accountMiniflux
+		titleLabel?.stringValue = NSLocalizedString("Sign in to your Miniflux account.", comment: "Miniflux")
+		noAccountTextField?.stringValue = NSLocalizedString("Don’t have a Miniflux instance?", comment: "No Miniflux")
+		createAccountButton?.title = NSLocalizedString("Find out more", comment: "No Miniflux Button")
+		apiURLTextField?.placeholderString = NSLocalizedString("https://miniflux.example.com", comment: "Miniflux API Helper")
 
-		authModeControl.setLabel(NSLocalizedString("Username and Password", comment: "Username and Password"), forSegment: AuthMode.usernameAndPassword.rawValue)
-		authModeControl.setLabel(NSLocalizedString("API Token", comment: "API Token"), forSegment: AuthMode.apiToken.rawValue)
-		authModeControl.selectedSegment = AuthMode.usernameAndPassword.rawValue
+		authModeControl?.setLabel(NSLocalizedString("Username and Password", comment: "Username and Password"), forSegment: AuthMode.usernameAndPassword.rawValue)
+		authModeControl?.setLabel(NSLocalizedString("API Token", comment: "API Token"), forSegment: AuthMode.apiToken.rawValue)
+		authModeControl?.selectedSegment = AuthMode.usernameAndPassword.rawValue
 
 		if let account {
 			if let tokenCredentials = try? account.retrieveCredentials(type: .minifluxAPIToken) {
-				apiTokenTextField.stringValue = tokenCredentials.secret
-				authModeControl.selectedSegment = AuthMode.apiToken.rawValue
+				apiTokenTextField?.stringValue = tokenCredentials.secret
+				authModeControl?.selectedSegment = AuthMode.apiToken.rawValue
 			} else if let basicCredentials = try? account.retrieveCredentials(type: .minifluxBasic) {
-				usernameTextField.stringValue = basicCredentials.username
-				authModeControl.selectedSegment = AuthMode.usernameAndPassword.rawValue
+				usernameTextField?.stringValue = basicCredentials.username
+				authModeControl?.selectedSegment = AuthMode.usernameAndPassword.rawValue
 			}
-			apiURLTextField.stringValue = account.endpointURL?.absoluteString ?? ""
-			actionButton.title = NSLocalizedString("Update", comment: "Update")
+			apiURLTextField?.stringValue = account.endpointURL?.absoluteString ?? ""
+			actionButton?.title = NSLocalizedString("Update", comment: "Update")
 		} else {
-			actionButton.title = NSLocalizedString("Add", comment: "Add button")
+			actionButton?.title = NSLocalizedString("Add", comment: "Add button")
 		}
 
 		updateAuthModeVisibility()
 		enableAutofill()
-		apiURLTextField.becomeFirstResponder()
+		apiURLTextField?.becomeFirstResponder()
 	}
 
 	// MARK: API
@@ -93,45 +93,48 @@ final class AccountsMinifluxWindowController: NSWindowController {
 	// MARK: Actions
 
 	@IBAction func cancel(_ sender: Any) {
-		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.cancel)
+		guard let hostWindow, let window else {
+			return
+		}
+		hostWindow.endSheet(window, returnCode: NSApplication.ModalResponse.cancel)
 	}
 
 	@IBAction func action(_ sender: Any) {
-		errorMessageLabel.stringValue = ""
+		errorMessageLabel?.stringValue = ""
 
-		guard let apiURL = Miniflux.normalizedEndpointURL(from: apiURLTextField.stringValue) else {
-			errorMessageLabel.stringValue = NSLocalizedString("Invalid API URL.", comment: "Invalid API URL")
+		guard let apiURL = Miniflux.normalizedEndpointURL(from: apiURLTextField?.stringValue ?? "") else {
+			errorMessageLabel?.stringValue = NSLocalizedString("Invalid API URL.", comment: "Invalid API URL")
 			return
 		}
 
 		let credentials: Credentials
 
 		if isTokenMode {
-			let token = apiTokenTextField.stringValue.trimmingWhitespace
+			let token = apiTokenTextField?.stringValue.trimmingWhitespace ?? ""
 			guard !token.isEmpty else {
-				errorMessageLabel.stringValue = NSLocalizedString("An API token is required.", comment: "Credentials Error")
+				errorMessageLabel?.stringValue = NSLocalizedString("An API token is required.", comment: "Credentials Error")
 				return
 			}
 			credentials = Credentials(type: .minifluxAPIToken, username: "", secret: token)
 		} else {
-			let trimmedUsername = usernameTextField.stringValue.trimmingWhitespace
-			let password = passwordTextField.stringValue
+			let trimmedUsername = usernameTextField?.stringValue.trimmingWhitespace ?? ""
+			let password = passwordTextField?.stringValue ?? ""
 			guard !trimmedUsername.isEmpty, !password.isEmpty else {
-				errorMessageLabel.stringValue = NSLocalizedString("Username and password are required.", comment: "Credentials Error")
+				errorMessageLabel?.stringValue = NSLocalizedString("Username and password are required.", comment: "Credentials Error")
 				return
 			}
 			credentials = Credentials(type: .minifluxBasic, username: trimmedUsername, secret: password)
 		}
 
 		Task { @MainActor in
-			actionButton.isEnabled = false
-			progressIndicator.isHidden = false
-			progressIndicator.startAnimation(self)
+			actionButton?.isEnabled = false
+			progressIndicator?.isHidden = false
+			progressIndicator?.startAnimation(self)
 
 			@MainActor func stopAnimation() {
-				actionButton.isEnabled = true
-				progressIndicator.isHidden = true
-				progressIndicator.stopAnimation(self)
+				actionButton?.isEnabled = true
+				progressIndicator?.isHidden = true
+				progressIndicator?.stopAnimation(self)
 			}
 
 			do {
@@ -139,12 +142,12 @@ final class AccountsMinifluxWindowController: NSWindowController {
 				stopAnimation()
 
 				guard let validatedCredentials else {
-					errorMessageLabel.stringValue = NSLocalizedString("Invalid username/password combination, or invalid API token.", comment: "Credentials Error")
+					errorMessageLabel?.stringValue = NSLocalizedString("Invalid username/password combination, or invalid API token.", comment: "Credentials Error")
 					return
 				}
 
 				guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: .miniflux, username: validatedCredentials.username, endpoint: apiURL) else {
-					errorMessageLabel.stringValue = NSLocalizedString("There is already a Miniflux account for this user on this server.", comment: "Duplicate Error")
+					errorMessageLabel?.stringValue = NSLocalizedString("There is already a Miniflux account for this user on this server.", comment: "Duplicate Error")
 					return
 				}
 
@@ -159,7 +162,9 @@ final class AccountsMinifluxWindowController: NSWindowController {
 					account?.endpointURL = apiURL
 					try account?.storeCredentials(validatedCredentials)
 
-					hostWindow?.endSheet(window!, returnCode: NSApplication.ModalResponse.OK)
+					if let hostWindow, let window {
+						hostWindow.endSheet(window, returnCode: NSApplication.ModalResponse.OK)
+					}
 
 					let refreshingAccount = account
 					Task { @MainActor in
@@ -170,18 +175,21 @@ final class AccountsMinifluxWindowController: NSWindowController {
 						}
 					}
 				} catch {
-					errorMessageLabel.stringValue = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")
+					errorMessageLabel?.stringValue = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")
 				}
 
 			} catch {
 				stopAnimation()
-				errorMessageLabel.stringValue = error.localizedDescription
+				errorMessageLabel?.stringValue = error.localizedDescription
 			}
 		}
 	}
 
 	@IBAction func createAccountWithProvider(_ sender: Any) {
-		NSWorkspace.shared.open(URL(string: "https://miniflux.app")!)
+		guard let url = URL(string: "https://miniflux.app") else {
+			return
+		}
+		NSWorkspace.shared.open(url)
 	}
 
 	@IBAction func authModeChanged(_ sender: Any) {
@@ -191,15 +199,15 @@ final class AccountsMinifluxWindowController: NSWindowController {
 	// MARK: Autofill
 
 	func enableAutofill() {
-		usernameTextField.contentType = .username
-		passwordTextField.contentType = .password
+		usernameTextField?.contentType = .username
+		passwordTextField?.contentType = .password
 	}
 
 	// MARK: Auth Mode
 
 	private func updateAuthModeVisibility() {
-		gridView.row(at: usernameRowIndex).isHidden = isTokenMode
-		gridView.row(at: passwordRowIndex).isHidden = isTokenMode
-		gridView.row(at: apiTokenRowIndex).isHidden = !isTokenMode
+		gridView?.row(at: usernameRowIndex).isHidden = isTokenMode
+		gridView?.row(at: passwordRowIndex).isHidden = isTokenMode
+		gridView?.row(at: apiTokenRowIndex).isHidden = !isTokenMode
 	}
 }
