@@ -96,6 +96,7 @@
 			<enumerator name="inoreader" code="Inrd" description="An Inoreader account"/>
 			<enumerator name="bazqux" code="Bzqx" description="A BazQux account"/>
 			<enumerator name="the old reader" code="Tord" description="A The Old Reader account"/>
+			<enumerator name="miniflux" code="Mnfx" description="A Miniflux account"/>
 		</enumeration>
 
         <class name="account" code="Acct" plural="accounts" description="An account for subscribing to feeds">
