@@ -492,29 +492,33 @@ import Secrets
 		guard let folderName = folder.name, !folderName.isEmpty else {
 			throw AccountError.invalidParameter
 		}
-		try await account.logActivity(kind: .restoreFolder, detail: folderName) {
-			// The category was deleted on the server along with the folder, so re-create it before restoring its feeds.
-			do {
-				let category = try await caller.createCategory(title: folderName)
-				folder.externalID = String(category.categoryID)
-			} catch {
-				Self.logger.error("Miniflux: Restore folder category error: \(error.localizedDescription)")
-				throw error
-			}
-
-			// The folder goes in the tree first, so each restored feed finds it by externalID.
-			let feeds = folder.topLevelFeeds
-			folder.topLevelFeeds.removeAll()
-			account.addFolderToTree(folder)
-
-			for feed in feeds {
+		do {
+			try await account.logActivity(kind: .restoreFolder, detail: folderName) {
+				// The category was deleted on the server along with the folder, so re-create it before restoring its feeds.
 				do {
-					try await restoreFeed(feed: feed, container: folder)
+					let category = try await caller.createCategory(title: folderName)
+					folder.externalID = String(category.categoryID)
 				} catch {
-					Self.logger.error("Miniflux: Restore folder feed error: \(error.localizedDescription)")
-					account.postSyncError(error, operation: "Restoring feed")
+					Self.logger.error("Miniflux: Restore folder category error: \(error.localizedDescription)")
+					throw error
+				}
+
+				// The folder goes in the tree first, so each restored feed finds it by externalID.
+				let feeds = folder.topLevelFeeds
+				folder.topLevelFeeds.removeAll()
+				account.addFolderToTree(folder)
+
+				for feed in feeds {
+					do {
+						try await restoreFeed(feed: feed, container: folder)
+					} catch {
+						Self.logger.error("Miniflux: Restore folder feed error: \(error.localizedDescription)")
+						account.postSyncError(error, operation: "Restoring feed")
+					}
 				}
 			}
+		} catch {
+			throw AccountError.wrapped(error, account)
 		}
 	}
 
