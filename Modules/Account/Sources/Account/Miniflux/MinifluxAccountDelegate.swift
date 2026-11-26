@@ -312,7 +312,7 @@ import Secrets
 					}
 				}
 
-				// Miniflux won’t delete a category that still has feeds, so remove the folder locally only after the server does.
+				// Deleting a category also deletes any feeds still in it, including any whose delete above failed.
 				try await caller.deleteCategory(categoryID: categoryID)
 				account.removeFolderFromTree(folder)
 			}
