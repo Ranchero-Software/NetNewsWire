@@ -865,41 +865,23 @@ private extension MinifluxAccountDelegate {
 			// Newest first, since Miniflux fetches one entry per request.
 			let entryIDs = fetchedArticleIDs.compactMap { Int($0) }.sorted(by: >).prefix(Self.missingArticlesFetchLimit)
 
-			var shouldStopFetching = false
-
 			for chunk in Array(entryIDs).chunked(into: Self.missingArticlesChunkSize) {
-				var entries = [MinifluxEntry]()
-				var serverDeletedArticleIDs = Set<String>()
-
-				for entryID in chunk {
-					do {
-						if let entry = try await caller.retrieveEntry(entryID: entryID) {
-							entries.append(entry)
-						} else {
-							serverDeletedArticleIDs.insert(String(entryID))
-						}
-					} catch {
-						Self.logger.error("Miniflux: Refresh missing articles error: \(error.localizedDescription)")
-						// An HTTP error is about this entry, so skip it without failing the refresh. Anything else, such as no connection, would fail every remaining request.
-						if case WebserviceError.httpError = error {
-							continue
-						}
-						savedError = error
-						shouldStopFetching = true
-						break
-					}
+				let result: (entries: [MinifluxEntry], serverDeletedArticleIDs: Set<String>)
+				do {
+					result = try await account.logRefreshPage(kind: .refreshMissingArticles, message: { "\($0.entries.count) articles" }, {
+						try await retrieveMissingEntries(entryIDs: chunk)
+					})
+				} catch {
+					savedError = error
+					break
 				}
 
-				await processEntries(account: account, entries: entries)
+				await processEntries(account: account, entries: result.entries)
 
 				// A 404 means the entry is gone on the server, so its status would be re-requested forever.
-				if !serverDeletedArticleIDs.isEmpty {
-					Self.logger.info("Miniflux: Deleting statuses for \(serverDeletedArticleIDs.count) entries removed on the server")
-					await account.deleteStatuses(articleIDs: serverDeletedArticleIDs)
-				}
-
-				if shouldStopFetching {
-					break
+				if !result.serverDeletedArticleIDs.isEmpty {
+					Self.logger.info("Miniflux: Deleting statuses for \(result.serverDeletedArticleIDs.count) entries removed on the server")
+					await account.deleteStatuses(articleIDs: result.serverDeletedArticleIDs)
 				}
 			}
 
@@ -908,6 +890,31 @@ private extension MinifluxAccountDelegate {
 				throw savedError
 			}
 		}
+	}
+
+	/// Fetches each entry, one request per entry. Returns the entries found and the IDs of entries deleted on the server.
+	func retrieveMissingEntries(entryIDs: [Int]) async throws -> (entries: [MinifluxEntry], serverDeletedArticleIDs: Set<String>) {
+		var entries = [MinifluxEntry]()
+		var serverDeletedArticleIDs = Set<String>()
+
+		for entryID in entryIDs {
+			do {
+				if let entry = try await caller.retrieveEntry(entryID: entryID) {
+					entries.append(entry)
+				} else {
+					serverDeletedArticleIDs.insert(String(entryID))
+				}
+			} catch {
+				Self.logger.error("Miniflux: Refresh missing articles error: \(error.localizedDescription)")
+				// An HTTP error is about this entry, so skip it without failing the refresh. Anything else, such as no connection, would fail every remaining request.
+				if case WebserviceError.httpError = error {
+					continue
+				}
+				throw error
+			}
+		}
+
+		return (entries, serverDeletedArticleIDs)
 	}
 
 	/// Returns the number of local statuses changed.
