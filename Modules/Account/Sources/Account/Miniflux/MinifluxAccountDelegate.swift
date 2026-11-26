@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import ActivityLog
 import Articles
 import FeedFinder
 import RSCore
@@ -836,7 +835,7 @@ private extension MinifluxAccountDelegate {
 			}
 
 			let pageOffset = offset
-			let response = try await account.logActivity(kind: .refreshArticles, detail: ActivityLog.shared.nextTaskNumberString(), successMessage: { "\($0.entries.count) articles" }, {
+			let response = try await account.logRefreshPage(kind: .refreshArticles, message: { "\($0.entries.count) articles" }, {
 				try await caller.retrieveEntries(offset: pageOffset, changedAfter: changedAfter, publishedAfter: publishedAfter)
 			})
 
