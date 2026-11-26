@@ -291,29 +291,18 @@ import Secrets
 			throw AccountError.invalidParameter
 		}
 
+		refreshProgress.addTask()
+		defer {
+			refreshProgress.completeTask()
+		}
+
 		do {
 			try await account.logActivity(kind: .removeFolder, detail: folder.name) {
-				refreshProgress.addTasks(folder.topLevelFeeds.count)
-
-				for feed in folder.topLevelFeeds {
-					defer {
-						refreshProgress.completeTask()
-					}
-
-					guard let feedExternalID = feed.externalID, let feedID = Int(feedExternalID) else {
-						continue
-					}
-					do {
-						try await caller.deleteFeed(feedID: feedID)
-						account.clearFeedSettings(feed)
-					} catch {
-						Self.logger.error("Miniflux: Remove feed error: \(error.localizedDescription)")
-						account.postSyncError(error, operation: "Removing feed")
-					}
-				}
-
-				// Deleting a category also deletes any feeds still in it, including any whose delete above failed.
+				// Deleting a category also deletes its feeds.
 				try await caller.deleteCategory(categoryID: categoryID)
+				for feed in folder.topLevelFeeds {
+					account.clearFeedSettings(feed)
+				}
 				account.removeFolderFromTree(folder)
 			}
 		} catch {
