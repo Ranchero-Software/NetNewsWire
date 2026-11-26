@@ -26,7 +26,10 @@ struct ArticlesSettingsView: View {
 				}
 			}
 			Section(String(localized: "Behavior", comment: "Behavior")) {
-				Toggle(String(localized: "Open Links in NetNewsWire", comment: "Open Links in NetNewsWire"), isOn: Binding(get: { !model.useSystemBrowser }, set: { AppDefaults.useSystemBrowser = !$0 }))
+				Toggle(String(localized: "Open Links in NetNewsWire", comment: "Open Links in NetNewsWire"), isOn: Binding(get: { !model.useSystemBrowser }, set: {
+					AppDefaults.useSystemBrowser = !$0
+					UIMenuSystem.main.setNeedsRebuild()
+				}))
 				Toggle(String(localized: "Swipe Between Articles", comment: "Swipe Between Articles"), isOn: Binding(get: { model.articleSwipeNavigationEnabled }, set: { AppDefaults.articleSwipeNavigationEnabled = $0 }))
 			}
 			Section {
