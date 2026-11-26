@@ -167,14 +167,7 @@ final class AccountsMinifluxWindowController: NSWindowController {
 						hostWindow.endSheet(window, returnCode: NSApplication.ModalResponse.OK)
 					}
 
-					let refreshingAccount = account
-					Task { @MainActor in
-						do {
-							try await refreshingAccount?.refreshAll()
-						} catch {
-							NSApplication.shared.presentError(error)
-						}
-					}
+					account?.triggerRefreshAll()
 				} catch {
 					if isNewAccount, let account {
 						AccountManager.shared.deleteAccount(account)
