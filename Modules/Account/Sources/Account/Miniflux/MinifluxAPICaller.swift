@@ -291,7 +291,7 @@ private extension MinifluxAPICaller {
 	}
 
 	/// Returns nil if `total` changed during the scan, since offset paging may then have skipped IDs.
-	private func scanEntryIDs(matching filter: [URLQueryItem]) async throws -> Set<Int>? {
+	func scanEntryIDs(matching filter: [URLQueryItem]) async throws -> Set<Int>? {
 		var entryIDs = Set<Int>()
 		var offset = 0
 		var firstTotal: Int?
@@ -321,7 +321,7 @@ private extension MinifluxAPICaller {
 	/// For servers without `/v1/entries/ids`.
 	func retrieveEntryIDsByPagingEntries(matching filter: [URLQueryItem]) async throws -> Set<Int> {
 		var entryIDs = Set<Int>()
-		var afterEntryID: Int = 0
+		var afterEntryID = 0
 
 		// Keyset paging, since offset paging skips IDs when the filtered set shrinks during the scan.
 		while true {

@@ -9,7 +9,6 @@
 import Foundation
 import ActivityLog
 import Articles
-import ErrorLog
 import FeedFinder
 import RSCore
 import RSParser
@@ -293,29 +292,33 @@ import Secrets
 			throw AccountError.invalidParameter
 		}
 
-		try await account.logActivity(kind: .removeFolder, detail: folder.name) {
-			refreshProgress.addTasks(folder.topLevelFeeds.count)
+		do {
+			try await account.logActivity(kind: .removeFolder, detail: folder.name) {
+				refreshProgress.addTasks(folder.topLevelFeeds.count)
 
-			for feed in folder.topLevelFeeds {
-				defer {
-					refreshProgress.completeTask()
+				for feed in folder.topLevelFeeds {
+					defer {
+						refreshProgress.completeTask()
+					}
+
+					guard let feedExternalID = feed.externalID, let feedID = Int(feedExternalID) else {
+						continue
+					}
+					do {
+						try await caller.deleteFeed(feedID: feedID)
+						account.clearFeedSettings(feed)
+					} catch {
+						Self.logger.error("Miniflux: Remove feed error: \(error.localizedDescription)")
+						account.postSyncError(error, operation: "Removing feed")
+					}
 				}
 
-				guard let feedExternalID = feed.externalID, let feedID = Int(feedExternalID) else {
-					continue
-				}
-				do {
-					try await caller.deleteFeed(feedID: feedID)
-					account.clearFeedSettings(feed)
-				} catch {
-					Self.logger.error("Miniflux: Remove feed error: \(error.localizedDescription)")
-					account.postSyncError(error, operation: "Removing feed")
-				}
+				// Miniflux won’t delete a category that still has feeds, so remove the folder locally only after the server does.
+				try await caller.deleteCategory(categoryID: categoryID)
+				account.removeFolderFromTree(folder)
 			}
-
-			// Miniflux won’t delete a category that still has feeds, so remove the folder locally only after the server does.
-			try await caller.deleteCategory(categoryID: categoryID)
-			account.removeFolderFromTree(folder)
+		} catch {
+			throw AccountError.wrapped(error, account)
 		}
 	}
 
@@ -798,7 +801,7 @@ private extension MinifluxAccountDelegate {
 			let publishedAfter = changedAfter == nil ? Calendar.current.date(byAdding: .month, value: -Self.articleHistoryMonths, to: fetchStartDate) : nil
 
 			let counts = try await account.logActivity(kind: .refreshArticles, successMessage: { "\($0.entryCount) articles" }, {
-				try await refreshArticlesPage(account: account, changedAfter: changedAfter, publishedAfter: publishedAfter, reportProgress: reportProgress)
+				try await refreshArticlePages(account: account, changedAfter: changedAfter, publishedAfter: publishedAfter, reportProgress: reportProgress)
 			})
 
 			accountSettings?.lastArticleFetchStartTime = fetchStartDate
@@ -810,7 +813,7 @@ private extension MinifluxAccountDelegate {
 	}
 
 	/// With `reportProgress`, the caller adds the first page’s progress task, and later pages add their own.
-	func refreshArticlesPage(account: Account, changedAfter: Date?, publishedAfter: Date?, reportProgress: Bool) async throws -> (entryCount: Int, changedStatusCount: Int) {
+	func refreshArticlePages(account: Account, changedAfter: Date?, publishedAfter: Date?, reportProgress: Bool) async throws -> (entryCount: Int, changedStatusCount: Int) {
 		var offset = 0
 		var totalEntriesProcessed = 0
 		var changedStatusCount = 0
