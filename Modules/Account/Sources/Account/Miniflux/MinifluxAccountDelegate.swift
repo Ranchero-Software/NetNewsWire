@@ -747,7 +747,7 @@ private extension MinifluxAccountDelegate {
 		var feedIDsWithNoCategory = Set<String>()
 		for feed in feeds where feed.category == nil {
 			feedIDsWithNoCategory.insert(String(feed.feedID))
-			Self.logger.error("Miniflux: Feed \(feed.feedID) has no category; leaving local folder placement unchanged")
+			Self.logger.error("Miniflux: Feed \(feed.feedID) has no category, so its local folder placement is unchanged")
 		}
 
 		for (categoryExternalID, folder) in folderDict {
@@ -941,10 +941,10 @@ private extension MinifluxAccountDelegate {
 		let pendingStarredArticleIDs = try? await syncDatabase.selectPendingStarredStatusArticleIDs()
 
 		if pendingReadArticleIDs == nil {
-			Self.logger.error("Miniflux: Sync database selectPendingReadStatusArticleIDs failed; skipping read status application")
+			Self.logger.error("Miniflux: Sync database selectPendingReadStatusArticleIDs failed, so read statuses won’t be applied")
 		}
 		if pendingStarredArticleIDs == nil {
-			Self.logger.error("Miniflux: Sync database selectPendingStarredStatusArticleIDs failed; skipping starred status application")
+			Self.logger.error("Miniflux: Sync database selectPendingStarredStatusArticleIDs failed, so starred statuses won’t be applied")
 		}
 
 		var unreadIDs = Set<String>()
