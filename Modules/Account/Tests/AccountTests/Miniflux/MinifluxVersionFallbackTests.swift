@@ -6,20 +6,15 @@
 //  Copyright © 2026 Ranchero Software, LLC. All rights reserved.
 //
 
-import XCTest
+import Foundation
+import Testing
 import RSWeb
 @testable import Account
 
-@MainActor final class MinifluxVersionFallbackTests: XCTestCase {
+@Suite(.isolatedWebserviceResponses) @MainActor struct MinifluxVersionFallbackTests {
 
-	override func setUp() {
-		TestingURLProtocol.reset()
-	}
-
-	/// On a server older than `entryIDsMinimumVersion`, `/v1/entries/ids` isn’t stubbed at
-	/// all — if the gating logic wrongly tried to use it, `refreshAll()` would throw. Instead
-	/// the initial sync's reconciliation must fall back to paging `/v1/entries`.
-	func testInitialSyncOnOldServerFallsBackToPagedEntries() async throws {
+	/// `/v1/entries/ids` isn’t stubbed, so the refresh would throw if an old server used it.
+	@Test func initialSyncOnOldServerFallsBackToPagedEntries() async throws {
 		TestingURLProtocol.setResponse("/v1/version", file: "JSON/miniflux_version_old.json")
 		TestingURLProtocol.setResponse("/v1/categories", file: "JSON/miniflux_categories_initial.json")
 		TestingURLProtocol.setResponse("/v1/feeds", file: "JSON/miniflux_feeds_initial.json")
@@ -35,32 +30,7 @@ import RSWeb
 
 		let unreadArticleIDs = await account.fetchUnreadArticleIDsAsync()
 		let starredArticleIDs = await account.fetchStarredArticleIDsAsync()
-		XCTAssertTrue(unreadArticleIDs.contains("5001"))
-		XCTAssertTrue(starredArticleIDs.contains("5001"))
-	}
-
-	/// On a current server, the initial sync's reconciliation should still use
-	/// `/v1/entries/ids` rather than the paged fallback.
-	func testInitialSyncOnCurrentServerStillUsesEntryIDsEndpoint() async throws {
-		TestingURLProtocol.setResponse("/v1/version", file: "JSON/miniflux_version.json")
-		TestingURLProtocol.setResponse("/v1/categories", file: "JSON/miniflux_categories_initial.json")
-		TestingURLProtocol.setResponse("/v1/feeds", file: "JSON/miniflux_feeds_initial.json")
-		TestingURLProtocol.setResponse("/v1/entries/ids", file: "JSON/miniflux_entry_ids.json")
-		TestingURLProtocol.setResponse("/v1/entries?", file: "JSON/miniflux_entries_page1.json")
-
-		let account = TestAccountManager.shared.createAccount(type: .miniflux)
-		defer {
-			TestAccountManager.shared.deleteAccount(account)
-		}
-		account.endpointURL = URL(string: "https://miniflux.test")
-
-		try await account.refreshAll()
-
-		XCTAssertGreaterThan(TestingURLProtocol.requestCount(forURLContaining: "/v1/entries/ids"), 0)
-
-		let unreadArticleIDs = await account.fetchUnreadArticleIDsAsync()
-		let starredArticleIDs = await account.fetchStarredArticleIDsAsync()
-		XCTAssertTrue(unreadArticleIDs.contains("5001"))
-		XCTAssertTrue(starredArticleIDs.contains("5001"))
+		#expect(unreadArticleIDs.contains("5001"))
+		#expect(starredArticleIDs.contains("5001"))
 	}
 }

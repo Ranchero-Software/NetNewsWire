@@ -6,36 +6,33 @@
 //  Copyright © 2026 Ranchero Software, LLC. All rights reserved.
 //
 
-import XCTest
+import Foundation
+import Testing
 import RSWeb
 import Secrets
 @testable import Account
 
-@MainActor final class MinifluxStarredFallbackTests: XCTestCase {
+@Suite(.isolatedWebserviceResponses) @MainActor struct MinifluxStarredFallbackTests {
 
-	override func setUp() {
-		TestingURLProtocol.reset()
-	}
-
-	func testFallbackOnlyTogglesEntriesWhoseStateDiffers() async throws {
+	@Test func fallbackOnlyTogglesEntriesWhoseStateDiffers() async throws {
 		let accountSettings = AccountSettings(accountID: UUID().uuidString, dataFolder: NSTemporaryDirectory())
 		defer {
 			accountSettings.deleteSettings()
 		}
 		accountSettings.endpointURL = URL(string: "https://miniflux.test")
-		accountSettings.detectedServerVersion = "2.1.0" // Below entryIDsMinimumVersion.
+		accountSettings.detectedServerVersion = "2.1.0"
 
 		let caller = MinifluxAPICaller()
 		caller.credentials = Credentials(type: .minifluxAPIToken, username: "", secret: "token")
 		caller.accountSettings = accountSettings
 
-		// 5001 is already starred; 5002 is not.
+		// 5001 is already starred, and 5002 isn’t.
 		TestingURLProtocol.setResponse("/v1/entries/5001", file: "JSON/miniflux_entry_5001_starred.json")
 		TestingURLProtocol.setResponse("/v1/entries/5002", file: "JSON/miniflux_entry_5002_unstarred.json")
 
 		try await caller.updateEntries(entryIDs: [5001, 5002], starred: true)
 
-		XCTAssertEqual(TestingURLProtocol.requestCount(forURLContaining: "/entries/5001/bookmark"), 0)
-		XCTAssertGreaterThan(TestingURLProtocol.requestCount(forURLContaining: "/entries/5002/bookmark"), 0)
+		#expect(TestingURLProtocol.requestCount(forURLContaining: "/entries/5001/bookmark") == 0)
+		#expect(TestingURLProtocol.requestCount(forURLContaining: "/entries/5002/bookmark") > 0)
 	}
 }
