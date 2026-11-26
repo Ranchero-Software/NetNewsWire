@@ -633,7 +633,9 @@ private extension MinifluxAccountDelegate {
 	func refreshArticlesAndStatuses(_ account: Account) async throws {
 		let isInitialSync = accountSettings?.lastRefreshCompletedDate == nil
 
-		try await sendArticleStatus()
+		// A failed status send must not block fetching new articles.
+		// <https://discourse.netnewswire.com/t/no-feed-updates/336>
+		try? await sendArticleStatus()
 		_ = try await refreshArticles(account, reportProgress: true)
 
 		if isInitialSync {
