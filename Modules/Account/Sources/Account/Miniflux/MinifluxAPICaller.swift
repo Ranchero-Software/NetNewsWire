@@ -241,7 +241,7 @@ import Secrets
 
 private extension MinifluxAPICaller {
 
-	enum QueryName {
+	struct QueryName {
 		static let afterEntryID = "after_entry_id"
 		static let changedAfter = "changed_after"
 		static let direction = "direction"
@@ -253,7 +253,7 @@ private extension MinifluxAPICaller {
 		static let status = "status"
 	}
 
-	enum QueryValue {
+	struct QueryValue {
 		static let ascending = "asc"
 		static let id = "id"
 		static let `true` = "true"
