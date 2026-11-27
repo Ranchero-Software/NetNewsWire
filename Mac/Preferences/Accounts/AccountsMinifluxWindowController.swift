@@ -22,7 +22,7 @@ final class AccountsMinifluxWindowController: NSWindowController {
 	@IBOutlet var apiURLTextField: NSTextField?
 	@IBOutlet var passwordTextField: NSSecureTextField?
 	@IBOutlet var apiTokenTextField: NSSecureTextField?
-	@IBOutlet var authModeControl: NSSegmentedControl?
+	@IBOutlet var authenticationPopUpButton: NSPopUpButton?
 	@IBOutlet var createAccountButton: NSButton?
 	@IBOutlet var errorMessageLabel: NSTextField?
 	@IBOutlet var actionButton: NSButton?
@@ -32,9 +32,10 @@ final class AccountsMinifluxWindowController: NSWindowController {
 
 	private weak var hostWindow: NSWindow?
 
-	private let usernameRowIndex = 1
-	private let passwordRowIndex = 2
-	private let apiTokenRowIndex = 3
+	private let labelColumnIndex = 0
+	private let usernameRowIndex = 2
+	private let passwordRowIndex = 3
+	private let apiTokenRowIndex = 4
 
 	private enum AuthMode: Int {
 		case usernameAndPassword = 0
@@ -42,7 +43,7 @@ final class AccountsMinifluxWindowController: NSWindowController {
 	}
 
 	private var isTokenMode: Bool {
-		authModeControl?.selectedSegment == AuthMode.apiToken.rawValue
+		authenticationPopUpButton?.selectedTag() == AuthMode.apiToken.rawValue
 	}
 
 	convenience init() {
@@ -56,17 +57,17 @@ final class AccountsMinifluxWindowController: NSWindowController {
 		createAccountButton?.title = NSLocalizedString("Find out more", comment: "Find out more")
 		apiURLTextField?.placeholderString = NSLocalizedString("https://miniflux.example.com", comment: "Miniflux API Helper")
 
-		authModeControl?.setLabel(NSLocalizedString("Username and Password", comment: "Username and Password"), forSegment: AuthMode.usernameAndPassword.rawValue)
-		authModeControl?.setLabel(NSLocalizedString("API Token", comment: "API Token"), forSegment: AuthMode.apiToken.rawValue)
-		authModeControl?.selectedSegment = AuthMode.usernameAndPassword.rawValue
+		authenticationPopUpButton?.menu?.item(withTag: AuthMode.usernameAndPassword.rawValue)?.title = NSLocalizedString("Password", comment: "Password")
+		authenticationPopUpButton?.menu?.item(withTag: AuthMode.apiToken.rawValue)?.title = NSLocalizedString("API Token", comment: "API Token")
+		authenticationPopUpButton?.selectItem(withTag: AuthMode.usernameAndPassword.rawValue)
 
 		if let account {
 			if let tokenCredentials = try? account.retrieveCredentials(type: .minifluxAPIToken) {
 				apiTokenTextField?.stringValue = tokenCredentials.secret
-				authModeControl?.selectedSegment = AuthMode.apiToken.rawValue
+				authenticationPopUpButton?.selectItem(withTag: AuthMode.apiToken.rawValue)
 			} else if let basicCredentials = try? account.retrieveCredentials(type: .minifluxBasic) {
 				usernameTextField?.stringValue = basicCredentials.username
-				authModeControl?.selectedSegment = AuthMode.usernameAndPassword.rawValue
+				authenticationPopUpButton?.selectItem(withTag: AuthMode.usernameAndPassword.rawValue)
 			}
 			apiURLTextField?.stringValue = account.endpointURL?.absoluteString ?? ""
 			actionButton?.title = NSLocalizedString("Update", comment: "Update")
@@ -74,6 +75,7 @@ final class AccountsMinifluxWindowController: NSWindowController {
 			actionButton?.title = NSLocalizedString("Add", comment: "Add button")
 		}
 
+		fixLabelColumnWidth()
 		updateAuthModeVisibility()
 		enableAutofill()
 		apiURLTextField?.becomeFirstResponder()
@@ -202,6 +204,16 @@ final class AccountsMinifluxWindowController: NSWindowController {
 	}
 
 	// MARK: Auth Mode
+
+	/// Hidden rows don’t count toward column width, so pin the label column to its widest label to keep the fields from shifting.
+	private func fixLabelColumnWidth() {
+		guard let gridView else {
+			return
+		}
+		let labelColumn = gridView.column(at: labelColumnIndex)
+		let labelWidths = (0..<labelColumn.numberOfCells).compactMap { labelColumn.cell(at: $0).contentView?.fittingSize.width }
+		labelColumn.width = labelWidths.max() ?? NSGridView.sizedForContent
+	}
 
 	private func updateAuthModeVisibility() {
 		gridView?.row(at: usernameRowIndex).isHidden = isTokenMode

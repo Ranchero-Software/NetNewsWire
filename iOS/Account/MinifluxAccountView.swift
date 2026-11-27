@@ -31,7 +31,7 @@ struct MinifluxAccountView: View {
 		AccountSetupSheet(accountType: .miniflux, isWorking: isValidating) {
 			Section {
 				Picker(NSLocalizedString("Authentication", comment: "Authentication"), selection: $usesAPIToken) {
-					Text(NSLocalizedString("Username and Password", comment: "Username and Password")).tag(false)
+					Text(NSLocalizedString("Password", comment: "Password")).tag(false)
 					Text(NSLocalizedString("API Token", comment: "API Token")).tag(true)
 				}
 				if usesAPIToken {
@@ -41,7 +41,7 @@ struct MinifluxAccountView: View {
 						.textContentType(.username)
 						.textInputAutocapitalization(.never)
 						.autocorrectionDisabled()
-					SecureField(NSLocalizedString("Password", comment: "Password field placeholder"), text: $password)
+					SecureField(NSLocalizedString("Password", comment: "Password"), text: $password)
 						.textContentType(.password)
 				}
 				TextField(NSLocalizedString("API URL: https://miniflux.example.com", comment: "Miniflux API Helper"), text: $apiURLString)

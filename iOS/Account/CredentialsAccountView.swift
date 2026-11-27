@@ -30,7 +30,7 @@ struct CredentialsAccountView: View {
 	/// Account types that sign in with this sheet.
 	static let accountTypes: Set<AccountType> = [.feedbin, .newsBlur, .inoreader, .bazQux, .theOldReader, .freshRSS]
 
-	private static let passwordPlaceholder = NSLocalizedString("Password", comment: "Password field placeholder")
+	private static let passwordPlaceholder = NSLocalizedString("Password", comment: "Password")
 
 	init(accountType: AccountType, account: Account?, didAddAccount: (() -> Void)?) {
 		self.accountType = accountType

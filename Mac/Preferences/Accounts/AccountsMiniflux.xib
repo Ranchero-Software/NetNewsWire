@@ -11,7 +11,7 @@
                 <outlet property="actionButton" destination="9mz-D9-krh" id="ozu-6Q-9Lb"/>
                 <outlet property="apiTokenTextField" destination="Mfx-C4-fld" id="Mfx-Ot-tok"/>
                 <outlet property="apiURLTextField" destination="d7d-ZV-CcZ" id="Af4-uM-Dgd"/>
-                <outlet property="authModeControl" destination="Mfx-Sg-ctl" id="Mfx-Sg-otl"/>
+                <outlet property="authenticationPopUpButton" destination="Mfx-Pp-btn" id="Mfx-Pp-otl"/>
                 <outlet property="createAccountButton" destination="kUQ-aj-Iu6" id="n9d-n0-mvN"/>
                 <outlet property="errorMessageLabel" destination="Gyz-Mz-v08" id="fwM-K9-xnR"/>
                 <outlet property="gridView" destination="zBB-JH-huI" id="ghz-ki-b0V"/>
@@ -38,23 +38,11 @@
                     <stackView distribution="fill" orientation="horizontal" alignment="bottom" spacing="19" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7Ht-Fn-0Ya">
                         <rect key="frame" x="217" y="286" width="0.0" height="0.0"/>
                     </stackView>
-                    <segmentedControl translatesAutoresizingMaskIntoConstraints="NO" id="Mfx-Sg-ctl">
-                        <rect key="frame" x="78" y="211" width="270" height="24"/>
-                        <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="Mfx-Sg-cel">
-                            <font key="font" metaFont="system"/>
-                            <segments>
-                                <segment label="Username and Password" width="0.0" tag="0" selected="YES"/>
-                                <segment label="API Token" width="0.0" tag="1"/>
-                            </segments>
-                        </segmentedCell>
-                        <connections>
-                            <action selector="authModeChanged:" target="-2" id="Mfx-Sg-act"/>
-                        </connections>
-                    </segmentedControl>
                     <gridView xPlacement="trailing" yPlacement="center" rowAlignment="none" rowSpacing="7" columnSpacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="zBB-JH-huI">
-                        <rect key="frame" x="80" y="84" width="270" height="117"/>
+                        <rect key="frame" x="80" y="83" width="304" height="149"/>
                         <rows>
                             <gridRow id="DRl-lC-vUc"/>
+                            <gridRow id="Mfx-R0-ath"/>
                             <gridRow id="eW8-uH-txq"/>
                             <gridRow id="ebD-On-mOK"/>
                             <gridRow id="Mfx-R4-tok"/>
@@ -66,7 +54,7 @@
                         <gridCells>
                             <gridCell row="DRl-lC-vUc" column="fCQ-jY-Mts" id="xwR-xz-N6h">
                                 <textField key="contentView" focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="H6f-t4-SMg">
-                                    <rect key="frame" x="7" y="97" width="57" height="16"/>
+                                    <rect key="frame" x="37" y="129" width="61" height="16"/>
                                     <textFieldCell key="cell" lineBreakMode="clipping" title="API URL:" id="zBm-dZ-EF1">
                                         <font key="font" usesAppearanceFont="YES"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -76,7 +64,7 @@
                             </gridCell>
                             <gridCell row="DRl-lC-vUc" column="7CY-bX-6x4" id="Wd5-Zp-t61">
                                 <textField key="contentView" focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="d7d-ZV-CcZ" userLabel="API URL Text Field">
-                                    <rect key="frame" x="70" y="93" width="200" height="24"/>
+                                    <rect key="frame" x="104" y="125" width="200" height="24"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="200" id="Mki-bb-tDu"/>
                                     </constraints>
@@ -87,10 +75,38 @@
                                     </textFieldCell>
                                 </textField>
                             </gridCell>
+                            <gridCell row="Mfx-R0-ath" column="fCQ-jY-Mts" id="Mfx-C0-lbc">
+                                <textField key="contentView" focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Mfx-C0-lbf">
+                                    <rect key="frame" x="-2" y="97" width="100" height="16"/>
+                                    <textFieldCell key="cell" lineBreakMode="clipping" title="Authentication:" id="Mfx-C0-lbl">
+                                        <font key="font" usesAppearanceFont="YES"/>
+                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    </textFieldCell>
+                                </textField>
+                            </gridCell>
+                            <gridCell row="Mfx-R0-ath" column="7CY-bX-6x4" id="Mfx-C0-ppc">
+                                <popUpButton key="contentView" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Mfx-Pp-btn">
+                                    <rect key="frame" x="101" y="89" width="107" height="25"/>
+                                    <popUpButtonCell key="cell" type="push" title="Password" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Mfx-Mi-pwd" id="Mfx-Pp-cel">
+                                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                        <menu key="menu" id="Mfx-Pp-mnu">
+                                            <items>
+                                                <menuItem title="Password" state="on" id="Mfx-Mi-pwd"/>
+                                                <menuItem title="API Token" tag="1" id="Mfx-Mi-tok"/>
+                                            </items>
+                                        </menu>
+                                    </popUpButtonCell>
+                                    <connections>
+                                        <action selector="authModeChanged:" target="-2" id="Mfx-Pp-act"/>
+                                    </connections>
+                                </popUpButton>
+                            </gridCell>
                             <gridCell row="eW8-uH-txq" column="fCQ-jY-Mts" id="4DI-01-jGD">
                                 <textField key="contentView" focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Zy6-9c-8TI">
-                                    <rect key="frame" x="23" y="66" width="41" height="16"/>
-                                    <textFieldCell key="cell" lineBreakMode="clipping" title="Login:" id="DqN-SV-v35">
+                                    <rect key="frame" x="30" y="66" width="68" height="16"/>
+                                    <textFieldCell key="cell" lineBreakMode="clipping" title="Username:" id="DqN-SV-v35">
                                         <font key="font" usesAppearanceFont="YES"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -99,7 +115,7 @@
                             </gridCell>
                             <gridCell row="eW8-uH-txq" column="7CY-bX-6x4" id="Z0b-qS-MUJ">
                                 <textField key="contentView" focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="78p-Cf-f55">
-                                    <rect key="frame" x="70" y="62" width="200" height="24"/>
+                                    <rect key="frame" x="104" y="62" width="200" height="24"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="200" id="Qin-jm-4zt"/>
                                     </constraints>
@@ -112,7 +128,7 @@
                             </gridCell>
                             <gridCell row="ebD-On-mOK" column="fCQ-jY-Mts" id="Hqa-3w-cQv">
                                 <textField key="contentView" focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wEx-TM-rPM">
-                                    <rect key="frame" x="-2" y="35" width="66" height="16"/>
+                                    <rect key="frame" x="32" y="35" width="66" height="16"/>
                                     <textFieldCell key="cell" lineBreakMode="clipping" title="Password:" id="7g8-Kk-ISg">
                                         <font key="font" metaFont="system"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -122,7 +138,7 @@
                             </gridCell>
                             <gridCell row="ebD-On-mOK" column="7CY-bX-6x4" id="m16-3v-9pf">
                                 <secureTextField key="contentView" focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="JSa-LY-zNQ">
-                                    <rect key="frame" x="70" y="31" width="200" height="24"/>
+                                    <rect key="frame" x="104" y="31" width="200" height="24"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="200" id="eal-wa-1nU"/>
                                     </constraints>
@@ -138,7 +154,7 @@
                             </gridCell>
                             <gridCell row="Mfx-R4-tok" column="fCQ-jY-Mts" id="Mfx-C4-lbc">
                                 <textField key="contentView" focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Mfx-C4-lbf">
-                                    <rect key="frame" x="4" y="4" width="60" height="16"/>
+                                    <rect key="frame" x="31" y="4" width="67" height="16"/>
                                     <textFieldCell key="cell" lineBreakMode="clipping" title="API Token:" id="Mfx-C4-lbl">
                                         <font key="font" usesAppearanceFont="YES"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -148,7 +164,7 @@
                             </gridCell>
                             <gridCell row="Mfx-R4-tok" column="7CY-bX-6x4" id="Mfx-C4-fdc">
                                 <secureTextField key="contentView" focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Mfx-C4-fld">
-                                    <rect key="frame" x="70" y="0.0" width="200" height="24"/>
+                                    <rect key="frame" x="104" y="0.0" width="200" height="24"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="200" id="Mfx-C4-wid"/>
                                     </constraints>
@@ -239,7 +255,7 @@ Gw
                         </connections>
                     </button>
                     <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="q5z-LG-0Fm">
-                        <rect key="frame" x="78" y="61" width="337" height="39"/>
+                        <rect key="frame" x="78" y="29" width="337" height="39"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="39" id="Zv4-mj-po0"/>
                             <constraint firstAttribute="width" constant="333" id="xsi-I6-XNM"/>
@@ -251,7 +267,7 @@ Gw
                         </textFieldCell>
                     </textField>
                     <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Gyz-Mz-v08">
-                        <rect key="frame" x="78" y="43" width="337" height="16"/>
+                        <rect key="frame" x="78" y="11" width="337" height="16"/>
                         <textFieldCell key="cell" id="AGV-EV-VmY">
                             <font key="font" usesAppearanceFont="YES"/>
                             <color key="textColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
@@ -261,9 +277,7 @@ Gw
                 </subviews>
                 <constraints>
                     <constraint firstItem="Ssh-Dh-xbg" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="0Fq-9s-pKG"/>
-                    <constraint firstItem="Mfx-Sg-ctl" firstAttribute="top" secondItem="R8e-67-Bwh" secondAttribute="bottom" constant="17" id="2Ve-1M-0xg"/>
-                    <constraint firstItem="zBB-JH-huI" firstAttribute="top" secondItem="Mfx-Sg-ctl" secondAttribute="bottom" constant="12" id="Mfx-Sg-top"/>
-                    <constraint firstItem="Mfx-Sg-ctl" firstAttribute="leading" secondItem="R8e-67-Bwh" secondAttribute="leading" id="Mfx-Sg-led"/>
+                    <constraint firstItem="zBB-JH-huI" firstAttribute="top" secondItem="R8e-67-Bwh" secondAttribute="bottom" constant="17" id="Mfx-Gd-top"/>
                     <constraint firstItem="kUQ-aj-Iu6" firstAttribute="centerY" secondItem="R8e-67-Bwh" secondAttribute="centerY" id="2hZ-w7-Lne"/>
                     <constraint firstItem="lti-yM-8LV" firstAttribute="leading" secondItem="Ssh-Dh-xbg" secondAttribute="trailing" constant="10" id="5a7-jI-SC9"/>
                     <constraint firstAttribute="bottom" secondItem="B0W-bh-Evv" secondAttribute="bottom" constant="20" symbolic="YES" id="7OS-Ie-XXN"/>
@@ -273,7 +287,8 @@ Gw
                     <constraint firstItem="9mz-D9-krh" firstAttribute="leading" secondItem="XAM-Hb-0Hw" secondAttribute="trailing" constant="12" symbolic="YES" id="CC8-HR-FDy"/>
                     <constraint firstAttribute="trailing" secondItem="lti-yM-8LV" secondAttribute="trailing" constant="20" symbolic="YES" id="CeA-ET-oeg"/>
                     <constraint firstItem="Ssh-Dh-xbg" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" symbolic="YES" id="EKF-Yq-DxZ"/>
-                    <constraint firstItem="q5z-LG-0Fm" firstAttribute="top" secondItem="zBB-JH-huI" secondAttribute="bottom" constant="15" id="Hdb-dd-lM9"/>
+                    <constraint firstItem="q5z-LG-0Fm" firstAttribute="top" relation="greaterThanOrEqual" secondItem="zBB-JH-huI" secondAttribute="bottom" constant="15" id="Hdb-dd-lM9"/>
+                    <constraint firstItem="9mz-D9-krh" firstAttribute="top" secondItem="q5z-LG-0Fm" secondAttribute="bottom" constant="17" priority="750" id="Mfx-Kc-btm"/>
                     <constraint firstItem="XAM-Hb-0Hw" firstAttribute="width" secondItem="9mz-D9-krh" secondAttribute="width" id="IN4-Kx-qyK"/>
                     <constraint firstItem="XAM-Hb-0Hw" firstAttribute="centerY" secondItem="9mz-D9-krh" secondAttribute="centerY" id="M2M-fb-kfR"/>
                     <constraint firstItem="zBB-JH-huI" firstAttribute="leading" secondItem="R8e-67-Bwh" secondAttribute="leading" id="Mqa-R7-znW"/>
