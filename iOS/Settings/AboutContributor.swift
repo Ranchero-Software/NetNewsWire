@@ -20,6 +20,7 @@ public enum Contributors: CaseIterable {
 	case mauriceParker
 	case stuartBreckenridge
 	case bradEllis
+	case daveMarquard
 	case kielGillard
 	case anhDo
 	case nateWeaver
@@ -40,6 +41,8 @@ public enum Contributors: CaseIterable {
 			return AboutContributor(name: "Stuart Breckenridge", url: URL(string: "https://stuartbreckenridge.net")!)
 		case .bradEllis:
 			return AboutContributor(name: "Brad Ellis", url: URL(string: "https://hachyderm.io/@bradellis")!)
+		case .daveMarquard:
+			return AboutContributor(name: "Dave Marquard", url: URL(string: "https://github.com/dave-atx")!)
 		case .kielGillard:
 			return AboutContributor(name: "Kiel Gillard", url: URL(string: "https://twitter.com/kielgillard")!)
 		case .anhDo:
