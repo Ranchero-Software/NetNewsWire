@@ -240,7 +240,7 @@ Gw
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kUQ-aj-Iu6">
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kUQ-aj-Iu6" customClass="LinkButton" customModule="NetNewsWire" customModuleProvider="target">
                         <rect key="frame" x="262" y="249" width="99" height="16"/>
                         <buttonCell key="cell" type="roundRect" title="Find out more" bezelStyle="roundedRect" alignment="center" state="on" imageScaling="proportionallyDown" inset="2" id="xY9-Rw-8kx">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>

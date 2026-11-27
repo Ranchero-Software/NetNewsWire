@@ -161,7 +161,7 @@ Gw
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="MlB-jN-Ybe">
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="MlB-jN-Ybe" customClass="LinkButton" customModule="NetNewsWire" customModuleProvider="target">
                         <rect key="frame" x="266" y="192" width="105" height="16"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="105" id="fHd-fN-n8G"/>
