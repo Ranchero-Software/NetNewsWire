@@ -61,7 +61,7 @@ struct MinifluxAccountView: View {
 				.frame(maxWidth: .infinity)
 				.disabled(!canSubmit || isValidating)
 			} footer: {
-				AccountSheetFooter(text: NSLocalizedString("Sign in to your Miniflux instance and sync your feeds across your devices. Your credentials will be encrypted and stored in Keychain.\n\nDon’t have a Miniflux instance?", comment: "Miniflux"), linkTitle: NSLocalizedString("Find Out More", comment: "Find Out More")) {
+				AccountSheetFooter(text: NSLocalizedString("Sign in to your Miniflux instance and sync your feeds across your devices. Your credentials will be stored securely in your keychain.\n\nDon’t have a Miniflux instance?", comment: "Miniflux"), linkTitle: NSLocalizedString("Find Out More", comment: "Find Out More")) {
 					isShowingSignUp = true
 				}
 			}

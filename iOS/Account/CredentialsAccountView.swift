@@ -267,17 +267,17 @@ private extension AccountType {
 	var footerText: String {
 		switch self {
 		case .feedbin:
-			return NSLocalizedString("Sign in to your Feedbin account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a Feedbin account?", comment: "Feedbin")
+			return NSLocalizedString("Sign in to your Feedbin account and sync your feeds across your devices. Your username and password will be stored securely in your keychain.\n\nDon’t have a Feedbin account?", comment: "Feedbin")
 		case .newsBlur:
-			return NSLocalizedString("Sign in to your NewsBlur account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a NewsBlur account?", comment: "NewsBlur")
+			return NSLocalizedString("Sign in to your NewsBlur account and sync your feeds across your devices. Your username and password will be stored securely in your keychain.\n\nDon’t have a NewsBlur account?", comment: "NewsBlur")
 		case .bazQux:
-			return NSLocalizedString("Sign in to your BazQux account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a BazQux account?", comment: "BazQux")
+			return NSLocalizedString("Sign in to your BazQux account and sync your feeds across your devices. Your username and password will be stored securely in your keychain.\n\nDon’t have a BazQux account?", comment: "BazQux")
 		case .inoreader:
-			return NSLocalizedString("Sign in to your Inoreader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an Inoreader account?", comment: "Inoreader")
+			return NSLocalizedString("Sign in to your Inoreader account and sync your feeds across your devices. Your username and password will be stored securely in your keychain.\n\nDon’t have an Inoreader account?", comment: "Inoreader")
 		case .theOldReader:
-			return NSLocalizedString("Sign in to your The Old Reader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a The Old Reader account?", comment: "TOR")
+			return NSLocalizedString("Sign in to your The Old Reader account and sync your feeds across your devices. Your username and password will be stored securely in your keychain.\n\nDon’t have a The Old Reader account?", comment: "TOR")
 		case .freshRSS:
-			return NSLocalizedString("Sign in to your FreshRSS instance and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a FreshRSS instance?", comment: "FreshRSS")
+			return NSLocalizedString("Sign in to your FreshRSS instance and sync your feeds across your devices. Your username and password will be stored securely in your keychain.\n\nDon’t have a FreshRSS instance?", comment: "FreshRSS")
 		default:
 			return ""
 		}
