@@ -21,6 +21,7 @@ enum DetailState: Equatable {
 }
 
 @MainActor protocol DetailViewControllerDelegate: AnyObject {
+	func detailViewController(_ controller: DetailViewController, didOpenBrowserFor article: Article)
 	func detailViewController(_ detailViewController: DetailViewController, mouseoverLinkDidChange link: String?)
 }
 
@@ -147,6 +148,10 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 // MARK: - DetailWebViewControllerDelegate
 
 extension DetailViewController: DetailWebViewControllerDelegate {
+
+	func detailWebViewController(_ controller: DetailWebViewController, didOpenBrowserFor article: Article) {
+		delegate?.detailViewController(self, didOpenBrowserFor: article)
+	}
 
 	func mouseDidEnter(_ detailWebViewController: DetailWebViewController, link: String) {
 		guard !link.isEmpty, detailWebViewController === currentWebViewController else {
