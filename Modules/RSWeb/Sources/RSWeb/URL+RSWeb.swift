@@ -17,6 +17,7 @@ private struct URLConstants {
 	static let schemeNetNewsWire = "netnewswire"
 	static let schemeFeed = "feed"
 	static let schemeFeeds = "feeds"
+	static let refusedSchemesForExternalApplications: Set<String> = [schemeHTTP, schemeHTTPS, schemeMailto, "tel", "javascript", "data", "file", "about", "blob", "vbscript"]
 #if os(macOS)
 	static let schemeMagnet = "magnet"
 	static let schemeNetNewsWireFeed = "x-netnewswire-feed"
@@ -66,6 +67,18 @@ public extension URL {
 		components.queryItems = newQueryItems
 
 		return components.url
+	}
+
+	// Written with the help of an LLM.
+	func preparedForOpeningInExternalApplication(excluding excludedSchemes: Set<String> = []) -> URL? {
+		guard let scheme = scheme?.lowercased(with: localeForLowercasing),
+			  !scheme.isEmpty,
+			  !URLConstants.refusedSchemesForExternalApplications.contains(scheme),
+			  !excludedSchemes.contains(where: { $0.lowercased(with: localeForLowercasing) == scheme }) else {
+			return nil
+		}
+
+		return self
 	}
 
 	func preparedForOpeningInBrowser() -> URL? {
