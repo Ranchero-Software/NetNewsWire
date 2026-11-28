@@ -82,6 +82,17 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	private var isApplyingSnapshot = false
 	private var queuedSidebarUpdates = [QueuedSidebarUpdate]()
 
+	// An animated apply that overlaps a sidebar width change can leave a stale cell on screen.
+	private var sidebarWidth: CGFloat = 0 {
+		didSet {
+			if sidebarWidth != oldValue {
+				sidebarWidthChangeDate = Date()
+			}
+		}
+	}
+	private var sidebarWidthChangeDate = Date.distantPast
+	private static let widthChangeAnimationSuppressionInterval: TimeInterval = 0.5
+
 	// Write via applySnapshot/reconfigureItems. Read via currentSidebarSnapshot
 	// and the lookup methods — in an apply completion if you need post-update state.
 	private var dataSource: UICollectionViewDiffableDataSource<String, SidebarItemNode>!
@@ -99,6 +110,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 	override func viewDidLayoutSubviews() {
 		super.viewDidLayoutSubviews()
+		sidebarWidth = view.bounds.width
 		coordinator?.sidebarDidLayout()
 	}
 
@@ -484,7 +496,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		}
 
 		// Animating a batch update while detached from a window strands cells too.
-		let animatingDifferences = animated && viewIfLoaded?.window != nil
+		let animatingDifferences = animated && viewIfLoaded?.window != nil && !isSidebarWidthChanging
 
 		isApplyingSnapshot = true
 		dataSource.apply(snapshot, animatingDifferences: animatingDifferences) { [weak self] in
@@ -507,6 +519,10 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	private func survivingItems(_ items: [SidebarItemNode], in snapshot: NSDiffableDataSourceSnapshot<String, SidebarItemNode>) -> [SidebarItemNode] {
 		let currentItems = Set(snapshot.itemIdentifiers)
 		return items.filter { currentItems.contains($0) }
+	}
+
+	private var isSidebarWidthChanging: Bool {
+		Date().timeIntervalSince(sidebarWidthChangeDate) < Self.widthChangeAnimationSuppressionInterval
 	}
 
 	private func finishSkippedSidebarUpdate(_ queuedUpdate: QueuedSidebarUpdate) {
