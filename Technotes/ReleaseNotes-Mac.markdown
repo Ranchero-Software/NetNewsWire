@@ -1,5 +1,10 @@
 # Mac Release Notes
 
+### 7.4b1 7245 27 Nov 2026 - branch: main tag: mac-7.4b1
+
+Added Miniflux syncing — sign in with a username and password or an API token. Thanks to Dave Marquard (who also does the awesome NetNewsWire themes site) for this feature!
+Made the article view inspectable with Safari’s Web Inspector
+
 ### 7.3.1 7242 19 Nov 2026 - branch: main tag: mac-7.3.1
 
 Same as 7.3.1b1 — just bumped the version.
