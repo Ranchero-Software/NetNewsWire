@@ -13,20 +13,19 @@ import AppKit
 #if canImport(UIKit)
 import UIKit
 #endif
-import RSCore
 
 enum AddCloudKitAccountError: LocalizedError, RecoverableError, Sendable {
-	case iCloudDriveMissing
+	case iCloudUnavailable
 
 	var errorDescription: String? {
-		NSLocalizedString("Can’t Add iCloud Account", comment: "CloudKit account setup failure description — iCloud Drive not enabled.")
+		NSLocalizedString("Can’t Add iCloud Account", comment: "CloudKit account setup failure description — iCloud not available.")
 	}
 
 	var recoverySuggestion: String? {
 		#if os(macOS)
-		NSLocalizedString("Open System Settings to configure iCloud and enable iCloud Drive.", comment: "CloudKit account setup recovery suggestion")
+		NSLocalizedString("Open System Settings to sign in to iCloud and turn on iCloud for NetNewsWire.", comment: "CloudKit account setup recovery suggestion")
 		#else
-		NSLocalizedString("Open Settings to configure iCloud and enable iCloud Drive.", comment: "CloudKit account setup recovery suggestion")
+		NSLocalizedString("Open Settings to sign in to iCloud and turn on iCloud for NetNewsWire.", comment: "CloudKit account setup recovery suggestion")
 		#endif
 	}
 
@@ -52,10 +51,6 @@ enum AddCloudKitAccountError: LocalizedError, RecoverableError, Sendable {
 }
 
 struct AddCloudKitAccountUtilities {
-	static var isiCloudDriveEnabled: Bool {
-		Platform.deviceHasiCloudAccount
-	}
-
 	@MainActor static func openiCloudSettings() {
 #if os(macOS)
 		if let url = URL(string: "x-apple.systempreferences:com.apple.preferences.AppleIDPrefPane") {

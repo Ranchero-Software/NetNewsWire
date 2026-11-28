@@ -1298,19 +1298,19 @@
       }
     },
     "m0T-w3-neT.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Show iCloud Drive Missing Alert\"; ObjectID = \"m0T-w3-neT\";",
+      "comment" : "Class = \"NSMenuItem\"; title = \"Show iCloud Unavailable Alert\"; ObjectID = \"m0T-w3-neT\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Show iCloud Drive Missing Alert"
+            "value" : "Show iCloud Unavailable Alert"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostrar alerta de iCloud Drive no disponible"
+            "value" : "Mostrar alerta de iCloud no disponible"
           }
         }
       }

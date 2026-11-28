@@ -60,7 +60,7 @@ public final class CloudKitError: LocalizedError, Sendable {
 		case .networkFailure:
 			return NSLocalizedString("Network Failure: the internet connection appears to be offline.", comment: "Known iCloud Error")
 		case .notAuthenticated:
-			return NSLocalizedString("Not Authenticated: to use the iCloud account, you must enable iCloud Drive. Go to device Settings, sign in to iCloud, then in the app settings, be sure the iCloud Drive feature is enabled.", comment: "Known iCloud Error")
+			return NSLocalizedString("Not Authenticated: to use the iCloud account, sign in to iCloud in Settings and make sure iCloud is turned on for NetNewsWire.", comment: "Known iCloud Error")
 		case .operationCancelled:
 			return NSLocalizedString("Operation Cancelled: the operation was explicitly canceled.", comment: "Known iCloud Error")
 		case .partialFailure:
@@ -68,7 +68,7 @@ public final class CloudKitError: LocalizedError, Sendable {
 		case .participantMayNeedVerification:
 			return NSLocalizedString("Participant May Need Verification: you are not a member of the share.", comment: "Known iCloud Error")
 		case .permissionFailure:
-			return NSLocalizedString("Permission Failure: to use this app, you must enable iCloud Drive. Go to device Settings, sign in to iCloud, then in the app settings, be sure the iCloud Drive feature is enabled.", comment: "Known iCloud Error")
+			return NSLocalizedString("Permission Failure: to use the iCloud account, sign in to iCloud in Settings and make sure iCloud is turned on for NetNewsWire.", comment: "Known iCloud Error")
 		case .quotaExceeded:
 			return NSLocalizedString("Quota Exceeded: saving would exceed your current iCloud storage quota.", comment: "Known iCloud Error")
 		case .referenceViolation:

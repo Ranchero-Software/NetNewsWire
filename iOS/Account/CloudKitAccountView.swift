@@ -15,16 +15,20 @@ struct CloudKitAccountView: View {
 	let didAddAccount: () -> Void
 
 	@Environment(\.dismiss) private var dismiss
-	@State private var iCloudDriveError: AddCloudKitAccountError?
+	@State private var iCloudError: AddCloudKitAccountError?
+	@State private var isCheckingiCloud = false
 	@State private var isShowingHelp = false
 
 	var body: some View {
 		AccountSetupSheet(accountType: .cloudKit) {
 			Section {
 				Button(NSLocalizedString("Use iCloud", comment: "Use iCloud button")) {
-					addAccount()
+					Task {
+						await addAccount()
+					}
 				}
 				.frame(maxWidth: .infinity)
+				.disabled(isCheckingiCloud)
 			} header: {
 				AccountIconHeader(accountType: .cloudKit)
 			} footer: {
@@ -33,12 +37,12 @@ struct CloudKitAccountView: View {
 				}
 			}
 		}
-		.alert(isPresented: isShowingiCloudDriveError, error: iCloudDriveError) { _ in
+		.alert(isPresented: isShowingiCloudError, error: iCloudError) { _ in
 			Button(NSLocalizedString("Open Settings", comment: "Open Settings button")) {
 				AddCloudKitAccountUtilities.openiCloudSettings()
 			}
 			Button(NSLocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {
-				iCloudDriveError = nil
+				iCloudError = nil
 			}
 		} message: { error in
 			Text(verbatim: error.recoverySuggestion ?? "")
@@ -48,19 +52,24 @@ struct CloudKitAccountView: View {
 		}
 	}
 
-	private var isShowingiCloudDriveError: Binding<Bool> {
+	private var isShowingiCloudError: Binding<Bool> {
 		Binding {
-			iCloudDriveError != nil
+			iCloudError != nil
 		} set: { isShowing in
 			if !isShowing {
-				iCloudDriveError = nil
+				iCloudError = nil
 			}
 		}
 	}
 
-	private func addAccount() {
-		guard AddCloudKitAccountUtilities.isiCloudDriveEnabled else {
-			iCloudDriveError = .iCloudDriveMissing
+	private func addAccount() async {
+		isCheckingiCloud = true
+		defer {
+			isCheckingiCloud = false
+		}
+
+		guard await AccountManager.shared.isiCloudAvailable() else {
+			iCloudError = .iCloudUnavailable
 			return
 		}
 

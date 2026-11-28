@@ -187,6 +187,10 @@ import ActivityLog
 
 	// MARK: - API
 
+	public func isiCloudAvailable() async -> Bool {
+		await CloudKitAccountDelegate.isiCloudAvailable()
+	}
+
 	public func createAccount(type: AccountType) -> Account {
 		if type == .cloudKit {
 			if let existingiCloudAccount = iCloudAccount {

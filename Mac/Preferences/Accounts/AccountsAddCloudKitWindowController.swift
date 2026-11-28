@@ -11,6 +11,7 @@ import Account
 
 final class AccountsAddCloudKitWindowController: NSWindowController {
 	private weak var hostWindow: NSWindow?
+	private var isCheckingiCloud = false
 
 	convenience init() {
 		self.init(windowNibName: "AccountsAddCloudKit")
@@ -40,19 +41,29 @@ final class AccountsAddCloudKitWindowController: NSWindowController {
 	}
 
 	@IBAction func create(_ sender: Any) {
+		guard !isCheckingiCloud else {
+			return
+		}
 		assert(!AccountManager.shared.hasiCloudAccount)
 
-		guard AddCloudKitAccountUtilities.isiCloudDriveEnabled else {
-			presentError(AddCloudKitAccountError.iCloudDriveMissing)
-			return
-		}
+		isCheckingiCloud = true
+		Task {
+			defer {
+				isCheckingiCloud = false
+			}
 
-		assert(hostWindow != nil && window != nil)
-		guard let hostWindow, let window else {
-			return
-		}
+			guard await AccountManager.shared.isiCloudAvailable() else {
+				presentError(AddCloudKitAccountError.iCloudUnavailable)
+				return
+			}
 
-		_ = AccountManager.shared.createAccount(type: .cloudKit)
-		hostWindow.endSheet(window, returnCode: NSApplication.ModalResponse.OK)
+			assert(hostWindow != nil && window != nil)
+			guard let hostWindow, let window else {
+				return
+			}
+
+			_ = AccountManager.shared.createAccount(type: .cloudKit)
+			hostWindow.endSheet(window, returnCode: NSApplication.ModalResponse.OK)
+		}
 	}
 }
