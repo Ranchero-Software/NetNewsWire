@@ -8,8 +8,9 @@
 import Foundation
 
 /// Handles common web date formats — RFC 822 (RSS pubDate) and W3C/ISO 8601
-/// (Atom and JSON Feed). Liberal: given garbage, it returns something, possibly
-/// wrong. Meant for feed parsing where formatting is often sloppy.
+/// (Atom and JSON Feed). Liberal: accepts many sloppy variants seen in real feeds,
+/// but returns nil for a pubDate-style string with no month or year rather than
+/// guessing January 1970.
 ///
 /// Usage:
 ///
@@ -17,7 +18,8 @@ import Foundation
 ///     DateParser.date(bytes: slice) // Used by the feed parsers
 public enum DateParser {
 
-	/// Parse a date string. Returns nil for empty input.
+	/// Parse a date string. Returns nil for empty input, or for a pubDate-style
+	/// string without a month or year.
 	public static func date(from dateString: String) -> Date? {
 		let bytes = Array(dateString.utf8)
 		return date(bytes: bytes[...])
@@ -38,6 +40,16 @@ public enum DateParser {
 		// Fallback: try W3C.
 		return parseW3CDate(slice)
 	}
+
+	// MARK: - Month table
+	//
+	// First three letters of each month name, packed like the time zone keys below.
+
+	private static let monthsPacked: [UInt64] = [
+		packASCII("jan"), packASCII("feb"), packASCII("mar"), packASCII("apr"),
+		packASCII("may"), packASCII("jun"), packASCII("jul"), packASCII("aug"),
+		packASCII("sep"), packASCII("oct"), packASCII("nov"), packASCII("dec")
+	]
 
 	// MARK: - Time zone table
 	//
@@ -138,17 +150,33 @@ private extension DateParser {
 	static func parsePubDate(_ slice: ArraySlice<UInt8>) -> Date? {
 		var finalIndex = slice.startIndex
 
-		var day = nextNumericValue(slice, startingIndex: slice.startIndex, maxDigits: 2, finalIndex: &finalIndex)
-		if day == nil || day! < 1 {
-			day = 1
+		// RFC 822 puts the day before the month (`Fri, 27 Nov 2026`), but some feeds
+		// put the month first (`Nov 25, 2026`, `Fri, Nov 27 2026`).
+		let parsedDay: Int?
+		let parsedMonth: Int?
+		if let leadingMonth = monthBeforeFirstDigit(slice) {
+			parsedMonth = leadingMonth.month
+			parsedDay = nextNumericValue(slice, startingIndex: leadingMonth.endIndex, maxDigits: 2, finalIndex: &finalIndex)
+		} else {
+			parsedDay = nextNumericValue(slice, startingIndex: slice.startIndex, maxDigits: 2, finalIndex: &finalIndex)
+			parsedMonth = nextMonthValue(slice, startingIndex: finalIndex + 1, finalIndex: &finalIndex)
 		}
 
-		let month = nextMonthValue(slice, startingIndex: finalIndex + 1, finalIndex: &finalIndex) ?? 1
+		let parsedYear = nextNumericValue(slice, startingIndex: finalIndex + 1, maxDigits: 4, finalIndex: &finalIndex)
 
-		var year = nextNumericValue(slice, startingIndex: finalIndex + 1, maxDigits: 4, finalIndex: &finalIndex)
-		if let y = year, y < 100 {
-			year = y + 2000
+		// A one- or two-digit number followed by `:` is the hour, so the year is
+		// missing (`Nov 27 14:07:36`, `25 Nov 10:00`).
+		let yearIsTime = (parsedYear ?? 0) < 100 && finalIndex + 1 < slice.endIndex && slice[finalIndex + 1] == UInt8(ascii: ":")
+
+		// Without a month or a year this isn't a date we understand. Returning nil
+		// beats a confident wrong date such as January 1970.
+		guard let month = parsedMonth, var year = parsedYear, !yearIsTime else {
+			return nil
 		}
+		if year < 100 {
+			year += 2000
+		}
+		let day = max(parsedDay ?? 1, 1)
 
 		var hour = nextNumericValue(slice, startingIndex: finalIndex + 1, maxDigits: 2, finalIndex: &finalIndex) ?? 0
 		if hour < 0 { hour = 0 }
@@ -164,13 +192,109 @@ private extension DateParser {
 		}
 
 		currentIndex = finalIndex + 1
-		let hasTimeZone = currentIndex < slice.endIndex && slice[currentIndex] == UInt8(ascii: " ")
-		var timeZoneOffset = 0
-		if hasTimeZone {
-			timeZoneOffset = parsedTimeZoneOffset(slice, startingIndex: currentIndex)
+		if let meridiem = parsedMeridiem(slice, startingIndex: currentIndex) {
+			if meridiem.isPM && hour < 12 {
+				hour += 12
+			} else if !meridiem.isPM && hour == 12 {
+				hour = 0
+			}
+			currentIndex = meridiem.endIndex
 		}
 
-		return dateWithComponents(year: year ?? 1970, month: month, day: day!, hour: hour, minute: minute, second: second, milliseconds: 0, timeZoneOffset: timeZoneOffset)
+		// The zone usually follows a space, but a numeric offset may be attached
+		// to the time (`00:00:00-0800`).
+		var timeZoneOffset = 0
+		if currentIndex < slice.endIndex {
+			let b = slice[currentIndex]
+			if b == UInt8(ascii: " ") || b == UInt8(ascii: "+") || b == UInt8(ascii: "-") {
+				timeZoneOffset = parsedTimeZoneOffset(slice, startingIndex: currentIndex)
+			}
+		}
+
+		return dateWithComponents(year: year, month: month, day: day, hour: hour, minute: minute, second: second, milliseconds: 0, timeZoneOffset: timeZoneOffset)
+	}
+
+	/// If the last word before the first digit is a month name and the day is followed
+	/// by the year (`Nov 25, 2026`, `Fri, Nov 27 2026`, `Nov 25th, 2026`), returns that
+	/// month and the index just past the word.
+	///
+	/// Returns nil for RFC 822 order (`Fri, 27 Nov 2026`), where a month name follows
+	/// the day. That also covers words before the day that only look like a month,
+	/// such as `mar` (Tuesday in French, Spanish and Italian) in `mar, 01 dic 2026`.
+	static func monthBeforeFirstDigit(_ slice: ArraySlice<UInt8>) -> (month: Int, endIndex: Int)? {
+		var wordStart: Int?
+		var wordEnd = slice.startIndex
+		var i = slice.startIndex
+		while i < slice.endIndex {
+			let b = slice[i]
+			if isDigit(b) {
+				break
+			}
+			if isAlpha(b) {
+				if i == slice.startIndex || !isAlpha(slice[i - 1]) {
+					wordStart = i
+				}
+				wordEnd = i + 1
+			}
+			i += 1
+		}
+		guard i < slice.endIndex, let wordStart, let month = monthOfWord(slice, start: wordStart, end: wordEnd) else {
+			return nil
+		}
+
+		// Skip the day, an ordinal suffix (`th`), and separators: the year must come next.
+		while i < slice.endIndex && isDigit(slice[i]) {
+			i += 1
+		}
+		while i < slice.endIndex && isAlpha(slice[i]) {
+			i += 1
+		}
+		while i < slice.endIndex && !isAlpha(slice[i]) && !isDigit(slice[i]) {
+			i += 1
+		}
+		guard i < slice.endIndex, isDigit(slice[i]) else {
+			return nil
+		}
+
+		return (month, wordEnd)
+	}
+
+	/// Month number (1–12) if the word in `start..<end` has at least three letters
+	/// and starts with a month abbreviation (`Nov`, `November`); otherwise nil.
+	static func monthOfWord(_ slice: ArraySlice<UInt8>, start: Int, end: Int) -> Int? {
+		guard end - start >= 3 else {
+			return nil
+		}
+		var packed: UInt64 = 0
+		for j in 0..<3 {
+			packed |= UInt64(slice[start + j] | 0x20) << (j * 8)
+		}
+		guard let monthIndex = monthsPacked.firstIndex(of: packed) else {
+			return nil
+		}
+		return monthIndex + 1
+	}
+
+	/// Reads `AM` or `PM` (any case, optionally after spaces) at `startingIndex`.
+	/// Returns nil if absent, or if the letters start a longer word such as the
+	/// `AMT` time zone.
+	static func parsedMeridiem(_ slice: ArraySlice<UInt8>, startingIndex: Int) -> (isPM: Bool, endIndex: Int)? {
+		var i = startingIndex
+		while i < slice.endIndex && slice[i] == UInt8(ascii: " ") {
+			i += 1
+		}
+		guard i + 1 < slice.endIndex, slice[i + 1] | 0x20 == UInt8(ascii: "m") else {
+			return nil
+		}
+		let first = slice[i] | 0x20
+		guard first == UInt8(ascii: "a") || first == UInt8(ascii: "p") else {
+			return nil
+		}
+		let endIndex = i + 2
+		if endIndex < slice.endIndex && isAlpha(slice[endIndex]) {
+			return nil
+		}
+		return (first == UInt8(ascii: "p"), endIndex)
 	}
 
 	// MARK: - W3C / ISO 8601

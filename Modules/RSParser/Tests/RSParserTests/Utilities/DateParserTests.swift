@@ -87,6 +87,85 @@ import Testing
 		                 Self.dateWithValues(2010, 4, 30, 12, 0, 0))
 	}
 
+	// https://github.com/Ranchero-Software/NetNewsWire/issues/5469
+	@Test func pubDateMonthBeforeDay() {
+		// CrowdStrike Blog: month first, offset attached to the time.
+		assertParsedDate("Nov 25, 2026 00:00:00-0800",
+		                 Self.dateWithValues(2026, 11, 25, 8, 0, 0))
+		// NBC New York: weekday, month first, 12-hour time, no time zone.
+		assertParsedDate("Fri, Nov 27 2026 02:07:36 PM",
+		                 Self.dateWithValues(2026, 11, 27, 14, 7, 36))
+		// Aero-News Network: comma attached to the year, AM/PM attached to the time.
+		assertParsedDate("Wed, Oct 07,2026 08:06:32PM",
+		                 Self.dateWithValues(2026, 10, 7, 20, 6, 32))
+		assertParsedDate("Nov 25, 2026",
+		                 Self.dateWithValues(2026, 11, 25, 0, 0, 0))
+		assertParsedDate("November 25, 2026 10:30 AM EST",
+		                 Self.dateWithValues(2026, 11, 25, 15, 30, 0))
+		assertParsedDate("Nov 25th, 2026", Self.dateWithValues(2026, 11, 25, 0, 0, 0))
+		assertParsedDate("Friday, November 27, 2026 2:07 PM", Self.dateWithValues(2026, 11, 27, 14, 7, 0))
+		assertParsedDate("\n  Fri, Nov 27 2026 02:07:36 PM\n", Self.dateWithValues(2026, 11, 27, 14, 7, 36))
+	}
+
+	@Test func pubDateAttachedOffset() {
+		let expected = Self.dateWithValues(2026, 11, 25, 8, 0, 0)
+		assertParsedDate("Nov 25, 2026 00:00:00-0800", expected)
+		assertParsedDate("Nov 25, 2026 00:00:00-08:00", expected)
+		assertParsedDate("Nov 25, 2026 00:00-0800", expected)
+		assertParsedDate("Nov 25, 2026 12:00:00 AM-0800", expected)
+		assertParsedDate("25 Nov 2026 10:00:00+0200", expected)
+	}
+
+	@Test func weekdayThatLooksLikeMonthStaysDayFirst() {
+		// "mar" is Tuesday in French, Spanish and Italian, not March.
+		assertParsedDate("mar, 24 nov 2026 10:00:00 +0100", Self.dateWithValues(2026, 11, 24, 9, 0, 0))
+		assertParsedDate("Mar, 13 Jan 2026 10:00:00 GMT", Self.dateWithValues(2026, 1, 13, 10, 0, 0))
+		assertParsedDate("mardi 24 novembre 2026", Self.dateWithValues(2026, 11, 24, 0, 0, 0))
+		assertParsedDate("mar, 01 dic 2026 10:00:00 GMT", Self.dateWithValues(2026, 12, 1, 10, 0, 0))
+		assertParsedDate("mar, 03 févr. 2026 10:00:00 GMT", Self.dateWithValues(2026, 2, 3, 10, 0, 0))
+		// A month name in an RFC 822 comment doesn't override the real month.
+		assertParsedDate("Fri, (March) 27 Nov 2026 10:00:00 GMT", Self.dateWithValues(2026, 11, 27, 10, 0, 0))
+	}
+
+	@Test func pubDateTwelveHourClock() {
+		assertParsedDate("27 Nov 2026 12:00:00 AM GMT", Self.dateWithValues(2026, 11, 27, 0, 0, 0))
+		assertParsedDate("27 Nov 2026 12:00:00 PM GMT", Self.dateWithValues(2026, 11, 27, 12, 0, 0))
+		assertParsedDate("27 Nov 2026 12:30 am", Self.dateWithValues(2026, 11, 27, 0, 30, 0))
+		assertParsedDate("27 Nov 2026 11:59:59 PM", Self.dateWithValues(2026, 11, 27, 23, 59, 59))
+		assertParsedDate("27 Nov 2026 01:15:00 pm +0100", Self.dateWithValues(2026, 11, 27, 12, 15, 0))
+		// Already a 24-hour time: PM doesn't add another 12 hours.
+		assertParsedDate("27 Nov 2026 14:07:36 PM", Self.dateWithValues(2026, 11, 27, 14, 7, 36))
+	}
+
+	@Test func timeZoneStartingWithAMIsNotMeridiem() {
+		// AMT (UTC+4) and AMST (UTC+5) must not be read as "AM".
+		assertParsedDate("27 Nov 2026 10:00:00 AMT", Self.dateWithValues(2026, 11, 27, 6, 0, 0))
+		assertParsedDate("27 Nov 2026 10:00:00 AMST", Self.dateWithValues(2026, 11, 27, 5, 0, 0))
+	}
+
+	@Test func pubDateWithoutYearReturnsNil() {
+		assertNilResult("27 Nov")
+		assertNilResult("Nov 25")
+		assertNilResult("Fri, Nov 27")
+		// The hour isn't taken as a two-digit year.
+		assertNilResult("Nov 27 12:00:00 GMT")
+		assertNilResult("Nov 25 10:00 AM")
+		assertNilResult("25 Nov 10:00")
+		assertNilResult("Fri Nov 27 14:07:36 PST 2026")
+		assertNilResult("Fri, Nov 2026")
+	}
+
+	@Test func fourDigitYearFollowedByColon() {
+		// Only a one- or two-digit number before `:` is taken as the hour.
+		assertParsedDate("28 May 2010:21:03:38 GMT", Self.dateWithValues(2010, 5, 28, 21, 3, 38))
+	}
+
+	@Test func dateFromSubSliceWithNonZeroStartIndex() {
+		let bytes = Array("xxFri, Nov 27 2026 02:07:36 PMyy".utf8)
+		let date = DateParser.date(bytes: bytes[2..<(bytes.count - 2)])
+		#expect(date == Self.dateWithValues(2026, 11, 27, 14, 7, 36))
+	}
+
 	// MARK: - Format: W3C / ISO 8601
 
 	@Test func w3cStandardForms() {
@@ -267,8 +346,8 @@ import Testing
 	// The parser is intentionally permissive: real-world feed pubDates are a mess,
 	// so it accepts more than the specs allow. These tests document current behavior
 	// (which is the contract the rest of the app depends on) so a future "tighten
-	// it up" change doesn't silently turn these cases into nil — which would, in
-	// turn, send 1000s of feed dates to the 1970 fallback in the transformer.
+	// it up" change doesn't silently turn these cases into nil. Only a pubDate with
+	// no month or year at all returns nil (#5469).
 
 	@Test func unknownMonthNameFallsBackToJanuary() {
 		// Unrecognized month string falls back to month=1, day-of-month preserved.
@@ -287,13 +366,11 @@ import Testing
 		                 Self.dateWithValues(2010, 2, 28, 21, 3, 38))
 	}
 
-	@Test func garbageInputReturnsEpoch() {
-		// No parseable digits: the parser doesn't return nil, it returns epoch.
-		// This documents the fallback so a regression that made this return nil
-		// — which would propagate into the feed transformer as a "missing date"
-		// — is caught.
-		let epoch = Self.dateWithValues(1970, 1, 1, 0, 0, 0)
-		assertParsedDate("the quick brown fox jumped over", epoch)
+	@Test func garbageInputReturnsNil() {
+		// No month or year: nil rather than a made-up January 1970 date, so the app
+		// falls back to the article's modified or arrival date.
+		// https://github.com/Ranchero-Software/NetNewsWire/issues/5469
+		assertNilResult("the quick brown fox jumped over")
 	}
 
 	@Test func partialISODateAcceptedWithMissingFieldsZeroed() {
