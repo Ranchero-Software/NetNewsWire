@@ -8,6 +8,19 @@
 
 
 <item>
+	<title>NetNewsWire 7.4b1</title>
+	<description><![CDATA[
+<ul>
+<li>Added Miniflux syncing — sign in with a username and password or an API token. Thanks to Dave Marquard (who also does the awesome NetNewsWire themes site) for this feature!
+<li>Made the article view inspectable with Safari’s Web Inspector
+</ul>
+	]]></description>
+	<pubDate>Fri, 27 Nov 2026 20:15:00 -0700</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.4b1/NetNewsWire7.4b1.zip" sparkle:version="7245" sparkle:shortVersionString="7.4b1" length="10731329" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
 	<title>NetNewsWire 7.3.1</title>
 	<description><![CDATA[
 	<b>Changes since 7.3</b>
