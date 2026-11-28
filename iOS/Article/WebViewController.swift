@@ -302,8 +302,7 @@ final class WebViewController: UIViewController {
 		coordinator.showStatusBar()
 		topShowBarsViewConstraint?.constant = 0
 		bottomShowBarsViewConstraint?.constant = 0
-		navigationController?.setNavigationBarHidden(false, animated: animated)
-		navigationController?.setToolbarHidden(false, animated: animated)
+		setBarsHidden(false, animated: animated)
 		additionalSafeAreaInsets.bottom = 0
 		setBottomScrollEdgeEffectHidden(false)
 		configureContextMenuInteraction()
@@ -315,10 +314,22 @@ final class WebViewController: UIViewController {
 			coordinator.hideStatusBar()
 			topShowBarsViewConstraint?.constant = -44.0
 			bottomShowBarsViewConstraint?.constant = 44.0
-			navigationController?.setNavigationBarHidden(true, animated: true)
-			navigationController?.setToolbarHidden(true, animated: true)
+			setBarsHidden(true, animated: true)
 			setBottomScrollEdgeEffectHidden(true)
 			configureContextMenuInteraction()
+		}
+	}
+
+	/// Skips calls that wouldn’t change anything.
+	private func setBarsHidden(_ hidden: Bool, animated: Bool) {
+		guard let navigationController else {
+			return
+		}
+		if navigationController.isNavigationBarHidden != hidden {
+			navigationController.setNavigationBarHidden(hidden, animated: animated)
+		}
+		if navigationController.isToolbarHidden != hidden {
+			navigationController.setToolbarHidden(hidden, animated: animated)
 		}
 	}
 
