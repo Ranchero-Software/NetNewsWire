@@ -1,5 +1,13 @@
 # iOS Release Notes
 
+### 7.4 build 7245 27 Nov 2026 - branch: main tag: iOS-7.4-7245
+
+Added Miniflux syncing — sign in with a username and password or an API token. Thanks to Dave Marquard (who also does the awesome NetNewsWire themes site) for this feature!
+Made the article view inspectable with Safari’s Web Inspector
+Switched Find in Article to the system find bar — fixes a bug on iPad where the find bar kept the previous article’s text and results, and Next and Previous did nothing
+Fixed a hang when tapping More in a swipe action in the sidebar or timeline, for feeds with many articles
+Simplified the Mark All as Read confirmation — dropped the Open Settings button and message
+
 ### 7.3.1 build 7244 21 Nov 2026 - branch: main tag: iOS-7.3.1-7244
 
 Changes since 7.3:
