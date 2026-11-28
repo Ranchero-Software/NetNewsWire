@@ -87,6 +87,7 @@ final class WebViewController: UIViewController {
 	}
 	private var restoreWindowScrollY: Int?
 	private var isChangingSize = false
+	private var lastLayoutWidth: CGFloat = 0
 	private var isArticleContentJavascriptEnabled = AppDefaults.isArticleContentJavascriptEnabled
 
 	override func viewDidLoad() {
@@ -115,17 +116,20 @@ final class WebViewController: UIViewController {
 
 	override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
 		super.viewWillTransition(to: size, with: coordinator)
+		beginSizeChange(coordinator: coordinator)
+	}
 
-		// Ignore mid-transition offsets, then scroll back to the reader’s place.
-		isChangingSize = true
-		coordinator.animate(alongsideTransition: nil) { [weak self] _ in
-			guard let self else {
-				return
-			}
-			restoreScrollAnchor()
-			scrollPositionDidChange()
-			isChangingSize = false
+	override func viewDidLayoutSubviews() {
+		super.viewDidLayoutSubviews()
+
+		// Split view display mode changes and full-screen modal dismissals change the
+		// article’s width without calling viewWillTransition.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5542>
+		let width = view.safeAreaLayoutGuide.layoutFrame.width
+		if lastLayoutWidth > 0 && width != lastLayoutWidth {
+			beginSizeChange(coordinator: transitionCoordinator)
 		}
+		lastLayoutWidth = width
 	}
 
 	override func viewWillDisappear(_ animated: Bool) {
@@ -621,6 +625,9 @@ extension WebViewController: UIScrollViewDelegate {
 	}
 
 	@objc func scrollPositionDidChange() {
+		guard !isChangingSize else {
+			return
+		}
 		let articleIDWhenAsked = article?.articleID
 		webView?.evaluateJavaScript("recordScrollAnchor(); window.scrollY") { (scrollY, error) in
 			guard error == nil else {
@@ -759,6 +766,29 @@ private extension WebViewController {
 
 		WebViewConfiguration.addContentBlockingRules(to: webView)
 		webView.loadHTMLString(html, baseURL: URL(string: rendering.baseURL))
+	}
+
+	/// Ignores mid-reflow offsets, then scrolls back to the reader’s place once the new width is in effect.
+	private func beginSizeChange(coordinator: UIViewControllerTransitionCoordinator?) {
+		guard !isChangingSize else {
+			return
+		}
+		isChangingSize = true
+		if let coordinator {
+			coordinator.animate(alongsideTransition: nil) { [weak self] _ in
+				self?.endSizeChange()
+			}
+		} else {
+			DispatchQueue.main.async { [weak self] in
+				self?.endSizeChange()
+			}
+		}
+	}
+
+	private func endSizeChange() {
+		isChangingSize = false
+		restoreScrollAnchor()
+		scrollPositionDidChange()
 	}
 
 	/// Scrolls back to the element that was at the top of the viewport before the article
